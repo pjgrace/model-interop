@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Patterns>
+    
+    <Pattern>
+        <File>NGSI9JSON.xml</File>
+        <Title>Context Broker GE</Title>
+        <Description>Test NGSI 9 REST Interface with JSON data types</Description>
+    </Pattern>    
+    
+    <Pattern>
+        <File>NGSI9XML.xml</File>
+        <Title>Context Broker GE</Title>
+        <Description>Test NGSI 9 REST Interface with XML data types</Description>
+    </Pattern> 
+    
+    <Pattern>
+        <File>NGSI10JSON.xml</File>
+        <Title>Context Broker GE</Title>
+        <Description>Test NGSI 10 REST Interface with JSON data types</Description>
+    </Pattern> 
+    
+    <Pattern>
+        <File>NGSI10XML.xml</File>
+        <Title>Context Broker GE</Title>
+        <Description>Test NGSI 10 REST Interface with XML data types</Description>
+    </Pattern> 
+    
+    <Pattern>
+        <File>CDMI.xml</File>
+        <Title>Object Broker GE</Title>
+        <Description>Test CDMI REST Interface</Description>
+    </Pattern> 
+
+</Patterns>
