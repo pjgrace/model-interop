@@ -48,7 +48,7 @@ public class PatternExecutionTest {
     @Test
     public final void testNGSI() {
         try {
-            final String sMachine = FileUtils.readFile("NGSI9.xml", Charset.defaultCharset());
+            final String sMachine = FileUtils.readFile("examples/NGSI9.xml", Charset.defaultCharset());
             final String editedsMachine = sMachine.replace("**TOKEN**", SystemProperties.readProperty("TEST_TOKEN"));
 
             Architecture stateMachine = null;

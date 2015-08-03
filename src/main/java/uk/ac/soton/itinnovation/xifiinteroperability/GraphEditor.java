@@ -229,7 +229,7 @@ public class GraphEditor extends BasicGraphEditor {
      * value rules.
      */
     private void checkRules(final mxGraphComponent graphComponent, Object sender, final mxEventObject evt) throws InvalidTransitionException{
-        System.out.println(sender);
+
         // If source is a client or a interface
         mxICell connectionCell = ((mxCell) evt.getProperty("cell")).getSource();
         final String ident = GUIdentifier.getGUIdentifier(((mxCell) connectionCell).getId(), graphComponent);

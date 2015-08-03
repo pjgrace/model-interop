@@ -1,29 +1,62 @@
 <?xml version="1.0"?>
 <pattern  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    
-    <patterndata>
-        <data>
-            <name>token</name>
-            <value>**TOKEN**</value>
-        </data>
-    </patterndata>
-    
     <architecture>
         <component>
             <id>pubsubGE</id>
-            <address>orion.lab.fi-ware.eu</address>
+            <address>orion.lab.fi-ware.org</address>
             <interface>
                 <id>NGSI9</id>
-                <url>http://orion.lab.fi-ware.eu:1026/NGSI9</url>
+                <url>http://orion.lab.fi-ware.org:1026/ngsi9</url>
+            </interface>
+        </component>
+        <component>
+            <id>idmGE</id>
+            <address>orion.lab.fiware.org</address>
+            <interface>
+                <id>idm</id>
+                <url>https://orion.lab.fiware.org:443/token</url>
             </interface>
         </component>
     </architecture>
-    
-     <behaviour>
-         <state>
-          <label>A1</label>
-          <type>triggerstart</type>
-          <transition>    
+    <behaviour>
+        <state>
+            <label>A0</label>
+            <type>triggerstart</type>
+            <transition>    
+                <to>A00</to>
+                <message>
+                    <url>component.idmGE.idm</url>
+                    <path></path>
+                    <method>post</method>
+                    <type>json</type>
+                    <headers>
+                        <header>
+                            <name>Content-type</name>
+                            <value>application/json</value>
+                        </header>
+                    </headers>
+                    <body><![CDATA[{"username": "interoptool1@gmail.com", "password":"testingtool1"}]]>
+                    </body>
+                </message>
+            </transition>
+        </state>
+        <state>
+            <label>A00</label>
+            <type>normal</type>
+            <transition>    
+                <to>A1</to>
+                <guards>
+                    <equal>
+                        <param>HTTP.Code</param>
+                        <value>200</value>
+                    </equal>
+                </guards>
+            </transition>
+        </state>
+        <state>
+            <label>A1</label>
+            <type>trigger</type>
+            <transition>    
                 <to>A2</to>
                 <message>
                     <url>component.pubsubGE.NGSI9</url>
@@ -33,7 +66,7 @@
                     <headers>
                         <header>
                             <name>X-Auth-Token</name>
-                            <value>patterndata.token</value>
+                            <value>$$A00|content|*$$</value>
                         </header>
                     </headers>
                     <body><![CDATA[{
@@ -112,7 +145,7 @@
                     <headers>
                         <header>
                             <name>X-Auth-Token</name>
-                            <value>patterndata.token</value>
+                            <value>$$A00|content|*$$</value>
                         </header>
                     </headers>
                     <body><![CDATA[
@@ -154,7 +187,7 @@
                     </equal>
                     <equal>
                         <param>Content[$.contextRegistrationResponses[0].contextRegistration.entities[0].id]</param>
-                        <value>Ford1</value>
+                        <value>ford1</value>
                     </equal>
                 </guards>
               </transition>
@@ -172,7 +205,7 @@
                     <headers>
                         <header>
                             <name>X-Auth-Token</name>
-                            <value>patterndata.token</value>
+                            <value>$$A00|content|*$$</value>
                         </header>
                     </headers>
                     <body><![CDATA[{
@@ -232,7 +265,7 @@
                     <headers>
                         <header>
                             <name>X-Auth-Token</name>
-                            <value>patterndata.token</value>
+                            <value>$$A00|content|*$$</value>
                         </header>
                     </headers>
                     <body><![CDATA[

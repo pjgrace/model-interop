@@ -65,9 +65,7 @@ public final class JSON {
                         final String reference, final Object value) {
         try {
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
-            System.out.println(jsonVal);
-            System.out.println(readValue(jsondoc, reference));
-            return jsonVal.equals(readValue(jsondoc, reference));
+            return jsonVal.equalsIgnoreCase(readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH)));
 //            JsonAssert.with(jsondoc.toLowerCase(Locale.ENGLISH)).assertThat(reference, Matchers.equalTo(jsonVal));
         } catch (Exception ex) {
             return false;
@@ -106,6 +104,9 @@ public final class JSON {
      * @return The data value as a string (Can be typed later).
      */
     public static String readValue(final String jsondoc, final String pathexpr) {
+        if (pathexpr.equalsIgnoreCase("*")) {
+            return jsondoc;
+        }
         return JsonPath.read(jsondoc, pathexpr).toString();
     }
 
