@@ -128,9 +128,10 @@ public class GraphNode extends AbstractGraphElement {
 
     /**
      * Get the indexed transition e.g. first, second.
+     * @param index The index of the graph element.
      * @return transition data object.
      */
-    public final AbstractGraphElement getTransition(int index) {
+    public final AbstractGraphElement getTransition(final int index) {
         return this.transitions.get(index);
     }
 

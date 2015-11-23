@@ -303,18 +303,18 @@ public class GraphGenerator {
     public final void importGraph(final Document dom) throws InvalidPatternException {
         NodeList nList = dom.getElementsByTagName("component");
         for (int i = 0; i < nList.getLength(); i++) {
-            Element eElement = (Element) nList.item(i);
+            final Element eElement = (Element) nList.item(i);
             final String label = eElement.getElementsByTagName("id").item(0).getTextContent();
-            if(this.dataModel.getComponentByLabel(label) != null) {
-                throw new InvalidPatternException("Component id: "+ label + " is not unique, rename before importing");
+            if (this.dataModel.getComponentByLabel(label) != null) {
+                throw new InvalidPatternException("Component id: " + label + " is not unique, rename before importing");
             }
         }
         nList = dom.getElementsByTagName("state");
         for (int i = 0; i < nList.getLength(); i++) {
-            Element eElement = (Element) nList.item(i);
+            final Element eElement = (Element) nList.item(i);
             final String label = eElement.getElementsByTagName("label").item(0).getTextContent();
-            if(this.dataModel.getNodeByLabel(label) != null) {
-                throw new InvalidPatternException("State label: "+ label + " is not unique, rename before importing");
+            if (this.dataModel.getNodeByLabel(label) != null) {
+                throw new InvalidPatternException("State label: " + label + " is not unique, rename before importing");
             }
         }
         createGraph(dom);

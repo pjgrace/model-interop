@@ -118,7 +118,7 @@ public class GraphEditor extends BasicGraphEditor {
                     if (cell instanceof mxCell) {
                         final String value = (String) ((mxCell) cell).getValue();
                         if (value.length() > 0) {
-                            return value.toString();
+                            return value;
                         } else {
                             return null;
                         }
@@ -227,8 +227,11 @@ public class GraphEditor extends BasicGraphEditor {
     /**
      * Rules for connecting nodes: based on type rather than the mxGraph
      * value rules.
+     * @param graphComponent The mxGraph component element.
+     * @param evt The user interface event.
+     * @throws InvalidTransitionException Error in the transition that is being checked.
      */
-    private void checkRules(final mxGraphComponent graphComponent, Object sender, final mxEventObject evt) throws InvalidTransitionException{
+    private void checkRules(final mxGraphComponent graphComponent, final mxEventObject evt) throws InvalidTransitionException {
 
         // If source is a client or a interface
         mxICell connectionCell = ((mxCell) evt.getProperty("cell")).getSource();
@@ -238,23 +241,20 @@ public class GraphEditor extends BasicGraphEditor {
 //        AbstractGraphElement transition = getDataModel().getTransition(connectionCell.getSource().getId());
         if (type.equalsIgnoreCase("component")) {
             throw new InvalidTransitionException("Cannot connect client component nodes");
-        }
-        else if (type.equalsIgnoreCase("interface")) {
+        } else if (type.equalsIgnoreCase("interface")) {
             throw new InvalidTransitionException("Cannot connect interface component nodes");
-        }
-        else if (type.equalsIgnoreCase("end")) {
+        } else if (type.equalsIgnoreCase("end")) {
             throw new InvalidTransitionException("An end node cannot have an output transition");
-        }
-        else if ((type.equalsIgnoreCase("trigger")) || (type.equalsIgnoreCase("triggerstart"))) {
-            GraphNode node = (GraphNode) getDataModel().getNode(ident);
-            if(node.getNumberTransitions()!=0){
+        } else if ((type.equalsIgnoreCase("trigger")) || (type.equalsIgnoreCase("triggerstart"))) {
+            final GraphNode node = (GraphNode) getDataModel().getNode(ident);
+            if (node.getNumberTransitions() != 0) {
                 throw new InvalidTransitionException("A trigger node can only have one output");
             }
 
         }
 
         connectionCell = ((mxCell) evt.getProperty("cell")).getTarget();
-        if(connectionCell != null) {
+        if (connectionCell != null) {
             final String ident2 = GUIdentifier.getGUIdentifier(((mxCell) connectionCell).getId(), graphComponent);
             type = getDataModel().getNode(ident2).getType();
             if (type.equalsIgnoreCase("triggerstart")) {
@@ -282,7 +282,7 @@ public class GraphEditor extends BasicGraphEditor {
                 @Override
                 public void invoke(final Object sender, final mxEventObject evt) {
                     try {
-                        checkRules(graphComponent, sender, evt);
+                        checkRules(graphComponent, evt);
                     } catch (InvalidTransitionException ex) {
                         JOptionPane.showMessageDialog(graphComponent.getParent(),
                         ex.getLocalizedMessage(),
@@ -307,14 +307,13 @@ public class GraphEditor extends BasicGraphEditor {
 
         graphComponent.getGraph().addListener(mxEvent.CELL_CONNECTED, new mxIEventListener() {
             @Override
-            public void invoke(Object sender, mxEventObject evt) {
-                mxCell connectionCell = (mxCell) evt.getProperty("edge");
+            public void invoke(final Object sender, final mxEventObject evt) {
+                final mxCell connectionCell = (mxCell) evt.getProperty("edge");
 
                 if (connectionCell.getTarget() == null) {
                     return;
                 }
 
-                AbstractGraphElement transition = getDataModel().getTransition(connectionCell.getId());
                 try {
                     getDataModel().updateConnection(connectionCell.getId(), connectionCell.getSource().getId(), connectionCell.getTarget().getId());
                 } catch (InvalidTransitionException ex) {
@@ -366,13 +365,13 @@ public class GraphEditor extends BasicGraphEditor {
         graphComponent.addListener(mxEvent.LABEL_CHANGED, new mxIEventListener() {
 
             @Override
-            public void invoke(Object o, mxEventObject evt) {
+            public void invoke(final Object obj, final mxEventObject evt) {
                 mxCell labelCell = (mxCell) evt.getProperty("cell");
-                String newLabel = (String) evt.getProperty("value");
+                final String newLabel = (String) evt.getProperty("value");
                 final String ident = GUIdentifier.getGUIdentifier(((mxCell) labelCell).getId(), graphComponent);
-                GraphNode gn = (GraphNode) getDataModel().getNode(ident);
-                String originalLabel = gn.getLabel();
-                gn.setLabel(newLabel);
+                final GraphNode gnode = (GraphNode) getDataModel().getNode(ident);
+                final String originalLabel = gnode.getLabel();
+                gnode.setLabel(newLabel);
                 getDataModel().updateConnectionLabel(originalLabel, newLabel);
             }
         });

@@ -318,8 +318,7 @@ public class RESTMessage {
                     } else if (this.dataBody.getType().equalsIgnoreCase(JSON_LABEL)) {
                         entity.setMediaType(MediaType.APPLICATION_JSON);
                         clientRes.accept(MediaType.APPLICATION_JSON);
-                    }
-                    else if (this.dataBody.getType().equalsIgnoreCase(OTHER_LABEL)) {
+                    } else if (this.dataBody.getType().equalsIgnoreCase(OTHER_LABEL)) {
                         String applicationType = null;
                         for (Parameter param : headers) {
                             if (param.getName().equalsIgnoreCase("http.Content-type")) {

@@ -172,7 +172,7 @@ public class Message extends AbstractGraphElement {
 
      /**
      * Get the target label id of the connection.
-     * @param newTarget The label id of the target label
+     * @return The target label.
      */
     public final String getTarget() {
         return this.targetLabel;

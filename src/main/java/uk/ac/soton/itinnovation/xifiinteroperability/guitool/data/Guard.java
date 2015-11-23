@@ -89,7 +89,7 @@ public class Guard extends AbstractGraphElement {
 
     /**
      * Get the target label id of the connection.
-     * @param newTarget The label id of the target label
+     * @return The id label.
      */
     public final String getTarget() {
         return this.targetLabel;

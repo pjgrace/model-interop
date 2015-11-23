@@ -40,7 +40,7 @@ public class InvalidWrapperException extends Exception {
      * @param exceptionMessage The error message to label the error.
      * @param excep The exception trace.
      */
-    public InvalidWrapperException(final String exceptionMessage, Exception excep) {
+    public InvalidWrapperException(final String exceptionMessage, final Exception excep) {
         super(exceptionMessage, excep);
     }
 }

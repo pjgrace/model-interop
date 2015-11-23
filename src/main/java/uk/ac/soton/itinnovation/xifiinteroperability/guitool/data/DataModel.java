@@ -193,6 +193,7 @@ public class DataModel {
     * Add a new node to the data model.
     * @param ident The identifier of the new node element.
     * @param label The label of the new node element.
+    * @param type. The type of the node (client or interface).
     */
    public final void addNode(final String ident, final String label, final String type) {
        switch(type) {

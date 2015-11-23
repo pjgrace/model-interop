@@ -1544,6 +1544,7 @@ public class Reference implements Serializable, Cloneable {
      * IllegalArgumentException will be raised.
      *
      * @param base The base reference to use.
+     * @return The Reference to get.
      */
     public final Reference getRelativeRef(final Reference base) {
         Reference result = null;
