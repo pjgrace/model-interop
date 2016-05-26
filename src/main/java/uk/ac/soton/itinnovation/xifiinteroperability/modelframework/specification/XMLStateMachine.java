@@ -109,9 +109,30 @@ public final class XMLStateMachine {
     public static final String TRIGGERSTART_LABEL = "triggerstart";
 
     /**
+     * XML TRIGGERSTART_LABEL type content label constant.
+     */
+    public static final String LOOP_LABEL = "loop";
+
+    /**
      * XML COMPONENT_LABEL type content label constant.
      */
     public static final String COMPONENT_LABEL = "component";
+
+    /**
+     * XML INTERFACE_LABEL type content label constant.
+     */
+    public static final String INTERFACE_LABEL = "interface";
+
+        /**
+     * ID tag in the XML specification.
+     */
+    public static final String ID_LABEL = "id";
+
+    /**
+     * ADDRESS tag in the XML specification.
+     */
+    public static final String ADDRESS_LABEL = "address";
+
 
     /**
      * XML TO_LABEL type content label constant.
@@ -166,6 +187,7 @@ public final class XMLStateMachine {
              case NORMAL_LABEL: return State.StateType.NORMAL;
              case TRIGGER_LABEL: return State.StateType.TRIGGER;
              case TRIGGERSTART_LABEL: return State.StateType.TRIGGERSTART;
+             case LOOP_LABEL: return State.StateType.LOOP;
              default: // Input hasn't matched so we must through an invalid input exception
                 throw new InvalidStateTypeException(textInput
                     + "must be either: {start, end, normal, trigger, triggerstart}");
@@ -216,6 +238,14 @@ public final class XMLStateMachine {
                         Guard.ComparisonType.NOTEQUALS,
                         guardValue, archDesc));
                 }
+                else if (eltIndex.getName().equalsIgnoreCase("counter")) {
+                    System.out.println("This is a counter");
+                    arrayOfGuards.add(new Guard(
+                        eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                        String.class,
+                        Guard.ComparisonType.COUNTER,
+                        guardValue, archDesc));
+                }
 
             }
          } catch (InvalidRESTMessage ex) {
@@ -227,6 +257,23 @@ public final class XMLStateMachine {
          }
 
          return arrayOfGuards;
+     }
+
+     /**
+      * Check if a transition is a message or a guard.
+      *
+      * @param msgRoot The rool element of the xml structure
+      * @return True is this is a message transition. False if a guard.
+      * @throws InvalidRESTMessage Error during parsing of XML into a rest message
+      */
+     private static boolean isMessageTransition(final Element msgRoot)
+        throws InvalidRESTMessage {
+
+         final Element tOut = msgRoot.getChild(RESTMessage.MESSAGE_LABEL);
+         if(tOut == null)
+             return false;
+         else
+             return true;
      }
 
      /**
@@ -291,7 +338,7 @@ public final class XMLStateMachine {
 
         final RESTComponent rComp = archDesc.getArchitectureComponents().get(tokenize.nextToken());
         final String delim = tokenize.nextToken();
-        if (delim.equalsIgnoreCase(RESTComponent.ADDRESSTAG)) {
+        if (delim.equalsIgnoreCase(ADDRESS_LABEL)) {
             return rComp.getipAddress();
         } else {
             // find interface
@@ -312,18 +359,19 @@ public final class XMLStateMachine {
       */
      private static Parameter[] getHeaders(final Element root) {
 
-        final List<Element> tOut = root.getChild(RESTMessage.MESSAGE_LABEL).getChild(RESTMessage.HEADERS_LABEL).getChildren();
-        if (tOut != null) {
-           final Parameter[] results = new Parameter[tOut.size()];
-           int index = 0;
-           for (Element eltIndex : tOut) {
+        Element headerListNode = root.getChild(RESTMessage.MESSAGE_LABEL).getChild(RESTMessage.HEADERS_LABEL);
+        if (headerListNode != null) {
+            final List<Element> tOut = headerListNode.getChildren();
+            final Parameter[] results = new Parameter[tOut.size()];
+            int index = 0;
+            for (Element eltIndex : tOut) {
                final String headerName = eltIndex.getChildText(RESTMessage.HEADERNAME_LABEL);
                final String headerValue = eltIndex.getChildText(RESTMessage.HEADERVALUE_LABEL);
                if ((headerName != null) && (headerValue != null)) {
                    results[index++] = new Parameter(headerName, headerValue);
                }
-           }
-           return results;
+            }
+            return results;
         }
 
          // There are no headers so we return a zero sized array
@@ -355,7 +403,7 @@ public final class XMLStateMachine {
                      throw new InvalidTransitionException("To state does not exist in state machine");
              }
              try {
-                 if (fromState.isTrigger()) {
+                 if (isMessageTransition(eltIndex)) {
                      fromState.addTransition(new Transition(toLabel, getMessage(eltIndex, archDesc)));
                  } else {
                     fromState.addTransition(new Transition(toLabel, getGuards(eltIndex, archDesc)));

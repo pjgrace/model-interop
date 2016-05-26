@@ -59,7 +59,17 @@ public final class Function {
          * Contains function, the set A contains B if
          * B is a member or field of A.
          */
-        Contains ("contains");
+        Contains ("contains"),
+
+        /**
+         * < function, a < b
+         */
+        LessThan ("lessthan"),
+
+        /**
+         * < function, a > b
+         */
+        GreaterThan ("greaterthan");
 
         /**
          * The string version of the type e.g. "equals"
@@ -105,6 +115,12 @@ public final class Function {
         }
         if (typeName.equalsIgnoreCase("contains")) {
             return FunctionType.Contains;
+        }
+        if (typeName.equalsIgnoreCase("lessthan")) {
+            return FunctionType.LessThan;
+        }
+        if (typeName.equalsIgnoreCase("greaterthan")) {
+            return FunctionType.GreaterThan;
         }
         return null;
     }

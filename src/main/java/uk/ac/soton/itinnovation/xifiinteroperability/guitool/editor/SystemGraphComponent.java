@@ -39,6 +39,7 @@ import java.awt.Point;
 import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 /**
  * The system graph component is the graph of clients and interfaces.
@@ -109,7 +110,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
         String type = null;
         if (target == null && cells.length == 1 && location != null) {
             type = (String) ((mxCell) cells[0]).getValue();
-            if (!(type.equalsIgnoreCase("client") || type.equalsIgnoreCase("interface"))) {
+            if (!(type.equalsIgnoreCase(DataModel.CLIENT) || type.equalsIgnoreCase(XMLStateMachine.INTERFACE_LABEL))) {
                 JOptionPane.showMessageDialog(this.getParent(),
                     "Behaviour elements not allowed in architecture graph",
                     "Design error",

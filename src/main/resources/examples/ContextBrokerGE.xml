@@ -86,7 +86,7 @@
         </state>
         <state>
           <label>A31</label>
-          <type>triggerstart</type>
+          <type>trigger</type>
           <transition>    
                 <to>A32</to>
                 <message>
@@ -146,7 +146,7 @@
         
         <state>
           <label>A3</label>
-          <type>triggerstart</type>
+          <type>trigger</type>
           <transition>    
                 <to>A4</to>
                 <message>
@@ -211,7 +211,7 @@
         </state>
         <state>
           <label>A5</label>
-          <type>triggerstart</type>
+          <type>trigger</type>
           <transition>    
                 <to>A6</to>
                 <message>

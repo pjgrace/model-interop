@@ -39,6 +39,7 @@ import java.awt.Point;
 import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 /**
  * The UI element holding the behaviour graph (state machine).
@@ -111,7 +112,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
 
         if (origTarget == null && cells.length == 1 && location != null) {
             final String type = (String) ((mxCell) cells[0]).getValue();
-            if (type.equalsIgnoreCase("client") || type.equalsIgnoreCase("interface")) {
+            if (type.equalsIgnoreCase(DataModel.CLIENT) || type.equalsIgnoreCase(XMLStateMachine.INTERFACE_LABEL)) {
                 JOptionPane.showMessageDialog(this.getParent(),
                     "Architecture elements not allowed in behavior graph",
                     "Design error",
@@ -119,7 +120,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
                 return null;
             }
 
-//            if ((type.equalsIgnoreCase("start") || type.equalsIgnoreCase("triggerstart")) && this.dataModel.containsStart()) {
+//            if ((type.equalsIgnoreCase("start") || type.equalsIgnoreCase(GraphEditor.TRIGGERSTART)) && this.dataModel.containsStart()) {
 //                JOptionPane.showMessageDialog(this.getParent(),
 //                "Only one start node allowed in the graph",
 //                "Design error",

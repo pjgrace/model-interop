@@ -51,7 +51,7 @@ public class Guard {
         /**
          * 3 types: =, !=, and set contains.
          */
-	EQUALS(0), NOTEQUALS(1), CONTAINS(2);
+	EQUALS(0), NOTEQUALS(1), CONTAINS(2), LESSTHAN(3), GREATERTHAN(4), COUNTER (5);
 
         /**
          * The integer id of the type (specified above).
@@ -181,7 +181,27 @@ public class Guard {
                 return toCompare.equals(this.compareTo);
             case NOTEQUALS:
                 return !toCompare.equals(this.compareTo);
-             case CONTAINS:
+            case COUNTER:
+                Integer aC = new Integer(this.compareTo);
+                Integer bC = (Integer) toCompare;
+                return aC==bC;
+            case LESSTHAN:
+                try{
+                    long a = new Long(this.compareTo);
+                    long b = (Long) toCompare;
+                    return a < b;
+                } catch(Exception ex) {
+                    return false;
+                }
+            case GREATERTHAN:
+                try{
+                    long a = new Long(this.compareTo);
+                    long b = (Long) toCompare;
+                    return a > b;
+                } catch(Exception ex) {
+                    return false;
+                }
+            case CONTAINS:
                  final HashMap<String, Parameter> heads = (HashMap<String, Parameter>) input;
                  return heads.containsKey(this.compareTo.toLowerCase());
              default:

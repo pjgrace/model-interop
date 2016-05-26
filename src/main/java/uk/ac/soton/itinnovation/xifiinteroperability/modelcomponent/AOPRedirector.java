@@ -334,8 +334,10 @@ public final class AOPRedirector extends Restlet {
          * Call the pre method interceptor to observe/process the incoming
          * HTTP request message.
          */
+        long reqTime = 0;
         try {
             pre(request);
+            reqTime = System.currentTimeMillis();
         } catch (Exception ex) {
             /**
              * We have to catch exceptions and then pass them to the pattern
@@ -415,8 +417,9 @@ public final class AOPRedirector extends Restlet {
          * Call the post interceptor: void method as this may be made an
          * asynchronous call if necessary.
          */
+        long responseTime = System.currentTimeMillis() - reqTime;
         try {
-            post(request, response);
+            post(request, response, responseTime);
         } catch (WrapperDeploymentException ex) {
             /**
              * We have to catch exceptions and then pass them to the pattern
@@ -594,13 +597,14 @@ public final class AOPRedirector extends Restlet {
      * to the request
      * @throws WrapperDeploymentException Error when reading the response from the wrapper.
      */
-    private void post(final Request req, final Response response) throws WrapperDeploymentException {
+    private void post(final Request req, final Response response, long time) throws WrapperDeploymentException {
 
         /*
          * Create a REST event about the Service Response i.e. capture and
          * uniform the data to be understood by the state machine rule checker
          */
         final RESTEvent rResp = new RESTEvent();
+        rResp.setResponseTime(time);
 
         rResp.addParameter(new Parameter(RESTEvent.HTTP_FROM, response.getServerInfo().getAddress()));
         rResp.addParameter(new Parameter(RESTEvent.HTTP_TO, req.getClientInfo().getAddress()));
@@ -666,6 +670,7 @@ public final class AOPRedirector extends Restlet {
 
             // Build the basic information
             final RESTEvent rReq = new RESTEvent();
+
             final String sTarget = this.getTargetTemplate(request.getOriginalRef().toUrl());
             if (sTarget == null) {
                 return;

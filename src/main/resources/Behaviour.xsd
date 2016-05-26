@@ -58,6 +58,9 @@ of the interoperability test behaviour.
                     <xs:element minOccurs="0" maxOccurs="unbounded" ref="equal"/>
                     <xs:element minOccurs="0" maxOccurs="unbounded" ref="contains"/>
                     <xs:element minOccurs="0" maxOccurs="unbounded" ref="notequal"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="counter"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="lessthan"/>
+                    <xs:element minOccurs="0" maxOccurs="unbounded" ref="greaterthan"/>
                 </xs:choice>  
             </xs:sequence>
         </xs:complexType>
@@ -112,6 +115,33 @@ of the interoperability test behaviour.
     </xs:element>
     
     <xs:element name="notequal">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param" type="xs:string"/>
+                <xs:element name="value" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="counter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param" type="xs:string"/>
+                <xs:element name="value" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="lessthan">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="param" type="xs:string"/>
+                <xs:element name="value" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="greaterthan">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="param" type="xs:string"/>

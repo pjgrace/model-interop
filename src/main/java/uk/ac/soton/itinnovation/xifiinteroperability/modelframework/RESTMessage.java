@@ -223,7 +223,7 @@ public class RESTMessage {
         }
 
         if (type != null) {
-            if (type.equalsIgnoreCase(XML_LABEL) || type.equalsIgnoreCase(JSON_LABEL) || type.equalsIgnoreCase(OTHER_LABEL) ) {
+            if (type.equalsIgnoreCase(XML_LABEL) || type.equalsIgnoreCase(JSON_LABEL) || type.equalsIgnoreCase(OTHER_LABEL)) {
                 this.dataBody = new Content(type, body);
             } else {
                 throw new InvalidRESTMessage("Type: " + type + " must be: 'xml' or 'json'");
@@ -292,9 +292,9 @@ public class RESTMessage {
      */
     public final RESTEvent invokeMessage() throws UnexpectedEventException {
         try {
-            this.path = parseData(this.path);
+            String rPath = parseData(this.path);
 
-            this.url = new URL(url.toExternalForm() + this.path);
+            this.url = new URL(url.toExternalForm() + rPath);
             final ClientResource clientRes =   new ClientResource(url.toExternalForm());
             if (headers != null) {
                 for (Parameter param : headers) {

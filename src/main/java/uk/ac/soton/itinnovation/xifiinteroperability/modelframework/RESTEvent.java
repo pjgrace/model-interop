@@ -90,7 +90,6 @@ public class RESTEvent implements Serializable {
     /** A creatable header field. */
     public static final String HTTP_CONFIG_HEAD = "http.";
 
-
     /**
      * The content of the message - optional, not all REST events will
      * have associated data.
@@ -103,6 +102,28 @@ public class RESTEvent implements Serializable {
      */
     public final Content getDataBody() {
         return dataBody;
+    }
+
+    /**
+     * A receiving state stores the response time for the server
+     * to react to the request. This can be used for QoS metric testing.
+     */
+    private long responseTime;
+
+    /**
+     * get the event time stamp
+     * @return the time stamp in milliseconds
+     */
+    public long getResponseTime() {
+        return this.responseTime;
+    }
+
+    /**
+     * Set the event time response
+     * @respTime the time stamp in milliseconds
+     */
+    public void setResponseTime(long respTime) {
+        this.responseTime = respTime;
     }
 
     /**

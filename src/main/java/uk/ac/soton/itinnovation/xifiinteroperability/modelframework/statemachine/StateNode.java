@@ -83,6 +83,10 @@ public class StateNode implements State {
     private transient StateMachine stateMachine;
 
     /**
+     * Counter. If this is a loop node
+     */
+    private int counter = 0;
+    /**
      * Constant to the content label of a rest event.
      */
     private static final String CONTENTLABEL = "content";
@@ -114,6 +118,19 @@ public class StateNode implements State {
         }
         this.nextStates = new ArrayList();
         this.stateType = type;
+    }
+
+    /**
+     * Update this state's counter value.
+     * @param change The value to update the counter by e.g. increment = 1, dec
+     * = -1.
+     */
+    public void counter(int change){
+        this.counter = this.counter + change;
+    }
+
+    public int getCounter() {
+        return this.counter;
     }
 
     /**
@@ -151,6 +168,15 @@ public class StateNode implements State {
     @Override
     public final boolean isTrigger() {
         return (stateType.equals(StateType.TRIGGER) || stateType.equals(StateType.TRIGGERSTART));
+    }
+
+    /**
+     * Return true if this is a trigger node state; otherwise return false.
+     * @return boolean value indicating trigger node status
+     */
+    @Override
+    public final boolean isLoop() {
+        return stateType.equals(StateType.LOOP);
     }
 
      /**
@@ -192,7 +218,7 @@ public class StateNode implements State {
     public final String executeTransition(final BlockingQueue<RESTEvent> input, final InteroperabilityReport outputReport)
             throws UnexpectedEventException {
         try {
-            if (!this.isTrigger()) {
+            if (!(this.isTrigger() || this.isLoop())) {
                 throw new UnexpectedEventException("Trying to execute a message trigger when the state"
                         + "is not a trigger");
             }
@@ -200,6 +226,8 @@ public class StateNode implements State {
 
             final RESTEvent retValue = action.invokeMessage();
             input.put(retValue);
+
+            outputReport.println("Invoked action - moving to state: " + this.nextStates.get(0).readLabel());
 
             // A Trigger state can only have one transition
             return this.nextStates.get(0).readLabel();
@@ -237,13 +265,40 @@ public class StateNode implements State {
         final Iterator<Transition> transIt = this.nextStates.iterator();
         while (transIt.hasNext()) {
             final Transition evTrans = transIt.next();
-            if (evaluateGuards(evTrans.listGuards(), input.getParameterMap(), outputReport)) {
-                outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
-                    return evTrans.readLabel();
+            if (!evTrans.listGuards().isEmpty()) {
+                if (evaluateGuards(evTrans.listGuards(), input.getParameterMap(), outputReport)) {
+                    outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
+                        return evTrans.readLabel();
+                }
             }
         }
         outputReport.println("Fail: no transition possible");
         throw new UnexpectedEventException("Fail: no transition possible");
+    };
+
+    public final String evaluateConditionalTransition(final RESTEvent input, final InteroperabilityReport outputReport, String currentState)
+            throws UnexpectedEventException {
+        // Find transitions with matching resource locations
+
+        if(input != null)
+            this.savedEvent = input;
+
+        /**
+         * Iterate through each potential event transition to find a matching
+         * next state. If no matches then we have an interoperability fail.
+         * Report in the exception.
+         */
+        final Iterator<Transition> transIt = this.nextStates.iterator();
+        while (transIt.hasNext()) {
+            final Transition evTrans = transIt.next();
+            if (!evTrans.listGuards().isEmpty()) {
+                if (evaluateGuards(evTrans.listGuards(), this.savedEvent.getParameterMap(), outputReport)) {
+                    outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
+                        return evTrans.readLabel();
+                }
+            }
+        }
+        return currentState;
     };
 
     /**
@@ -330,6 +385,25 @@ public class StateNode implements State {
         return true;
     }
 
+
+    private int arrayContentEvaluation(final Guard chGuard, final Map<String, Parameter> conditions,
+            final InteroperabilityReport report) {
+        final String xpathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
+        final Parameter value = conditions.get(CONTENTLABEL);
+        final Parameter dataType = conditions.get("http.content-type");
+        if (dataType.getValue().contains("xml")) {
+            return XML.getArraySize(value.getValue(), xpathExp);
+        } else if (dataType.getValue().contains("json")) {
+            if (!JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
+                reportGuardFailure(chGuard, value, report);
+                return 0;
+            }
+        } else {
+            return -1;
+        }
+        return -1;
+    }
+
     /**
      *
      * Evaluate the guard content.
@@ -376,7 +450,15 @@ public class StateNode implements State {
                 if (chGuard.getGuardCompare().contains("$$")) {
                     chGuard.setGuardCompare(getStateValue(chGuard.getGuardCompare()));
                 }
-                if (chGuard.getType() == Guard.ComparisonType.CONTAINS) {
+                if (chGuard.getType() == Guard.ComparisonType.COUNTER) {
+                    int arraySize = arrayContentEvaluation(chGuard, conditions, report);
+                    if (this.counter == arraySize) {
+                        return true;
+                    }
+                    report.printtabline("Counter Sequence: Current" + this.counter + "; Target: " + arraySize);
+                    return false;
+                }
+                else if (chGuard.getType() == Guard.ComparisonType.CONTAINS) {
                     if (!guardContainsEvaluation(chGuard, conditions, report)) {
                         return false;
                     }

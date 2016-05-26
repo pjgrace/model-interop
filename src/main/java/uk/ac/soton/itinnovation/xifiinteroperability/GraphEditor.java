@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// Ãƒâ€šÃ‚Â© University of Southampton IT Innovation Centre, 2015
+// University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
+// Created for Project : FIESTA (http://www.fiesta-iot.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -75,6 +75,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.BasicConfigurator;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.SystemGraphComponent;
@@ -83,6 +84,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BehaviourGra
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorMenuBar;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPalette;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidTransitionException;
 
 
@@ -97,10 +99,17 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
  */
 public class GraphEditor extends BasicGraphEditor {
 
+
+
     /**
-     * The constant label for a start node type.
+     * Application name.
      */
-    private static final String STARTTYPE = "start";
+    private static final String APPTITLE = "Interoperability Pattern Editor";
+
+
+
+
+
 
     /**
      * The Graph editor is made up of two graphical views onto a single
@@ -110,7 +119,7 @@ public class GraphEditor extends BasicGraphEditor {
      * Here we create these two graphs and attach the rules and listeners.
      */
     public GraphEditor() {
-        this("Interoperability Pattern Editor", new BehaviourGraphComponent(
+        this(APPTITLE, new BehaviourGraphComponent(
             new CustomGraph() {
                 // Overrides method to provide a cell label in the display
                 @Override
@@ -155,7 +164,6 @@ public class GraphEditor extends BasicGraphEditor {
     * @param appTitle The title to be displayed on the GUI header bar
     * @param component The graph view for the pattern behaviour
     * @param arcComponent The graph view for the architecture specification
-    *
     */
     public GraphEditor(final String appTitle, final mxGraphComponent component,
             final mxGraphComponent arcComponent) {
@@ -171,57 +179,66 @@ public class GraphEditor extends BasicGraphEditor {
          * The REST component. A web service interface implementing a REST
          * API. Invoked by client components.
          */
-        arcPalette.addTemplate("REST Interface",
+        arcPalette.addTemplate(XMLStateMachine.INTERFACE_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/server.png")),
                 "image;image=/images/server.png",
-                50, 50, "interface");
+                50, 50, XMLStateMachine.INTERFACE_LABEL);
+
         /**
          * A REST client. The user of a particular interface.
          */
-        arcPalette.addTemplate("Client",
+        arcPalette.addTemplate(DataModel.CLIENT,
                 new ImageIcon(GraphEditor.class.getResource("/images/workplace.png")),
                 "image;image=/images/workplace.png",
-                50, 50, "client");
+                50, 50, DataModel.CLIENT);
 
         // Adds the five node types to the behaviour pallete
 
         /**
          * The start node. The waiting start
          */
-        shapesPalette.addTemplate(STARTTYPE,
+        shapesPalette.addTemplate(XMLStateMachine.START_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/event_end.png")),
                 "image;image=/images/event_end.png",
-                50, 50, STARTTYPE);
+                50, 50, XMLStateMachine.START_LABEL);
         /**
          * The end node.
          */
-        shapesPalette.addTemplate("End",
+        shapesPalette.addTemplate(XMLStateMachine.END_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/terminate.png")),
                 "image;image=/images/terminate.png",
-                50, 50, "end");
+                50, 50, XMLStateMachine.END_LABEL);
         /**
          * The normal node
          */
-        shapesPalette.addTemplate("Normal",
+        shapesPalette.addTemplate(XMLStateMachine.NORMAL_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/event.png")),
                 "image;image=/images/event.png",
-                50, 50, "normal");
+                50, 50, XMLStateMachine.NORMAL_LABEL);
 
         /**
          * Start with a trigger node
          */
-        shapesPalette.addTemplate("Trigger Start",
+        shapesPalette.addTemplate(XMLStateMachine.TRIGGERSTART_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/event_triggerstart.png")),
                 "image;image=/images/event_triggerstart.png",
-                50, 50, "triggerstart");
+                50, 50, XMLStateMachine.TRIGGERSTART_LABEL);
 
         /**
          * Standard trigger node
          */
-        shapesPalette.addTemplate("Trigger",
+        shapesPalette.addTemplate(XMLStateMachine.TRIGGER_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/link.png")),
                 "image;image=/images/link.png",
-                50, 50, "trigger");
+                50, 50, XMLStateMachine.TRIGGER_LABEL);
+
+        /**
+         * Standard trigger node
+         */
+        shapesPalette.addTemplate("Loop",
+                new ImageIcon(GraphEditor.class.getResource("/images/loop.png")),
+                "image;image=/images/loop.png",
+                50, 50, "Loop");
     }
 
     /**
@@ -241,26 +258,25 @@ public class GraphEditor extends BasicGraphEditor {
 //        AbstractGraphElement transition = getDataModel().getTransition(connectionCell.getSource().getId());
         if (type.equalsIgnoreCase("component")) {
             throw new InvalidTransitionException("Cannot connect client component nodes");
-        } else if (type.equalsIgnoreCase("interface")) {
+        } else if (type.equalsIgnoreCase(XMLStateMachine.INTERFACE_LABEL)) {
             throw new InvalidTransitionException("Cannot connect interface component nodes");
-        } else if (type.equalsIgnoreCase("end")) {
+        } else if (type.equalsIgnoreCase(XMLStateMachine.END_LABEL)) {
             throw new InvalidTransitionException("An end node cannot have an output transition");
-        } else if ((type.equalsIgnoreCase("trigger")) || (type.equalsIgnoreCase("triggerstart"))) {
+        } else if ((type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL)) || (type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL))) {
             final GraphNode node = (GraphNode) getDataModel().getNode(ident);
             if (node.getNumberTransitions() != 0) {
                 throw new InvalidTransitionException("A trigger node can only have one output");
             }
-
         }
 
         connectionCell = ((mxCell) evt.getProperty("cell")).getTarget();
         if (connectionCell != null) {
             final String ident2 = GUIdentifier.getGUIdentifier(((mxCell) connectionCell).getId(), graphComponent);
             type = getDataModel().getNode(ident2).getType();
-            if (type.equalsIgnoreCase("triggerstart")) {
+            if (type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
                 throw new InvalidTransitionException("A trigger start node cannot have an input transition");
             }
-            if (type.equalsIgnoreCase("start")) {
+            if (type.equalsIgnoreCase(XMLStateMachine.START_LABEL)) {
                 throw new InvalidTransitionException("A start node cannot have an input transition");
             }
         }
@@ -348,8 +364,8 @@ public class GraphEditor extends BasicGraphEditor {
                         if (grpghM != null) {
                             final CardLayout cardLayout = (CardLayout) getAttributePanel().getLayout();
                             String type = grpghM.getType();
-                            if (type.contains(STARTTYPE)) {
-                                type = STARTTYPE;
+                            if (type.contains(XMLStateMachine.START_LABEL)) {
+                                type = XMLStateMachine.START_LABEL;
                             }
                             cardLayout.show(getAttributePanel(), type);
                         }

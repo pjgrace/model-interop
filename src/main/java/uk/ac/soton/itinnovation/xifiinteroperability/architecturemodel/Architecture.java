@@ -262,12 +262,22 @@ public class Architecture {
       */
      public final String replacePatternValue(final String templateValue)
             throws InvalidPatternReferenceException, InvalidRESTMessage {
-         if (templateValue.contains("$$")) {
-             final int count = XMLStateMachine.charOccurences(templateValue, "$");
+
+         String toReplace = templateValue;
+         if (toReplace.contains("%%")) {
+             final int count = XMLStateMachine.charOccurences(toReplace, "%");
+             if (count % 4 != 0) {
+                 throw new InvalidPatternReferenceException("Invalid %% template input");
+             }
+             toReplace = createChange(toReplace, "\\%\\%");
+         }
+         if (toReplace.contains("$$")) {
+             final int count = XMLStateMachine.charOccurences(toReplace, "$");
              if (count % 4 != 0) {
                  throw new InvalidPatternReferenceException("Invalid $$ template input");
              }
-             return createChange(templateValue);
+
+             return createChange(toReplace, "\\$\\$");
         } else if (templateValue.startsWith(XMLStateMachine.DATA_TAG)) {
             return getData(templateValue);
         } else if (templateValue.startsWith(XMLStateMachine.COMPONENT_LABEL)) {
@@ -333,8 +343,8 @@ public class Architecture {
      * @return The fully evaluated data value
      * @throws InvalidPatternReferenceException Error applying change to pattern.
      */
-    private String createChange(final String body) throws InvalidPatternReferenceException {
-         String[] split = body.split("\\$\\$");
+    private String createChange(final String body, final String splitType) throws InvalidPatternReferenceException {
+         String[] split = body.split(splitType);
          if (split == null) {
              throw new InvalidPatternReferenceException("Does not contain $ parameters");
          }
@@ -346,6 +356,8 @@ public class Architecture {
                  split[i] = getData(expr);
             } else if (expr.startsWith(XMLStateMachine.COMPONENT_LABEL)) {
                 split[i] = getComponentValue(expr);
+            } else if (expr.equalsIgnoreCase("counter")) {
+                split[i] = ""+getCounterValue();
             }
          }
          final StringBuilder result = new StringBuilder();
@@ -392,6 +404,18 @@ public class Architecture {
         } catch (InvalidRESTMessage ex) {
             throw new InvalidPatternReferenceException("Invalid component expression", ex);
         }
+    }
+
+    /**
+     * Obtain a state's counter value.
+     * @return The counter value.
+     * @throws InvalidPatternReferenceException Error in the XML expression.
+     */
+    private int getCounterValue()
+            throws InvalidPatternReferenceException {
+        State stateS = this.behaviourSequence.getCurrentState();
+        return stateS.getCounter();
+
     }
 
 }

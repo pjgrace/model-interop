@@ -34,6 +34,7 @@ import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.view.mxGraph;
 import java.io.IOException;
 import java.io.StringReader;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -52,6 +53,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 
 /**
@@ -88,15 +90,18 @@ public class GraphGenerator {
     private transient double currentVertical = 50.0;
 
     /**
-     * Configure the graph/specification generator.
-     * @param graph The state machine behaviour graph in the GUI.
-     * @param arcGrph The system graph in the GUI.
-     * @param newDataModel The data model in the GUI.
+     * Reference to UI object
      */
-    public GraphGenerator(final mxGraph graph, final mxGraph arcGrph, final DataModel newDataModel) {
-        this.graphPanel = graph;
-        this.archPanel = arcGrph;
-        this.dataModel = newDataModel;
+    private final transient BasicGraphEditor UIEditor;
+    /**
+     * Configure the graph/specification generator.
+     * @param editor The graph UI object to extract elements from.
+     */
+    public GraphGenerator(final BasicGraphEditor editor) {
+        this.graphPanel = editor.getBehaviourGraph().getGraph();
+        this.archPanel = editor.getSystemGraph().getGraph();
+        this.dataModel = editor.getDataModel();
+        this.UIEditor = editor;
     }
 
     /**
@@ -121,11 +126,15 @@ public class GraphGenerator {
      * @param fromID The source ID of the transition - the GUI id.
      * @param eElement The xml description of the transition.
      */
-    private void generateTransitions(final String fromID, final Element eElement) {
+    private void generateTransitions(final String fromID, final Element eElement)
+        throws XMLInputException{
 
         try {
             // Get the info about the two from nodes in the graph to draw connection.
             final String toNode = eElement.getElementsByTagName("to").item(0).getTextContent();
+            if (toNode == null) {
+                throw new XMLInputException("The <to> tag is missing, or incorrect in the " + fromID + "<transition>");
+            }
             final GraphNode toID = (GraphNode) dataModel.getNodeByLabel(toNode);
             final GraphNode from = (GraphNode) dataModel.getNode(fromID);
             final Object parent = graphPanel.getDefaultParent();
@@ -140,15 +149,41 @@ public class GraphGenerator {
 
             // Add the attribute data to the connection (message/guard data)
             final String nodeType = from.getType();
-            if (nodeType.equalsIgnoreCase("trigger") || nodeType.equalsIgnoreCase("triggerstart")) {
+            if (nodeType.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || nodeType.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
                 final Message message = (Message) dataModel.getTransition(myCell3.getId());
-                final Node msgData = eElement.getElementsByTagName("message").item(0);
+                final NodeList msgDataList = eElement.getElementsByTagName("message");
 
+                if (msgDataList == null || msgDataList.getLength() == 0) {
+                    throw new XMLInputException("The <message> tag is missing, or incorrect in the " + fromID + "<transition>");
+                }
+
+                final Node msgData = msgDataList.item(0);
+
+                if (((Element) msgData).getElementsByTagName("url") == null) {
+                    throw new XMLInputException("The <url> tag is missing, or incorrect in the " + fromID + "<transition>");
+                }
                 final String url = ((Element) msgData).getElementsByTagName("url").item(0).getTextContent();
+
+                if (((Element) msgData).getElementsByTagName("path").item(0) == null) {
+                    throw new XMLInputException("The <path> tag is missing, or incorrect in the " + fromID + "<transition>");
+                }
                 final String path = ((Element) msgData).getElementsByTagName("path").item(0).getTextContent();
+
+                if (((Element) msgData).getElementsByTagName("method") == null) {
+                    throw new XMLInputException("The <method> tag is missing, or incorrect in the " + fromID + "<transition>");
+                }
                 final String method = ((Element) msgData).getElementsByTagName("method").item(0).getTextContent();
+
+                if (((Element) msgData).getElementsByTagName("type") == null) {
+                    throw new XMLInputException("The <type> tag is missing, or incorrect in the " + fromID + "<transition>");
+                }
                 final String type = ((Element) msgData).getElementsByTagName("type").item(0).getTextContent();
+
+                if (((Element) msgData).getElementsByTagName("body") == null) {
+                    throw new XMLInputException("The <body> tag is missing, or incorrect in the " + fromID + "<transition>");
+                }
                 final NodeList bodyTag = ((Element) msgData).getElementsByTagName("body");
+
                 String body = "";
                 if (bodyTag.getLength() > 0) {
                     body = bodyTag.item(0).getTextContent();
@@ -197,7 +232,7 @@ public class GraphGenerator {
             final mxGeometry geo1 = new mxGeometry(currentHorizontal, currentVertical, 50, 50);
             final String label = eElement.getElementsByTagName("id").item(0).getTextContent();
 
-            final Node interfaceData = eElement.getElementsByTagName("interface").item(0);
+            final Node interfaceData = eElement.getElementsByTagName(XMLStateMachine.INTERFACE_LABEL).item(0);
             mxCell port1 = null;
             if (interfaceData == null) {
                port1 = new mxCell(
@@ -211,7 +246,7 @@ public class GraphGenerator {
 
             port1.setVertex(true);
             final mxCell restul = (mxCell) archPanel.addCell(port1);
-            dataModel.addNode(restul.getId(), label, "interface");
+            dataModel.addNode(restul.getId(), label, XMLStateMachine.INTERFACE_LABEL);
             final ArchitectureNode gNode = (ArchitectureNode) dataModel.getNode(GUIdentifier.setArchID(restul.getId()));
 
             gNode.setData(label,
@@ -247,23 +282,23 @@ public class GraphGenerator {
             mxCell nNode = null;
 
             switch(nodeType) {
-                case "start": nNode = new mxCell(
+                case XMLStateMachine.START_LABEL: nNode = new mxCell(
                     nodeType, geo1,
                     "image;image=/images/event_end.png");
                     break;
-                case "triggerstart": nNode = new mxCell(
+                case XMLStateMachine.TRIGGERSTART_LABEL: nNode = new mxCell(
                     nodeType, geo1,
                     "image;image=/images/event_triggerstart.png");
                     break;
-                case "end": nNode = new mxCell(
+                case XMLStateMachine.END_LABEL: nNode = new mxCell(
                     nodeType, geo1,
                     "image;image=/images/terminate.png");
                     break;
-                case "trigger": nNode = new mxCell(
+                case XMLStateMachine.TRIGGER_LABEL: nNode = new mxCell(
                     nodeType, geo1,
                     "image;image=/images/link.png");
                     break;
-                case "normal": nNode = new mxCell(
+                case XMLStateMachine.NORMAL_LABEL: nNode = new mxCell(
                     nodeType, geo1,
                     "image;image=/images/event.png");
                     break;
@@ -351,7 +386,17 @@ public class GraphGenerator {
             final String label = ((Element) nList.item(i)).getElementsByTagName("label").item(0).getTextContent();
             final String srcID = dataModel.getNodeByLabel(label).getUIIdentifier();
             for (int j = 0; j < transitions.getLength(); j++) {
-                generateTransitions(srcID , (Element) transitions.item(j));
+                try{
+                    generateTransitions(srcID , (Element) transitions.item(j));
+                } catch (XMLInputException ex) {
+                     JOptionPane.showMessageDialog(UIEditor,
+                        ex.getLocalizedMessage(),
+                        "Import Graph Error",
+                        JOptionPane.PLAIN_MESSAGE);
+                        this.graphPanel.clearSelection();
+                        this.archPanel.clearSelection();
+                        return;
+                }
             }
         }
 

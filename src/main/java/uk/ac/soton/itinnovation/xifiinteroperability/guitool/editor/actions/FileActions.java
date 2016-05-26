@@ -362,8 +362,7 @@ public class FileActions {
                 final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 final Document doc = dBuilder.parse(file);
-                final GraphGenerator gGenerate = new GraphGenerator(editor.getBehaviourGraph().getGraph(),
-                        editor.getSystemGraph().getGraph(), editor.getDataModel());
+                final GraphGenerator gGenerate = new GraphGenerator(editor);
 
                 editor.setCurrentFile(file);
                 resetEditor();
@@ -501,8 +500,7 @@ public class FileActions {
                 final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 final Document doc = dBuilder.parse(file);
-                final GraphGenerator gGenerate = new GraphGenerator(editor.getBehaviourGraph().getGraph(),
-                        editor.getSystemGraph().getGraph(), editor.getDataModel());
+                final GraphGenerator gGenerate = new GraphGenerator(editor);
 
                 gGenerate.importGraph(doc);
 

@@ -53,6 +53,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
@@ -119,6 +120,33 @@ public final class XML {
         final StreamSource source = new StreamSource(new StringReader(xml));
         final Validator validator = schema.newValidator();
         validator.validate(source);
+    }
+
+    public static int getArraySize(final String xmlDoc, final String reference) {
+        try {
+            final DocumentBuilderFactory domFactory = DocumentBuilderFactory
+                .newInstance();
+            domFactory.setNamespaceAware(true);
+            final DocumentBuilder builder = domFactory.newDocumentBuilder();
+            final InputSource source = new InputSource(new StringReader(xmlDoc.toLowerCase(Locale.ENGLISH)));
+            final Document doc = builder.parse(source);
+            final XPath xpath = XPathFactory.newInstance().newXPath();
+            final XPathExpression expr = xpath.compile(reference.toLowerCase(Locale.ENGLISH));
+
+
+            Object result = expr.evaluate(doc, XPathConstants.NODESET);
+            NodeList products = (NodeList) result;
+            return products.getLength();
+
+        } catch (SAXException ex) {
+            ServiceLogger.LOG.error("Error parsing the xml document", ex);
+        } catch (IOException ex) {
+            ServiceLogger.LOG.error("Error buffering the xml string data", ex);
+        } catch (ParserConfigurationException ex) {
+            ServiceLogger.LOG.error("Error configuring the xml parser", ex);
+        } catch (XPathExpressionException ex) {
+        }
+        return 0;
     }
 
     /**

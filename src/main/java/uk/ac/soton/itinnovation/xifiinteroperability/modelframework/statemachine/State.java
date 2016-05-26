@@ -70,6 +70,11 @@ public interface State {
          */
         NORMAL,
         /**
+         * Two out transitions i) Counted trigger state: repeated action invocations
+         * and ii) a counter=0 transition.
+         */
+        LOOP,
+        /**
          * A state to send a single rest message as a test trigger.
          */
         TRIGGER,
@@ -86,6 +91,18 @@ public interface State {
     boolean isEndNode();
 
     /**
+     * Update the counter state value.
+     * @param change The value to change e.g. 1 to add, -1 to subtract
+     */
+    void counter(int change);
+
+    /**
+     * Get the counter state value.
+     * @return The counter value
+     */
+    int getCounter();
+
+    /**
      * Return true if this is a start node state; otherwise return false.
      * @return boolean value indicating start node status.
      */
@@ -96,6 +113,12 @@ public interface State {
      * @return boolean status indicating trigger node status
      */
     boolean isTrigger();
+
+    /**
+     * Return true if this state is a loop node; otherwise return false.
+     * @return boolean status indicating loop node status
+     */
+    boolean isLoop();
 
     /**
      * Read the state label. Within a state machine, labels are
@@ -143,6 +166,24 @@ public interface State {
      * behaviour described in the state machine.
      */
     String evaluateTransition(RESTEvent input, InteroperabilityReport out)
+            throws UnexpectedEventException;
+
+    /**
+     * Evaluate a new event (a rest operation) against the set of transitions
+     * at this state. If there is a complete match then the next state to
+     * transition to is returned. If not - we have an error event (i.e.
+     * an interoperability error) and hence we throw an unexpected event error.
+     *
+     * @param input The details of the occured event - a rest operations with
+     * data and parameters to compare against the condition.
+     * @param out As the transition is evaluated it reports actions to the
+     * interoperability report passed here
+     *
+     * @return the state to move to based upon the event
+     * @throws UnexpectedEventException Event detected that doesn't match the
+     * behaviour described in the state machine.
+     */
+    String evaluateConditionalTransition(RESTEvent input, InteroperabilityReport out, String current)
             throws UnexpectedEventException;
 
     /**

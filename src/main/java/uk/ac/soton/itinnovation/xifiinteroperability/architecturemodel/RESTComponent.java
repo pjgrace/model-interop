@@ -30,6 +30,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel;
 import java.util.ArrayList;
 import java.util.List;
 import org.jdom.Element;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 /**
  * Each architecture is made up of REST components. These exchange REST
@@ -40,21 +41,6 @@ import org.jdom.Element;
 public class RESTComponent {
 
     // Static constants related to the XML tag types in the pattern spec:
-
-    /**
-     * ID tag in the XML specification.
-     */
-    public static final String IDTAG = "id";
-
-    /**
-     * ADDRESS tag in the XML specification.
-     */
-    public static final String ADDRESSTAG = "address";
-
-    /**
-     * INTERFACE tag in the xml specification.
-     */
-    public static final String INTERFACETAG = "interface";
 
     /**
      * The unique identifier of the component within the specification. This is
@@ -116,16 +102,16 @@ public class RESTComponent {
         this.interfaces = new ArrayList();
 
         // Get the state label
-        componentID = eltIndex.getChildText(IDTAG);
+        componentID = eltIndex.getChildText(XMLStateMachine.ID_LABEL);
         if (componentID == null) {
             throw new InvalidArchitectureException("Component ID canot be null");
         }
-        ipAddress = eltIndex.getChildText(ADDRESSTAG);
+        ipAddress = eltIndex.getChildText(XMLStateMachine.ADDRESS_LABEL);
         if (ipAddress == null) {
             throw new InvalidArchitectureException("Component IP address cannot be null");
         }
 
-        final List<Element> xmlStates = eltIndex.getChildren(INTERFACETAG);
+        final List<Element> xmlStates = eltIndex.getChildren(XMLStateMachine.INTERFACE_LABEL);
         for (Element eltIntfIndex : xmlStates) {
             try {
                 addInterface(new RESTInterface(eltIntfIndex, capture));

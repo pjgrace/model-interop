@@ -124,6 +124,14 @@ public class StateMachine implements EventCapture {
     }
 
     /**
+     * Return the current executable position in the state machine.
+     * @return state The current position state.
+     */
+    public final State getCurrentState() {
+        return this.currentState;
+    }
+
+    /**
      * Get the start state. Used for beginning the execution phase.
      * @return The fixed start state reference.
      */
@@ -185,7 +193,22 @@ public class StateMachine implements EventCapture {
             try {
                 if (currentState.isTrigger()) {
                     currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));
-                } else {
+                }
+                else if (currentState.isLoop()) {
+                    RESTEvent ev = null;
+                    if(currentState.getCounter() == 0) {
+                        ev = this.eventQueue.take();
+                    }
+                    String tState = currentState.evaluateConditionalTransition(ev, outputReport, currentState.getLabel());
+                    if(tState.equalsIgnoreCase(currentState.getLabel())) {
+                        currentState.counter(1);
+                        currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));
+                    }
+                    else {
+                        currentState = getState(tState);
+                    }
+                }
+                else {
                     currentState = getState(currentState.evaluateTransition(this.eventQueue.take(), outputReport));
                     if (currentState == null) {
                         ServiceLogger.LOG.error("Invalid state machine - could not find next state");

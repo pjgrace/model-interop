@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidTransitionException;
 
 /**
@@ -44,6 +45,11 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
  * @author pjg
  */
 public class DataModel {
+
+    /**
+     * The constant label for a client graph element.
+     */
+    public static final String CLIENT = "client";
 
     /**
      * Each pattern may contain 0 or more component elements. Note
@@ -99,7 +105,7 @@ public class DataModel {
     */
    public final boolean containsStart() {
        for (GraphNode e : this.graphElements) {
-           if (e.getType().contains("start")) {
+           if (e.getType().contains(XMLStateMachine.START_LABEL)) {
                    return true;
            }
        }
@@ -197,10 +203,10 @@ public class DataModel {
     */
    public final void addNode(final String ident, final String label, final String type) {
        switch(type) {
-           case "interface":
+           case XMLStateMachine.INTERFACE_LABEL:
                this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label));
                break;
-           case "client":
+           case CLIENT:
                 this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label));
                 break;
            default:
@@ -249,12 +255,12 @@ public class DataModel {
        // use the type of the src to determine connection type
        final String type = getNode(srcID).getType();
        // if src is a start or normal
-       if (type.equalsIgnoreCase("start") || type.equalsIgnoreCase("normal")) {
+       if (type.equalsIgnoreCase(XMLStateMachine.START_LABEL) || type.equalsIgnoreCase(XMLStateMachine.NORMAL_LABEL)) {
             final AbstractGraphElement connection = new Guard(connID, "guard", getNode(trgtID));
             final GraphNode src = (GraphNode) getNode(srcID);
             this.connectionIndex.put(connID, src);
             src.addTransition(connection);
-       } else if (type.equalsIgnoreCase("trigger") || type.equalsIgnoreCase("triggerstart")) {
+       } else if (type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
            final AbstractGraphElement connection = new Message(connID, "message", getNode(trgtID));
            final GraphNode src = (GraphNode) getNode(srcID);
            this.connectionIndex.put(connID, src);
@@ -304,12 +310,12 @@ public class DataModel {
         }
         if (connx.getUIIdentifier().equalsIgnoreCase(srcID)) {
             final String type = connx.getType();
-            if (type.equalsIgnoreCase("start") || type.equalsIgnoreCase("normal")) {
+            if (type.equalsIgnoreCase(XMLStateMachine.START_LABEL) || type.equalsIgnoreCase(XMLStateMachine.NORMAL_LABEL)) {
                 final Guard grd = (Guard) connx.getTransition(connID);
                 if (grd != null) {
                     grd.setTarget(getNode(trgtID).getLabel());
                 }
-           } else if (type.equalsIgnoreCase("trigger") || type.equalsIgnoreCase("triggerstart")) {
+           } else if (type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
                 final Message msg = (Message) connx.getTransition(connID);
                 if (msg != null) {
                     msg.setTarget(getNode(trgtID).getLabel());
@@ -317,9 +323,9 @@ public class DataModel {
            }
         } else {
             String type = connx.getType();
-            if (type.equalsIgnoreCase("start") || type.equalsIgnoreCase("normal")) {
+            if (type.equalsIgnoreCase(XMLStateMachine.START_LABEL) || type.equalsIgnoreCase(XMLStateMachine.NORMAL_LABEL)) {
                 type = getNode(srcID).getType();
-                if (!(type.equalsIgnoreCase("start") || type.equalsIgnoreCase("normal"))) {
+                if (!(type.equalsIgnoreCase(XMLStateMachine.START_LABEL) || type.equalsIgnoreCase(XMLStateMachine.NORMAL_LABEL))) {
                     throw new InvalidTransitionException("Cannot reconnect to this type of src node");
                 }
                 final Guard grd = (Guard) connx.getTransition(connID);
@@ -328,9 +334,9 @@ public class DataModel {
                     connx.deleteTranstion(grd.getUIIdentifier());
                     this.connectionIndex.put(connID, (GraphNode) getNode(srcID));
                 }
-            } else if (type.equalsIgnoreCase("trigger") || type.equalsIgnoreCase("triggerstart")) {
+            } else if (type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
                 type = getNode(srcID).getType();
-                if (!(type.equalsIgnoreCase("trigger") || type.equalsIgnoreCase("triggerstart"))) {
+                if (!(type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL))) {
                     throw new InvalidTransitionException("Cannot reconnect to this type of src node");
                 }
                 final Message msg = (Message) connx.getTransition(connID);
