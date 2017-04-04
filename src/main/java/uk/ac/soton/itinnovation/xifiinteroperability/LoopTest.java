@@ -63,7 +63,7 @@ public class LoopTest {
      */
     public static final void main(String[] args) {
         try {
-            final String sMachine = FileUtils.readFile("examples/loop.xml", Charset.defaultCharset());
+            final String sMachine = FileUtils.readFile("examples/loop2.xml", Charset.defaultCharset());
 
             Architecture stateMachine = null;
 

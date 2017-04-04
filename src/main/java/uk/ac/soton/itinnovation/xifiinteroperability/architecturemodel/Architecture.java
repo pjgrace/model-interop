@@ -116,6 +116,11 @@ public class Architecture {
             // Validate the pattern
             final URL schemaUrl = FileUtils.getURL(SystemProperties.PATTERNSCHEMA);
 
+            if (schemaUrl == null) {
+                ServiceLogger.LOG.error("Pattern Schema not loaded");
+                throw new InvalidStateMachineException("Could not load pattern.xsd");
+            }
+
             if (!PatternValidation.validatePattern(xml, schemaUrl)) {
                 ServiceLogger.LOG.error("Not a valid pattern description");
                 throw new InvalidStateMachineException("The XML description of pattern is not valid");

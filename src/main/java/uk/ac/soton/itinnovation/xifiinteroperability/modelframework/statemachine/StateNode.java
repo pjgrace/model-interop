@@ -125,10 +125,12 @@ public class StateNode implements State {
      * @param change The value to update the counter by e.g. increment = 1, dec
      * = -1.
      */
+    @Override
     public void counter(int change){
         this.counter = this.counter + change;
     }
 
+    @Override
     public int getCounter() {
         return this.counter;
     }
@@ -326,7 +328,7 @@ public class StateNode implements State {
             if (rEv.getDataBody().getType().contains("xml")) {
                 return XML.readValue(content, exprSplit[2]);
             } else {
-                return JSON.readValue(content, exprSplit[2]);
+                return JSON.readValue("$."+content, exprSplit[2]);
             }
         } else if (exprSplit[1].equalsIgnoreCase("headers")) {
             return rEv.getParameterMap().get(exprSplit[2]).getValue();
@@ -385,9 +387,20 @@ public class StateNode implements State {
         return true;
     }
 
-
+    /**
+     * This evaluates an index of array
+     * @param chGuard
+     * @param conditions
+     * @param report
+     * @return
+     */
     private int arrayContentEvaluation(final Guard chGuard, final Map<String, Parameter> conditions,
             final InteroperabilityReport report) {
+
+        if(chGuard.getGuardLabel().equalsIgnoreCase("Index")){
+            return Integer.valueOf(chGuard.getGuardCompare());
+        }
+
         final String xpathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
         final Parameter value = conditions.get(CONTENTLABEL);
         final Parameter dataType = conditions.get("http.content-type");
@@ -452,6 +465,7 @@ public class StateNode implements State {
                 }
                 if (chGuard.getType() == Guard.ComparisonType.COUNTER) {
                     int arraySize = arrayContentEvaluation(chGuard, conditions, report);
+
                     if (this.counter == arraySize) {
                         return true;
                     }

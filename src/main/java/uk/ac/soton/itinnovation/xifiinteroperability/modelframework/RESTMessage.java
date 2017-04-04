@@ -32,9 +32,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentMap;
+import org.restlet.Client;
+import org.restlet.Context;
 import org.restlet.Message;
 import org.restlet.Response;
 import org.restlet.data.MediaType;
+import org.restlet.data.Protocol;
 import org.restlet.engine.header.Header;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -293,9 +296,13 @@ public class RESTMessage {
     public final RESTEvent invokeMessage() throws UnexpectedEventException {
         try {
             String rPath = parseData(this.path);
+            // Instantiate the client connector, and configure it.
+            Client client = new Client(new Context(), Protocol.HTTPS);
+            client.getContext().getParameters().add("useForwardedForHeader","false");
 
             this.url = new URL(url.toExternalForm() + rPath);
             final ClientResource clientRes =   new ClientResource(url.toExternalForm());
+            clientRes.setNext(client);
             if (headers != null) {
                 for (Parameter param : headers) {
                     param.setValue(parseData(param.getValue()));

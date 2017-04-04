@@ -1,3 +1,0 @@
-clear
-mvn exec:java -Dexec.mainClass="uk.ac.soton.itinnovation.xifiinteroperability.InteroperabilityService"
-
