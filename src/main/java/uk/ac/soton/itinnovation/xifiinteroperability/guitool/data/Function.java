@@ -45,6 +45,8 @@ public final class Function {
      * Can be equals, notequals, contains.
      */
     public enum FunctionType {
+
+        Counter ("counter"),
         /**
          * The equals function a==b.
          */
@@ -109,6 +111,9 @@ public final class Function {
     public static FunctionType getFunction(final String typeName) {
         if (typeName.equalsIgnoreCase("equal")) {
             return FunctionType.Equals;
+        }
+        if (typeName.equalsIgnoreCase("counter")) {
+            return FunctionType.Counter;
         }
         if (typeName.equalsIgnoreCase("notequal")) {
             return FunctionType.NotEquals;

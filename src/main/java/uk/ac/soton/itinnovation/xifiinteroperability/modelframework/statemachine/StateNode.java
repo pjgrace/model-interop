@@ -31,6 +31,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachin
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -282,24 +283,37 @@ public class StateNode implements State {
             throws UnexpectedEventException {
         // Find transitions with matching resource locations
 
-        if(input != null)
+        if(input != null) {
             this.savedEvent = input;
 
-        /**
-         * Iterate through each potential event transition to find a matching
-         * next state. If no matches then we have an interoperability fail.
-         * Report in the exception.
-         */
-        final Iterator<Transition> transIt = this.nextStates.iterator();
-        while (transIt.hasNext()) {
-            final Transition evTrans = transIt.next();
-            if (!evTrans.listGuards().isEmpty()) {
-                if (evaluateGuards(evTrans.listGuards(), this.savedEvent.getParameterMap(), outputReport)) {
-                    outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
-                        return evTrans.readLabel();
+            /**
+             * Iterate through each potential event transition to find a matching
+             * next state. If no matches then we have an interoperability fail.
+             * Report in the exception.
+             */
+            final Iterator<Transition> transIt = this.nextStates.iterator();
+            while (transIt.hasNext()) {
+                final Transition evTrans = transIt.next();
+                if (!evTrans.listGuards().isEmpty()) {
+                    if (evaluateGuards(evTrans.listGuards(), this.savedEvent.getParameterMap(), outputReport)) {
+                        outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
+                            return evTrans.readLabel();
+                    }
+                }
+            }
+        } else {
+            final Iterator<Transition> transIt = this.nextStates.iterator();
+            while (transIt.hasNext()) {
+                final Transition evTrans = transIt.next();
+                if (!evTrans.listGuards().isEmpty()) {
+                    if (evaluateGuards(evTrans.listGuards(), new HashMap<String, Parameter>(), outputReport)) {
+                        outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
+                            return evTrans.readLabel();
+                    }
                 }
             }
         }
+
         return currentState;
     };
 
@@ -366,7 +380,7 @@ public class StateNode implements State {
                     return false;
                 }
             } else if (dataType.getValue().contains("json")) {
-                final Object document = Configuration.defaultConfiguration().getProvider().parse(value.getValue());
+                final Object document = Configuration.defaultConfiguration().jsonProvider().parse(value.getValue());
                 final String grdComp = JsonPath.read(document, chGuard.getGuardCompare());
                 if (grdComp == null) {
                     reportGuardFailure(chGuard, value, report);
@@ -431,14 +445,30 @@ public class StateNode implements State {
         final Parameter value = conditions.get(CONTENTLABEL);
         final Parameter dataType = conditions.get("http.content-type");
         if (dataType.getValue().contains("xml")) {
-            if (!XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                reportGuardFailure(chGuard, value, report);
-                return false;
+            if(chGuard.getType() == Guard.ComparisonType.NOTEQUALS) {
+                if (XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
+                    reportGuardFailure(chGuard, value, report);
+                    return false;
+                }
+            }
+            else if (chGuard.getType() == Guard.ComparisonType.EQUALS){
+                if (!XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
+                    reportGuardFailure(chGuard, value, report);
+                    return false;
+                }
             }
         } else if (dataType.getValue().contains("json")) {
-            if (!JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                reportGuardFailure(chGuard, value, report);
-                return false;
+            if(chGuard.getType() == Guard.ComparisonType.NOTEQUALS) {
+                if (JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
+                    reportGuardFailure(chGuard, value, report);
+                    return false;
+                }
+            }
+            else if (chGuard.getType() == Guard.ComparisonType.EQUALS){
+                if (!JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
+                    reportGuardFailure(chGuard, value, report);
+                    return false;
+                }
             }
         } else {
             return false;
@@ -480,7 +510,8 @@ public class StateNode implements State {
                     if (!contentEvaluation(chGuard, conditions, report)) {
                         return false;
                     }
-                } else {
+                }
+                else {
                     final Parameter value = conditions.get(chGuard.getGuardLabel());
                     if (value == null) {
                         report.printtabline("Guard test failed: " + chGuard.getGuardLabel() + " is not part of message");

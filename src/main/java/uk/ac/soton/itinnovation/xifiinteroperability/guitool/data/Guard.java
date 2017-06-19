@@ -80,6 +80,22 @@ public class Guard extends AbstractGraphElement {
     }
 
     /**
+     * Remove a guard
+     */
+    public final void removeGuard(final String grdlabel) {
+        GuardData toRemove = null;
+        for (GuardData guard: data){
+            if(guard.getGuardData().equalsIgnoreCase(grdlabel)) {
+                toRemove = guard;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            System.out.println("Success = " + data.remove(toRemove));
+        }
+    }
+
+    /**
      * Update the target id of the connection.
      * @param newTarget The label id of the
      */

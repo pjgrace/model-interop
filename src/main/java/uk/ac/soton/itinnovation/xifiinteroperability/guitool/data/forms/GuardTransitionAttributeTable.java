@@ -154,6 +154,15 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
     }
 
     /**
+     * Add a new guard to the table view.
+     * @param newrow The new guard to display.
+     */
+    public final void removeRowData(final int newrow) {
+        data.remove(newrow);
+        fireTableRowsDeleted(newrow,newrow);
+    }
+
+    /**
      * Reset the table with a new set of guard data i.e. refresh the table
      * view of a given data set.
      * @param nGuard The data set to display in the table.

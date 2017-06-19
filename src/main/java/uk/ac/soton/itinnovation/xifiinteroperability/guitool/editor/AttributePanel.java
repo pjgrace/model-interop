@@ -168,7 +168,7 @@ public class AttributePanel {
 
         mForm = new MessageForm(httpMethods, dataTypes, editor);
         cForm = new ComponentForm();
-        gForm = new GuardForm();
+        gForm = new GuardForm(editor);
         nForm = new NodeForm();
 
         //Create the panel that contains the "cards".

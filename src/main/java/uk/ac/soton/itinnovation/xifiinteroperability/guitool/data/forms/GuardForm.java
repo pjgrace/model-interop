@@ -37,6 +37,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 import javax.swing.BorderFactory;
@@ -48,10 +50,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
  * The form to input data attached to a guard transition. It appears in the
@@ -102,10 +106,29 @@ public class GuardForm extends JPanel {
     /**
      * Create a form with the specified labels, tooltips, and sizes.
      */
-    public GuardForm() {
+    public GuardForm(final BasicGraphEditor editor) {
         super(new BorderLayout());
         guardView = new GuardTransitionAttributeTable();
         final JTable guardTable = new JTable(guardView);
+        guardTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int r = guardTable.rowAtPoint(e.getPoint());
+                if (r >= 0 && r < guardTable.getRowCount()) {
+                    guardTable.setRowSelectionInterval(r, r);
+                } else {
+                    guardTable.clearSelection();
+                }
+
+                int rowindex = guardTable.getSelectedRow();
+                if (rowindex < 0)
+                    return;
+                if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
+                    JPopupMenu popup = new ChangeTable(editor, guardView, r, mirrorNode);
+                    popup.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
 
          // The guard table needs a dropbox input field
         guardTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(guardView.getGuardCombo()));

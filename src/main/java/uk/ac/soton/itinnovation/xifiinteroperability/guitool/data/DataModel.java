@@ -254,18 +254,26 @@ public class DataModel {
    public final void addConnection(final String connID, final String srcID, final String trgtID) {
        // use the type of the src to determine connection type
        final String type = getNode(srcID).getType();
+       final String endType = getNode(trgtID).getType();
        // if src is a start or normal
-       if (type.equalsIgnoreCase(XMLStateMachine.START_LABEL) || type.equalsIgnoreCase(XMLStateMachine.NORMAL_LABEL)) {
-            final AbstractGraphElement connection = new Guard(connID, "guard", getNode(trgtID));
-            final GraphNode src = (GraphNode) getNode(srcID);
-            this.connectionIndex.put(connID, src);
-            src.addTransition(connection);
-       } else if (type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
+      if (type.equalsIgnoreCase(XMLStateMachine.LOOP_LABEL) && endType.equalsIgnoreCase(XMLStateMachine.NORMAL_LABEL)) {
            final AbstractGraphElement connection = new Message(connID, "message", getNode(trgtID));
            final GraphNode src = (GraphNode) getNode(srcID);
            this.connectionIndex.put(connID, src);
            src.addTransition(connection);
        }
+       else if (type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
+           final AbstractGraphElement connection = new Message(connID, "message", getNode(trgtID));
+           final GraphNode src = (GraphNode) getNode(srcID);
+           this.connectionIndex.put(connID, src);
+           src.addTransition(connection);
+       } else {
+           final AbstractGraphElement connection = new Guard(connID, "guard", getNode(trgtID));
+            final GraphNode src = (GraphNode) getNode(srcID);
+            this.connectionIndex.put(connID, src);
+            src.addTransition(connection);
+       }
+              
    }
 
    /**

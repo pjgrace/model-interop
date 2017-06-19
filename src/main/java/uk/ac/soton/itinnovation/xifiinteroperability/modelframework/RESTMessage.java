@@ -351,7 +351,9 @@ public class RESTMessage {
             } catch (ResourceException excep) {
                 ServiceLogger.LOG.error("Error constructing HTTP message", excep);
             }
-             return fromResponse(clientRes.getResponse());
+            Response response = clientRes.getResponse();
+            System.out.println(response.getEntityAsText());
+             return fromResponse(response);
         } catch (InvalidRESTMessage ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
         } catch (MalformedURLException ex) {

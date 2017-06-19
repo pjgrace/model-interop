@@ -175,11 +175,16 @@ public class Guard {
         if (dataType == String.class) {
             toCompare = ((String) input).toLowerCase();
         }
+        System.out.println("Input: " + toCompare.toString());
+        System.out.println("Input2 : " + this.compareTo.toString());
+        System.out.println("Input3 : " + this.guardCondType);
 
         switch(this.guardCondType) {
             case EQUALS:
                 return toCompare.equals(this.compareTo);
             case NOTEQUALS:
+                System.out.println("Input: " + toCompare.toString());
+                System.out.println("Input2 : " + this.compareTo.toString());
                 return !toCompare.equals(this.compareTo);
             case COUNTER:
                 Integer aC = new Integer(this.compareTo);

@@ -119,6 +119,56 @@ public class GraphGenerator {
         return builder.parse(inSource);
     }
 
+    private void addMessageTransition(final String fromID, final Element eElement, mxCell myCell3) throws XMLInputException {
+        final Message message = (Message) dataModel.getTransition(myCell3.getId());
+        final NodeList msgDataList = eElement.getElementsByTagName("message");
+
+        if (msgDataList == null || msgDataList.getLength() == 0) {
+            throw new XMLInputException("The <message> tag is missing, or incorrect in the " + fromID + "<transition>");
+        }
+
+        final Node msgData = msgDataList.item(0);
+
+        if (((Element) msgData).getElementsByTagName("url") == null) {
+            throw new XMLInputException("The <url> tag is missing, or incorrect in the " + fromID + "<transition>");
+        }
+        final String url = ((Element) msgData).getElementsByTagName("url").item(0).getTextContent();
+
+        if (((Element) msgData).getElementsByTagName("path").item(0) == null) {
+            throw new XMLInputException("The <path> tag is missing, or incorrect in the " + fromID + "<transition>");
+        }
+        final String path = ((Element) msgData).getElementsByTagName("path").item(0).getTextContent();
+
+        if (((Element) msgData).getElementsByTagName("method") == null) {
+            throw new XMLInputException("The <method> tag is missing, or incorrect in the " + fromID + "<transition>");
+        }
+        final String method = ((Element) msgData).getElementsByTagName("method").item(0).getTextContent();
+
+        if (((Element) msgData).getElementsByTagName("type") == null) {
+            throw new XMLInputException("The <type> tag is missing, or incorrect in the " + fromID + "<transition>");
+        }
+        final String type = ((Element) msgData).getElementsByTagName("type").item(0).getTextContent();
+
+        if (((Element) msgData).getElementsByTagName("body") == null) {
+            throw new XMLInputException("The <body> tag is missing, or incorrect in the " + fromID + "<transition>");
+        }
+        final NodeList bodyTag = ((Element) msgData).getElementsByTagName("body");
+
+        String body = "";
+        if (bodyTag.getLength() > 0) {
+            body = bodyTag.item(0).getTextContent();
+        }
+
+        message.addMessage(url, path, method, type, body);
+
+        final NodeList headers = eElement.getElementsByTagName("header");
+        for (int j = 0; j < headers.getLength(); j++) {
+            final String param = ((Element) headers.item(j)).getElementsByTagName("name").item(0).getTextContent();
+            final String value = ((Element) headers.item(j)).getElementsByTagName("value").item(0).getTextContent();
+            message.addHeader(param, value);
+        }
+    }
+
     /**
      * Generate a series of transitions from the xml input and then add them
      * to the data model which forms the basis of the newly drawn graph.
@@ -150,54 +200,12 @@ public class GraphGenerator {
             // Add the attribute data to the connection (message/guard data)
             final String nodeType = from.getType();
             if (nodeType.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || nodeType.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
-                final Message message = (Message) dataModel.getTransition(myCell3.getId());
-                final NodeList msgDataList = eElement.getElementsByTagName("message");
-
-                if (msgDataList == null || msgDataList.getLength() == 0) {
-                    throw new XMLInputException("The <message> tag is missing, or incorrect in the " + fromID + "<transition>");
-                }
-
-                final Node msgData = msgDataList.item(0);
-
-                if (((Element) msgData).getElementsByTagName("url") == null) {
-                    throw new XMLInputException("The <url> tag is missing, or incorrect in the " + fromID + "<transition>");
-                }
-                final String url = ((Element) msgData).getElementsByTagName("url").item(0).getTextContent();
-
-                if (((Element) msgData).getElementsByTagName("path").item(0) == null) {
-                    throw new XMLInputException("The <path> tag is missing, or incorrect in the " + fromID + "<transition>");
-                }
-                final String path = ((Element) msgData).getElementsByTagName("path").item(0).getTextContent();
-
-                if (((Element) msgData).getElementsByTagName("method") == null) {
-                    throw new XMLInputException("The <method> tag is missing, or incorrect in the " + fromID + "<transition>");
-                }
-                final String method = ((Element) msgData).getElementsByTagName("method").item(0).getTextContent();
-
-                if (((Element) msgData).getElementsByTagName("type") == null) {
-                    throw new XMLInputException("The <type> tag is missing, or incorrect in the " + fromID + "<transition>");
-                }
-                final String type = ((Element) msgData).getElementsByTagName("type").item(0).getTextContent();
-
-                if (((Element) msgData).getElementsByTagName("body") == null) {
-                    throw new XMLInputException("The <body> tag is missing, or incorrect in the " + fromID + "<transition>");
-                }
-                final NodeList bodyTag = ((Element) msgData).getElementsByTagName("body");
-
-                String body = "";
-                if (bodyTag.getLength() > 0) {
-                    body = bodyTag.item(0).getTextContent();
-                }
-
-                message.addMessage(url, path, method, type, body);
-
-                final NodeList headers = eElement.getElementsByTagName("header");
-                for (int j = 0; j < headers.getLength(); j++) {
-                    final String param = ((Element) headers.item(j)).getElementsByTagName("name").item(0).getTextContent();
-                    final String value = ((Element) headers.item(j)).getElementsByTagName("value").item(0).getTextContent();
-                    message.addHeader(param, value);
-                }
-            } else {
+                addMessageTransition(fromID, eElement, myCell3);
+            }
+            else if (nodeType.equalsIgnoreCase(XMLStateMachine.LOOP_LABEL) && eElement.getElementsByTagName("guards").getLength() == 0) {
+                addMessageTransition(fromID, eElement, myCell3);
+            }
+            else {
                 final Guard guardData = (Guard) dataModel.getTransition(myCell3.getId());
                 if (guardData != null) {
                     final NodeList guards = eElement.getElementsByTagName("guards").item(0).getChildNodes();
@@ -297,6 +305,10 @@ public class GraphGenerator {
                 case XMLStateMachine.TRIGGER_LABEL: nNode = new mxCell(
                     nodeType, geo1,
                     "image;image=/images/link.png");
+                    break;
+                case XMLStateMachine.LOOP_LABEL: nNode = new mxCell(
+                    nodeType, geo1,
+                    "image;image=/images/loop.png");
                     break;
                 case XMLStateMachine.NORMAL_LABEL: nNode = new mxCell(
                     nodeType, geo1,

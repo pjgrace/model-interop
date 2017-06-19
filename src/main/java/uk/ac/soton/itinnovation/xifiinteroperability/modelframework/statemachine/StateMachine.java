@@ -195,11 +195,11 @@ public class StateMachine implements EventCapture {
                     currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));
                 }
                 else if (currentState.isLoop()) {
-                    RESTEvent ev = null;
-                    if(currentState.getCounter() == 0) {
-                        ev = this.eventQueue.take();
-                    }
-                    String tState = currentState.evaluateConditionalTransition(ev, outputReport, currentState.getLabel());
+//                    RESTEvent ev = null;
+//                    if(currentState.getCounter() == 0) {
+//                        ev = this.eventQueue.take();
+//                    }
+                    String tState = currentState.evaluateConditionalTransition(null, outputReport, currentState.getLabel());
                     if(tState.equalsIgnoreCase(currentState.getLabel())) {
                         currentState.counter(1);
                         currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));

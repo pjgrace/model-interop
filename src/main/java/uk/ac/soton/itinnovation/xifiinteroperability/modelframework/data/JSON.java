@@ -36,6 +36,7 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
@@ -64,10 +65,20 @@ public final class JSON {
     public static boolean assertJSON(final String jsondoc,
                         final String reference, final Object value) {
         try {
+            final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
-            return jsonVal.equalsIgnoreCase(readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH)));
+
+            return jsonVal.equalsIgnoreCase(xprVal);
 //            JsonAssert.with(jsondoc.toLowerCase(Locale.ENGLISH)).assertThat(reference, Matchers.equalTo(jsonVal));
-        } catch (Exception ex) {
+        }
+        catch (PathNotFoundException ex2) {
+            final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
+            if(jsonVal.equalsIgnoreCase("null")){
+                return true;
+            }
+            return false;
+        }
+        catch (Exception ex) {
             return false;
         }
     }

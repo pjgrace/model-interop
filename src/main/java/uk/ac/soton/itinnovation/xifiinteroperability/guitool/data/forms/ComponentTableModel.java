@@ -130,6 +130,15 @@ public class ComponentTableModel extends AbstractTableModel {
     }
 
     /**
+     * Add a full row to the table using the data in the interface data object.
+     * @param newrow The row of information.
+     */
+    public final void removeRowData(final InterfaceData newrow) {
+        data.remove(newrow);
+        fireTableDataChanged();
+    }
+
+    /**
      * Overwrite the table view with a full set of data from a new node in the
      * graph.
      * @param arcNode The selected node in the system graph.
