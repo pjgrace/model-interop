@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import org.java_websocket.WebSocket;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.EventCapture;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
@@ -175,16 +174,15 @@ public class StateMachine implements EventCapture {
     /**
      * Start the trace and begin outputting the event tests that correspond
      * to the state machine checks.
-     * @param sock Web socket reporting if online.
      * @return The string version of the output report.
      */
-    public final String start(final WebSocket sock)	{
+    public final String start()	{
 	currentState = this.firstState;
         if (currentState == null) {
             outputReport.println("Invalid pattern -> no valid start state");
             return outputReport.outputReport();
         }
-        outputReport.setSocket(sock);
+
         outputReport.println("Test started - run the application");
         outputReport.println("----------------------------------");
         outputReport.println("Starting trace at Node:" + currentState.getLabel());
@@ -195,11 +193,7 @@ public class StateMachine implements EventCapture {
                     currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));
                 }
                 else if (currentState.isLoop()) {
-//                    RESTEvent ev = null;
-//                    if(currentState.getCounter() == 0) {
-//                        ev = this.eventQueue.take();
-//                    }
-                    String tState = currentState.evaluateConditionalTransition(null, outputReport, currentState.getLabel());
+                    String tState = currentState.evaluateConditionalTransition(outputReport, currentState.getLabel());
                     if(tState.equalsIgnoreCase(currentState.getLabel())) {
                         currentState.counter(1);
                         currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));

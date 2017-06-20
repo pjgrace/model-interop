@@ -83,7 +83,7 @@ public class PatternCheckThread extends Thread {
                                 "Pattern verification",
                                 JOptionPane.ERROR_MESSAGE);
             } else  {
-                arch.executePattern(null);
+                arch.executePattern();
                 arch.cleanup();
             }
         } catch (InvalidStateMachineException ex) {

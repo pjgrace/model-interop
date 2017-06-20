@@ -183,7 +183,7 @@ public interface State {
      * @throws UnexpectedEventException Event detected that doesn't match the
      * behaviour described in the state machine.
      */
-    String evaluateConditionalTransition(RESTEvent input, InteroperabilityReport out, String current)
+    String evaluateConditionalTransition(InteroperabilityReport out, String current)
             throws UnexpectedEventException;
 
     /**

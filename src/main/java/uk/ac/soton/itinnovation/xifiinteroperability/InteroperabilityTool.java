@@ -53,7 +53,7 @@ public final class InteroperabilityTool {
      */
     private InteroperabilityTool() {
     }
-    
+
     /**
      * Run the interoperability tool from the command line.
      * @param args the command line arguments.
@@ -83,7 +83,7 @@ public final class InteroperabilityTool {
             /*
             * Start the cradle monitoring
             */
-            ServiceLogger.LOG.info(architect.executePattern(null));
+            ServiceLogger.LOG.info(architect.executePattern());
 
             /*
             * Once the application has been tested and report produced we

@@ -28,7 +28,6 @@
 package uk.ac.soton.itinnovation.xifiinteroperability.modelframework;
 
 import java.io.PrintStream;
-import org.java_websocket.WebSocket;
 
 /**
  * The Interoperability report is a generated report of the trace through
@@ -45,12 +44,6 @@ public class InteroperabilityReport {
      * with a title.
      */
     private transient String textContent = "Output from Interoperability Cradle\n";
-
-    /**
-     * The web socket that the interoperability report is mirrored to. When
-     * an online realtime report is required.
-     */
-    private transient WebSocket sock = null;
 
     /**
      * The stream output of the text on the local host.
@@ -89,14 +82,6 @@ public class InteroperabilityReport {
     }
 
     /**
-     * Update the output web socket for online realtime reporting.
-     * @param socket The new web socket to report to.
-     */
-    public final void setSocket(final WebSocket socket) {
-        this.sock = socket;
-    }
-
-    /**
      * Add a string to a new line.
      * @param newval String to report.
      */
@@ -104,9 +89,7 @@ public class InteroperabilityReport {
         newline();
         this.textContent += newval;
         newline();
-        if (sock != null) {
-            sock.send(this.textContent);
-        }
+
         if (realtime) {
             output.println(newval);
         }
@@ -119,9 +102,7 @@ public class InteroperabilityReport {
     public final void printtabline(final String newval) {
         this.textContent += "\t" + newval;
         newline();
-        if (sock != null) {
-            sock.send(this.textContent);
-        }
+
         if (realtime) {
             output.println("\t" + newval);
         }

@@ -28,13 +28,34 @@
           <label>A1</label>
           <type>triggerstart</type>
           <transition>    
-                <to>A2</to>
+                <to>A7</to>
                 <message>
                     <url>component.f_rest_comp.rest1</url>
                     <path>?method=flickr.panda.getList&amp;api_key=$$patterndata.apikey$$</path>
                     <method>get</method>
                     <type>xml</type>
                 </message>
+           </transition>
+        </state>
+        <state>
+          <label>A7</label>
+          <type>normal</type>
+          <transition>    
+                <to>A2</to>
+                <guards>
+                    <equal>
+                        <param>HTTP.from</param>
+                        <value>component.f_rest_comp.address</value>
+                    </equal>
+                    <equal>
+                        <param>HTTP.msg</param>
+                        <value>REPLY</value>
+                    </equal>
+                    <equal>
+                        <param>HTTP.Code</param>
+                        <value>200</value>
+                    </equal>
+                </guards>
            </transition>
         </state>
 
@@ -45,7 +66,7 @@
                 <to>A3</to>
                 <message>
                     <url>component.f_rest_comp.rest1</url>
-                    <path>?method=flickr.panda.getPhotos&amp;api_key=$$patterndata.apikey$$&amp;panda_name=$$A2|content|//pandas/panda[%%counter%%]$$</path>
+                    <path>?method=flickr.panda.getPhotos&amp;api_key=$$patterndata.apikey$$&amp;panda_name=$$A7|content|//pandas/panda[%%counter%%]$$</path>
                     <method>get</method>
                     <type>xml</type>
                 </message>
@@ -54,8 +75,8 @@
                 <to>A4</to>
                 <guards>
                     <counter>
-                        <param>Content[//pandas/*]</param>
-                        <value>0</value>
+                        <param>$$A7|content|count(//pandas/*)$$</param>
+                        <value>4</value>
                     </counter>
                 </guards>
               </transition>

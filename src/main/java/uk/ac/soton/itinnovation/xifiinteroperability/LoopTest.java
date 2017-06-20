@@ -77,7 +77,7 @@ public class LoopTest {
             /*
              * Start the cradle monitoring
              */
-            final String interopReport = stateMachine.executePattern(null);
+            final String interopReport = stateMachine.executePattern();
             System.out.println(interopReport);
 
         } catch (MalformedURLException ex) {

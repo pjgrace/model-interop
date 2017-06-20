@@ -31,7 +31,6 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachin
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -279,37 +278,24 @@ public class StateNode implements State {
         throw new UnexpectedEventException("Fail: no transition possible");
     };
 
-    public final String evaluateConditionalTransition(final RESTEvent input, final InteroperabilityReport outputReport, String currentState)
+    public final String evaluateConditionalTransition(final InteroperabilityReport outputReport, String currentState)
             throws UnexpectedEventException {
         // Find transitions with matching resource locations
 
-        if(input != null) {
-            this.savedEvent = input;
 
-            /**
-             * Iterate through each potential event transition to find a matching
-             * next state. If no matches then we have an interoperability fail.
-             * Report in the exception.
-             */
-            final Iterator<Transition> transIt = this.nextStates.iterator();
-            while (transIt.hasNext()) {
-                final Transition evTrans = transIt.next();
-                if (!evTrans.listGuards().isEmpty()) {
-                    if (evaluateGuards(evTrans.listGuards(), this.savedEvent.getParameterMap(), outputReport)) {
-                        outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
-                            return evTrans.readLabel();
-                    }
-                }
-            }
-        } else {
-            final Iterator<Transition> transIt = this.nextStates.iterator();
-            while (transIt.hasNext()) {
-                final Transition evTrans = transIt.next();
-                if (!evTrans.listGuards().isEmpty()) {
-                    if (evaluateGuards(evTrans.listGuards(), new HashMap<String, Parameter>(), outputReport)) {
-                        outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
-                            return evTrans.readLabel();
-                    }
+        /**
+         * Iterate through each potential event transition to find a matching
+         * next state. If no matches then we have an interoperability fail.
+         * Report in the exception.
+         */
+        final Iterator<Transition> transIt = this.nextStates.iterator();
+        while (transIt.hasNext()) {
+            final Transition evTrans = transIt.next();
+            // The counter transition
+            if (!evTrans.listGuards().isEmpty()) {
+                if (evaluateCounterGuards(evTrans.listGuards().get(0), outputReport)) {
+                    outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
+                        return evTrans.readLabel();
                 }
             }
         }
@@ -408,26 +394,25 @@ public class StateNode implements State {
      * @param report
      * @return
      */
-    private int arrayContentEvaluation(final Guard chGuard, final Map<String, Parameter> conditions,
-            final InteroperabilityReport report) {
+    private int arrayContentEvaluation(final Guard chGuard, final InteroperabilityReport report) {
 
         if(chGuard.getGuardLabel().equalsIgnoreCase("Index")){
             return Integer.valueOf(chGuard.getGuardCompare());
         }
 
         final String xpathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
-        final Parameter value = conditions.get(CONTENTLABEL);
-        final Parameter dataType = conditions.get("http.content-type");
-        if (dataType.getValue().contains("xml")) {
-            return XML.getArraySize(value.getValue(), xpathExp);
-        } else if (dataType.getValue().contains("json")) {
-            if (!JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                reportGuardFailure(chGuard, value, report);
-                return 0;
-            }
-        } else {
-            return -1;
-        }
+//        final Parameter value = conditions.get(CONTENTLABEL);
+//        final Parameter dataType = conditions.get("http.content-type");
+//        if (dataType.getValue().contains("xml")) {
+//            return XML.getArraySize(value.getValue(), xpathExp);
+//        } else if (dataType.getValue().contains("json")) {
+//            if (!JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
+//                reportGuardFailure(chGuard, value, report);
+//                return 0;
+//            }
+//        } else {
+//            return -1;
+//        }
         return -1;
     }
 
@@ -476,6 +461,31 @@ public class StateNode implements State {
         return true;
     }
 
+     /**
+     * Evaluate the guards on a transition of this state.
+     * @param checks The list of guards to evaluate with.
+     * @param conditions The list of conditions that occurred from the event.
+     * @param report The output stream to output the data.
+     * @return True if all guards evaluate against the conditions.
+     */
+    private boolean evaluateCounterGuards(final Guard chGuard, final InteroperabilityReport report) {
+        int comparitor = -1;
+        if(chGuard.getGuardLabel().equalsIgnoreCase("Index")){
+            comparitor = Integer.valueOf(chGuard.getGuardCompare());
+        }
+        else if (chGuard.getGuardLabel().contains("$$")) {
+            comparitor = Integer.valueOf(getStateValue(chGuard.getGuardLabel()));
+        }
+
+        if (this.counter == comparitor) {
+            report.printtabline("Guard test succeeded: " + chGuard.getGuardLabel() + " is " + comparitor);
+            return true;
+        }
+        report.printtabline("Counter Sequence: Current" + this.counter + "; Target: " + comparitor);
+        return false;
+    }
+
+
     /**
      * Evaluate the guards on a transition of this state.
      * @param checks The list of guards to evaluate with.
@@ -492,15 +502,6 @@ public class StateNode implements State {
                 final Guard chGuard = itCheck.next();
                 if (chGuard.getGuardCompare().contains("$$")) {
                     chGuard.setGuardCompare(getStateValue(chGuard.getGuardCompare()));
-                }
-                if (chGuard.getType() == Guard.ComparisonType.COUNTER) {
-                    int arraySize = arrayContentEvaluation(chGuard, conditions, report);
-
-                    if (this.counter == arraySize) {
-                        return true;
-                    }
-                    report.printtabline("Counter Sequence: Current" + this.counter + "; Target: " + arraySize);
-                    return false;
                 }
                 else if (chGuard.getType() == Guard.ComparisonType.CONTAINS) {
                     if (!guardContainsEvaluation(chGuard, conditions, report)) {

@@ -79,7 +79,7 @@ public final class TraceExecuteTool {
             // Output the result of the test to the command line
             ServiceLogger.LOG.info("Interoperability Report");
             ServiceLogger.LOG.info("-----------------------");
-            ServiceLogger.LOG.info(stateMachine.executePattern(null));
+            ServiceLogger.LOG.info(stateMachine.executePattern());
 
             // cleanup the resources and exit
             stateMachine.cleanup();

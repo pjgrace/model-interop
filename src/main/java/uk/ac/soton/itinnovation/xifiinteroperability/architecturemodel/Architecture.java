@@ -33,7 +33,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.java_websocket.WebSocket;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -225,8 +224,8 @@ public class Architecture {
      * @param sock The web socket to report the outputs.
      * @return The interoperability report describing the reporting of
       */
-     public final String executePattern(final WebSocket sock) {
-         return this.behaviourSequence.start(sock);
+     public final String executePattern() {
+         return this.behaviourSequence.start();
      }
 
 

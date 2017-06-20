@@ -314,6 +314,7 @@ public class RESTMessage {
              * Where there is a body message to build.
              */
             StringRepresentation entity = null;
+            MediaType mediaType = null;
             if (this.dataBody.getData() != null) {
                 if (this.dataBody.getData().length() > 0) {
                     this.dataBody.setData(parseData(this.dataBody.getData()));
@@ -322,18 +323,24 @@ public class RESTMessage {
                     if (this.dataBody.getType().equalsIgnoreCase(XML_LABEL)) {
                         entity.setMediaType(MediaType.APPLICATION_XML);
                                 clientRes.accept(MediaType.APPLICATION_XML);
+                                mediaType = MediaType.APPLICATION_XML;
                     } else if (this.dataBody.getType().equalsIgnoreCase(JSON_LABEL)) {
                         entity.setMediaType(MediaType.APPLICATION_JSON);
                         clientRes.accept(MediaType.APPLICATION_JSON);
+                        mediaType = MediaType.APPLICATION_JSON;
                     } else if (this.dataBody.getType().equalsIgnoreCase(OTHER_LABEL)) {
                         String applicationType = null;
                         for (Parameter param : headers) {
                             if (param.getName().equalsIgnoreCase("http.Content-type")) {
                                 applicationType = param.getValue();
                             }
+                            if (param.getName().equalsIgnoreCase("http.Accept")) {
+                                String mType = param.getValue();
+                                mediaType = MediaType.valueOf(mType);
+                            }
                         }
                         entity.setMediaType(MediaType.valueOf(applicationType));
-                        clientRes.accept(MediaType.APPLICATION_ALL);
+                        clientRes.accept(mediaType);
                     }
                 }
             }
@@ -353,7 +360,7 @@ public class RESTMessage {
             }
             Response response = clientRes.getResponse();
             System.out.println(response.getEntityAsText());
-             return fromResponse(response);
+             return fromResponse(response, mediaType);
         } catch (InvalidRESTMessage ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
         } catch (MalformedURLException ex) {
@@ -370,7 +377,7 @@ public class RESTMessage {
      * @return A generated Rest event object.
      * @throws InvalidRESTMessage Error creating event from message.
      */
-    private static RESTEvent fromResponse(final Response response)
+    private static RESTEvent fromResponse(final Response response, MediaType acceptType)
         throws InvalidRESTMessage {
         final RESTEvent rResp = new RESTEvent();
         try {
@@ -391,10 +398,15 @@ public class RESTMessage {
             }
 
             final Representation msgContent = response.getEntity();
-            final MediaType mediaType = msgContent.getMediaType();
+            MediaType mediaType = msgContent.getMediaType();
             if (mediaType != null) {
                 rResp.addContent(mediaType.getName(), response.getEntityAsText());
+            } else {
+                mediaType = acceptType;
+                rResp.addContent(mediaType.getName(), response.getEntityAsText());
+                rResp.addParameter(new Parameter("http.content-type", mediaType.getName()));
             }
+
         } catch (ConfigurationException ex) {
             throw new InvalidRESTMessage("Failed to build event from HTTP Response", ex);
         } catch (IOException ex) {
