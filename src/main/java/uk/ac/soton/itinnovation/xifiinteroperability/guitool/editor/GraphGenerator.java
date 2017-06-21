@@ -208,15 +208,18 @@ public class GraphGenerator {
             else {
                 final Guard guardData = (Guard) dataModel.getTransition(myCell3.getId());
                 if (guardData != null) {
-                    final NodeList guards = eElement.getElementsByTagName("guards").item(0).getChildNodes();
+                    Node item = eElement.getElementsByTagName("guards").item(0);
+                    if (item != null) {
+                        final NodeList guards = item.getChildNodes();
 
-                    for (int i = 0; i < guards.getLength(); i++) {
-                        final Node currentItem = guards.item(i);
-                        if (currentItem.getNodeType() != 3) {
-                            final String fName = currentItem.getNodeName();
-                            final String param = ((Element) currentItem).getElementsByTagName("param").item(0).getTextContent();
-                            final String value = ((Element) currentItem).getElementsByTagName("value").item(0).getTextContent();
-                            guardData.addGuard(Function.getFunction(fName), param, value);
+                        for (int i = 0; i < guards.getLength(); i++) {
+                            final Node currentItem = guards.item(i);
+                            if (currentItem.getNodeType() != 3) {
+                                final String fName = currentItem.getNodeName();
+                                final String param = ((Element) currentItem).getElementsByTagName("param").item(0).getTextContent();
+                                final String value = ((Element) currentItem).getElementsByTagName("value").item(0).getTextContent();
+                                guardData.addGuard(Function.getFunction(fName), param, value);
+                            }
                         }
                     }
                 }

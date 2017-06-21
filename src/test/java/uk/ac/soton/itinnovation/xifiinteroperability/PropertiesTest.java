@@ -49,52 +49,13 @@ public class PropertiesTest {
         } catch (ConfigurationException ex) {
             Assert.fail("Error reading default_port property");
         }
-        try {
-            Assert.assertNotNull(SystemProperties.readProperty("default_service"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Error reading default_service property");
-        }
-        try {
-            Assert.assertNotNull(SystemProperties.readProperty("callback"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Error reading callback property");
-        }
 
-        try {
-            Assert.assertNotNull(SystemProperties.readProperty("client_secret"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Error reading client_secret property");
-        }
-        try {
-            Assert.assertNotNull(SystemProperties.readProperty("client_id"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Error reading client_id property");
-        }
 
         try {
             Assert.assertNotNull(SystemProperties.readProperty("virtualised"));
         } catch (ConfigurationException ex) {
             Assert.fail("Error reading virtualised property");
         }
-        try {
-            Assert.assertNotNull(SystemProperties.readProperty("FILAB_SS"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Error reading FILAB_SS property");
-        }
-        try {
-            Assert.assertNotNull(SystemProperties.readProperty("FILAB_IDM"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Error reading FILAB_IDM property");
-        }
-        try {
-            Assert.assertNotNull(SystemProperties.readProperty("oauth_protected"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Error reading oauth_protected property");
-        }
-         try {
-            Assert.assertNull(SystemProperties.readProperty("errorproperty"));
-        } catch (ConfigurationException ex) {
-            Assert.fail("Exception reading error property");
-        }
+        
     }
 }

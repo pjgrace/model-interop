@@ -208,6 +208,9 @@ public class Message extends AbstractGraphElement {
                     sBuilder.append(this.body).append("</body>");
                 }
             }
+            else {
+                sBuilder.append("</body>");
+            }
         sBuilder.append("\n\t\t\t\t</message>");
         sBuilder.append("\n\t\t\t</transition>");
         return sBuilder.toString();

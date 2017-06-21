@@ -71,10 +71,6 @@ public final class SystemProperties {
      */
 
     /**
-     * Label for the FIOPS_DAEMON t/f indicator.
-     */
-    public static final String FIOPSDAEMONPROP = "fiops_daemon";
-    /**
      * The pattern DTD schema describing a valid pattern.
      */
     public static final String PATTERNSCHEMA = "Pattern.xsd";

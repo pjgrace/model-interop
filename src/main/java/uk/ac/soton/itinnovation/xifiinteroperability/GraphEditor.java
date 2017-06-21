@@ -235,10 +235,10 @@ public class GraphEditor extends BasicGraphEditor {
         /**
          * Standard trigger node
          */
-        shapesPalette.addTemplate("Loop",
+        shapesPalette.addTemplate(XMLStateMachine.LOOP_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/loop.png")),
                 "image;image=/images/loop.png",
-                50, 50, "Loop");
+                50, 50, XMLStateMachine.LOOP_LABEL);
     }
 
     /**

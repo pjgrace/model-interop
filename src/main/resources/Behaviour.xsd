@@ -26,6 +26,8 @@ of the interoperability test behaviour.
                 <xs:element ref="label"/>
                 <xs:element ref="type"/>
                 <xs:element minOccurs="0" maxOccurs="unbounded" ref="transition"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="success"/>
+                <xs:element minOccurs="0" maxOccurs="1" ref="report"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -35,6 +37,11 @@ of the interoperability test behaviour.
 
     <!-- label of the end state -->
     <xs:element name="type" type="xs:NCName"/>
+    
+    <!-- label of the end state -->
+    <xs:element name="report" type="xs:string"/>
+    
+    <xs:element name="success" type="xs:string"/>
   
     <xs:element name="transition">
         <xs:complexType>
@@ -44,6 +51,7 @@ of the interoperability test behaviour.
                     <xs:element ref="guards" />
                     <xs:element ref="message" />
                 </xs:choice>
+                <xs:element minOccurs="0" maxOccurs="1" ref="report"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

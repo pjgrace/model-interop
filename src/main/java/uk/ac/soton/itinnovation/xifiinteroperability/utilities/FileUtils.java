@@ -84,7 +84,7 @@ public final class FileUtils {
     public static URL getURL(final String fileName) {
 
         try {
-            if (SystemProperties.readProperty(SystemProperties.FIOPSDAEMONPROP).equalsIgnoreCase("true")) {
+            if (SystemProperties.readProperty("virtualised").equalsIgnoreCase("true")) {
                 return resourceFiles(fileName).toUri().toURL();
             }
             return Thread.currentThread().getContextClassLoader().getResource(fileName);
@@ -119,7 +119,7 @@ public final class FileUtils {
     public static String readFile(final String path, final Charset encoding)
             throws IOException {
         try {
-            if (SystemProperties.readProperty(SystemProperties.FIOPSDAEMONPROP).equalsIgnoreCase("true")) {
+            if (SystemProperties.readProperty("virtualised").equalsIgnoreCase("true")) {
                 return readFileFromDaemon(path, encoding);
             }
 
