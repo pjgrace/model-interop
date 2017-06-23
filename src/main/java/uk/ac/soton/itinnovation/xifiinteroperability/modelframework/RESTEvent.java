@@ -56,10 +56,10 @@ public class RESTEvent implements Serializable {
 
     /** XML <guards><contains> tag constant. */
     public static final String CONTAINS_LABEL = "contains";
-    
+
     /** XML <guards><greaterthan> tag constant. */
     public static final String GREATERTHAN_LABEL = "greaterthan";
-    
+
     /** XML <guards><lessthan> tag constant. */
     public static final String LESSTHAN_LABEL = "lessthan";
 
@@ -71,6 +71,9 @@ public class RESTEvent implements Serializable {
 
     /** Message type (only capture reply messages as events for now). */
     public static final String REPLY_LABEL = "reply";
+
+     /** Report label tag <report> */
+    public static final String REPORT_LABEL = "report";
 
     /**
      * REST Events have fixed constants for parameter values specific to
