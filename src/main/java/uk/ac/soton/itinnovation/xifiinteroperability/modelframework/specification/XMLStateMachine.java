@@ -230,18 +230,34 @@ public final class XMLStateMachine {
                         String.class,
                         Guard.ComparisonType.EQUALS,
                         guardValue, archDesc));
-                } else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.CONTAINS_LABEL)) {
+                } 
+                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.CONTAINS_LABEL)) {
                     arrayOfGuards.add(new Guard(
                         eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
                         Map.class,
                         Guard.ComparisonType.CONTAINS,
                         guardValue, archDesc));
-                } else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.NOTEQUALS_LABEL)) {
+                } 
+                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.NOTEQUALS_LABEL)) {
                     arrayOfGuards.add(new Guard(
                         eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
                         String.class,
                         Guard.ComparisonType.NOTEQUALS,
                         guardValue, archDesc));
+                }
+                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.GREATERTHAN_LABEL)) {
+                    arrayOfGuards.add(new Guard(
+                            eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                            String.class,
+                            Guard.ComparisonType.GREATERTHAN,
+                            guardValue, archDesc));
+                }
+                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.LESSTHAN_LABEL)){
+                    arrayOfGuards.add(new Guard(
+                            eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                            String.class,
+                            Guard.ComparisonType.LESSTHAN,
+                            guardValue, archDesc));
                 }
                 else if (eltIndex.getName().equalsIgnoreCase("counter")) {
                     System.out.println("This is a counter");

@@ -149,7 +149,7 @@ public class Guard {
     public Guard(final String label, final Class type, final ComparisonType condition,
             final String comparitor, final Architecture arc) throws InvalidGuard {
         this.guardCondition = label.toLowerCase(Locale.ENGLISH);
-
+        
         String testCondition = comparitor;
         if (testCondition.startsWith(XMLStateMachine.DATA_TAG)) {
             try {
@@ -192,17 +192,17 @@ public class Guard {
                 return aC==bC;
             case LESSTHAN:
                 try{
-                    long a = new Long(this.compareTo);
-                    long b = (Long) toCompare;
-                    return a < b;
+                    double a = new Double(this.compareTo);
+                    double b = new Double(toCompare.toString());
+                    return b < a;
                 } catch(Exception ex) {
                     return false;
                 }
             case GREATERTHAN:
                 try{
-                    long a = new Long(this.compareTo);
-                    long b = (Long) toCompare;
-                    return a > b;
+                    double a = new Double(this.compareTo);
+                    double b = new Double(toCompare.toString());
+                    return b > a;
                 } catch(Exception ex) {
                     return false;
                 }

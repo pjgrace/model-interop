@@ -40,6 +40,7 @@ import com.jayway.jsonpath.PathNotFoundException;
 import java.io.IOException;
 import java.util.Locale;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
 
 /**
  * Methods for evaluating JSON Data. Utility class.
@@ -60,29 +61,73 @@ public final class JSON {
      * @param jsondoc The document to check.
      * @param reference The JSON path expression.
      * @param value The required value.
-     * @return true if the assertion is true;
+     * @return PathEvaluationResult with the boolean result and the value of the JSONPath expression
+     * @throws InvalidJSONPathException Thrown in case of an invalid JSONPath in a guard.
      */
-    public static boolean assertJSON(final String jsondoc,
-                        final String reference, final Object value) {
+    public static PathEvaluationResult assertJSON(final String jsondoc,
+                        final String reference, final Object value) throws InvalidJSONPathException {
         try {
             final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
-
-            return jsonVal.equalsIgnoreCase(xprVal);
+            return new PathEvaluationResult(jsonVal.equalsIgnoreCase(xprVal), xprVal);
 //            JsonAssert.with(jsondoc.toLowerCase(Locale.ENGLISH)).assertThat(reference, Matchers.equalTo(jsonVal));
         }
         catch (PathNotFoundException ex2) {
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
             if(jsonVal.equalsIgnoreCase("null")){
-                return true;
+                return new PathEvaluationResult(true, "null");
             }
-            return false;
+            throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
         catch (Exception ex) {
-            return false;
+            throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
     }
 
+    /**
+     * Compare a JSON document reference (jsonpath expr) against a particular value.
+     * LESSTHAN or GREATERTHAN comparisons only, use assertJSON for EQUAL and NOTEQUAL comparisons
+     * 
+     * @param jsondoc The document to check.
+     * @param reference The JSON path expression.
+     * @param value The required value.
+     * @param comparisonType The type of the comparison, GREATERTHAN or LESSTHAN
+     * @return PathEvaluationResult with the boolean result and the value of the JSONPath expression
+     * @throws InvalidJSONPathException Thrown in case of an invalid JSONPath in a guard.
+     */
+    public static PathEvaluationResult compareJSON(final String jsondoc,
+                        final String reference, final Object value, final Guard.ComparisonType comparisonType) throws InvalidJSONPathException {
+        try {
+            final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
+            final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
+            if (comparisonType == Guard.ComparisonType.GREATERTHAN){
+                try{
+                    double a = new Double(xprVal);
+                    double b = new Double(jsonVal);
+                    return new PathEvaluationResult(a > b, xprVal);
+                } catch(Exception ex) {
+                    return new PathEvaluationResult(false, xprVal);
+                }
+            }
+            else if (comparisonType == Guard.ComparisonType.LESSTHAN){
+                try{
+                    double a = new Double(xprVal);
+                    double b = new Double(jsonVal);
+                    return new PathEvaluationResult(a < b, xprVal);
+                } catch(Exception ex) {
+                    return new PathEvaluationResult(false, xprVal);
+                }
+            }
+            return new PathEvaluationResult(false, null);
+        }
+        catch (PathNotFoundException ex2) {
+            throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
+        }
+        catch (Exception ex) {
+            throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
+        }
+    }
+    
     /**
      * Validate a JSON document against a schema.
      * @param jsonDoc The full json document content as a string.

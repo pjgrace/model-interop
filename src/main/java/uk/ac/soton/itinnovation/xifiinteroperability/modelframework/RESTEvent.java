@@ -56,6 +56,12 @@ public class RESTEvent implements Serializable {
 
     /** XML <guards><contains> tag constant. */
     public static final String CONTAINS_LABEL = "contains";
+    
+    /** XML <guards><greaterthan> tag constant. */
+    public static final String GREATERTHAN_LABEL = "greaterthan";
+    
+    /** XML <guards><lessthan> tag constant. */
+    public static final String LESSTHAN_LABEL = "lessthan";
 
     /** XML <param>tag constant. */
     public static final String PARAM_LABEL = "param";
