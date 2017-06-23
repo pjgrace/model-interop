@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// Â© University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -56,12 +56,6 @@ public class RESTEvent implements Serializable {
 
     /** XML <guards><contains> tag constant. */
     public static final String CONTAINS_LABEL = "contains";
-    
-    /** XML <guards><greaterthan> tag constant. */
-    public static final String GREATERTHAN_LABEL = "greaterthan";
-    
-    /** XML <guards><lessthan> tag constant. */
-    public static final String LESSTHAN_LABEL = "lessthan";
 
     /** XML <guards><greaterthan> tag constant. */
     public static final String GREATERTHAN_LABEL = "greaterthan";
@@ -78,8 +72,8 @@ public class RESTEvent implements Serializable {
     /** Message type (only capture reply messages as events for now). */
     public static final String REPLY_LABEL = "reply";
 
-     /** Report label tag <report> */
-    public static final String REPORT_LABEL = "report";
+    /** Message type (only capture reply messages as events for now). */
+    public static final String REPORT_LABEL = "reply";
 
     /**
      * REST Events have fixed constants for parameter values specific to
