@@ -92,16 +92,52 @@ public class StateNode implements State {
     private static final String CONTENTLABEL = "content";
 
     /**
+     * A node has a report field that is used to annotate information about
+     * why a test succeeds or fails. This is particularly used to explain
+     * how a test reached an end state success or fail conclusion.
+     */
+    private String InteroperabilityReport = null;
+
+    /**
+     * Get the report statement for this state node.
+     * @return The report as a string.
+     */
+    @Override
+    public String getReport() {
+        return this.InteroperabilityReport;
+    }
+
+    /**
+     * A state reached can identify a successful or failed condition. This
+     * is a string rather than a boolean to be extensible beyond yes or no. For
+     * example, partial success values.
+     */
+    private String InteroperabilitySuccess = null;
+
+    /**
+     * Return the success condition of this node. This is particularly used
+     * in end states to finalise the outcome of a full test.
+     * @return A "true" or "false" string to indicate success.
+     */
+    @Override
+    public String getSuccess() {
+        return this.InteroperabilitySuccess;
+    }
+
+
+    /**
      *
      * @param nodeName This is the string identifier labelling the state. It must
      * be at least 2 characters long.
      * @param type must be one of the stateType enumeration. Null values are
      * not allowed.
      * @param arc The architecture context
+     * @param report The report specification of interoperability reporting for the node.
+     * @param success The success of the testing in reaching this state.
      * @throws InvalidStateMachineException error initialising node
      */
-    public StateNode(final String nodeName, final StateType type, final Architecture arc)
-        throws InvalidStateMachineException {
+    public StateNode(final String nodeName, final StateType type, final Architecture arc,
+            String report, String success) throws InvalidStateMachineException {
 
         if ((nodeName == null) || (type == null)) {
                 throw new InvalidStateMachineException("State " + nodeName + " contains"
@@ -118,6 +154,9 @@ public class StateNode implements State {
         }
         this.nextStates = new ArrayList();
         this.stateType = type;
+
+        this.InteroperabilityReport = report;
+        this.InteroperabilitySuccess = success;
     }
 
     /**
@@ -270,7 +309,8 @@ public class StateNode implements State {
             if (!evTrans.listGuards().isEmpty()) {
                 if (evaluateGuards(evTrans.listGuards(), input.getParameterMap(), outputReport)) {
                     outputReport.println("Transition to state " + evTrans.readLabel() + " successful");
-                        return evTrans.readLabel();
+                    outputReport.addReport(evTrans.getReport());
+                    return evTrans.readLabel();
                 }
             }
         }
