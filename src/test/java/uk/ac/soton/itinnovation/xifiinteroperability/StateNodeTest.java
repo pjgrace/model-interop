@@ -57,21 +57,21 @@ public class StateNodeTest {
     @Test
     public final void testStartNode() {
         try {
-            new StateNode(null, StateNode.StateType.START, null);
+            new StateNode(null, StateNode.StateType.START, null, null, null);
             Assert.fail("StateNode didn't throw invalidStateMachineException");
         } catch (InvalidStateMachineException e) {
             ServiceLogger.LOG.info("Code correctly captures exception " + e);
         }
 
         try {
-            new StateNode(TESTVALUE, null, null);
+            new StateNode(TESTVALUE, null, null, null, null);
             Assert.fail("StateNode didn't throw invalidStateMachineException");
         } catch (InvalidStateMachineException e) {
             ServiceLogger.LOG.info("Code correctly captures exception " + e);
         }
 
         try {
-            new StateNode("t", StateNode.StateType.START, null);
+            new StateNode("t", StateNode.StateType.START, null, null, null);
             Assert.fail("StateNode didn't throw invalidStateMachineException");
         } catch (InvalidStateMachineException e) {
             ServiceLogger.LOG.info("Code correctly captures exception " + e);
@@ -79,7 +79,7 @@ public class StateNodeTest {
 
         State sFirst;
         try {
-            sFirst = new StateNode(TESTVALUE, StateNode.StateType.START, null);
+            sFirst = new StateNode(TESTVALUE, StateNode.StateType.START, null, null, null);
             Assert.assertEquals(sFirst.isEndNode(), false);
             Assert.assertEquals(sFirst.isStartNode(), true);
             Assert.assertEquals(sFirst.getLabel(), TESTVALUE);
@@ -98,7 +98,7 @@ public class StateNodeTest {
     @Test
     public final void testEndNode() {
         try {
-            final State sFirst = new StateNode("test", StateNode.StateType.END, null);
+            final State sFirst = new StateNode("test", StateNode.StateType.END, null, null, null);
 
             Assert.assertEquals(sFirst.isEndNode(), true);
             Assert.assertEquals(sFirst.isStartNode(), false);
@@ -114,7 +114,7 @@ public class StateNodeTest {
     @Test
     public final void testNormalNode() {
         try {
-            State sFirst = new StateNode(TESTVALUE, StateNode.StateType.NORMAL, null);
+            State sFirst = new StateNode(TESTVALUE, StateNode.StateType.NORMAL, null, null, null);
 
             Assert.assertEquals(sFirst.isEndNode(), false);
             Assert.assertEquals(sFirst.isStartNode(), false);
@@ -130,7 +130,7 @@ public class StateNodeTest {
     @Test
     public final void testTriggerNode() {
         try {
-            State sFirst = new StateNode(TESTVALUE, StateNode.StateType.TRIGGER, null);
+            State sFirst = new StateNode(TESTVALUE, StateNode.StateType.TRIGGER, null, null, null);
 
             Assert.assertEquals(sFirst.isEndNode(), false);
             Assert.assertEquals(sFirst.isStartNode(), false);
@@ -146,7 +146,7 @@ public class StateNodeTest {
     @Test
     public final void testTriggerStartNode() {
         try {
-            State sFirst = new StateNode(TESTVALUE, StateNode.StateType.TRIGGERSTART, null);
+            State sFirst = new StateNode(TESTVALUE, StateNode.StateType.TRIGGERSTART, null, null, null);
 
             Assert.assertEquals(sFirst.isEndNode(), false);
             Assert.assertEquals(sFirst.isStartNode(), true);
@@ -163,7 +163,7 @@ public class StateNodeTest {
     public final void addTriggerTransition() {
         try {
 
-            final State sFirst = new StateNode(TESTVALUE, StateNode.StateType.TRIGGERSTART, null);
+            final State sFirst = new StateNode(TESTVALUE, StateNode.StateType.TRIGGERSTART, null, null, null);
             Assert.assertEquals(sFirst.isEndNode(), false);
             Assert.assertEquals(sFirst.isStartNode(), true);
             Assert.assertEquals(sFirst.isTrigger(), true);

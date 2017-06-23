@@ -90,7 +90,7 @@ of the interoperability test behaviour.
     <xs:element name="headers">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="1" maxOccurs="unbounded" ref="header"/>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="header"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

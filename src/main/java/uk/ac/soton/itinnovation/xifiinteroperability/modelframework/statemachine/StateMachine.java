@@ -176,11 +176,13 @@ public class StateMachine implements EventCapture {
      * to the state machine checks.
      * @return The string version of the output report.
      */
-    public final String start()	{
+    public final InteroperabilityReport start()	{
 	currentState = this.firstState;
         if (currentState == null) {
-            outputReport.println("Invalid pattern -> no valid start state");
-            return outputReport.outputReport();
+            outputReport.println("Invalid test model -> no valid start state");
+            outputReport.setSuccess("false");
+            outputReport.addReport("{\"Begin Testing\":\"Error in test model\"");
+            return outputReport;
         }
 
         outputReport.println("Test started - run the application");
@@ -206,19 +208,29 @@ public class StateMachine implements EventCapture {
                     currentState = getState(currentState.evaluateTransition(this.eventQueue.take(), outputReport));
                     if (currentState == null) {
                         ServiceLogger.LOG.error("Invalid state machine - could not find next state");
-                        return outputReport.outputReport();
+                        outputReport.setSuccess("false");
+                        outputReport.addReport("{\"Test trace\":\"Invalid state machine - could not find next state, check traces\"");
+                        return outputReport;
                     }
                     outputReport.println("Transition Success - move to state:" + currentState.getLabel());
                 }
             } catch (UnexpectedEventException ex) {
                logException(ex);
-               return outputReport.outputReport();
+               outputReport.setSuccess("false");
+               outputReport.addReport("{\"Test trace\":\""+ ex.getLocalizedMessage() + "\"");
+               return outputReport;
             } catch (InterruptedException ex) {
                 ServiceLogger.LOG.error("Error processing events", ex);
+                outputReport.setSuccess("false");
+                outputReport.addReport("{\"Test trace\":\""+ ex.getLocalizedMessage() + "\"");
+                return outputReport;
             }
         }
-        outputReport.println("End node reached --> Application interoperates correctly");
-        return outputReport.outputReport();
+        outputReport.setSuccess(currentState.getSuccess());
+        outputReport.addReport(currentState.getReport());
+        outputReport.println("End node reached --> Interoperability Testing Complete");
+
+        return outputReport;
     }
 
     /**

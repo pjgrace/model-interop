@@ -65,6 +65,12 @@ public class Transition {
     private transient RESTMessage event;
 
     /**
+     * The value of the <report> tag in the transition to specify what could
+     * have gone wrong/right.
+     */
+    private transient String interopReport;
+
+    /**
      * Create a basic transition.
      * @param label The identifier of the transition's to i.e. the label of the
      * to state.
@@ -78,9 +84,10 @@ public class Transition {
      * @param label The to label.
      * @param guards The list of guards to evaluate events against.
      */
-    public Transition(final String label, final List<Guard> guards) {
+    public Transition(final String label, final List<Guard> guards, String report) {
         this(label);
         this.conditions = guards;
+        this.interopReport = report;
     }
 
     /**
@@ -88,9 +95,10 @@ public class Transition {
      * @param label The to label.
      * @param rMesg The message to be sent when transition is triggered.
      */
-    public Transition(final String label, final RESTMessage rMesg) {
+    public Transition(final String label, final RESTMessage rMesg, String report) {
         this(label);
         this.event = rMesg;
+        this.interopReport = report;
     }
 
     /**
@@ -148,5 +156,21 @@ public class Transition {
             }
         }
         return null;
+    }
+
+    /**
+     * Add the report field for the transition.
+     * @param report The report string.
+     */
+    public final void addReport(final String report) {
+        this.interopReport = report;
+    }
+
+    /**
+     * Get the report field for this transition.
+     * @return The report as a single string.
+     */
+    public final String getReport() {
+        return this.interopReport;
     }
 }

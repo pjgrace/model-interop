@@ -224,7 +224,7 @@ public class Architecture {
      * @param sock The web socket to report the outputs.
      * @return The interoperability report describing the reporting of
       */
-     public final String executePattern() {
+     public final InteroperabilityReport executePattern() {
          return this.behaviourSequence.start();
      }
 

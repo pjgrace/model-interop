@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
 
@@ -77,8 +78,8 @@ public class LoopTest {
             /*
              * Start the cradle monitoring
              */
-            final String interopReport = stateMachine.executePattern();
-            System.out.println(interopReport);
+            final InteroperabilityReport interopReport = stateMachine.executePattern();
+            System.out.println(interopReport.getReport());
 
         } catch (MalformedURLException ex) {
             ServiceLogger.LOG.error("Check the url field -- " + ex.getLocalizedMessage());

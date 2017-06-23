@@ -39,11 +39,36 @@ import java.io.PrintStream;
  */
 public class InteroperabilityReport {
 
+    private String Success;
+
+    public void setSuccess(String val){
+        this.Success = val;
+    }
+
+    public String getSuccess() {
+        return this.Success;
+    }
+
     /**
      * This is the editable content of the report (i.e. the body). We initialise
      * with a title.
      */
-    private transient String textContent = "Output from Interoperability Cradle\n";
+    private transient String textTrace = "Output from Interoperability Test Framework\n";
+
+    /**
+     * Interoperability Summary in Json format.
+     * {"owner":"fiesta",
+     *  "extention":"jsonld",
+     *  "validated":true,
+     *  "global_duration":"271 ms",
+     *  "semantic_duration":"5 ms",
+     *  "start":"2017/03/10 19:06:36",
+     * "results":[{"type":"Namespace and URI validation","value":""},
+     * {"type":"Literal","value":""},{"type":"Predicate and Class validation","value":""},
+     * {"type":"Semantic Error","value":""},{"type":"Complete","value":""}],"syntactic_duration":"266 ms"}
+     *
+     */
+    private transient String intReport = "[";
 
     /**
      * The stream output of the text on the local host.
@@ -60,7 +85,7 @@ public class InteroperabilityReport {
      * Method to add a new line to the report. Simple formatting method.
      */
     private void newline() {
-        this.textContent += "\n";
+        this.textTrace += "\n";
     }
 
     /**
@@ -70,7 +95,7 @@ public class InteroperabilityReport {
     public InteroperabilityReport(final PrintStream printOut) {
         this.output = printOut;
         this.realtime = true;
-        println(textContent);
+        println(textTrace);
     }
 
     /**
@@ -87,7 +112,7 @@ public class InteroperabilityReport {
      */
     public final void println(final String newval) {
         newline();
-        this.textContent += newval;
+        this.textTrace += newval;
         newline();
 
         if (realtime) {
@@ -96,11 +121,39 @@ public class InteroperabilityReport {
     }
 
     /**
+     * A report is a statement of an evaluation of an event, whether
+     * and individual test or a full model test. This is added to the JSON
+     * interoperability report - as a JSON array element.
+     * @param report The JSON String to add to the report.
+     */
+    public final void addReport(final String report) {
+        // If this is the first input, we construct the first element of the json array
+        if(this.intReport.equalsIgnoreCase("[")) {
+            this.intReport +=report ;
+        } else {
+            // Otherwise we add the json to the array
+            this.intReport += "," + report ;
+        }
+    }
+
+    /**
+     * A report is a statement of an evaluation of an event, whether
+     * and individual test or a full model test. This is added to the JSON
+     * interoperability report - as a JSON array element.
+     */
+    public final String getReport() {
+        if(this.intReport.lastIndexOf(']')!= (this.intReport.length()-1)){
+            this.intReport += "]";
+        }
+        return this.intReport;
+    }
+
+    /**
     * Add a tabbed string new line.
     * @param newval The text to add as a tabbed line.
     */
     public final void printtabline(final String newval) {
-        this.textContent += "\t" + newval;
+        this.textTrace += "\t" + newval;
         newline();
 
         if (realtime) {
@@ -113,8 +166,8 @@ public class InteroperabilityReport {
      * a text field or the console.
      * @return The interoperability report as a single string.
      */
-    public final String outputReport() {
-        return this.textContent;
+    public final String outputTrace() {
+        return this.textTrace;
     }
 
 }

@@ -103,6 +103,18 @@ public interface State {
     int getCounter();
 
     /**
+     * Get the success reporting state value.
+     * @return The success field value
+     */
+    String getSuccess();
+
+    /**
+     * Get the interoperability reporting value.
+     * @return The report value
+     */
+    String getReport();
+
+    /**
      * Return true if this is a start node state; otherwise return false.
      * @return boolean value indicating start node status.
      */
