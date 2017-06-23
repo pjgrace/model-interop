@@ -69,6 +69,11 @@ public final class XMLStateMachine {
     public static final String STATE_LABEL = "state";
 
     /**
+     * XML success tag label constant.
+     */
+    public static final String SUCCESS_LABEL = "success";
+
+    /**
      * XML transition tag label constant.
      */
     public static final String TRANSITION_LABEL = "transition";
@@ -352,6 +357,14 @@ public final class XMLStateMachine {
         return initial;
     }
 
+    private static String getReport(final Element transition) {
+        Element reportTag = transition.getChild(RESTEvent.REPORT_LABEL);
+        if (reportTag!=null) {
+            return reportTag.getText();
+        }
+        return null;
+    }
+
      /**
       * Get the list of headers in the XML specification with headers tag.
       * @param root The part of the xml document to parse
@@ -404,9 +417,9 @@ public final class XMLStateMachine {
              }
              try {
                  if (isMessageTransition(eltIndex)) {
-                     fromState.addTransition(new Transition(toLabel, getMessage(eltIndex, archDesc)));
+                     fromState.addTransition(new Transition(toLabel, getMessage(eltIndex, archDesc), getReport(eltIndex)));
                  } else {
-                    fromState.addTransition(new Transition(toLabel, getGuards(eltIndex, archDesc)));
+                    fromState.addTransition(new Transition(toLabel, getGuards(eltIndex, archDesc), getReport(eltIndex)));
                  }
              } catch (InvalidTransitionException ex) {
                  throw new InvalidTransitionException("Invalid transition specification", ex);
@@ -439,7 +452,10 @@ public final class XMLStateMachine {
                 // Get the state label
                 final String label = eltIndex.getChildText(LABEL_LABEL);
                 final State.StateType type = getStateType(eltIndex.getChildText(STATE_TYPE));
-                states.put(label, new StateNode(label, type, arch));
+                final String report = eltIndex.getChildText(RESTEvent.REPORT_LABEL);
+                final String success = eltIndex.getChildText(SUCCESS_LABEL);
+
+                states.put(label, new StateNode(label, type, arch, report, success));
             }
             for (Element eltIndex2 : xmlStates) {
                 addTransitions(eltIndex2, states, arch);
