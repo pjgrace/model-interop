@@ -45,6 +45,9 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEventException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidJSONPathException;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidXPathException;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult;
 
 /**
  * State in a state machine.
@@ -343,7 +346,59 @@ public class StateNode implements State {
      * @param report The output location to report the failure.
      */
     private void reportGuardFailure(final Guard chGuard, final Parameter value, final InteroperabilityReport report) {
-        report.printtabline("Guard test failed: " + chGuard.getGuardLabel() + " is " + value.getValue() + " which !=" + chGuard.getGuardCompare());
+        switch (chGuard.getType()) {
+            case EQUALS:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue() + "', while it was supposed to be equal to the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            case NOTEQUALS:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue() + "', while it was supposed to be not equal to the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            case GREATERTHAN:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue() + "', while it was supposed to be greater than the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            case LESSTHAN:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue() + "', while it was supposed to be less than the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            default:
+                report.printtabline("Guard test failed!");
+        }
+    }
+    
+    /**
+     * The guard failure(due to a content evaluation) is reported to the interoperability report.
+     * @param chGuard The rule that has failed.
+     * @param value The input to the failed rule.
+     * @param report The output location to report the failure.
+     */
+    private void reportGuardFailure(final Guard chGuard, final PathEvaluationResult value, final InteroperabilityReport report) {
+        switch (chGuard.getType()) {
+            case EQUALS:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to be equal to the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            case NOTEQUALS:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to be not equal to the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            case GREATERTHAN:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to be greater than the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            case LESSTHAN:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to be less than the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            default:
+                report.printtabline("Guard test failed!");
+        }
+    }
+    
+     /**
+     * The guard failure(due to an exception) is reported to the interoperability report.
+     * @param chGuard The rule that has failed.
+     * @param value The input to the failed rule.
+     * @param report The output location to report the failure.
+     * @param ex The exception, which caused the guard to fail
+     */
+    private void reportGuardFailure(final InteroperabilityReport report, Exception ex){
+        report.printtabline("Guard test failed due to the following error:");
+        report.printtabline(ex.getMessage());
     }
 
     /**
@@ -361,11 +416,18 @@ public class StateNode implements State {
             final Parameter value = conditions.get(CONTENTLABEL);
             final Parameter dataType = conditions.get("http.content-type");
             if (dataType.getValue().contains("xml")) {
-                if (!XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                    reportGuardFailure(chGuard, value, report);
+                try {
+                    if (!XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare()).getResult()) {
+                        reportGuardFailure(chGuard, value, report);
+                        return false;
+                    }
+                }
+                catch (InvalidXPathException ex) {
+                    reportGuardFailure(report, ex);
                     return false;
                 }
-            } else if (dataType.getValue().contains("json")) {
+            } 
+            else if (dataType.getValue().contains("json")) {
                 final Object document = Configuration.defaultConfiguration().jsonProvider().parse(value.getValue());
                 final String grdComp = JsonPath.read(document, chGuard.getGuardCompare());
                 if (grdComp == null) {
@@ -373,7 +435,8 @@ public class StateNode implements State {
                     return false;
                 }
             }
-        } else {
+        } 
+        else {
             try {
                 final Object compareVal = conditions;
                 if (!chGuard.evaluate(compareVal)) {
@@ -429,33 +492,83 @@ public class StateNode implements State {
         final String xpathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
         final Parameter value = conditions.get(CONTENTLABEL);
         final Parameter dataType = conditions.get("http.content-type");
+        PathEvaluationResult pathResult;
         if (dataType.getValue().contains("xml")) {
-            if(chGuard.getType() == Guard.ComparisonType.NOTEQUALS) {
-                if (XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                    reportGuardFailure(chGuard, value, report);
-                    return false;
+            try {
+                Object exprValue = null;
+                if(null != chGuard.getType()) switch (chGuard.getType()) {
+                    case NOTEQUALS:
+                        pathResult = XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        if (pathResult.getResult()) {
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case EQUALS:
+                        pathResult = XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        if (!pathResult.getResult()) {
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case GREATERTHAN:
+                        pathResult = XML.xmlCompare(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.GREATERTHAN);
+                        if(!pathResult.getResult()){
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case LESSTHAN:
+                        pathResult = XML.xmlCompare(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.LESSTHAN);
+                        if(!pathResult.getResult()){
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    default:
+                        reportGuardFailure(report, new InvalidInputException("Unknown condition type"));
+                        return false;
                 }
             }
-            else if (chGuard.getType() == Guard.ComparisonType.EQUALS){
-                if (!XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                    reportGuardFailure(chGuard, value, report);
-                    return false;
+            catch (InvalidXPathException ex) {
+                reportGuardFailure(report, ex);
+                return false;
+            } 
+        } 
+        else if (dataType.getValue().contains("json")) {
+            try {
+                if(null != chGuard.getType()) switch (chGuard.getType()) {
+                    case NOTEQUALS:
+                        pathResult = JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        if (pathResult.getResult()) {
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case EQUALS:
+                        pathResult = JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        if (!pathResult.getResult()) {
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case GREATERTHAN:
+                        pathResult = JSON.compareJSON(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.GREATERTHAN);
+                        if(!pathResult.getResult()){
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case LESSTHAN:
+                        pathResult = JSON.compareJSON(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.LESSTHAN);
+                        if(!pathResult.getResult()){
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    default:
+                        reportGuardFailure(report, new InvalidInputException("Unknown condition type"));
+                        return false;
                 }
             }
-        } else if (dataType.getValue().contains("json")) {
-            if(chGuard.getType() == Guard.ComparisonType.NOTEQUALS) {
-                if (JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                    reportGuardFailure(chGuard, value, report);
-                    return false;
-                }
+            catch (InvalidJSONPathException ex) {
+                reportGuardFailure(report, ex);
+                return false;
             }
-            else if (chGuard.getType() == Guard.ComparisonType.EQUALS){
-                if (!JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare())) {
-                    reportGuardFailure(chGuard, value, report);
-                    return false;
-                }
-            }
-        } else {
+        } 
+        else {
             return false;
         }
         return true;
@@ -495,7 +608,9 @@ public class StateNode implements State {
      */
     private boolean evaluateGuards(final List<Guard> checks,
             final Map<String, Parameter> conditions, final InteroperabilityReport report) {
-
+        
+        report.printtabline("Evaluating " + checks.size() +  " guards");
+        
         final Iterator<Guard> itCheck = checks.iterator();
         while (itCheck.hasNext()) {
             try {
@@ -507,7 +622,8 @@ public class StateNode implements State {
                     if (!guardContainsEvaluation(chGuard, conditions, report)) {
                         return false;
                     }
-                } else if (chGuard.getGuardLabel().startsWith(CONTENTLABEL)) {
+                } 
+                else if (chGuard.getGuardLabel().startsWith(CONTENTLABEL)) {
                     if (!contentEvaluation(chGuard, conditions, report)) {
                         return false;
                     }
@@ -524,8 +640,29 @@ public class StateNode implements State {
                         return false;
                     }
                 }
-                report.printtabline("Guard test succeeded: " + chGuard.getGuardLabel() + " is " + chGuard.getGuardCompare());
-            } catch (InvalidInputException ex) {
+                
+                switch (chGuard.getType()) {
+                    case NOTEQUALS:
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is not equal to '" + chGuard.getGuardCompare() + "'");
+                        break;
+                    case EQUALS:
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is equal to '" + chGuard.getGuardCompare() + "'");
+                        break;
+                    case GREATERTHAN:
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is greater than '" + chGuard.getGuardCompare() + "'");
+                        break;
+                    case LESSTHAN:
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is less than '" + chGuard.getGuardCompare() + "'");
+                        break;
+                    case CONTAINS:
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' contains '" + chGuard.getGuardCompare() + "'");
+                        break;
+                    default:
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is '" + chGuard.getGuardCompare() + "'");
+                        break;
+                }
+            } 
+            catch (InvalidInputException ex) {
                 ServiceLogger.LOG.error("Invalid guard test specification", ex);
                 return false;
             }

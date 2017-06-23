@@ -57,6 +57,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
 
 /**
  * Operations for evaluating XML data elements. These are typically applied
@@ -73,6 +74,7 @@ public final class XML {
     private XML() {
         // no implementation required.
     }
+    
     /**
      * XPATH based method to assert that particular expressions in an
      * XML data structure e.g. /Resp/Address/Street == Main St. Given an XML
@@ -81,9 +83,10 @@ public final class XML {
      * @param xmlDoc The xml content to apply an XPATH expression to
      * @param reference The XPATH reference expression to evaluate
      * @param value The value to compare against
-     * @return true or false as a result of the test
+     * @return PathEvaluationResult with the boolean result and the value of the XPath expression
+     * @throws InvalidXPathException Thrown in case of an invalid XPath in a guard.
      */
-    public static boolean xmlAssert(final String xmlDoc, final String reference, final Object value) {
+    public static PathEvaluationResult xmlAssert(final String xmlDoc, final String reference, final Object value) throws InvalidXPathException {
         try {
             final DocumentBuilderFactory domFactory = DocumentBuilderFactory
                 .newInstance();
@@ -93,8 +96,12 @@ public final class XML {
             final Document doc = builder.parse(source);
             final XPath xpath = XPathFactory.newInstance().newXPath();
             final XPathExpression expr = xpath.compile(reference.toLowerCase(Locale.ENGLISH));
+            final boolean xPathExist = (boolean) expr.evaluate(doc, XPathConstants.BOOLEAN);
+            if (!xPathExist){
+                throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
+            }
             final Object result = expr.evaluate(doc);
-            return result.equals(value.toString().toLowerCase());
+            return new PathEvaluationResult(result.equals(value.toString().toLowerCase()), result);
         } catch (SAXException ex) {
             ServiceLogger.LOG.error("Error parsing the xml document", ex);
         } catch (IOException ex) {
@@ -104,9 +111,66 @@ public final class XML {
         } catch (XPathExpressionException ex) {
             ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
         }
-        return false;
+        return new PathEvaluationResult(false, null);
     }
-
+    
+    /**
+     * XPATH based method to to compare an expression in an XML data structure against 
+     * a particular value e.g. /Resp/Address/Street/Number > 0 or /Resp/Address/Street/Number < 15. 
+     * LESSTHAN or GREATERTHAN comparisons only, use xmlAssert for EQUAL and NOTEQUAL comparisons
+     * 
+     * @param xmlDoc The xml content to apply an XPATH expression to
+     * @param reference The XPATH reference expression to evaluate
+     * @param value The value to compare against
+     * @param comparisonType The type of the comparison, GREATERTHAN or LESSTHAN
+     * @return PathEvaluationResult with the boolean result and the value of the XPath expression
+     * @throws InvalidXPathException Thrown in case of an invalid XPath in a guard.
+     */
+    public static PathEvaluationResult xmlCompare(final String xmlDoc, final String reference, final Object value, final Guard.ComparisonType comparisonType) throws InvalidXPathException {
+        try {
+            final DocumentBuilderFactory domFactory = DocumentBuilderFactory
+                .newInstance();
+            domFactory.setNamespaceAware(true);
+            final DocumentBuilder builder = domFactory.newDocumentBuilder();
+            final InputSource source = new InputSource(new StringReader(xmlDoc.toLowerCase(Locale.ENGLISH)));
+            final Document doc = builder.parse(source);
+            final XPath xpath = XPathFactory.newInstance().newXPath();
+            final XPathExpression expr = xpath.compile(reference.toLowerCase(Locale.ENGLISH));
+            final boolean xPathExist = (boolean) expr.evaluate(doc, XPathConstants.BOOLEAN);
+            if (!xPathExist){
+                throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
+            }
+            final Object result = expr.evaluate(doc);
+            if (comparisonType == Guard.ComparisonType.GREATERTHAN){
+                try{
+                    double a = new Double(result.toString());
+                    double b = new Double(value.toString());
+                    return new PathEvaluationResult(a > b, result);
+                } catch(Exception ex) {
+                    return new PathEvaluationResult(false, result);
+                }
+            }
+            else if (comparisonType == Guard.ComparisonType.LESSTHAN){
+                try{
+                    double a = new Double(result.toString());
+                    double b = new Double(value.toString());
+                    return new PathEvaluationResult(a < b, result);
+                } catch(Exception ex) {
+                    return new PathEvaluationResult(false, result);
+                }
+            }
+        } catch (SAXException ex) {
+            ServiceLogger.LOG.error("Error parsing the xml document", ex);
+        } catch (IOException ex) {
+            ServiceLogger.LOG.error("Error buffering the xml string data", ex);
+        } catch (ParserConfigurationException ex) {
+            ServiceLogger.LOG.error("Error configuring the xml parser", ex);
+        } catch (XPathExpressionException ex) {
+            ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
+        }
+        return new PathEvaluationResult(false, null);
+    }
+    
     /**
      * Validate and xml document against the xml schema; throw exceptions
      * when the schema doesn't match.
