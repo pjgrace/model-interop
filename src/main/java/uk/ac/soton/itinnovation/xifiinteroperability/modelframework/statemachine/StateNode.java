@@ -94,7 +94,7 @@ public class StateNode implements State {
      */
     private static final String CONTENTLABEL = "content";
 
-    /**
+        /**
      * A node has a report field that is used to annotate information about
      * why a test succeeds or fails. This is particularly used to explain
      * how a test reached an end state success or fail conclusion.
@@ -157,9 +157,10 @@ public class StateNode implements State {
         }
         this.nextStates = new ArrayList();
         this.stateType = type;
-        
-        this.InteroperabilityReport = report;
+
+                this.InteroperabilityReport = report;
         this.InteroperabilitySuccess = success;
+
     }
 
     /**

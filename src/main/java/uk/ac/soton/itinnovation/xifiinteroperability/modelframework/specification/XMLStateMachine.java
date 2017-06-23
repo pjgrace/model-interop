@@ -273,6 +273,20 @@ public final class XMLStateMachine {
                             Guard.ComparisonType.LESSTHAN,
                             guardValue, archDesc));
                 }
+                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.GREATERTHAN_LABEL)) {
+                    arrayOfGuards.add(new Guard(
+                            eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                            String.class,
+                            Guard.ComparisonType.GREATERTHAN,
+                            guardValue, archDesc));
+                }
+                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.LESSTHAN_LABEL)){
+                    arrayOfGuards.add(new Guard(
+                            eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                            String.class,
+                            Guard.ComparisonType.LESSTHAN,
+                            guardValue, archDesc));
+                }
                 else if (eltIndex.getName().equalsIgnoreCase("counter")) {
                     System.out.println("This is a counter");
                     arrayOfGuards.add(new Guard(
