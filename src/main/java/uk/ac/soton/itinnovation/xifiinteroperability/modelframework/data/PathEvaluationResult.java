@@ -35,6 +35,27 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data;
  */
 public class PathEvaluationResult {
     
+    /**
+     * Enumeration of 2 possible types for data format: XML or JSON
+     */
+    public enum DataFormat {
+        
+        XML(0), JSON(1);
+        
+        /**
+         * The integer id of the type (specified above).
+         */
+	private final int type;
+        
+        /**
+         * Private constructor.
+         * @param type The type to data format.
+         */
+	private DataFormat(final int type) {
+	    this.type = type;
+	}        
+    }
+    
     /** 
      * The boolean result of the evaluation. 
      */
@@ -45,14 +66,22 @@ public class PathEvaluationResult {
      */
     final private Object exprValue;
     
+    /**
+     * The data format used in the evaluation
+     * 
+     */
+    final private DataFormat dataFormat;
+    
      /**
      * Construct an invalid JSONPath exception with a given string message.
      * @param result The boolean result of the evaluation.
      * @param exprValue The value returned from parsing the XPath or JSONPath expression 
+     * @param dataFormat The data format used in the evaluation
      */
-    public PathEvaluationResult(boolean result, Object exprValue){
+    public PathEvaluationResult(boolean result, Object exprValue, DataFormat dataFormat){
         this.result = result;
         this.exprValue = exprValue;
+        this.dataFormat = dataFormat;
     }
     
     /**
@@ -69,5 +98,13 @@ public class PathEvaluationResult {
      */
     public Object getValue(){
         return this.exprValue;
+    }
+    
+    /**
+     * Get the data format used in the evaluation
+     * @return The dataFormat, either XML or JSON
+     */
+    public DataFormat getType(){
+        return this.dataFormat;
     }
 }

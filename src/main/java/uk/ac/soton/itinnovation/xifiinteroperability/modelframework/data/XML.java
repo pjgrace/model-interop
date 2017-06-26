@@ -62,6 +62,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult.DataFormat;
 
 /**
  * Operations for evaluating XML data elements. These are typically applied
@@ -90,7 +91,8 @@ public final class XML {
      * @return PathEvaluationResult with the boolean result and the value of the XPath expression
      * @throws InvalidXPathException Thrown in case of an invalid XPath in a guard.
      */
-    public static PathEvaluationResult xmlAssert(final String xmlDoc, final String reference, final Object value) throws InvalidXPathException {
+    public static PathEvaluationResult xmlAssert(final String xmlDoc, final String reference, final Object value) 
+            throws InvalidXPathException {
         try {
             final DocumentBuilderFactory domFactory = DocumentBuilderFactory
                 .newInstance();
@@ -105,7 +107,7 @@ public final class XML {
                 throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
             }
             final Object result = expr.evaluate(doc);
-            return new PathEvaluationResult(result.equals(value.toString().toLowerCase()), result);
+            return new PathEvaluationResult(result.equals(value.toString().toLowerCase()), result, DataFormat.XML);
         } catch (SAXException ex) {
             ServiceLogger.LOG.error("Error parsing the xml document", ex);
         } catch (IOException ex) {
@@ -116,7 +118,7 @@ public final class XML {
             ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
             throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
         }
-        return new PathEvaluationResult(false, null);
+        return new PathEvaluationResult(false, null, DataFormat.XML);
     }
     
     /**
@@ -131,7 +133,8 @@ public final class XML {
      * @return PathEvaluationResult with the boolean result and the value of the XPath expression
      * @throws InvalidXPathException Thrown in case of an invalid XPath in a guard.
      */
-    public static PathEvaluationResult xmlCompare(final String xmlDoc, final String reference, final Object value, final Guard.ComparisonType comparisonType) throws InvalidXPathException {
+    public static PathEvaluationResult xmlCompare(final String xmlDoc, final String reference, final Object value, 
+            final Guard.ComparisonType comparisonType) throws InvalidXPathException {
         try {
             final DocumentBuilderFactory domFactory = DocumentBuilderFactory
                 .newInstance();
@@ -150,18 +153,18 @@ public final class XML {
                 try{
                     double a = new Double(result.toString());
                     double b = new Double(value.toString());
-                    return new PathEvaluationResult(a > b, result);
+                    return new PathEvaluationResult(a > b, result, DataFormat.XML);
                 } catch(Exception ex) {
-                    return new PathEvaluationResult(false, result);
+                    return new PathEvaluationResult(false, result, DataFormat.XML);
                 }
             }
             else if (comparisonType == Guard.ComparisonType.LESSTHAN){
                 try{
                     double a = new Double(result.toString());
                     double b = new Double(value.toString());
-                    return new PathEvaluationResult(a < b, result);
+                    return new PathEvaluationResult(a < b, result, DataFormat.XML);
                 } catch(Exception ex) {
-                    return new PathEvaluationResult(false, result);
+                    return new PathEvaluationResult(false, result, DataFormat.XML);
                 }
             }
         } catch (SAXException ex) {
@@ -174,20 +177,22 @@ public final class XML {
             ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
             throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
         }
-        return new PathEvaluationResult(false, null);
+        return new PathEvaluationResult(false, null, DataFormat.XML);
     }
     
     /**
      * XPATH based method to check if an expression in an XML data structure 
-     * contains a particular node (field), e.g TODO
+     * contains a particular node (field), .e.g //bookstore/book contains title
+     * CONTAINS evaluation
      * 
      * @param xmlDoc The xml content to apply an XPATH expression to
      * @param reference The XPATH reference expression to evaluate
      * @param value The value to compare against
-     * @return PathEvaluationResult with the boolean result and the value of the XPath expression (array list)
+     * @return PathEvaluationResult with the boolean result and the fields of the XPath expression (array list)
      * @throws InvalidXPathException Thrown in case of an invalid XPath in a guard.
      */
-    public static PathEvaluationResult xmlContains(final String xmlDoc, final String reference, final Object value) throws InvalidXPathException {
+    public static PathEvaluationResult xmlContains(final String xmlDoc, final String reference, final Object value) 
+            throws InvalidXPathException {
         try {
             final DocumentBuilderFactory domFactory = DocumentBuilderFactory
                 .newInstance();
@@ -221,7 +226,7 @@ public final class XML {
                 }
             }
             
-            return new PathEvaluationResult(containsResult, elementNodesList);
+            return new PathEvaluationResult(containsResult, elementNodesList, DataFormat.XML);
         } catch (SAXException ex) {
             ServiceLogger.LOG.error("Error parsing the xml document", ex);
         } catch (IOException ex) {
@@ -232,7 +237,7 @@ public final class XML {
             ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
             throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
         }
-        return new PathEvaluationResult(false, null);
+        return new PathEvaluationResult(false, null, DataFormat.XML);
     }
     
     

@@ -35,12 +35,18 @@ import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult.DataFormat;
 
 /**
  * Methods for evaluating JSON Data. Utility class.
@@ -69,13 +75,13 @@ public final class JSON {
         try {
             final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
-            return new PathEvaluationResult(jsonVal.equalsIgnoreCase(xprVal), xprVal);
+            return new PathEvaluationResult(jsonVal.equalsIgnoreCase(xprVal), xprVal, DataFormat.JSON);
 //            JsonAssert.with(jsondoc.toLowerCase(Locale.ENGLISH)).assertThat(reference, Matchers.equalTo(jsonVal));
         }
         catch (PathNotFoundException ex2) {
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
             if(jsonVal.equalsIgnoreCase("null")){
-                return new PathEvaluationResult(true, "null");
+                return new PathEvaluationResult(true, "null", DataFormat.JSON);
             }
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
@@ -96,7 +102,8 @@ public final class JSON {
      * @throws InvalidJSONPathException Thrown in case of an invalid JSONPath in a guard.
      */
     public static PathEvaluationResult compareJSON(final String jsondoc,
-                        final String reference, final Object value, final Guard.ComparisonType comparisonType) throws InvalidJSONPathException {
+                        final String reference, final Object value, final Guard.ComparisonType comparisonType) 
+            throws InvalidJSONPathException {
         try {
             final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
@@ -104,26 +111,64 @@ public final class JSON {
                 try{
                     double a = new Double(xprVal);
                     double b = new Double(jsonVal);
-                    return new PathEvaluationResult(a > b, xprVal);
+                    return new PathEvaluationResult(a > b, xprVal, DataFormat.JSON);
                 } catch(Exception ex) {
-                    return new PathEvaluationResult(false, xprVal);
+                    return new PathEvaluationResult(false, xprVal, DataFormat.JSON);
                 }
             }
             else if (comparisonType == Guard.ComparisonType.LESSTHAN){
                 try{
                     double a = new Double(xprVal);
                     double b = new Double(jsonVal);
-                    return new PathEvaluationResult(a < b, xprVal);
+                    return new PathEvaluationResult(a < b, xprVal, DataFormat.JSON);
                 } catch(Exception ex) {
-                    return new PathEvaluationResult(false, xprVal);
+                    return new PathEvaluationResult(false, xprVal, DataFormat.JSON);
                 }
             }
-            return new PathEvaluationResult(false, null);
+            return new PathEvaluationResult(false, null, DataFormat.JSON);
         }
         catch (PathNotFoundException ex2) {
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
         catch (Exception ex) {
+            throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
+        }
+    }
+    
+    /**
+     * Check if a JSON document reference (jsonpath expr) contains a particular key field.
+     * CONTAINS evaluation
+     * 
+     * @param jsondoc The document to check.
+     * @param reference The JSON path expression.
+     * @param value The required value.
+     * @return PathEvaluationResult with the boolean result and the fields of the JSONPath expression (array list)
+     * @throws InvalidJSONPathException Thrown in case of an invalid JSONPath in a guard.
+     */
+    public static PathEvaluationResult containsJSON(final String jsondoc,
+                        final String reference, final Object value) 
+            throws InvalidJSONPathException {
+        try {
+            final Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsondoc);
+            Map<String, String> childFields = JsonPath.read(document, reference);
+            List<String> childFieldsList = new ArrayList<>();
+            
+            boolean containsResult = false;
+            for (String child: childFields.keySet()){
+                childFieldsList.add(child);
+                
+                if (child.toLowerCase().equals(value.toString().toLowerCase())){
+                    containsResult = true;
+                }
+            }
+            return new PathEvaluationResult(containsResult, childFieldsList, DataFormat.JSON);
+        }
+        catch (ClassCastException ex) {
+            /* if a ClassCastException is thrown, this means that the json evaluation most 
+            probably returned a list and not a map, hence there are no child fields */
+            return new PathEvaluationResult(false, new ArrayList<>(), DataFormat.JSON);
+        }
+        catch (PathNotFoundException | InvalidJsonException ex) {
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
     }

@@ -28,8 +28,6 @@
 package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine;
 
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.JsonPath;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +47,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidJSONPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidXPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult.DataFormat;
 
 /**
  * State in a state machine.
@@ -426,21 +425,40 @@ public class StateNode implements State {
                 report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to be less than the guard value: '" + chGuard.getGuardCompare() + "'");
                 break;
             case CONTAINS:
-                List<Node> nodesList = (List<Node>) value.getValue();
-                
-                if (nodesList.isEmpty()){
-                    report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' doesn't contain any child fields");
-                }
-                else {
-                    String msg = "Guard test failed: '" + chGuard.getGuardLabel() + "' contains chield fields (";
-                    
-                    for (int i=0; i<nodesList.size()-1; i++){
-                        msg += "'" + nodesList.get(i).getNodeName() + "' ";
+                if (value.getType() == DataFormat.XML){
+                    List<Node> nodesList = (List<Node>) value.getValue();
+
+                    if (nodesList.isEmpty()){
+                        report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' doesn't contain any child fields");
                     }
-                    
-                    msg += "'" + nodesList.get(nodesList.size()-1).getNodeName() + "') but doesn't contain child field '" + chGuard.getGuardCompare() + "'";
-                    report.printtabline(msg);
+                    else {
+                        String msg = "Guard test failed: '" + chGuard.getGuardLabel() + "' contains child fields (";
+
+                        for (int i=0; i<nodesList.size()-1; i++){
+                            msg += "'" + nodesList.get(i).getNodeName() + "' ";
+                        }
+
+                        msg += "'" + nodesList.get(nodesList.size()-1).getNodeName() + "') but doesn't contain child field '" + chGuard.getGuardCompare() + "'";
+                        report.printtabline(msg);
+                    }
                 }
+                else if (value.getType() == DataFormat.JSON) {
+                    List<String> childFields = (List<String>) value.getValue();
+                    if (childFields.isEmpty()){
+                        report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' doesn't contain any child fields");
+                    }
+                    else {
+                        String msg = "Guard test failed: '" + chGuard.getGuardLabel() + "' contains child fields (";
+                        
+                        for (int i=0; i < childFields.size()-1; i++){
+                            msg += "'" + childFields.get(i) + "' ";
+                        }
+                        
+                        msg += "'" + childFields.get(childFields.size()-1) + "') but doesn't contain child field '" + chGuard.getGuardCompare() + "'";
+                        report.printtabline(msg);
+                    }
+                }
+                
                 break;
             default:
                 report.printtabline("Guard test failed!");
@@ -488,10 +506,15 @@ public class StateNode implements State {
                 }
             }
             else if (dataType.getValue().contains("json")) {
-                final Object document = Configuration.defaultConfiguration().jsonProvider().parse(value.getValue());
-                final String grdComp = JsonPath.read(document, chGuard.getGuardCompare());
-                if (grdComp == null) {
-                    reportGuardFailure(chGuard, value, report);
+                try {
+                    evaluationResult = JSON.containsJSON(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                    if (!evaluationResult.getResult()) {
+                        reportGuardFailure(chGuard, evaluationResult, report);
+                        return false;
+                    }
+                }
+                catch (InvalidJSONPathException ex) {
+                    reportGuardFailure(report, ex);
                     return false;
                 }
             }
