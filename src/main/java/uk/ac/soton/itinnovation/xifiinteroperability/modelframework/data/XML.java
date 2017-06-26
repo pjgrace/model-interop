@@ -31,7 +31,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -110,12 +114,13 @@ public final class XML {
             ServiceLogger.LOG.error("Error configuring the xml parser", ex);
         } catch (XPathExpressionException ex) {
             ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
+            throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
         }
         return new PathEvaluationResult(false, null);
     }
     
     /**
-     * XPATH based method to to compare an expression in an XML data structure against 
+     * XPATH based method to compare an expression in an XML data structure against 
      * a particular value e.g. /Resp/Address/Street/Number > 0 or /Resp/Address/Street/Number < 15. 
      * LESSTHAN or GREATERTHAN comparisons only, use xmlAssert for EQUAL and NOTEQUAL comparisons
      * 
@@ -167,9 +172,69 @@ public final class XML {
             ServiceLogger.LOG.error("Error configuring the xml parser", ex);
         } catch (XPathExpressionException ex) {
             ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
+            throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
         }
         return new PathEvaluationResult(false, null);
     }
+    
+    /**
+     * XPATH based method to check if an expression in an XML data structure 
+     * contains a particular node (field), e.g TODO
+     * 
+     * @param xmlDoc The xml content to apply an XPATH expression to
+     * @param reference The XPATH reference expression to evaluate
+     * @param value The value to compare against
+     * @return PathEvaluationResult with the boolean result and the value of the XPath expression (array list)
+     * @throws InvalidXPathException Thrown in case of an invalid XPath in a guard.
+     */
+    public static PathEvaluationResult xmlContains(final String xmlDoc, final String reference, final Object value) throws InvalidXPathException {
+        try {
+            final DocumentBuilderFactory domFactory = DocumentBuilderFactory
+                .newInstance();
+            domFactory.setNamespaceAware(true);
+            final DocumentBuilder builder = domFactory.newDocumentBuilder();
+            final InputSource source = new InputSource(new StringReader(xmlDoc.toLowerCase(Locale.ENGLISH)));
+            final Document doc = builder.parse(source);
+            final XPath xpath = XPathFactory.newInstance().newXPath();
+            final XPathExpression expr = xpath.compile(reference.toLowerCase(Locale.ENGLISH));
+            final boolean xPathExist = (boolean) expr.evaluate(doc, XPathConstants.BOOLEAN);
+            if (!xPathExist){
+                throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
+            }
+            
+            final Node resultNode = (Node) expr.evaluate(doc, XPathConstants.NODE);
+            final NodeList resultNodeList = (NodeList) resultNode.getChildNodes();
+            
+            boolean containsResult = false;
+            List<Node> elementNodesList = new ArrayList<>();
+            /* the set is used to avoid duplicate chield fields*/
+            Set<String> elementNodesSet = new HashSet<>();
+            for (int i=0; i<resultNodeList.getLength(); i++){
+                if (resultNodeList.item(i).getNodeType() == Node.ELEMENT_NODE){
+                    if (elementNodesSet.add(resultNodeList.item(i).getNodeName())){
+                        elementNodesList.add(resultNodeList.item(i));
+                        
+                        if (resultNodeList.item(i).getNodeName().toLowerCase().equals(value.toString().toLowerCase())){
+                            containsResult = true;
+                        }
+                    }
+                }
+            }
+            
+            return new PathEvaluationResult(containsResult, elementNodesList);
+        } catch (SAXException ex) {
+            ServiceLogger.LOG.error("Error parsing the xml document", ex);
+        } catch (IOException ex) {
+            ServiceLogger.LOG.error("Error buffering the xml string data", ex);
+        } catch (ParserConfigurationException ex) {
+            ServiceLogger.LOG.error("Error configuring the xml parser", ex);
+        } catch (XPathExpressionException ex) {
+            ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
+            throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
+        }
+        return new PathEvaluationResult(false, null);
+    }
+    
     
     /**
      * Validate and xml document against the xml schema; throw exceptions
@@ -327,3 +392,4 @@ public final class XML {
         return null;
     }
 }
+

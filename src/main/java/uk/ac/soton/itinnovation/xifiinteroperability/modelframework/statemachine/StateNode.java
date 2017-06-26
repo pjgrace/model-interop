@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import org.w3c.dom.Node;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.JSON;
@@ -424,6 +425,23 @@ public class StateNode implements State {
             case LESSTHAN:
                 report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to be less than the guard value: '" + chGuard.getGuardCompare() + "'");
                 break;
+            case CONTAINS:
+                List<Node> nodesList = (List<Node>) value.getValue();
+                
+                if (nodesList.isEmpty()){
+                    report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' doesn't contain any child fields");
+                }
+                else {
+                    String msg = "Guard test failed: '" + chGuard.getGuardLabel() + "' contains chield fields (";
+                    
+                    for (int i=0; i<nodesList.size()-1; i++){
+                        msg += "'" + nodesList.get(i).getNodeName() + "' ";
+                    }
+                    
+                    msg += "'" + nodesList.get(nodesList.size()-1).getNodeName() + "') but doesn't contain child field '" + chGuard.getGuardCompare() + "'";
+                    report.printtabline(msg);
+                }
+                break;
             default:
                 report.printtabline("Guard test failed!");
         }
@@ -450,15 +468,17 @@ public class StateNode implements State {
      */
     private boolean guardContainsEvaluation(final Guard chGuard, final Map<String, Parameter> conditions,
             final InteroperabilityReport report) {
-
+        
         if (chGuard.getGuardLabel().startsWith(CONTENTLABEL)) {
-            final String xpathExp = chGuard.getGuardCompare();
+            final String xpathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
             final Parameter value = conditions.get(CONTENTLABEL);
             final Parameter dataType = conditions.get("http.content-type");
+            PathEvaluationResult evaluationResult;
             if (dataType.getValue().contains("xml")) {
                 try {
-                    if (!XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare()).getResult()) {
-                        reportGuardFailure(chGuard, value, report);
+                    evaluationResult = XML.xmlContains(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                    if (!evaluationResult.getResult()) {
+                        reportGuardFailure(chGuard, evaluationResult, report);
                         return false;
                     }
                 }
@@ -695,7 +715,7 @@ public class StateNode implements State {
                         report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is less than '" + chGuard.getGuardCompare() + "'");
                         break;
                     case CONTAINS:
-                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' contains '" + chGuard.getGuardCompare() + "'");
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' contains child field '" + chGuard.getGuardCompare() + "'");
                         break;
                     default:
                         report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is '" + chGuard.getGuardCompare() + "'");
