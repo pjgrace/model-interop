@@ -212,7 +212,7 @@ public final class XML {
             
             boolean containsResult = false;
             List<Node> elementNodesList = new ArrayList<>();
-            /* the set is used to avoid duplicate chield fields*/
+            /* the set is used to avoid duplicate child fields*/
             Set<String> elementNodesSet = new HashSet<>();
             for (int i=0; i<resultNodeList.getLength(); i++){
                 if (resultNodeList.item(i).getNodeType() == Node.ELEMENT_NODE){
@@ -225,7 +225,6 @@ public final class XML {
                     }
                 }
             }
-            
             return new PathEvaluationResult(containsResult, elementNodesList, DataFormat.XML);
         } catch (SAXException ex) {
             ServiceLogger.LOG.error("Error parsing the xml document", ex);
