@@ -246,11 +246,12 @@ public class GraphGenerator {
             final Node interfaceData = eElement.getElementsByTagName(XMLStateMachine.INTERFACE_LABEL).item(0);
             mxCell port1 = null;
             if (interfaceData == null) {
-               port1 = new mxCell(
+                port1 = new mxCell(
                     label, geo1,
                     "image;image=/images/workplace.png");
-            } else {
-                 port1 = new mxCell(
+            } 
+            else {
+                port1 = new mxCell(
                     label, geo1,
                     "image;image=/images/server.png");
             }
@@ -264,9 +265,12 @@ public class GraphGenerator {
                     eElement.getElementsByTagName("address").item(0).getTextContent());
 
             if (interfaceData != null) {
-                final Element interfa = (Element) interfaceData;
-                gNode.addInterfaceData(interfa.getElementsByTagName("id").item(0).getTextContent(),
-                        interfa.getElementsByTagName("url").item(0).getTextContent());
+                final NodeList interfacesData = eElement.getElementsByTagName(XMLStateMachine.INTERFACE_LABEL);
+                for(int i=0; i<interfacesData.getLength(); i++){
+                    final Element interfa = (Element) interfacesData.item(i);
+                    gNode.addInterfaceData(interfa.getElementsByTagName("id").item(0).getTextContent(),
+                            interfa.getElementsByTagName("url").item(0).getTextContent());
+                }
                 this.currentHorizontal += 100;
             }
 
