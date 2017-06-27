@@ -98,7 +98,12 @@ public class FileActions {
          * Remember the directory location for saving files to.
          */
         private transient String lastDir = null;
-
+        
+        /**
+         * a boolean, which represents if the saveAs button was clicked
+         */
+        private final transient boolean saveAsClicked;
+        
         /**
          * Editor context - the editor where we are saving files.
          */
@@ -113,9 +118,10 @@ public class FileActions {
          * Create a new concrete action for saving files.
          * @param edtr The editor context information.
          */
-        public SaveAction(final BasicGraphEditor edtr) {
+        public SaveAction(final BasicGraphEditor edtr, boolean saveAsClicked) {
             super();
             this.editor = edtr;
+            this.saveAsClicked = saveAsClicked;
         }
 
         /**
@@ -132,7 +138,7 @@ public class FileActions {
 
                 final StringBuffer filename = new StringBuffer();
 
-                if (editor.getCurrentFile() == null) {
+                if (editor.getCurrentFile() == null || saveAsClicked) {
                     java.io.FileWriter fWriter = null;
                     try {
                         String wDir;
@@ -215,7 +221,8 @@ public class FileActions {
                             ServiceLogger.LOG.error("Error closing file stream", ex);
                         }
                     }
-                } else {
+                } 
+                else {
                     filename.append(editor.getCurrentFile().getAbsolutePath());
                     final String xml = editor.getDataModel().getGraphXML();
                     java.io.FileWriter fWrite = null;
@@ -244,7 +251,7 @@ public class FileActions {
             }
         }
     }
-
+    
     /**
      * Create a new graph. Essentially clear all the data models and views
      * from the UI.
