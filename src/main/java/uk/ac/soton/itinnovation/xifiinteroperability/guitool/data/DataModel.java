@@ -29,8 +29,10 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
@@ -221,7 +223,7 @@ public class DataModel {
    public final void deleteNode(final String ident) {
        GraphNode toDelete = this.connectionIndex.get(ident);
        if (toDelete != null) {
-           toDelete.deleteTranstion(ident);
+           toDelete.deleteTransition(ident);
            this.connectionIndex.remove(ident);
            return;
        }
@@ -232,8 +234,38 @@ public class DataModel {
            }
        }
        if (toDelete != null) {
-            this.graphElements.remove(toDelete);
-        } else {
+           this.graphElements.remove(toDelete);
+           
+           /* deleting all transitions going TO this Node */
+           List<String> transitionsToRemove = new ArrayList<>();
+           /* set is used to avoid double checking the same transitions from a given node*/
+           Set<String> visitedNodes = new HashSet<>();
+           for(GraphNode sourceNode: this.connectionIndex.values()){
+               if (visitedNodes.add(sourceNode.getUIIdentifier())) {
+                   /* going through all transitions and checking if the target is the node we are deleting */
+                   for (int index = 0; index < sourceNode.getNumberTransitions(); index++) {
+                       AbstractGraphElement transition = sourceNode.getTransition(index);
+                       if (transition instanceof Message) {
+                           Message messageTransition = (Message) transition;
+                           if (messageTransition.getTarget().equalsIgnoreCase(toDelete.getLabel())) {
+                               transitionsToRemove.add(messageTransition.getUIIdentifier());
+                           }
+                       } else if (transition instanceof Guard) {
+                           Guard guardTransition = (Guard) transition;
+                           if (guardTransition.getTarget().equalsIgnoreCase(toDelete.getLabel())) {
+                               transitionsToRemove.add(guardTransition.getUIIdentifier());
+                           }
+                       }
+                   }
+               }
+           }
+           /* deleting the transitions to be removed */
+           for (String transitionToRemove: transitionsToRemove){
+               this.connectionIndex.get(transitionToRemove).deleteTransition(transitionToRemove);
+               this.connectionIndex.remove(transitionToRemove);
+           }
+       } 
+       else {
            ArchitectureNode aDelete = null;
            for (ArchitectureNode e : this.archElements) {
                 if (e.getUIIdentifier().equalsIgnoreCase(ident)) {
@@ -339,7 +371,7 @@ public class DataModel {
                 final Guard grd = (Guard) connx.getTransition(connID);
                 if (grd != null) {
                     ((GraphNode) getNode(srcID)).addTransition(grd);
-                    connx.deleteTranstion(grd.getUIIdentifier());
+                    connx.deleteTransition(grd.getUIIdentifier());
                     this.connectionIndex.put(connID, (GraphNode) getNode(srcID));
                 }
             } else if (type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
@@ -350,7 +382,7 @@ public class DataModel {
                 final Message msg = (Message) connx.getTransition(connID);
                 if (msg != null) {
                     ((GraphNode) getNode(srcID)).addTransition(msg);
-                    connx.deleteTranstion(msg.getUIIdentifier());
+                    connx.deleteTransition(msg.getUIIdentifier());
                     this.connectionIndex.put(connID, (GraphNode) getNode(srcID));
                 }
             } else {

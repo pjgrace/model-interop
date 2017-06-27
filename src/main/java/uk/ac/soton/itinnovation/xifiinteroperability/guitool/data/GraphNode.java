@@ -43,7 +43,7 @@ public class GraphNode extends AbstractGraphElement {
      * The list of transitions from this node to other nodes.
      */
     private final transient List<AbstractGraphElement> transitions = new ArrayList();
-
+    
     /**
      * IF the node is a Start node - parameter data can be attached. These
      * act as global constants only.
@@ -107,7 +107,7 @@ public class GraphNode extends AbstractGraphElement {
      * from the graph data model.
      * @param idty  The transition id to delete
      */
-    public final void deleteTranstion(final String idty) {
+    public final void deleteTransition(final String idty) {
         AbstractGraphElement toDelete = null;
         for (AbstractGraphElement e : this.transitions) {
             if (e.getUIIdentifier().equalsIgnoreCase(idty)) {
@@ -141,7 +141,7 @@ public class GraphNode extends AbstractGraphElement {
         final StringBuilder sBuilder = new StringBuilder();
         sBuilder.append("\n\t\t<state>\n\t\t\t<label>").append(this.getLabel()).append("</label>");
         sBuilder.append("\n\t\t\t<type>").append(getType()).append("</type>");
-
+        
         for (AbstractGraphElement t : transitions) {
             sBuilder.append(t.generateTransitionXML());
         }
