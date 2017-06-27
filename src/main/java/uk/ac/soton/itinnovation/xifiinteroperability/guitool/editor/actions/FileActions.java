@@ -107,7 +107,7 @@ public class FileActions {
         /**
          * Editor context - the editor where we are saving files.
          */
-        private final transient BasicGraphEditor editor;
+        private transient BasicGraphEditor editor;
 
         /**
          * Saving XML files - constant for the file type.
@@ -130,6 +130,9 @@ public class FileActions {
          */
         @Override
         public final void actionPerformed(final ActionEvent actEvent) {
+            if (editor == null) {
+                editor = EditorActions.getEditor(actEvent);
+            }
 
             if (editor != null) {
                 FileFilter selectedFilter = null;
