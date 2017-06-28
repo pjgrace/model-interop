@@ -148,6 +148,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
         if (newNode != null) {
             label = (String) newNode.getValue();
         }
+        String type = label;
         
         if (dataModel.graphIdentExist(label)){
             label = (String) JOptionPane.showInputDialog(this.getParent(), 
@@ -175,7 +176,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
             newNode.setValue(label);
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
             if (newCells[0] != null) {
-                this.dataModel.addNode(((mxCell) newCells[0]).getId(), label, "state");
+                this.dataModel.addNode(((mxCell) newCells[0]).getId(), label, type);
             }
             return newCells;
         }

@@ -332,7 +332,7 @@ public class GraphGenerator {
             }
             final mxCell restul = (mxCell) graphPanel.addCell(nNode);
 
-            dataModel.addNode(restul.getId(), nodeType, "state");
+            dataModel.addNode(restul.getId(), label, nodeType);
             final GraphNode grphNode = (GraphNode) dataModel.getNode(restul.getId());
             grphNode.setLabel(label);
             this.currentHorizontal += 100;

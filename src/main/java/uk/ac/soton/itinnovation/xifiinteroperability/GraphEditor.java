@@ -392,11 +392,10 @@ public class GraphEditor extends BasicGraphEditor {
                 String newLabel = (String) evt.getProperty("value");
                 final String ident = GUIdentifier.getGUIdentifier(((mxCell) labelCell).getId(), graphComponent);
                 final AbstractGraphElement node = dataModel.getNode(ident);
+                final String originalLabel = node.getLabel();
+                newLabel = newLabel.replaceAll("\\s+", "_");
                 
                 if (node instanceof GraphNode){
-                    GraphNode gnode = (GraphNode) node;
-                    final String originalLabel = gnode.getLabel();
-                    newLabel = newLabel.replaceAll("\\s+", "_");
                     if (!(newLabel.equalsIgnoreCase(originalLabel)) && dataModel.graphIdentExist(newLabel)){
                         JOptionPane.showMessageDialog(panel, 
                                 "Please choose a different label for this state.",
@@ -405,16 +404,13 @@ public class GraphEditor extends BasicGraphEditor {
                         labelCell.setValue(originalLabel);
                     }
                     else {
-                        gnode.setLabel(newLabel);
+                        node.setLabel(newLabel);
                         labelCell.setValue(newLabel);
                         dataModel.updateConnectionLabel(originalLabel, newLabel);
                     }
                 }
                 
                 else if (node instanceof ArchitectureNode) {
-                    ArchitectureNode anode = (ArchitectureNode) node;
-                    final String originalLabel = anode.getLabel();
-                    newLabel = newLabel.replaceAll("\\s+", "_");
                     if (!(newLabel.equalsIgnoreCase(originalLabel)) && dataModel.archIdentExist(newLabel)){
                         JOptionPane.showMessageDialog(panel, 
                                 "Please choose a different label identifier for this component.",
@@ -423,8 +419,14 @@ public class GraphEditor extends BasicGraphEditor {
                         labelCell.setValue(originalLabel);
                     }
                     else {
-                        anode.setLabel(newLabel);
+                        node.setLabel(newLabel);
                         labelCell.setValue(newLabel);
+                        
+                        
+                        // Get the user interface ID of the selection and update the table
+                        final String id = GUIdentifier.getGUIdentifier(labelCell.getId(), graphComponent);
+                        updateTableView(id, graphComponent);
+                        
                         // TODO this method works for behaviour graph only
                         // dataModel.updateConnectionLabel(originalLabel, newLabel);
                     }
