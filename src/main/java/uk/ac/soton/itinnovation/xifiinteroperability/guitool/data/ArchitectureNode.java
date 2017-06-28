@@ -56,7 +56,27 @@ public class ArchitectureNode extends AbstractGraphElement {
     public final String getIdentifier() {
         return ident;
     }
+    
+    /**
+     * Setter for the architecture node id.
+     * @param ident the new identification label for the component
+     */
+    public final void setIdentifier(String ident) {
+        this.ident = ident;
+        /* making sure that identifier and label are the same */
+        this.setLabel(ident);
+    }
 
+    /**
+     * Set the label of the arch node. Use this instead of the parent's method 
+     * setLabel() to ensure that identifier is updated as well
+     * @param newLabel The new label displayed against the graph element.
+     */
+    public final void setArchLabel(final String newLabel){
+        /* making sure that identifier and label are the same */
+        this.setIdentifier(newLabel);
+    }
+    
     /**
      * The address of the interface or client - typically the IP address in string.
      */
@@ -87,10 +107,13 @@ public class ArchitectureNode extends AbstractGraphElement {
     /**
      * Constructor for the node about the system element.
      * @param idnty The label identifying the system node.
+     * @param label The component label identifier, same as the GUI label for the component
      * @param type The type of node, client or interface.
      */
-    public ArchitectureNode(final String idnty, final String type) {
+    public ArchitectureNode(final String idnty, final String label, final String type) {
         super(idnty, type);
+        /* setting the identifier adn the label to be the same; address remains null*/
+        this.setIdentifier(label);
     }
 
     /**

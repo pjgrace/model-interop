@@ -71,6 +71,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.BasicConfigurator;
@@ -375,6 +376,9 @@ public class GraphEditor extends BasicGraphEditor {
             }
         });
 
+        /* the variable is used as a reference to the JPanel in the listener implementation */
+        JPanel panel = this;
+        
          /**
          * Listen for a selection event: this can be either a vertex or
          * edge that has been selected.
@@ -383,21 +387,34 @@ public class GraphEditor extends BasicGraphEditor {
 
             @Override
             public void invoke(final Object obj, final mxEventObject evt) {
+                DataModel dataModel = getDataModel();
                 mxCell labelCell = (mxCell) evt.getProperty("cell");
-                final String newLabel = (String) evt.getProperty("value");
+                String newLabel = (String) evt.getProperty("value");
                 final String ident = GUIdentifier.getGUIdentifier(((mxCell) labelCell).getId(), graphComponent);
-                final AbstractGraphElement node = getDataModel().getNode(ident);
+                final AbstractGraphElement node = dataModel.getNode(ident);
                 if (node instanceof GraphNode){
                     GraphNode gnode = (GraphNode) node;
                     final String originalLabel = gnode.getLabel();
                     gnode.setLabel(newLabel);
-                    getDataModel().updateConnectionLabel(originalLabel, newLabel);
+                    dataModel.updateConnectionLabel(originalLabel, newLabel);
                 }
                 else if (node instanceof ArchitectureNode) {
                     ArchitectureNode anode = (ArchitectureNode) node;
                     final String originalLabel = anode.getLabel();
-                    anode.setLabel(newLabel);
-                    getDataModel().updateConnectionLabel(originalLabel, newLabel);
+                    newLabel = newLabel.replaceAll("\\s+", "_");
+                    if (!(newLabel.equalsIgnoreCase(originalLabel)) && dataModel.archIdentExist(newLabel)){
+                        JOptionPane.showMessageDialog(panel, 
+                                "Please choose a differenct label identifier for this component.",
+                                "Renaming error", 
+                                JOptionPane.ERROR_MESSAGE);
+                        labelCell.setValue(originalLabel);
+                    }
+                    else {
+                        anode.setArchLabel(newLabel);
+                        labelCell.setValue(newLabel);
+                        // TODO this method works for behaviour graph only
+                        // dataModel.updateConnectionLabel(originalLabel, newLabel);
+                    }
                 }
             }
         });

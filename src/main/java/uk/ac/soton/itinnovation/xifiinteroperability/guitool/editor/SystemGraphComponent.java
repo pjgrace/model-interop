@@ -137,12 +137,40 @@ public  class SystemGraphComponent extends mxGraphComponent {
         if (newNode != null) {
             label = (String) newNode.getValue();
         }
-        final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
-        newNode = (mxCell) newCells[0];
-        if (newCells[0] != null) {
-            dataModel.addNode(newNode.getId(), label, type);
+        
+        if (dataModel.archIdentExist(label)){
+            label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please choose a label identifier for this component", 
+                        "Component Identifier", 
+                        JOptionPane.PLAIN_MESSAGE, 
+                        null, null, "component");
+            if (label != null){
+                label = label.replaceAll("\\s+", "_");
+            }
+            
+            while (label != null && dataModel.archIdentExist(label)){
+                label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please chooose a different label identifier for this component", 
+                        "Component Identifier", 
+                        JOptionPane.ERROR_MESSAGE, 
+                        null, null, "component");
+                if (label != null){
+                    label = label.replaceAll("\\s+", "_");
+                }
+            } 
         }
-        return newCells;
+        
+        if (label != null){
+            newNode.setValue(label);
+            final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
+            String id = ((mxCell) newCells[0]).getId();
+            if (newCells[0] != null) {
+                dataModel.addNode(id, label, type);
+            }
+            return newCells;
+        }
+        
+        return null;
     }
 
 }

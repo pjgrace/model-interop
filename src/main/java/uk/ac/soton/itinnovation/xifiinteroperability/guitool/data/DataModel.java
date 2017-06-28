@@ -206,16 +206,25 @@ public class DataModel {
    public final void addNode(final String ident, final String label, final String type) {
        switch(type) {
            case XMLStateMachine.INTERFACE_LABEL:
-               this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label));
+               this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type));
                break;
            case CLIENT:
-                this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label));
+                this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type));
                 break;
            default:
                 this.graphElements.add(new GraphNode(ident, label));
        }
    }
-
+   
+   /**
+    * Check if an label identifier is already in use with another arch node
+    * @param ident The label identifier to check
+    * @return boolean to represent if the identification label  is already in use
+    */
+   public final boolean archIdentExist(final String ident){
+       return this.archElements.stream().anyMatch((archNode) -> (archNode.getIdentifier().equalsIgnoreCase(ident)));
+   }
+   
    /**
     * Remove the identified element from the data model.
     * @param ident The element to remove.
