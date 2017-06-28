@@ -423,7 +423,7 @@ public class GraphEditor extends BasicGraphEditor {
                         labelCell.setValue(originalLabel);
                     }
                     else {
-                        anode.setArchLabel(newLabel);
+                        anode.setLabel(newLabel);
                         labelCell.setValue(newLabel);
                         // TODO this method works for behaviour graph only
                         // dataModel.updateConnectionLabel(originalLabel, newLabel);

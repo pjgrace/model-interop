@@ -139,7 +139,7 @@ public class DataModel {
     */
    public final AbstractGraphElement getComponentByLabel(final String label) {
        for (ArchitectureNode e : this.archElements) {
-           if (e.getIdentifier().equalsIgnoreCase(label)) {
+           if (e.getLabel().equalsIgnoreCase(label)) {
                return e;
            }
        }
@@ -222,7 +222,7 @@ public class DataModel {
     * @return boolean to represent if the identification label  is already in use
     */
    public final boolean archIdentExist(final String ident){
-       return this.archElements.stream().anyMatch((archNode) -> (archNode.getIdentifier().equalsIgnoreCase(ident)));
+       return this.archElements.stream().anyMatch((archNode) -> (archNode.getLabel().equalsIgnoreCase(ident)));
    }
    
    /**

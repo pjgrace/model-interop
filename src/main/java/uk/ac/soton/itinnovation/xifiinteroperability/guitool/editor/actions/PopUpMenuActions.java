@@ -131,7 +131,7 @@ public final class PopUpMenuActions {
             final ArchitectureNode selNode = (ArchitectureNode) editor.getDataModel().getNode(GUIdentifier.setArchID(nodeID));
             String urlToCopy = "";
             if (selNode.getData().size() > 0) {
-                urlToCopy = XMLStateMachine.COMPONENT_LABEL + "." + selNode.getIdentifier() + "." + selNode.getData().get(0).getRestID();
+                urlToCopy = XMLStateMachine.COMPONENT_LABEL + "." + selNode.getLabel() + "." + selNode.getData().get(0).getRestID();
             }
             final StringSelection stringSelection = new StringSelection(urlToCopy);
             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

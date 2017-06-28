@@ -201,7 +201,7 @@ public class ComponentForm extends JPanel {
      */
     public final void setData(final ArchitectureNode archNodeInput) {
         mirrorNode = archNodeInput;
-        ident.setText(archNodeInput.getIdentifier());
+        ident.setText(archNodeInput.getLabel());
         address.setText(archNodeInput.getAddress());
         componentView.setData(archNodeInput);
     }

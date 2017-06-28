@@ -40,42 +40,6 @@ import java.util.List;
  * @author pjg
  */
 public class ArchitectureNode extends AbstractGraphElement {
-
-    /**
-     * The user entered data - can be edited via the UI:
-     * 1) The ID of the interface or client
-     * 2) The address of the interface or client
-     * 3) The list of interface data.
-     */
-    private transient String ident;
-
-    /**
-     * Getter for the architecture node id.
-     * @return The string id.
-     */
-    public final String getIdentifier() {
-        return ident;
-    }
-    
-    /**
-     * Setter for the architecture node id.
-     * @param ident the new identification label for the component
-     */
-    public final void setIdentifier(String ident) {
-        this.ident = ident;
-        /* making sure that identifier and label are the same */
-        this.setLabel(ident);
-    }
-
-    /**
-     * Set the label of the arch node. Use this instead of the parent's method 
-     * setLabel() to ensure that identifier is updated as well
-     * @param newLabel The new label displayed against the graph element.
-     */
-    public final void setArchLabel(final String newLabel){
-        /* making sure that identifier and label are the same */
-        this.setIdentifier(newLabel);
-    }
     
     /**
      * The address of the interface or client - typically the IP address in string.
@@ -111,9 +75,7 @@ public class ArchitectureNode extends AbstractGraphElement {
      * @param type The type of node, client or interface.
      */
     public ArchitectureNode(final String idnty, final String label, final String type) {
-        super(idnty, type);
-        /* setting the identifier adn the label to be the same; address remains null*/
-        this.setIdentifier(label);
+        super(idnty, label, type);
     }
 
     /**
@@ -131,7 +93,7 @@ public class ArchitectureNode extends AbstractGraphElement {
      * @param addr The address of the interface or client
      */
     public final void setData(final String idnty, final String addr) {
-        this.ident = idnty;
+        this.setLabel(idnty);
         this.address = addr;
     }
 
@@ -145,7 +107,7 @@ public class ArchitectureNode extends AbstractGraphElement {
         final StringBuilder strBuilder = new StringBuilder();
         // Add the ident
         strBuilder.append("\n\t\t<component>");
-        strBuilder.append("\n\t\t\t<id>").append(this.ident).append("</id>");
+        strBuilder.append("\n\t\t\t<id>").append(this.getLabel()).append("</id>");
         strBuilder.append("\n\t\t\t<address>").append(this.address).append("</address>");
 
         // Add the interfaces
