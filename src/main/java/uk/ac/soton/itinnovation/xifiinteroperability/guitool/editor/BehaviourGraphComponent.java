@@ -148,12 +148,38 @@ public class BehaviourGraphComponent extends mxGraphComponent {
         if (newNode != null) {
             label = (String) newNode.getValue();
         }
-
-        final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
-        if (newCells[0] != null) {
-            this.dataModel.addNode(((mxCell) newCells[0]).getId(), label, "state");
+        
+        if (dataModel.graphIdentExist(label)){
+            label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please choose a label for this state", 
+                        "State Label", 
+                        JOptionPane.PLAIN_MESSAGE, 
+                        null, null, "state");
+            if (label != null){
+                label = label.replaceAll("\\s+", "_");
+            }
+            
+            while (label != null && dataModel.graphIdentExist(label)){
+                label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please chooose a different label for this state", 
+                        "State Label", 
+                        JOptionPane.ERROR_MESSAGE, 
+                        null, null, "state");
+                if (label != null){
+                    label = label.replaceAll("\\s+", "_");
+                }
+            } 
         }
-        return newCells;
+        
+        if (label != null){
+            newNode.setValue(label);
+            final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
+            if (newCells[0] != null) {
+                this.dataModel.addNode(((mxCell) newCells[0]).getId(), label, "state");
+            }
+            return newCells;
+        }
+        return null;
     }
 
 }

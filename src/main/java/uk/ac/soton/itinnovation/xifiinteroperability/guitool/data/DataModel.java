@@ -212,12 +212,12 @@ public class DataModel {
                 this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type));
                 break;
            default:
-                this.graphElements.add(new GraphNode(ident, label));
+                this.graphElements.add(new GraphNode(ident, label, type));
        }
    }
    
    /**
-    * Check if an label identifier is already in use with another arch node
+    * Check if a label identifier is already in use with another arch node
     * @param ident The label identifier to check
     * @return boolean to represent if the identification label  is already in use
     */
@@ -225,6 +225,14 @@ public class DataModel {
        return this.archElements.stream().anyMatch((archNode) -> (archNode.getIdentifier().equalsIgnoreCase(ident)));
    }
    
+   /**
+    * Check if a label is already in use with another graph node
+    * @param ident The label to check
+    * @return boolean to represent if the label is already in use
+    */
+   public final boolean graphIdentExist(final String ident) {
+       return this.graphElements.stream().anyMatch((graphNode) -> (graphNode.getLabel().equalsIgnoreCase(ident)));
+   }
    /**
     * Remove the identified element from the data model.
     * @param ident The element to remove.

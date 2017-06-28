@@ -61,6 +61,18 @@ public abstract class AbstractGraphElement {
         this.type = newType;
         this.label = newType + ident;
     }
+    
+    /**
+     * Create a new Graph element data node. This constructor takes the label as
+     * argument.
+     * @param ident The mxGraph generated unique UI identifier.
+     * @param label
+     * @param newType The type of the node.
+     */
+    public AbstractGraphElement(final String ident, final String label, final String newType){
+        this(ident, newType);
+        this.label = label;
+    }
 
     /**
      * Translate the data structure into the XML content as described

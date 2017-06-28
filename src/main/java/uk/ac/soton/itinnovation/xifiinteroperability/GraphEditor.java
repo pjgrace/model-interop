@@ -392,19 +392,32 @@ public class GraphEditor extends BasicGraphEditor {
                 String newLabel = (String) evt.getProperty("value");
                 final String ident = GUIdentifier.getGUIdentifier(((mxCell) labelCell).getId(), graphComponent);
                 final AbstractGraphElement node = dataModel.getNode(ident);
+                
                 if (node instanceof GraphNode){
                     GraphNode gnode = (GraphNode) node;
                     final String originalLabel = gnode.getLabel();
-                    gnode.setLabel(newLabel);
-                    dataModel.updateConnectionLabel(originalLabel, newLabel);
+                    newLabel = newLabel.replaceAll("\\s+", "_");
+                    if (!(newLabel.equalsIgnoreCase(originalLabel)) && dataModel.graphIdentExist(newLabel)){
+                        JOptionPane.showMessageDialog(panel, 
+                                "Please choose a different label for this state.",
+                                "Renaming error", 
+                                JOptionPane.ERROR_MESSAGE);
+                        labelCell.setValue(originalLabel);
+                    }
+                    else {
+                        gnode.setLabel(newLabel);
+                        labelCell.setValue(newLabel);
+                        dataModel.updateConnectionLabel(originalLabel, newLabel);
+                    }
                 }
+                
                 else if (node instanceof ArchitectureNode) {
                     ArchitectureNode anode = (ArchitectureNode) node;
                     final String originalLabel = anode.getLabel();
                     newLabel = newLabel.replaceAll("\\s+", "_");
                     if (!(newLabel.equalsIgnoreCase(originalLabel)) && dataModel.archIdentExist(newLabel)){
                         JOptionPane.showMessageDialog(panel, 
-                                "Please choose a differenct label identifier for this component.",
+                                "Please choose a different label identifier for this component.",
                                 "Renaming error", 
                                 JOptionPane.ERROR_MESSAGE);
                         labelCell.setValue(originalLabel);

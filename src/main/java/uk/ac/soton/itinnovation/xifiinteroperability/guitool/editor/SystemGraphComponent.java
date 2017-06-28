@@ -163,9 +163,8 @@ public  class SystemGraphComponent extends mxGraphComponent {
         if (label != null){
             newNode.setValue(label);
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
-            String id = ((mxCell) newCells[0]).getId();
             if (newCells[0] != null) {
-                dataModel.addNode(id, label, type);
+                dataModel.addNode(((mxCell) newCells[0]).getId(), label, type);
             }
             return newCells;
         }

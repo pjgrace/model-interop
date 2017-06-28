@@ -62,11 +62,12 @@ public class GraphNode extends AbstractGraphElement {
     /**
      * Create a new graph node element.
      * @param idty The UI identity of the node
+     * @param label The GUI label for the node
      * @param type The type of the node (state type)
      */
 
-    public GraphNode(final String idty, final String type) {
-        super(idty, type);
+    public GraphNode(final String idty, final String label, final String type) {
+        super(idty, label, type);
     }
 
     /**
