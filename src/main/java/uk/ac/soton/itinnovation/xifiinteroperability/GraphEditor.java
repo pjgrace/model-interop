@@ -383,10 +383,8 @@ public class GraphEditor extends BasicGraphEditor {
 
             @Override
             public void invoke(final Object obj, final mxEventObject evt) {
-                System.out.println("HERE");
                 mxCell labelCell = (mxCell) evt.getProperty("cell");
                 final String newLabel = (String) evt.getProperty("value");
-                System.out.println("Label changed to " + newLabel);
                 final String ident = GUIdentifier.getGUIdentifier(((mxCell) labelCell).getId(), graphComponent);
                 final AbstractGraphElement node = getDataModel().getNode(ident);
                 if (node instanceof GraphNode){
