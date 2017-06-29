@@ -119,15 +119,17 @@ public class BehaviourGraphComponent extends mxGraphComponent {
                     JOptionPane.ERROR_MESSAGE);
                 return null;
             }
-
-//            if ((type.equalsIgnoreCase("start") || type.equalsIgnoreCase(GraphEditor.TRIGGERSTART)) && this.dataModel.containsStart()) {
-//                JOptionPane.showMessageDialog(this.getParent(),
-//                "Only one start node allowed in the graph",
-//                "Design error",
-//                JOptionPane.ERROR_MESSAGE);
-//                return null;
-//            }
-
+            
+            if (type.equals(XMLStateMachine.START_LABEL) || type.equals(XMLStateMachine.TRIGGERSTART_LABEL)){
+                if (dataModel.containsStart()){
+                    JOptionPane.showMessageDialog(this.getParent(),
+                            "Only one start node allowed in the graph",
+                            "Design error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return null;
+                }
+            }
+            
             target = getCellAt(location.x, location.y);
 
             if (target instanceof mxICell && cells[0] instanceof mxICell) {

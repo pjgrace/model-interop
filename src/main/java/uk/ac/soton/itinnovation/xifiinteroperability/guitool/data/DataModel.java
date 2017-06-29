@@ -36,6 +36,8 @@ import java.util.Set;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
+import static uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine.START_LABEL;
+import static uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine.TRIGGERSTART_LABEL;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidTransitionException;
 
 /**
@@ -70,7 +72,21 @@ public class DataModel {
      * Index of connection IDs to the source node.
      */
     private final transient Map<String, GraphNode> connectionIndex;
+    
+    /**
+     * Boolean to represent if the model has a start state.
+     * Only one start state is allowed
+     */
+    private boolean hasStart;
 
+    /**
+     * Get the boolean, which represents if there is a start node in the data model
+     * @return the boolean hasStart
+     */
+    public boolean containsStart(){
+        return this.hasStart;
+    }
+    
     /**
      * Initialse the data model.
      */
@@ -78,6 +94,7 @@ public class DataModel {
        this.graphElements = new ArrayList();
        this.connectionIndex = new HashMap();
        this.archElements = new ArrayList();
+       this.hasStart = false;
    }
 
    /**
@@ -105,14 +122,14 @@ public class DataModel {
     * Detect if there is a start node in the current graph specification.
     * @return Returns true where a start node has been added.
     */
-   public final boolean containsStart() {
-       for (GraphNode e : this.graphElements) {
-           if (e.getType().contains(XMLStateMachine.START_LABEL)) {
-                   return true;
-           }
-       }
-       return false;
-   }
+//   public final boolean containsStart() {
+//       for (GraphNode e : this.graphElements) {
+//           if (e.getType().contains(XMLStateMachine.START_LABEL)) {
+//                   return true;
+//           }
+//       }
+//       return false;
+//   } TODO 
 
    /**
     * Get the data node specified by the label from the graph. That is,
@@ -211,6 +228,14 @@ public class DataModel {
            case CLIENT:
                 this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type));
                 break;
+           case START_LABEL:
+               this.hasStart = true;
+               this.graphElements.add(new GraphNode(ident, label, type));
+               break;
+           case TRIGGERSTART_LABEL:
+               this.hasStart = true;
+               this.graphElements.add(new GraphNode(ident, label, type));
+               break;
            default:
                 this.graphElements.add(new GraphNode(ident, label, type));
        }
@@ -251,6 +276,9 @@ public class DataModel {
            }
        }
        if (toDelete != null) {
+           if (toDelete.getType().equals(XMLStateMachine.START_LABEL) || toDelete.getType().equals(XMLStateMachine.TRIGGERSTART_LABEL)){
+               this.hasStart = false;
+           }
            this.graphElements.remove(toDelete);
            
            /* deleting all transitions going TO this Node */
