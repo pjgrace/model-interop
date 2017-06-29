@@ -295,6 +295,7 @@ public class FileActions {
                  */
                 editor.getDataModel().clearData();
                 editor.getUndoManager().clear();
+                editor.updateTableView(null, null);
 
                 /**
                  * Clear the graph views.
@@ -359,6 +360,7 @@ public class FileActions {
                 editor.setModified(false);
                 editor.getUndoManager().clear();
                 editor.getDataModel().clearData();
+                editor.updateTableView(null, null);
         }
 
         /**
@@ -408,8 +410,6 @@ public class FileActions {
                     return;
                 }
             }
-
-            editor.getDataModel().clearData();
 
             if (!editor.isModified() || JOptionPane.showConfirmDialog(editor,
                     mxResources.get("loseChanges")) == JOptionPane.YES_OPTION) {

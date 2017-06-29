@@ -1046,7 +1046,12 @@ public class BasicGraphEditor extends JPanel {
     *  @param view The view we are updated i.e. which of the 2 graphs
      */
     public final void updateTableView(final String uiID, final mxGraphComponent view) {
-
+        /* two null arguments are passed if a new file is opened, this clears the table */
+        if (uiID == null && view == null){
+            ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), "EmptyPanel");
+            return;
+        }
+        
         // Get the attribut information
         AbstractGraphElement transition = dataModel.getNode(uiID);
 

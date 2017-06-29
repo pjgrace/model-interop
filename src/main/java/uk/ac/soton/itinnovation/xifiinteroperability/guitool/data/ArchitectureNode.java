@@ -76,6 +76,7 @@ public class ArchitectureNode extends AbstractGraphElement {
      */
     public ArchitectureNode(final String idnty, final String label, final String type) {
         super(idnty, label, type);
+        this.address = "null";
     }
 
     /**

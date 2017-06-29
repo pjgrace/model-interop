@@ -106,12 +106,12 @@ public class AttributePanel {
     }
 
     /**
-     * Reference to the Node Form UI component.
+     * Reference to the  End Node Form UI component.
      */
     private final transient EndForm eForm;
 
     /**
-     * Get the Node component element. This is the form in the left
+     * Get the End Node component element. This is the form in the left
      * hand panel for entering node details.
      * @return The reference to the UI component.
      */
@@ -189,7 +189,7 @@ public class AttributePanel {
         eForm = new EndForm();
 
         //Create the panel that contains the "cards".
-//        parent.add(new EmptyForm(), ENDPANEL);
+        parent.add(new EmptyForm(), "EmptyPanel");
         parent.add(gForm, GUARDPANEL);
         parent.add(nForm, NODEPANEL);
         parent.add(cForm, COMPONENTPANEL);
