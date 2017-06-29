@@ -119,19 +119,6 @@ public class DataModel {
    }
 
    /**
-    * Detect if there is a start node in the current graph specification.
-    * @return Returns true where a start node has been added.
-    */
-//   public final boolean containsStart() {
-//       for (GraphNode e : this.graphElements) {
-//           if (e.getType().contains(XMLStateMachine.START_LABEL)) {
-//                   return true;
-//           }
-//       }
-//       return false;
-//   } TODO 
-
-   /**
     * Get the data node specified by the label from the graph. That is,
     * select the node data.
     *
