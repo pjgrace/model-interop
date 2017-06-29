@@ -130,12 +130,12 @@ public class ComponentTableModel extends AbstractTableModel {
     }
 
     /**
-     * Add a full row to the table using the data in the interface data object.
-     * @param newrow The row of information.
+     * Remove a full row from the table using the data in the interface data object.
+     * @param row The row of information.
      */
-    public final void removeRowData(final InterfaceData newrow) {
-        data.remove(newrow);
-        fireTableDataChanged();
+    public final void removeRowData(final int row) {
+        data.remove(row);
+        fireTableRowsDeleted(row, row);
     }
 
     /**

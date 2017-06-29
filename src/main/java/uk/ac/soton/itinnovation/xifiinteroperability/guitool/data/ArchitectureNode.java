@@ -87,7 +87,21 @@ public class ArchitectureNode extends AbstractGraphElement {
     public final void addInterfaceData(final String idnty, final String url) {
         data.add(new InterfaceData(idnty, url));
     }
-
+    
+    public final void removeInterfaceData(final String restID){
+        InterfaceData toRemove = null;
+        for(InterfaceData interfaceData: this.data){
+            if (interfaceData.getRestID().equalsIgnoreCase(restID)){
+                toRemove = interfaceData;
+                break;
+            }
+        }
+        
+        if (toRemove != null){
+            data.remove(toRemove);
+        }
+    }
+    
     /**
      * Change the data information about the ID and the address.
      * @param idnty The ID of the interface or client

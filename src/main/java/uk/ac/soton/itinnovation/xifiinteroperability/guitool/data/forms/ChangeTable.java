@@ -32,6 +32,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
 import javax.swing.table.AbstractTableModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
@@ -81,6 +82,11 @@ public class ChangeTable extends JPopupMenu {
                 String labelMessage = delTable.getValueAt(row, 0).toString();
                 ((MessageTableModel) delTable).removeRowData(row);
                 ((Message) mirrorNode).removeHeader(labelMessage);
+            }
+            else if (mirrorNode instanceof ArchitectureNode){
+                String labelMessage = delTable.getValueAt(row, 0).toString();
+                ((ComponentTableModel) delTable).removeRowData(row);
+                ((ArchitectureNode) mirrorNode).removeInterfaceData(labelMessage);
             }
         }
     }

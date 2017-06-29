@@ -183,7 +183,7 @@ public class AttributePanel {
         final String[] dataTypes = {"XML", "JSON", "OTHER"};
 
         mForm = new MessageForm(httpMethods, dataTypes, editor);
-        cForm = new ComponentForm();
+        cForm = new ComponentForm(editor);
         gForm = new GuardForm(editor);
         nForm = new NodeForm();
         eForm = new EndForm();
