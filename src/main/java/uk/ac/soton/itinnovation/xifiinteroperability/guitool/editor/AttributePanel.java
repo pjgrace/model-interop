@@ -35,6 +35,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.NodeForm
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.EndForm;
 
 /**
  * The Attribute panel where different panels are switched between to input
@@ -105,6 +106,20 @@ public class AttributePanel {
     }
 
     /**
+     * Reference to the Node Form UI component.
+     */
+    private final transient EndForm eForm;
+
+    /**
+     * Get the Node component element. This is the form in the left
+     * hand panel for entering node details.
+     * @return The reference to the UI component.
+     */
+    public final EndForm getEndForm() {
+        return eForm;
+    }
+
+    /**
      * Constant panel refs.
      */
 
@@ -143,6 +158,7 @@ public class AttributePanel {
      */
     private static final String TRIGGERPANEL = "trigger";
 
+
     /**
      * Change the look and feel.
      * @param input The table to change the feel of.
@@ -170,13 +186,15 @@ public class AttributePanel {
         cForm = new ComponentForm();
         gForm = new GuardForm(editor);
         nForm = new NodeForm();
+        eForm = new EndForm();
 
         //Create the panel that contains the "cards".
-        parent.add(new EmptyForm(), ENDPANEL);
+//        parent.add(new EmptyForm(), ENDPANEL);
         parent.add(gForm, GUARDPANEL);
         parent.add(nForm, NODEPANEL);
         parent.add(cForm, COMPONENTPANEL);
         parent.add(mForm, MESSAGEPANEL);
+        parent.add(eForm, ENDPANEL);
         parent.add(new EmptyForm(), NORMALPANEL);
         parent.add(new EmptyForm(), TRIGGERPANEL);
 

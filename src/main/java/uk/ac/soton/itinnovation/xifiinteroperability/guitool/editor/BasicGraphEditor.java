@@ -408,8 +408,8 @@ public class BasicGraphEditor extends JPanel {
         // the graph behaveGraph on the right side of the window
         final JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inner,
                         codePanel);
-        outer.setOneTouchExpandable(true);
-        outer.setDividerLocation(300);
+        outer.setOneTouchExpandable(false);
+        outer.setDividerLocation(200);
         outer.setDividerSize(3);
         outer.setBorder(null);
 
@@ -1060,26 +1060,36 @@ public class BasicGraphEditor extends JPanel {
          */
         if (transition != null) {
             switch(transition.getType()) {
-                case "guard":    if (ctablePanel.getGuardForm() != null) {
-                                ctablePanel.getGuardForm().clearData();
-                                ctablePanel.getGuardForm().setData((Guard) transition);
-                            }
-                        break;
-                case "component": if (ctablePanel.getComponentForm() != null) {
-                                ctablePanel.getComponentForm().clearData();
-                                ctablePanel.getComponentForm().setData((ArchitectureNode) transition);
-                            }
-                        break;
-                case "message":    if (ctablePanel.getMessageComponent() != null) {
-                                ctablePanel.getMessageComponent().clearData();
-                                ctablePanel.getMessageComponent().setData((Message) transition);
-                            }
-                        break;
-                default:
+                case "start":
                     if (ctablePanel.getNodeForm() != null) {
                         ctablePanel.getNodeForm().clearData();
                         ctablePanel.getNodeForm().setData((GraphNode) transition);
                     }
+                    break;
+                case "end":
+                    if (ctablePanel.getEndForm() != null) {
+                        ctablePanel.getEndForm().clearData();
+                        ctablePanel.getEndForm().setData((GraphNode) transition);
+                    }
+                    break;
+                case "guard":
+                    if (ctablePanel.getGuardForm() != null) {
+                        ctablePanel.getGuardForm().clearData();
+                        ctablePanel.getGuardForm().setData((Guard) transition);
+                    }
+                    break;
+                case "component":
+                    if (ctablePanel.getComponentForm() != null) {
+                        ctablePanel.getComponentForm().clearData();
+                        ctablePanel.getComponentForm().setData((ArchitectureNode) transition);
+                    }
+                    break;
+                case "message":
+                    if (ctablePanel.getMessageComponent() != null) {
+                        ctablePanel.getMessageComponent().clearData();
+                        ctablePanel.getMessageComponent().setData((Message) transition);
+                    }
+                    break;
                 }
         }
     }

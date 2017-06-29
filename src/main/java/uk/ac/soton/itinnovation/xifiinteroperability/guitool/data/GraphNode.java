@@ -43,12 +43,27 @@ public class GraphNode extends AbstractGraphElement {
      * The list of transitions from this node to other nodes.
      */
     private final transient List<AbstractGraphElement> transitions = new ArrayList();
-    
+
     /**
      * IF the node is a Start node - parameter data can be attached. These
      * act as global constants only.
      */
     private final transient List<ConstantData> data = new ArrayList();
+
+    /**
+     * IF the node is an end node - report data can be attached.
+     */
+    private String endStateReport;
+
+    public String getEndStateReport() {
+        return this.endStateReport;
+    }
+
+    private boolean endStateSuccess;
+
+    public boolean getEndStateSuccess() {
+        return this.endStateSuccess;
+    }
 
     /**
      * Get the list of constant data elements attached to the node (these
@@ -68,6 +83,16 @@ public class GraphNode extends AbstractGraphElement {
 
     public GraphNode(final String idty, final String label, final String type) {
         super(idty, label, type);
+    }
+
+    /**
+     * Add new end state data to the node. This is the success and report fields
+     * @param success The entered success value for this end state.
+     * @param report The test reporting statement.
+     */
+    public final void addEndStateData(final boolean success, final String report) {
+        this.endStateSuccess = success;
+        this.endStateReport = report;
     }
 
     /**
@@ -142,9 +167,13 @@ public class GraphNode extends AbstractGraphElement {
         final StringBuilder sBuilder = new StringBuilder();
         sBuilder.append("\n\t\t<state>\n\t\t\t<label>").append(this.getLabel()).append("</label>");
         sBuilder.append("\n\t\t\t<type>").append(getType()).append("</type>");
-        
+
         for (AbstractGraphElement t : transitions) {
             sBuilder.append(t.generateTransitionXML());
+        }
+        if(getType().equalsIgnoreCase("end")){
+            sBuilder.append("\n\t\t\t<success>").append(this.endStateSuccess).append("</success>");
+            sBuilder.append("\n\t\t\t<report>").append(this.endStateReport).append("</report>");
         }
         sBuilder.append("\n\t\t</state>");
         return sBuilder.toString();
@@ -165,6 +194,4 @@ public class GraphNode extends AbstractGraphElement {
         }
         return sBuilder.toString();
     }
-
-
 }

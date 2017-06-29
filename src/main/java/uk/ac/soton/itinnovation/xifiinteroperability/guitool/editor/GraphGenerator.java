@@ -249,7 +249,7 @@ public class GraphGenerator {
                 port1 = new mxCell(
                     label, geo1,
                     "image;image=/images/workplace.png");
-            } 
+            }
             else {
                 port1 = new mxCell(
                     label, geo1,
@@ -335,6 +335,23 @@ public class GraphGenerator {
             dataModel.addNode(restul.getId(), label, nodeType);
             final GraphNode grphNode = (GraphNode) dataModel.getNode(restul.getId());
             grphNode.setLabel(label);
+
+            if (nodeType.equalsIgnoreCase("end")) {
+                boolean success = true;
+                String report = "Interoperability test succeeded";
+                NodeList elementsByTagName = eElement.getElementsByTagName("success");
+                if (elementsByTagName != null ) {
+                    String successTxt = elementsByTagName.item(0).getTextContent();
+                    success = Boolean.valueOf(successTxt);
+                }
+
+                elementsByTagName = eElement.getElementsByTagName("report");
+                if (elementsByTagName != null ) {
+                    report = elementsByTagName.item(0).getTextContent();
+                }
+                grphNode.addEndStateData(success, report);
+            }
+
             this.currentHorizontal += 100;
             if (nodeType.equalsIgnoreCase("start") || nodeType.equalsIgnoreCase("triggerstart")) {
                 return restul.getId();

@@ -194,7 +194,7 @@ public class GraphEditor extends BasicGraphEditor {
                 "image;image=/images/workplace.png",
                 50, 50, DataModel.CLIENT);
 
-        // Adds the five node types to the behaviour pallete
+        // Adds the six node types to the behaviour pallete
 
         /**
          * The start node. The waiting start
@@ -235,7 +235,7 @@ public class GraphEditor extends BasicGraphEditor {
                 50, 50, XMLStateMachine.TRIGGER_LABEL);
 
         /**
-         * Standard trigger node
+         * Standard Loop node
          */
         shapesPalette.addTemplate(XMLStateMachine.LOOP_LABEL,
                 new ImageIcon(GraphEditor.class.getResource("/images/loop.png")),
