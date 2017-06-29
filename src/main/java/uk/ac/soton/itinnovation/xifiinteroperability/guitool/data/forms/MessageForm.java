@@ -35,6 +35,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.Locale;
 import java.util.Map;
@@ -45,6 +47,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -187,6 +190,26 @@ public class MessageForm extends JPanel {
         topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
         final JTable nodetable = new JTable(messageView);
+        nodetable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int r = nodetable.rowAtPoint(e.getPoint());
+                if (r >= 0 && r < nodetable.getRowCount()) {
+                    nodetable.setRowSelectionInterval(r, r);
+                } else {
+                    nodetable.clearSelection();
+                }
+                
+                int rowindex = nodetable.getSelectedRow();
+                if (rowindex < 0)
+                    return;
+                
+                if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
+                    JPopupMenu popup = new ChangeTable(editor, messageView, r, mirrorNode);
+                    popup.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
         final JScrollPane messageScrollPane = JTable.createScrollPaneForTable(nodetable);
 
 //        add(messageScrollPane, BorderLayout.CENTER);

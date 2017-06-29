@@ -115,6 +115,15 @@ public class MessageTableModel extends AbstractTableModel {
         data.add(newrow);
         fireTableDataChanged();
     }
+    
+    /**
+     * Remove a header from the table view.
+     * @param row The header to remove.
+     */
+    public final void removeRowData(final int row) {
+        data.remove(row);
+        fireTableRowsDeleted(row,row);
+    }
 
     /**
      * Change the view of the table to the new message header data set.

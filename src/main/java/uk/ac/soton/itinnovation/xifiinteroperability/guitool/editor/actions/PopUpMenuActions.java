@@ -131,7 +131,7 @@ public final class PopUpMenuActions {
             final String nodeID = ((mxCell) selectionCells[0]).getId();
 
             final ArchitectureNode selNode = (ArchitectureNode) editor.getDataModel().getNode(GUIdentifier.setArchID(nodeID));
-            String urlToCopy = "";
+            String urlToCopy;
             if (selNode.getData().size() > 0) {
                 Object[] urls = selNode.getData().toArray();
                 InterfaceData chosenInterface = (InterfaceData) JOptionPane.showInputDialog( 

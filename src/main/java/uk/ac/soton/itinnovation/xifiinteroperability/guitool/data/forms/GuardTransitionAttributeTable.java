@@ -154,12 +154,12 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
     }
 
     /**
-     * Add a new guard to the table view.
-     * @param newrow The new guard to display.
+     * Remove a guard from the table view.
+     * @param row The guard to remove.
      */
-    public final void removeRowData(final int newrow) {
-        data.remove(newrow);
-        fireTableRowsDeleted(newrow,newrow);
+    public final void removeRowData(final int row) {
+        data.remove(row);
+        fireTableRowsDeleted(row,row);
     }
 
     /**

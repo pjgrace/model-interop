@@ -105,6 +105,7 @@ public class GuardForm extends JPanel {
 
     /**
      * Create a form with the specified labels, tooltips, and sizes.
+     * @param editor a basic graph editor
      */
     public GuardForm(final BasicGraphEditor editor) {
         super(new BorderLayout());

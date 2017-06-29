@@ -30,7 +30,10 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JPopupMenu;
+import javax.swing.table.AbstractTableModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -41,15 +44,17 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
  */
 public class ChangeTable extends JPopupMenu {
 
-    private GuardTransitionAttributeTable delTable;
-    private int row;
-    Guard mirrorNode;
+    private final AbstractTableModel delTable;
+    private final int row;
+    private final AbstractGraphElement mirrorNode;
     /**
      * Create a new pop up menu associated with a text field.
      * @param editor The editor context.
      * @param table to remove the row from.
+     * @param r row where the menu is triggered
+     * @param mirrorNode the AbstractGraphElement to change
      */
-    public ChangeTable(final BasicGraphEditor editor, GuardTransitionAttributeTable table, int r, Guard mirrorNode) {
+    public ChangeTable(final BasicGraphEditor editor, AbstractTableModel table, int r, AbstractGraphElement mirrorNode) {
         super();
         this.delTable = table;
         this.row = r;
@@ -67,10 +72,16 @@ public class ChangeTable extends JPopupMenu {
          */
         @Override
         public final void actionPerformed(final ActionEvent actEvent) {
-            String labelGuard = delTable.getValueAt(row, 0).toString();
-            delTable.removeRowData(row);
-            System.out.println("Label = " + labelGuard);
-            mirrorNode.removeGuard(labelGuard);
+            if (mirrorNode instanceof Guard){
+                String labelGuard = delTable.getValueAt(row, 0).toString();
+                ((GuardTransitionAttributeTable) delTable).removeRowData(row);
+                ((Guard) mirrorNode).removeGuard(labelGuard);
+            }
+            else if (mirrorNode instanceof Message){
+                String labelMessage = delTable.getValueAt(row, 0).toString();
+                ((MessageTableModel) delTable).removeRowData(row);
+                ((Message) mirrorNode).removeHeader(labelMessage);
+            }
         }
     }
 

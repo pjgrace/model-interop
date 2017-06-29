@@ -81,6 +81,7 @@ public class Guard extends AbstractGraphElement {
 
     /**
      * Remove a guard
+     * @param grdlabel the guard to remove
      */
     public final void removeGuard(final String grdlabel) {
         GuardData toRemove = null;
@@ -91,7 +92,7 @@ public class Guard extends AbstractGraphElement {
             }
         }
         if (toRemove != null) {
-            System.out.println("Success = " + data.remove(toRemove));
+            data.remove(toRemove);
         }
     }
 

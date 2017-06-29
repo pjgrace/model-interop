@@ -160,7 +160,24 @@ public class Message extends AbstractGraphElement {
     public final void addHeader(final String name, final String value) {
         this.headers.add(new ConstantData(name, value));
     }
-
+    
+    /**
+     * remove an existing http header from the data message.
+     * @param name the header to remove
+     */
+    public final void removeHeader(final String name){
+        ConstantData toRemove = null;
+        for (ConstantData header: this.headers){
+            if (header.getFieldName().equalsIgnoreCase(name)){
+                toRemove = header;
+                break;
+            }
+        }
+        
+        if (toRemove != null){
+            headers.remove(toRemove);
+        }
+    }
 
     /**
      * Update the target label id of the connection.
