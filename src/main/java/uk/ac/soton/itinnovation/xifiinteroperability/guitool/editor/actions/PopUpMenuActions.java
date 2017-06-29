@@ -35,7 +35,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPopupMenu;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
@@ -131,11 +133,29 @@ public final class PopUpMenuActions {
             final ArchitectureNode selNode = (ArchitectureNode) editor.getDataModel().getNode(GUIdentifier.setArchID(nodeID));
             String urlToCopy = "";
             if (selNode.getData().size() > 0) {
-                urlToCopy = XMLStateMachine.COMPONENT_LABEL + "." + selNode.getLabel() + "." + selNode.getData().get(0).getRestID();
+                Object[] urls = selNode.getData().toArray();
+                InterfaceData chosenInterface = (InterfaceData) JOptionPane.showInputDialog( 
+                        editor,
+                        "Please choose the ID of the rest URL you want to copy",
+                        "Copy URL",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        urls,
+                        selNode.getData().get(0));
+                if (chosenInterface != null){
+                    urlToCopy = XMLStateMachine.COMPONENT_LABEL + "." + selNode.getLabel() + "." + chosenInterface.getRestID();
+                    final StringSelection stringSelection = new StringSelection(urlToCopy);
+                    final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(stringSelection, null);
+                }
             }
-            final StringSelection stringSelection = new StringSelection(urlToCopy);
-            final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(stringSelection, null);
+            else {
+                JOptionPane.showMessageDialog(
+                        editor,
+                        "There are no URLs to copy from this component",
+                        "No URLs",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

@@ -455,8 +455,6 @@ public class FileActions {
 
                 final int rChck = fChoose.showDialog(null,
                                 mxResources.get("openFile"));
-                
-                System.out.println("Check " + Integer.toString(rChck));
 
                 if (rChck == JFileChooser.APPROVE_OPTION) {
                         lastDir = fChoose.getSelectedFile().getParent();

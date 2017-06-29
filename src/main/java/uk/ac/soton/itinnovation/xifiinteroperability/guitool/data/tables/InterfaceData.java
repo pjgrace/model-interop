@@ -92,6 +92,15 @@ public class InterfaceData {
     }
 
     /**
+     * Overriding the toString method
+     * @return the restID of the InterfaceData
+     */
+    @Override
+    public String toString(){
+        return this.restID;
+    }
+    
+    /**
     * Generate the XML content for this data.
     *
     * @return The XML pattern string for this data object.
