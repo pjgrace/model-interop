@@ -119,6 +119,15 @@ public class GraphNodeAttributeTable extends AbstractTableModel {
         data.add(newrow);
         fireTableDataChanged();
     }
+    
+    /**
+     * Remove a full row from the table using the data in the interface data object.
+     * @param row The row of information.
+     */
+    public final void removeRowData(final int row) {
+        data.remove(row);
+        fireTableRowsDeleted(row, row);
+    }
 
     /**
      * Set the table to view the given attributes.

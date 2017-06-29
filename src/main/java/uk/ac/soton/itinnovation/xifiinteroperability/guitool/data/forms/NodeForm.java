@@ -35,6 +35,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.Map;
 import javax.swing.BorderFactory;
@@ -43,10 +45,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
  * Table related to the data attached to graph nodes. Essentially, there
@@ -100,8 +104,9 @@ public class NodeForm extends JPanel {
 
     /**
      * Create a form with the specified labels, tooltips, and sizes.
+     * @param editor
      */
-    public NodeForm() {
+    public NodeForm(BasicGraphEditor editor) {
         /**
          * Create the form properties with a border layout.
          */
@@ -163,6 +168,26 @@ public class NodeForm extends JPanel {
         topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
         final JTable nodeTable = new JTable(nodeView);
+        nodeTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int r = nodeTable.rowAtPoint(e.getPoint());
+                if (r >= 0 && r < nodeTable.getRowCount()) {
+                    nodeTable.setRowSelectionInterval(r, r);
+                } else {
+                    nodeTable.clearSelection();
+                }
+                
+                int rowindex = nodeTable.getSelectedRow();
+                if (rowindex < 0)
+                    return;
+                
+                if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
+                    JPopupMenu popup = new ChangeTable(editor, nodeView, r, mirrorNode);
+                    popup.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
         AttributePanel.setTableConsistentLookAndFeel(nodeTable);
         final JScrollPane nodeScrollPane = JTable.createScrollPaneForTable(nodeTable);
 

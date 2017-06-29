@@ -104,6 +104,24 @@ public class GraphNode extends AbstractGraphElement {
     public final void addConstantData(final String consName, final String consValue) {
         data.add(new ConstantData(consName, consValue));
     }
+    
+    /**
+     * Remove constant data for this node. 
+     * @param consName The constant name
+     */
+    public final void removeConstantData(final String consName) {
+        ConstantData toRemove = null;
+        for (ConstantData constantData: this.data){
+            if (constantData.getFieldName().equalsIgnoreCase(consName)){
+                toRemove = constantData;
+                break;
+            }
+        }
+        
+        if (toRemove != null){
+            data.remove(toRemove);
+        }
+    }
 
     /**
      * Add a new transition when two nodes have been connected in the graph of

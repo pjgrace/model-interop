@@ -300,6 +300,7 @@ public final class EditorActions {
                 graph2.removeCells(selectionCells);
 
                 mxGraphActions.getDeleteAction().actionPerformed(actionEvent);
+                editor.updateTableView(null);
             }
 	}
 

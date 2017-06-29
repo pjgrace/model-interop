@@ -295,7 +295,7 @@ public class FileActions {
                  */
                 editor.getDataModel().clearData();
                 editor.getUndoManager().clear();
-                editor.updateTableView(null, null);
+                editor.updateTableView(null);
 
                 /**
                  * Clear the graph views.
@@ -373,7 +373,7 @@ public class FileActions {
             editor.setModified(false);
             editor.getUndoManager().clear();
             editor.getDataModel().clearData();
-            editor.updateTableView(null, null);
+            editor.updateTableView(null);
         }
 
         /**

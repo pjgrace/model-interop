@@ -357,7 +357,7 @@ public class GraphEditor extends BasicGraphEditor {
                         // Get the user interface ID of the selection
                         final String ident = GUIdentifier.getGUIdentifier(((mxCell) cell).getId(), graphComponent);
 
-                        updateTableView(ident, graphComponent);
+                        updateTableView(ident);
                         AbstractGraphElement grpghM = null;
                         grpghM = getDataModel().getNode(ident);
                         if (grpghM == null) {
@@ -425,10 +425,7 @@ public class GraphEditor extends BasicGraphEditor {
                         
                         // Get the user interface ID of the selection and update the table
                         final String id = GUIdentifier.getGUIdentifier(labelCell.getId(), graphComponent);
-                        updateTableView(id, graphComponent);
-                        
-                        // TODO this method works for behaviour graph only
-                        // dataModel.updateConnectionLabel(originalLabel, newLabel);
+                        updateTableView(id);
                     }
                 }
             }

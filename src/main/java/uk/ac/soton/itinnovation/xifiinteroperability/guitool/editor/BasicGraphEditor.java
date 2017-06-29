@@ -1043,11 +1043,10 @@ public class BasicGraphEditor extends JPanel {
      * updated here.
      *
      * @param uiID The user interface id of the element in the drawn graph
-    *  @param view The view we are updated i.e. which of the 2 graphs
      */
-    public final void updateTableView(final String uiID, final mxGraphComponent view) {
+    public final void updateTableView(final String uiID) {
         /* two null arguments are passed if a new file is opened, this clears the table */
-        if (uiID == null && view == null){
+        if (uiID == null){
             ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), "EmptyPanel");
             return;
         }
@@ -1066,6 +1065,12 @@ public class BasicGraphEditor extends JPanel {
         if (transition != null) {
             switch(transition.getType()) {
                 case "start":
+                    if (ctablePanel.getNodeForm() != null) {
+                        ctablePanel.getNodeForm().clearData();
+                        ctablePanel.getNodeForm().setData((GraphNode) transition);
+                    }
+                    break;
+                case "triggerstart":
                     if (ctablePanel.getNodeForm() != null) {
                         ctablePanel.getNodeForm().clearData();
                         ctablePanel.getNodeForm().setData((GraphNode) transition);
