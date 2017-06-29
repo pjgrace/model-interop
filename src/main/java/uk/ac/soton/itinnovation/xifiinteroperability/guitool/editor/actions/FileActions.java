@@ -357,10 +357,23 @@ public class FileActions {
          * Clear the editor information of data and history.
          */
         protected final void resetEditor() {
-                editor.setModified(false);
-                editor.getUndoManager().clear();
-                editor.getDataModel().clearData();
-                editor.updateTableView(null, null);
+            final mxGraph graph = editor.getBehaviourGraph().getGraph();
+            // Check modified flag and display save dialog
+            editor.getCodePanel().getTestingPanel().clearTestingPanel();
+
+            final mxCell root = new mxCell();
+            root.insert(new mxCell());
+            graph.getModel().setRoot(root);
+
+            final mxGraph agraph = editor.getSystemGraph().getGraph();
+            final mxCell root2 = new mxCell();
+            root2.insert(new mxCell());
+            agraph.getModel().setRoot(root2);
+            
+            editor.setModified(false);
+            editor.getUndoManager().clear();
+            editor.getDataModel().clearData();
+            editor.updateTableView(null, null);
         }
 
         /**
@@ -413,18 +426,6 @@ public class FileActions {
 
             if (!editor.isModified() || JOptionPane.showConfirmDialog(editor,
                     mxResources.get("loseChanges")) == JOptionPane.YES_OPTION) {
-                final mxGraph graph = editor.getBehaviourGraph().getGraph();
-                // Check modified flag and display save dialog
-                editor.getCodePanel().getTestingPanel().clearTestingPanel();
-
-                final mxCell root = new mxCell();
-                root.insert(new mxCell());
-                graph.getModel().setRoot(root);
-
-                final mxGraph agraph = editor.getSystemGraph().getGraph();
-                final mxCell root2 = new mxCell();
-                root2.insert(new mxCell());
-                agraph.getModel().setRoot(root2);
 
                 final String wDir = (lastDir != null) ? lastDir : System
                                 .getProperty("user.dir");
@@ -454,6 +455,8 @@ public class FileActions {
 
                 final int rChck = fChoose.showDialog(null,
                                 mxResources.get("openFile"));
+                
+                System.out.println("Check " + Integer.toString(rChck));
 
                 if (rChck == JFileChooser.APPROVE_OPTION) {
                         lastDir = fChoose.getSelectedFile().getParent();
