@@ -160,7 +160,14 @@ public class InteroperabilityReport {
             output.println("\t" + newval);
         }
     }
-
+    
+    /**
+     * Clear the text trace of the report
+     */
+    public final void clear(){
+        this.textTrace = "";
+    }
+    
     /**
      * Produce a text version of the output report. Typically displayed to
      * a text field or the console.

@@ -32,6 +32,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JToolBar;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExecuteAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.GraphAction;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ReportsAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.NewAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.OpenAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.SaveAction;
@@ -72,7 +73,7 @@ public class EditorToolBar extends JToolBar {
 				"/images/import-icon.png"));
 
                 addSeparator();
-		add(editor.bind("Delete", /*mxGraphActions.getDeleteAction()*/ new EditorActions.Delete(editor),
+		add(editor.bind("Delete", new EditorActions.Delete(editor),
 				"/images/delete.gif"));
 
 		addSeparator();
@@ -101,7 +102,12 @@ public class EditorToolBar extends JToolBar {
 
 		add(editor.bind("Run", new ExecuteAction(),
 				"/images/test.png"));
-
+                
+                
+                addSeparator();
+                
+                add(editor.bind("Reports", new ReportsAction(), 
+                        "/images/outline.gif"));
 	}
 }
 

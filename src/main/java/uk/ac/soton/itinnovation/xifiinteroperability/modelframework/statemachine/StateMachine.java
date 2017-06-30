@@ -184,7 +184,8 @@ public class StateMachine implements EventCapture {
             outputReport.addReport("{\"Begin Testing\":\"Error in test model\"");
             return outputReport;
         }
-
+        
+        outputReport.clear();
         outputReport.println("Test started - run the application");
         outputReport.println("----------------------------------");
         outputReport.println("Starting trace at Node:" + currentState.getLabel());

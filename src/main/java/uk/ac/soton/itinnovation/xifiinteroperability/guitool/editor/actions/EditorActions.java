@@ -131,7 +131,7 @@ public final class EditorActions {
         @Override
         public final void actionPerformed(final ActionEvent actionEvent) {
             final BasicGraphEditor editor = getEditor(actionEvent);
-//            editor.getCodePanel().getTestingPanel().clearTestingPanel();
+            editor.getCodePanel().getTestingPanel().clearTestingPanel();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.REPORTPANEL);
 
@@ -146,6 +146,23 @@ public final class EditorActions {
                         JOptionPane.ERROR_MESSAGE);
             }
 
+        }
+    }
+    
+    /**
+     * Perform the showing last reports action.
+     */
+    public static class ReportsAction extends AbstractAction {
+        /**
+         * The method to switch to a panel with all previous reports.
+         * @param actionEvent The received UI event.
+         */
+        @Override
+        public final void actionPerformed(final ActionEvent actionEvent) {
+            final BasicGraphEditor editor = getEditor(actionEvent);
+            final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
+            cardLayout.show(editor.getMainArea(), MainDisplayPanel.PREVIOUSREPORTS);
+            editor.getCodePanel().getReportsPanel().resetTabbedPane();
         }
     }
 

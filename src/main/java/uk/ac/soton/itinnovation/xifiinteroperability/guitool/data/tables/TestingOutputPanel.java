@@ -67,7 +67,7 @@ public class TestingOutputPanel extends JPanel {
      * The text area where the test reports are displayed.
      */
     private final transient JTextArea consoleOutput;
-
+    
 
     /**
      * Create the console output of test results in a panel that is
@@ -76,12 +76,13 @@ public class TestingOutputPanel extends JPanel {
     public TestingOutputPanel() {
         super(new BorderLayout());
 
-        consoleOutput  = new JTextArea("Report Panel");
+        consoleOutput  = new JTextArea();
         consoleOutput.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
         consoleOutput.setLineWrap(true);
         consoleOutput.setWrapStyleWord(true);
         consoleOutput.setColumns(30);
+        consoleOutput.setEditable(false);
 
         try {
             final TestingOutputStream outputReport = new TestingOutputStream(consoleOutput);
@@ -91,13 +92,13 @@ public class TestingOutputPanel extends JPanel {
             areaScrollPane.setVerticalScrollBarPolicy(
                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             areaScrollPane.setPreferredSize(new Dimension(1000, 1000));
-
+                        
             add(areaScrollPane, BorderLayout.CENTER);
         } catch (Exception ex) {
             ServiceLogger.LOG.error("Unable to create text area output on local device: " + ex.getMessage());
         }
     }
-
+    
     /**
      * Clear all text from the testing panel.
      */

@@ -85,6 +85,7 @@ public class PatternCheckThread extends Thread {
             } else  {
                 arch.executePattern();
                 arch.cleanup();
+                editor.getCodePanel().getReportsPanel().addTabReport(report.outputTrace());
             }
         } catch (InvalidStateMachineException ex) {
              JOptionPane.showMessageDialog(editor,

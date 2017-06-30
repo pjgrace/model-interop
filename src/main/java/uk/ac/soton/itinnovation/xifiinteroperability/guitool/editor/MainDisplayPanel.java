@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.PreviousReportsPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.TestingOutputPanel;
 
@@ -56,6 +57,11 @@ public class MainDisplayPanel {
      * Constant to switch to the testing output card.
      */
     public static final String REPORTPANEL = "exe";
+    
+    /**
+     * Constant to switch to previous reports card
+     */
+    public static final String PREVIOUSREPORTS = "reports";
 
 
     /**
@@ -85,7 +91,20 @@ public class MainDisplayPanel {
     public final TestingOutputPanel getTestingPanel() {
         return exDocument;
     }
-
+    
+    /**
+     * The privious reports panel.
+     */
+    private final transient PreviousReportsPanel reportsDocument;
+    
+    /**
+     * Get the reference to the previous reports panel
+     * @return the old reports panel
+     */
+    public final PreviousReportsPanel getReportsPanel(){
+        return reportsDocument;
+    }
+    
     /**
      * Create a new instance of the main display panel.
      * @param parent The parent panel in the UI.
@@ -97,6 +116,7 @@ public class MainDisplayPanel {
 
             xmlDocument = new XMLSpecificationPanel(dModel);
             exDocument = new TestingOutputPanel();
+            reportsDocument = new PreviousReportsPanel(editor);
 
             final JPanel controls = new JPanel();
             controls.setLayout(new GridLayout(1 , 2));
@@ -126,6 +146,7 @@ public class MainDisplayPanel {
             parent.add(boxSplit, GRAPHPANEL);
             parent.add(xmlDocument, CODEPANEL);
             parent.add(exDocument, REPORTPANEL);
+            parent.add(reportsDocument, PREVIOUSREPORTS);
 
     }
 
