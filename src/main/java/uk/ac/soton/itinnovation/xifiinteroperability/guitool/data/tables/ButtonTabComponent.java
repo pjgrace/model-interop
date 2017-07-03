@@ -105,7 +105,16 @@ public class ButtonTabComponent extends JPanel {
          
         add(label);
         //add more space between the label and the button
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 12));
+        
+        // saveButton
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/save.gif"));
+        Image img = icon.getImage();
+        Image newImg = img.getScaledInstance(14, 14, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(newImg);
+        JButton saveButton = new SaveButton(icon, 18);
+        add(saveButton);
+        
         //tab button
         JButton button = new TabButton();
         add(button);
@@ -267,7 +276,7 @@ public class ButtonTabComponent extends JPanel {
             g2.dispose();
         }
     }
- 
+    
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
         public void mouseEntered(MouseEvent e) {
             Component component = e.getComponent();
@@ -285,4 +294,107 @@ public class ButtonTabComponent extends JPanel {
             }
         }
     };
+    
+    /**
+     * created by Nikolay Stanchev - SaveButton
+     */
+    private class SaveButton extends JButton implements ActionListener {
+        
+        public SaveButton(Icon icon, int size) {
+            super(icon);
+            
+            setPreferredSize(new Dimension(size, size));
+            setToolTipText("save this tab");
+            setUI(new BasicButtonUI());
+            setContentAreaFilled(false);
+            setFocusable(false);
+            setBorder(BorderFactory.createEtchedBorder());
+            setBorderPainted(false);
+            setRolloverEnabled(true);
+            addMouseListener(buttonMouseListener);
+            addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            int i = pane.indexOfTabComponent(ButtonTabComponent.this);
+            
+            String wDir;
+            boolean userChosenFile = false;
+            if (previousReportsPanel.getEditor().getCurrentFile() != null) {
+                wDir = previousReportsPanel.getEditor().getCurrentFile().getParent();
+            } 
+            else {
+                final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files (.txt)", "txt", "text");
+                fChooser.setFileFilter(filter);
+                fChooser.setAcceptAllFileFilterUsed(false);
+                final int check = fChooser.showDialog(previousReportsPanel, "Save test report");
+
+                if (check != JFileChooser.APPROVE_OPTION) {
+                    return;
+                } else {
+                    wDir = fChooser.getSelectedFile().getAbsolutePath();
+                    userChosenFile = true;
+                }
+            }
+
+            if (wDir != null) {
+                java.io.FileWriter fWrite = null;
+                try {
+                    File file;
+                    if (userChosenFile) {
+                        if (wDir.contains(".txt")) {
+                            file = new File(wDir);
+                        } else {
+                            file = new File(wDir + ".txt");
+                        }
+                    } 
+                    else {
+                        String fileName = pane.getTitleAt(i) + ".txt";
+                        fileName = fileName.replaceAll("\\s+", "");
+                        fileName = fileName.replaceFirst(":", "h");
+                        fileName = fileName.replaceFirst(":", "m");
+                        fileName = fileName.replaceFirst("\\.", "s.");
+
+                        file = new File(new File(wDir), fileName);
+                    }
+
+                    if (!file.exists()
+                            || (file.exists() && JOptionPane.showConfirmDialog(previousReportsPanel,
+                            "File " + file.getAbsolutePath() + " will be overwritten. "
+                            + "Are you sure you want to continue?",
+                            "Overriding file", JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION)) {
+
+                        fWrite = new java.io.FileWriter(file.getAbsolutePath());
+                        try {
+                            fWrite.write(previousReportsPanel.getPreviousReports().get(pane.getTitleAt(i)));
+                            JOptionPane.showMessageDialog(previousReportsPanel,
+                                    "Successfully saved report to " + file.getAbsolutePath(), "Report saving",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } finally {
+                            fWrite.close();
+                        }
+                    }
+                } catch (IOException ex) {
+                    ServiceLogger.LOG.error("Error saving file", ex);
+                    JOptionPane.showMessageDialog(previousReportsPanel,
+                            "An error occured while saving your test report. Please try again!",
+                            "Error saving file", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    try {
+                        if (fWrite != null) {
+                            fWrite.close();
+                        }
+                    } catch (IOException ex) {
+                        ServiceLogger.LOG.error("Error saving file", ex);
+                        JOptionPane.showMessageDialog(previousReportsPanel,
+                                "An error occured while saving your test report. Please try again!",
+                                "Error saving file", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        }
+    }
 }
