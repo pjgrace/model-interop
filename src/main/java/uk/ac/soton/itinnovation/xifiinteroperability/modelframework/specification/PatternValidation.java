@@ -43,8 +43,10 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
 
 /**
@@ -68,8 +70,9 @@ public final class PatternValidation {
      * @param xmlcontent The pattern to check.
      * @return True if it is valid, false otherwise.
      * @throws SAXException Where there is an error in the xml content.
+     * @throws InvalidPatternException when there are more than one start nodes in the graph
      */
-    public static boolean validatePattern(final String xmlcontent) throws SAXException {
+    public static boolean validatePattern(final String xmlcontent) throws SAXException, InvalidPatternException {
         return validatePattern(xmlcontent, FileUtils.getURL("Pattern.xsd"));
     }
 
@@ -84,8 +87,9 @@ public final class PatternValidation {
      * is unable to complete the error (i.e. an internal server error).
      *
      * @throws SAXException where there is a mismatch
+     * @throws InvalidPatternException when there are more than one start nodes in the graph
      */
-    public static boolean validatePattern(final String xmlcontent, final URL schemaUrl) throws SAXException {
+    public static boolean validatePattern(final String xmlcontent, final URL schemaUrl) throws SAXException, InvalidPatternException {
         try {
             final InputStream inStream = new ByteArrayInputStream(xmlcontent.getBytes(StandardCharsets.UTF_8));
 
@@ -107,6 +111,20 @@ public final class PatternValidation {
 
             // validate the DOM tree
             validator.validate(new DOMSource(document));
+            
+            NodeList stateTypes = document.getElementsByTagName("type");
+            boolean hasStart = false;
+            for(int i=0; i<stateTypes.getLength(); i++){
+                String type = stateTypes.item(i).getTextContent();
+                if (type.equalsIgnoreCase("start") || type.equalsIgnoreCase("triggerstart")){
+                    if (hasStart){
+                        throw new InvalidPatternException("There are more than one start nodes in the graph.");
+                    }
+                    else {
+                        hasStart = true;
+                    }
+                }
+            }
             return true;
         } catch (ParserConfigurationException ex) {
             ServiceLogger.LOG.error("Unable to parse xml content", ex);

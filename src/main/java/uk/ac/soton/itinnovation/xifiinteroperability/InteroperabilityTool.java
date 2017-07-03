@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import org.apache.log4j.BasicConfigurator;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
 
@@ -93,6 +94,8 @@ public final class InteroperabilityTool {
 
         } catch (IOException ex) {
            ServiceLogger.LOG.error("Unable to execute tool: invalid statemachine input, check " + args[0]);
+        } catch (InvalidPatternException ex){
+            ServiceLogger.LOG.error("There are more than one start nodes in the graph.");
         }
 
     }

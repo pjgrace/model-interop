@@ -34,6 +34,8 @@ import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.view.mxGraph;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -362,8 +364,154 @@ public class GraphGenerator {
             throw new InvalidPatternException("XML description of state is invalid", ex);
         }
     }
+    
+    /**
+     * a method to ensure the uniqueness of all components when importing a graph
+     * @param dom the document of the graph
+     * @throws InvalidPatternException thrown if an id is not unique and the user rejects to change it
+     */
+    private void ensureComponentsUniqueness(final Document dom) throws InvalidPatternException {
+        Set<String> usedIDs = new HashSet<>();
+        Set<String> followingIDs;
+        NodeList nList = dom.getElementsByTagName("component");
+        
+        for (int i = 0; i < nList.getLength(); i++) {
+            followingIDs = new HashSet<>();
+            for(int k=i+1; k<nList.getLength(); k++){
+                followingIDs.add(((Element) nList.item(k)).getElementsByTagName("id").item(0).getTextContent().toLowerCase());
+            }
+            
+            final Element eElement = (Element) nList.item(i);
+            String label = eElement.getElementsByTagName("id").item(0).getTextContent();
+            label = label.replaceAll("\\s+", "_");
+            String title = "Unique component id error : ID '" + label + "'";
+            String originalLabel = label.toLowerCase();
+            if (this.dataModel.getComponentByLabel(label) != null || usedIDs.contains(label.toLowerCase()) || followingIDs.contains(label.toLowerCase())){
+                label = JOptionPane.showInputDialog(UIEditor,
+                        "Component id '" + label + "' is not unique, please choose a diferent id before importing",
+                        title, JOptionPane.ERROR_MESSAGE);
+                if (label != null){
+                    label = label.replaceAll("\\s+", "_");
+                }
+                
+                while (label != null && (this.dataModel.getComponentByLabel(label) != null || usedIDs.contains(label.toLowerCase()) || followingIDs.contains(label.toLowerCase()))) {
+                    label = JOptionPane.showInputDialog(UIEditor,
+                            "The new component id '" + label + "' is also not unique, please choose a diferent id before importing",
+                            title, JOptionPane.ERROR_MESSAGE);
+                    if (label != null) {
+                        label = label.replaceAll("\\s+", "_");
+                    }
+                }
+            }
+            
+            if (label != null) {
+                usedIDs.add(label.toLowerCase());
+                
+                if (!originalLabel.equalsIgnoreCase(label)) {
+                    eElement.getElementsByTagName("id").item(0).setTextContent(label);
+                    
+                    /* going to the url of all states with url element to check if they contain
+                       the original label of the renamed component */
+                    NodeList testStates = dom.getElementsByTagName("state");
+                    for (int j=0; j<testStates.getLength(); j++){
+                        final Element testState = (Element) testStates.item(j);
+                        if (testState.getElementsByTagName("url").getLength() > 0){
+                            Node urlAddress = testState.getElementsByTagName("url").item(0);
+                            String url = urlAddress.getTextContent().toLowerCase();
+                            if (url.contains(originalLabel)){
+                                urlAddress.setTextContent(url.replace(originalLabel, label));
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                throw new InvalidPatternException("Component '" + originalLabel + "' is not unique.");
+            }
+        }
+    }
 
+    /**
+     * a method to ensure the uniqueness of all state labels when importing a graph
+     * @param dom the document of the graph to import
+     * @throws InvalidPatternException thrown when a state's label is not unique but 
+     * the user rejects to change it
+     */
+    private void ensureStatesUniqueness(final Document dom) throws InvalidPatternException {
+        Set<String> usedLabels = new HashSet<>();
+        Set<String> followingLabels;
+        NodeList nList = dom.getElementsByTagName("state");
+        
+        for (int i = 0; i < nList.getLength(); i++) {
+            followingLabels = new HashSet<>();
+            for(int k=i+1; k<nList.getLength(); k++){
+                followingLabels.add(((Element) nList.item(k)).getElementsByTagName("label").item(0).getTextContent().toLowerCase());
+            }
+            
+            final Element eElement = (Element) nList.item(i);
+            
+            String label = eElement.getElementsByTagName("label").item(0).getTextContent();
+            label = label.replaceAll("\\s+", "_");
+            String title = "Unique state label error : Label '" + label + "'";
+            String originalLabel = label.toLowerCase();
+            if (this.dataModel.getNodeByLabel(label) != null || usedLabels.contains(label.toLowerCase()) || followingLabels.contains(label.toLowerCase())){
+                label = JOptionPane.showInputDialog(UIEditor,
+                        "State label '" + label + "' is not unique, please choose a diferent label before importing",
+                        title, JOptionPane.ERROR_MESSAGE);
+                if (label != null){
+                    label = label.replaceAll("\\s+", "_");
+                }
+                
+                while (label != null && (this.dataModel.getNodeByLabel(label) != null || usedLabels.contains(label.toLowerCase()) || followingLabels.contains(label.toLowerCase()))) {
+                    label = JOptionPane.showInputDialog(UIEditor,
+                            "The new state label '" + label + "' is also not unique, please choose a diferent label before importing",
+                            title, JOptionPane.ERROR_MESSAGE);
+                    if (label != null) {
+                        label = label.replaceAll("\\s+", "_");
+                    }
+                }
+            }
+            
+            if (label != null){
+                usedLabels.add(label.toLowerCase());
+                
+                if (!originalLabel.equalsIgnoreCase(label)) {
+                    eElement.getElementsByTagName("label").item(0).setTextContent(label);
 
+                    /* going through all transitions and rename the 'to' tag of those with
+                       the original label of the renamed state */
+                    NodeList transitions = dom.getElementsByTagName("to");
+                    for(int j=0; j<transitions.getLength(); j++){
+                        Node transition = transitions.item(j);
+                        if (transition.getTextContent().equalsIgnoreCase(originalLabel)){
+                            transition.setTextContent(label);
+                        }
+                    }
+                }
+            }
+            else {
+                throw new InvalidPatternException("State '" + originalLabel + "' is not unique.");
+            }
+        }
+    }
+    
+    /**
+     * a method to ensure the uniqueness of a start or triggerstart node
+     * @param dom the document of the graph to import
+     * @throws InvalidPatternException thrown in case of more than one start nodes
+     */
+    private void ensureStartStateUniqueness(Document dom) throws InvalidPatternException {
+        NodeList nList = dom.getElementsByTagName("state");
+        
+        for (int i = 0; i < nList.getLength(); i++) {
+            final Element eElement = (Element) nList.item(i);
+            String type = eElement.getElementsByTagName("type").item(0).getTextContent();
+            if (dataModel.containsStart() && (type.equalsIgnoreCase("triggerstart") || type.equalsIgnoreCase("start"))){
+                throw new InvalidPatternException("There are more than one start nodes in the graph!");
+            }
+        }
+    }
+    
      /**
      * Public method to create a visual graph from the xml specification. There
      * are two graph views displayed in the GUI: 1) the system graph, and 2)
@@ -372,22 +520,25 @@ public class GraphGenerator {
      * @throws InvalidPatternException Invalid pattern input to method.
      */
     public final void importGraph(final Document dom) throws InvalidPatternException {
-        NodeList nList = dom.getElementsByTagName("component");
-        for (int i = 0; i < nList.getLength(); i++) {
-            final Element eElement = (Element) nList.item(i);
-            final String label = eElement.getElementsByTagName("id").item(0).getTextContent();
-            if (this.dataModel.getComponentByLabel(label) != null) {
-                throw new InvalidPatternException("Component id: " + label + " is not unique, rename before importing");
-            }
+        try {
+            ensureComponentsUniqueness(dom);
+            ensureStatesUniqueness(dom);
         }
-        nList = dom.getElementsByTagName("state");
-        for (int i = 0; i < nList.getLength(); i++) {
-            final Element eElement = (Element) nList.item(i);
-            final String label = eElement.getElementsByTagName("label").item(0).getTextContent();
-            if (this.dataModel.getNodeByLabel(label) != null) {
-                throw new InvalidPatternException("State label: " + label + " is not unique, rename before importing");
-            }
+        catch (InvalidPatternException ex){
+            return;
         }
+        
+        try {
+            ensureStartStateUniqueness(dom);
+        }
+        catch (InvalidPatternException ex){
+            JOptionPane.showMessageDialog(UIEditor, 
+                    "Warning! There are more than one start nodes in the graph. "
+                            + "Your pattern will not be verified as correct when testing. "
+                            + "Please ensure you have only one start or triggerstart node when running the test.",
+                    "Duplicate start nodes", JOptionPane.WARNING_MESSAGE);
+        }
+        
         createGraph(dom);
     }
 
