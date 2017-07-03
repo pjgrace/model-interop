@@ -101,17 +101,10 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
  */
 public class GraphEditor extends BasicGraphEditor {
 
-
-
     /**
      * Application name.
      */
-    private static final String APPTITLE = "Interoperability Pattern Editor";
-
-
-
-
-
+    private static final String APPTITLE = "Model-based Interoperability Testing";
 
     /**
      * The Graph editor is made up of two graphical views onto a single
@@ -378,7 +371,7 @@ public class GraphEditor extends BasicGraphEditor {
 
         /* the variable is used as a reference to the JPanel in the listener implementation */
         JPanel panel = this;
-        
+
          /**
          * Listen for a selection event: this can be either a vertex or
          * edge that has been selected.
@@ -394,12 +387,12 @@ public class GraphEditor extends BasicGraphEditor {
                 final AbstractGraphElement node = dataModel.getNode(ident);
                 final String originalLabel = node.getLabel();
                 newLabel = newLabel.replaceAll("\\s+", "_");
-                
+
                 if (node instanceof GraphNode){
                     if (!(newLabel.equalsIgnoreCase(originalLabel)) && dataModel.graphIdentExist(newLabel)){
-                        JOptionPane.showMessageDialog(panel, 
+                        JOptionPane.showMessageDialog(panel,
                                 "Please choose a different label for this state.",
-                                "Renaming error", 
+                                "Renaming error",
                                 JOptionPane.ERROR_MESSAGE);
                         labelCell.setValue(originalLabel);
                     }
@@ -409,20 +402,20 @@ public class GraphEditor extends BasicGraphEditor {
                         dataModel.updateConnectionLabel(originalLabel, newLabel);
                     }
                 }
-                
+
                 else if (node instanceof ArchitectureNode) {
                     if (!(newLabel.equalsIgnoreCase(originalLabel)) && dataModel.archIdentExist(newLabel)){
-                        JOptionPane.showMessageDialog(panel, 
+                        JOptionPane.showMessageDialog(panel,
                                 "Please choose a different label identifier for this component.",
-                                "Renaming error", 
+                                "Renaming error",
                                 JOptionPane.ERROR_MESSAGE);
                         labelCell.setValue(originalLabel);
                     }
                     else {
                         node.setLabel(newLabel);
                         labelCell.setValue(newLabel);
-                        
-                        
+
+
                         // Get the user interface ID of the selection and update the table
                         final String id = GUIdentifier.getGUIdentifier(labelCell.getId(), graphComponent);
                         updateTableView(id);

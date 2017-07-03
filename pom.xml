@@ -97,35 +97,29 @@
       <version>4.5</version>
       <type>jar</type>
     </dependency>
-    
-    <dependency>
-        <groupId>org.java-websocket</groupId>
-        <artifactId>Java-WebSocket</artifactId>
-        <version>1.3.0</version>
-    </dependency> 
-
+   
     <dependency>
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
       <version>1.0</version>
     </dependency>  
     <dependency>
-<groupId>jaxen</groupId>
-<artifactId>jaxen</artifactId>
-<version>1.1.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>icu4j</artifactId>
-          <groupId>com.ibm.icu</groupId>
-        </exclusion>
-      </exclusions>
+        <groupId>jaxen</groupId>
+        <artifactId>jaxen</artifactId>
+        <version>1.1.1</version>
+              <exclusions>
+                <exclusion>
+                  <artifactId>icu4j</artifactId>
+                  <groupId>com.ibm.icu</groupId>
+                </exclusion>
+              </exclusions>
     </dependency>    
 
-<dependency>
-	<groupId>org.json</groupId>
-	<artifactId>json</artifactId>
-	<version>20090211</version>
-</dependency>
+    <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+    </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -152,12 +146,7 @@
         <artifactId>json-schema-validator</artifactId>
         <version>2.2.5</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.2.2</version>
-      <type>jar</type>
-    </dependency>
+
     <dependency>
       <groupId>org.jsslutils</groupId>
       <artifactId>jsslutils</artifactId>
@@ -196,11 +185,6 @@
         <type>jar</type>
     </dependency>
     <dependency>
-        <groupId>org.mapdb</groupId>
-        <artifactId>mapdb</artifactId>
-        <version>0.9.9</version>
-    </dependency>
-    <dependency>
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
         <version>3.1</version>
@@ -211,12 +195,7 @@
       <version>1.1</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-client</artifactId>
-      <version>1.9.1</version>
-      <type>jar</type>
-    </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -228,11 +207,6 @@
       <artifactId>org.restlet.ext.oauth</artifactId>
       <version>2.2-RC2</version>
       <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.prevayler</groupId>
-      <artifactId>prevayler-factory</artifactId>
-      <version>2.6</version>
     </dependency>
     <dependency>
 	<groupId>org.tinyjee.jgraphx</groupId>

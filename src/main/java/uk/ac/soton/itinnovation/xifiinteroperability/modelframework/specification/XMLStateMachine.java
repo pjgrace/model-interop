@@ -260,7 +260,6 @@ public final class XMLStateMachine {
                             guardValue, archDesc));
                 }
                 else if (eltIndex.getName().equalsIgnoreCase("counter")) {
-                    System.out.println("This is a counter");
                     arrayOfGuards.add(new Guard(
                         eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
                         String.class,
