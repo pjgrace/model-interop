@@ -432,6 +432,7 @@ public class DataModel {
        this.archElements.clear();
        this.connectionIndex.clear();
        this.graphElements.clear();
+       this.hasStart = false;
    }
 
 }

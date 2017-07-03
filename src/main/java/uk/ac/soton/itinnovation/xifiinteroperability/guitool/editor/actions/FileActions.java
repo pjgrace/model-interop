@@ -117,6 +117,8 @@ public class FileActions {
         /**
          * Create a new concrete action for saving files.
          * @param edtr The editor context information.
+         * @param saveAsClicked a boolean to show if Save As button was clicked
+         * or just the Save button
          */
         public SaveAction(final BasicGraphEditor edtr, boolean saveAsClicked) {
             super();
@@ -325,6 +327,10 @@ public class FileActions {
                  * Clear the testing page.
                  */
                 editor.getCodePanel().getTestingPanel().clearTestingPanel();
+                /**
+                 * Clear the previous reports panel
+                 */
+                editor.getCodePanel().getReportsPanel().clearTabbedPane();
             }
         }
     }
@@ -374,6 +380,7 @@ public class FileActions {
             editor.getUndoManager().clear();
             editor.getDataModel().clearData();
             editor.updateTableView(null);
+            editor.getCodePanel().getReportsPanel().clearTabbedPane();
         }
 
         /**

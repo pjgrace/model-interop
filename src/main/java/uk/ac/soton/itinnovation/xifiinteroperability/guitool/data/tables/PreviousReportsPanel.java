@@ -160,4 +160,13 @@ public class PreviousReportsPanel extends JPanel {
         }
         title.setText(titleLabel);
     }
+    
+    /**
+     * clear the tabbed pane
+     */
+    public final void clearTabbedPane(){
+        previousReports.clear();
+        tabbedPane.removeAll();
+        setPanelTitle();
+    }
 }

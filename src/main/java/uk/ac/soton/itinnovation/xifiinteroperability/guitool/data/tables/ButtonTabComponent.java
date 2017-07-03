@@ -63,6 +63,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
  
 /**
@@ -144,27 +145,47 @@ public class ButtonTabComponent extends JPanel {
                         JOptionPane.PLAIN_MESSAGE);
                 if (reply == JOptionPane.YES_OPTION) {
                     String wDir;
+                    boolean userChosenFile = false;
                     if (previousReportsPanel.getEditor().getCurrentFile() != null){
                         wDir = previousReportsPanel.getEditor().getCurrentFile().getParent();
                     }
                     else {
-                        wDir = System.getProperty("user.dir");
-                    }
-                    
-                    if (wDir == null){
-                        // TODO allow user to choose location - JFileChooser
+                        final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+                        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files (.txt)", "txt", "text");
+                        fChooser.setFileFilter(filter);
+                        fChooser.setAcceptAllFileFilterUsed(false);
+                        final int check = fChooser.showDialog(previousReportsPanel, "Save test report");
+                        
+                        if (check != JFileChooser.APPROVE_OPTION) {
+                            return;
+                        }
+                        else {
+                            wDir = fChooser.getSelectedFile().getAbsolutePath();
+                            userChosenFile = true;
+                        }
                     }
                     
                     if (wDir != null){
                         java.io.FileWriter fWrite = null;
                         try {
-                            String fileName = pane.getTitleAt(i) + ".txt";
-                            fileName = fileName.replaceAll("\\s+", "");
-                            fileName = fileName.replaceFirst(":", "h");
-                            fileName = fileName.replaceFirst(":", "m");
-                            fileName = fileName.replaceFirst("\\.", "s.");
-                            
-                            File file = new File(new File(wDir), fileName);
+                            File file;
+                            if (userChosenFile){
+                                if (wDir.contains(".txt")){
+                                    file = new File(wDir);
+                                }
+                                else {
+                                    file = new File(wDir + ".txt");
+                                }
+                            }
+                            else {
+                                String fileName = pane.getTitleAt(i) + ".txt";
+                                fileName = fileName.replaceAll("\\s+", "");
+                                fileName = fileName.replaceFirst(":", "h");
+                                fileName = fileName.replaceFirst(":", "m");
+                                fileName = fileName.replaceFirst("\\.", "s.");
+
+                                file = new File(new File(wDir), fileName);
+                            }
                             
                             if (!file.exists() || 
                                     (file.exists() && JOptionPane.showConfirmDialog(previousReportsPanel,
@@ -193,7 +214,10 @@ public class ButtonTabComponent extends JPanel {
                         } 
                         catch (IOException ex) {
                             ServiceLogger.LOG.error("Error saving file", ex);
-                        } 
+                            JOptionPane.showMessageDialog(previousReportsPanel,
+                                    "An error occured while saving your test report. Please try again!",
+                                    "Error saving file", JOptionPane.ERROR_MESSAGE);
+                        }
                         finally {
                             try {
                                 if (fWrite != null) {
@@ -202,6 +226,9 @@ public class ButtonTabComponent extends JPanel {
                             } 
                             catch (IOException ex) {
                                 ServiceLogger.LOG.error("Error saving file", ex);
+                                JOptionPane.showMessageDialog(previousReportsPanel,
+                                    "An error occured while saving your test report. Please try again!",
+                                    "Error saving file", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     }                                        
