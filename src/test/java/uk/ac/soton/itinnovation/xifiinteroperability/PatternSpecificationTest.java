@@ -35,8 +35,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -82,7 +80,7 @@ public class PatternSpecificationTest {
     @Test
     public final void testValidApplicationPattern() {
         try {
-            final String pattern = readFile("examples/PublishSubscribe.xml", Charset.defaultCharset());
+            final String pattern = readFile("examples/Loop.xml", Charset.defaultCharset());
 
             final boolean valid = PatternValidation.validatePattern(pattern, schemaUrl);
 
@@ -102,7 +100,7 @@ public class PatternSpecificationTest {
     @Test
     public final void testValidAPIPattern() {
         try {
-            final String pattern = readFile("examples/ContextBrokerGE.xml", Charset.defaultCharset());
+            final String pattern = readFile("examples/Loop.xml", Charset.defaultCharset());
 
             final boolean valid = PatternValidation.validatePattern(pattern, schemaUrl);
 

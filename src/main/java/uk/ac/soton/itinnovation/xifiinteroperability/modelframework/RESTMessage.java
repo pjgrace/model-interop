@@ -331,10 +331,10 @@ public class RESTMessage {
                     } else if (this.dataBody.getType().equalsIgnoreCase(OTHER_LABEL)) {
                         String applicationType = null;
                         for (Parameter param : headers) {
-                            if (param.getName().equalsIgnoreCase("Content-type")) {
+                            if (param.getName().equalsIgnoreCase("http.Content-type")) {
                                 applicationType = param.getValue();
                             }
-                            if (param.getName().equalsIgnoreCase("Accept")) {
+                            if (param.getName().equalsIgnoreCase("http.Accept")) {
                                 String mType = param.getValue();
                                 mediaType = MediaType.valueOf(mType);
                             }
