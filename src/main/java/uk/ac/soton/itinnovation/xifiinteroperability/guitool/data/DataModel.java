@@ -210,10 +210,10 @@ public class DataModel {
    public final void addNode(final String ident, final String label, final String type) {
        switch(type) {
            case XMLStateMachine.INTERFACE_LABEL:
-               this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type));
+               this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type, ident));
                break;
            case CLIENT:
-                this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type));
+                this.archElements.add(new ArchitectureNode(GUIdentifier.setArchID(ident), label, type, ident));
                 break;
            case START_LABEL:
                this.hasStart = true;
