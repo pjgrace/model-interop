@@ -27,6 +27,8 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,6 +46,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -144,7 +147,20 @@ public class ComponentForm extends JPanel {
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-              mirrorNode.setData(ident.getText(), address.getText());
+                
+                if (mirrorNode.getLabel().equalsIgnoreCase(ident.getText()) || !editor.getDataModel().archIdentExist(ident.getText())){
+                    mxGraphModel model = (mxGraphModel) editor.getSystemGraph().getGraph().getModel();
+                    mxCell cellChanged = (mxCell) model.getCell(mirrorNode.getNodeLabelID());
+                    cellChanged.setValue(ident.getText());
+                    editor.getSystemGraph().refresh();
+                    mirrorNode.setData(ident.getText(), address.getText());
+                }
+                else {
+                    JOptionPane.showMessageDialog(editor, 
+                            "Component id '" + ident.getText() + "' is already used. Please choose another label."
+                            , "Renaming error", JOptionPane.ERROR_MESSAGE);
+                    ident.setText(mirrorNode.getLabel());
+                }
             }
           });
 

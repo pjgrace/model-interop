@@ -55,6 +55,19 @@ public class ArchitectureNode extends AbstractGraphElement {
     }
 
     /**
+     * The id of the graph label of this component node
+     */
+    private transient final String nodeLabelID;
+    
+    /**
+     * Getter for the id of the node graph label 
+     * @return the nodeLabelID of the node
+     */
+    public final String getNodeLabelID(){
+        return nodeLabelID;
+    }
+    
+    /**
      * The list of data parameters attached to the node. These are the
      * descriptive params adding additional information e.g. urls, ...
      */
@@ -73,10 +86,12 @@ public class ArchitectureNode extends AbstractGraphElement {
      * @param idnty The label identifying the system node.
      * @param label The component label identifier, same as the GUI label for the component
      * @param type The type of node, client or interface.
+     * @param nodeLabelID id of the node graph label 
      */
-    public ArchitectureNode(final String idnty, final String label, final String type) {
+    public ArchitectureNode(final String idnty, final String label, final String type, final String nodeLabelID) {
         super(idnty, label, type);
         this.address = "null";
+        this.nodeLabelID = nodeLabelID;
     }
 
     /**
