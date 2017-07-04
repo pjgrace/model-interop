@@ -30,6 +30,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 import javax.swing.JOptionPane;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidStateMachineException;
 
 /**
@@ -90,6 +91,11 @@ public class PatternCheckThread extends Thread {
         } catch (InvalidStateMachineException ex) {
              JOptionPane.showMessageDialog(editor,
                                 "Pattern is not valid: " + ex.getMessage(),
+                                "Pattern verification",
+                                JOptionPane.ERROR_MESSAGE);
+        } catch (InvalidPatternException ex) {
+            JOptionPane.showMessageDialog(editor,
+                                "Pattern is not valid: There are more than one start or triggerstart nodes in the graph",
                                 "Pattern verification",
                                 JOptionPane.ERROR_MESSAGE);
         }

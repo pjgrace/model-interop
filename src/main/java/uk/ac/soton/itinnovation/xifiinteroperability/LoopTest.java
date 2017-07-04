@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
 
@@ -72,6 +73,9 @@ public class LoopTest {
                  stateMachine = new Architecture(sMachine, null);
             } catch (InvalidStateMachineException e) {
                 System.err.println("Invalid input. File does not contain a valid pattern:" + e.getMessage());
+                System.exit(-1);
+            } catch (InvalidPatternException ex){
+                System.err.println("There are more than 2 start nodes in the xml graph.");
                 System.exit(-1);
             }
 

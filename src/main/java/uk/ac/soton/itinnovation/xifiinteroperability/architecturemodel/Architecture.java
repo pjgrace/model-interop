@@ -52,6 +52,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidRESTMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
 
 /**
@@ -103,9 +104,10 @@ public class Architecture {
      * @param xml The architecture specification (pattern).
      * @param report The report to output tests to.
      * @throws InvalidStateMachineException when the XML is invalid
+     * @throws InvalidPatternException when there are more than one start nodes in the graph
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Architecture(final String xml, final InteroperabilityReport report) throws InvalidStateMachineException {
+    public Architecture(final String xml, final InteroperabilityReport report) throws InvalidStateMachineException, InvalidPatternException {
         try {
             if (report == null) {
                 this.behaviourSequence = new StateMachine();
@@ -119,10 +121,15 @@ public class Architecture {
                 ServiceLogger.LOG.error("Pattern Schema not loaded");
                 throw new InvalidStateMachineException("Could not load pattern.xsd");
             }
-
-            if (!PatternValidation.validatePattern(xml, schemaUrl)) {
-                ServiceLogger.LOG.error("Not a valid pattern description");
-                throw new InvalidStateMachineException("The XML description of pattern is not valid");
+            try {
+                if (!PatternValidation.validatePattern(xml, schemaUrl)) {
+                    ServiceLogger.LOG.error("Not a valid pattern description");
+                    throw new InvalidStateMachineException("The XML description of pattern is not valid");
+                }
+            }
+            catch (InvalidPatternException ex){
+                cleanup();
+                throw new InvalidPatternException("Error in the Pattern xml" + ex.getMessage(), ex);
             }
 
             // Read the pattern from the xml string input parameter
@@ -155,7 +162,7 @@ public class Architecture {
         } catch (InvalidArchitectureException ex) {
             cleanup();
             throw new InvalidStateMachineException("Invalid architecture specification " + ex.getMessage(), ex);
-        }
+        } 
     }
 
 

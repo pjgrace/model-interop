@@ -35,9 +35,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.PatternValidation;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
 
@@ -88,6 +91,8 @@ public class PatternSpecificationTest {
             ServiceLogger.LOG.error("Unit test failed - coundn't read pattern");
         } catch (SAXException ex) {
             ServiceLogger.LOG.error("Invalid Pattern specification");
+        } catch (InvalidPatternException ex) {
+            ServiceLogger.LOG.error("There are more than one start nodes in the graph.");
         }
      }
 
@@ -106,6 +111,8 @@ public class PatternSpecificationTest {
             ServiceLogger.LOG.error("Unit test failed - coundn't read pattern");
         } catch (SAXException ex) {
             ServiceLogger.LOG.error("Invalid Pattern specification");
+        } catch (InvalidPatternException ex) {
+            ServiceLogger.LOG.error("There are more than one start nodes in the graph.");
         }
     }
 

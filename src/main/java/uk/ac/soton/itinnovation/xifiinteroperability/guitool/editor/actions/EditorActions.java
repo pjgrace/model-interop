@@ -44,6 +44,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPopupM
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.MainDisplayPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.PatternCheckThread;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.PatternValidation;
 
 /**
@@ -190,9 +191,16 @@ public final class EditorActions {
                         VER_DIALOGUE,
                         JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (SAXException ex) {
+            } 
+            catch (SAXException ex) {
                 JOptionPane.showMessageDialog(editor,
                         "Pattern is not valid: " + ex.getMessage(),
+                        VER_DIALOGUE,
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            catch (InvalidPatternException ex){
+                JOptionPane.showMessageDialog(editor,
+                        "Pattern is not valid: There are more than one start or triggerstart nodes in your pattern.",
                         VER_DIALOGUE,
                         JOptionPane.ERROR_MESSAGE);
             }

@@ -499,7 +499,7 @@ public class FileActions {
         private transient BasicGraphEditor editor;
 
         /**
-         * Create a new open action.
+         * Create a new import action.
          * @param edtr The UI context of this operation.
          */
         public ImportAction(final BasicGraphEditor edtr) {

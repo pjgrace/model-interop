@@ -29,9 +29,12 @@ package uk.ac.soton.itinnovation.xifiinteroperability.tracetools;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.log4j.BasicConfigurator;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.TraceGenerator;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidStateMachineException;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
@@ -86,7 +89,9 @@ public final class TraceExecuteTool {
 
         } catch (IOException ex) {
            ServiceLogger.LOG.error("Unable to execute tool: invalid statemachine input, check " + args[0]);
-        }
+        } catch (InvalidPatternException ex) {
+            ServiceLogger.LOG.error("Unable to execute tool: invalid statemachine input, check " + args[0]);
+        } 
 
     }
 
