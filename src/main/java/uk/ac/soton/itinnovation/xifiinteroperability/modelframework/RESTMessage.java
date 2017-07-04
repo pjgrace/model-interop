@@ -359,7 +359,7 @@ public class RESTMessage {
                 ServiceLogger.LOG.error("Error constructing HTTP message", excep);
             }
             Response response = clientRes.getResponse();
-             return fromResponse(response, mediaType);
+            return fromResponse(response, mediaType);
         } catch (InvalidRESTMessage ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
         } catch (MalformedURLException ex) {
@@ -392,6 +392,13 @@ public class RESTMessage {
 
             // Build the headers from the HTTP headers
             final Series<Header> headers = (Series<Header>) response.getAttributes().get("org.restlet.http.headers");
+
+            /**
+             * Complete failure case - the request has not got a response
+             */
+            if(headers == null)
+                return rResp;
+
             for (Header h : headers) {
                 rResp.addParameter(new Parameter(RESTEvent.HTTP_CONFIG_HEAD + h.getName().toLowerCase(), h.getValue()));
             }
