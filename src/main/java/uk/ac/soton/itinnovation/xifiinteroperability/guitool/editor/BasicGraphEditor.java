@@ -387,6 +387,8 @@ public class BasicGraphEditor extends JPanel {
         // Stores a reference to the graph and creates the command history
         graphComponent = behaveGraph;
         arcGraphComponent = systemGraph;
+        graphComponent.getGraph().getSelectionModel().setSingleSelection(true);
+        arcGraphComponent.getGraph().getSelectionModel().setSingleSelection(true);
 
         final mxGraph graph = graphComponent.getGraph();
         final mxGraph sysGraph = arcGraphComponent.getGraph();
