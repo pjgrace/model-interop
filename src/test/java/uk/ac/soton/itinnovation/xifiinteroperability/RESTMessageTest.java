@@ -28,8 +28,6 @@
 package uk.ac.soton.itinnovation.xifiinteroperability;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import junit.framework.Assert;
 import org.junit.Test;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
@@ -69,7 +67,7 @@ public class RESTMessageTest {
     public final void testMessageStructure() {
         try {
 
-            final URL urlFull = new URL(TESTURL);
+            final String urlFull = TESTURL;
 
             RESTMessage msg = new RESTMessage(TESTURL, "/", RESTMessage.GET_LABEL, null, null, null, null);
             Assert.assertEquals(RESTMessage.GET_LABEL, msg.getMethod());
@@ -84,12 +82,8 @@ public class RESTMessageTest {
             msg = new RESTMessage(TESTURL, "/", RESTMessage.DELETE_LABEL, null, null, null, null);
             Assert.assertEquals(RESTMessage.DELETE_LABEL, msg.getMethod());
 
-            new RESTMessage("badurl:wewe.ww", "/", RESTMessage.GET_LABEL, null, null, null, null);
-            Assert.fail("Invalid URL - should have failed");
         } catch (InvalidRESTMessage ex) {
              ServiceLogger.LOG.info("Code correctly captures BadURL exception " + ex);
-        } catch (MalformedURLException ex) {
-            ServiceLogger.LOG.error("Check the url field -- " + ex.getLocalizedMessage());
         }
     }
 

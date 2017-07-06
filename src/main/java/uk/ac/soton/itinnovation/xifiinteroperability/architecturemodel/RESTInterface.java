@@ -75,13 +75,13 @@ public class RESTInterface {
         - The url to use the interface
         - The port to access the interface.
      */
-    private final transient URL url;
+    private final transient String url;
 
     /**
      * Access the URL field value of this object.
      * @return The URL field in full form.
      */
-    public final URL getURL() {
+    public final String getURL() {
         return url;
     }
 
@@ -159,20 +159,20 @@ public class RESTInterface {
     public RESTInterface(final Element eltIntIndex, final EventCapture capture)
             throws InvalidInterfaceException {
         try {
-            String urlString = eltIntIndex.getChildText(URLXMLTAG);
-            if(urlString.startsWith("coap")) {
-                urlString = urlString.replaceFirst("coap", "http");
+            url = eltIntIndex.getChildText(URLXMLTAG);
+            String changedURL = null;
+            if(url.startsWith("coap")) {
+                changedURL = url.replaceFirst("coap", "http");
             }
-            url = new URL(urlString);
+            URL urlInFormat = new URL(changedURL);
             this.interfaceID = eltIntIndex.getChildText(INTERFACEIDXMLTAG);
             this.protocol = eltIntIndex.getChildText(PROTOCOLXMLTAG);
 
-            this.port = SystemProperties.getAvailablePort(url.getPort());
+            this.port = SystemProperties.getAvailablePort(urlInFormat.getPort());
 
             this.pushEvents = capture;
 
-            addProxy(this.protocol);
-
+            addProxy(urlInFormat);
 
         } catch (MalformedURLException ex) {
 
@@ -189,20 +189,20 @@ public class RESTInterface {
      * https).
      * @throws InvalidWrapperException Error building the proxy.
      */
-    private void addProxy(String protocol) throws InvalidWrapperException {
+    private void addProxy(URL urlIn) throws InvalidWrapperException {
         try {
             switch (this.protocol) {
                 case "coap":
 
-                    String newUrl = "coap://" + url.getHost() + ":" + port;
-                    ForwardingResource coap2coap = new ProxyCoapClientResource(url.getPath(), newUrl);
+                    String newUrl = "coap://" + urlIn.getHost() + ":" + port;
+                    ForwardingResource coap2coap = new ProxyCoapClientResource(urlIn.getPath(), newUrl);
 
                     // Create CoAP Server on PORT with proxy resources form CoAP to CoAP and HTTP
                     coapProxy = new CoapServer(port);
                     coapProxy.add(coap2coap);
                     coapProxy.start();
                     break;
-                default: interfaceRedirect = new Proxy(url, org.restlet.data.Protocol.HTTP,
+                default: interfaceRedirect = new Proxy(urlIn, org.restlet.data.Protocol.HTTP,
                     port, pushEvents);
                     interfaceRedirect.startup();
             }

@@ -40,7 +40,7 @@ import java.util.List;
  * @author pjg
  */
 public class ArchitectureNode extends AbstractGraphElement {
-    
+
     /**
      * The address of the interface or client - typically the IP address in string.
      */
@@ -58,15 +58,15 @@ public class ArchitectureNode extends AbstractGraphElement {
      * The id of the graph label of this component node
      */
     private transient final String nodeLabelID;
-    
+
     /**
-     * Getter for the id of the node graph label 
+     * Getter for the id of the node graph label
      * @return the nodeLabelID of the node
      */
     public final String getNodeLabelID(){
         return nodeLabelID;
     }
-    
+
     /**
      * The list of data parameters attached to the node. These are the
      * descriptive params adding additional information e.g. urls, ...
@@ -86,7 +86,7 @@ public class ArchitectureNode extends AbstractGraphElement {
      * @param idnty The label identifying the system node.
      * @param label The component label identifier, same as the GUI label for the component
      * @param type The type of node, client or interface.
-     * @param nodeLabelID id of the node graph label 
+     * @param nodeLabelID id of the node graph label
      */
     public ArchitectureNode(final String idnty, final String label, final String type, final String nodeLabelID) {
         super(idnty, label, type);
@@ -98,11 +98,12 @@ public class ArchitectureNode extends AbstractGraphElement {
      * Add new input data about a REST Interface.
      * @param idnty The data identifier of the interface e.g. "itf1"
      * @param url The fully qualified REST url as a string.
+     * @param protocol The different protocol type
      */
-    public final void addInterfaceData(final String idnty, final String url) {
-        data.add(new InterfaceData(idnty, url));
+    public final void addInterfaceData(final String idnty, final String url, final String protocol) {
+        data.add(new InterfaceData(idnty, url, protocol));
     }
-    
+
     public final void removeInterfaceData(final String restID){
         InterfaceData toRemove = null;
         for(InterfaceData interfaceData: this.data){
@@ -111,12 +112,12 @@ public class ArchitectureNode extends AbstractGraphElement {
                 break;
             }
         }
-        
+
         if (toRemove != null){
             data.remove(toRemove);
         }
     }
-    
+
     /**
      * Change the data information about the ID and the address.
      * @param idnty The ID of the interface or client
@@ -146,6 +147,7 @@ public class ArchitectureNode extends AbstractGraphElement {
             strBuilder.append("\n\t\t\t\t<interface>");
             strBuilder.append("\n\t\t\t\t\t<id>").append(dfield.getRestID()).append("</id>");
             strBuilder.append("\n\t\t\t\t\t<url>").append(dfield.getRestURL()).append("</url>");
+            strBuilder.append("\n\t\t\t\t\t<protocol>").append(dfield.getProtocol()).append("</protocol>");
             strBuilder.append("\n\t\t\t\t</interface>");
         }
 

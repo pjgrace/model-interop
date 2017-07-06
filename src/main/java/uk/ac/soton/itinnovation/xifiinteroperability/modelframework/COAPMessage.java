@@ -27,8 +27,6 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.modelframework;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import org.eclipse.californium.core.CoapClient;
@@ -75,13 +73,13 @@ public class COAPMessage extends ProtocolMessage{
     /**
      * The REST URL to send the request to.
      */
-    private transient URL url;
+    private transient String url;
 
     /**
      * Getter for the full URL.
      * @return the url as a java url object.
      */
-    public final URL getURL() {
+    public final String getURL() {
         return url;
     }
 
@@ -95,11 +93,6 @@ public class COAPMessage extends ProtocolMessage{
      */
     private transient Parameter[] headers;
 
-
-    /**
-     * RESTLET constant used to set application headers.
-     */
-    private static final String HEADERS_KEY = "org.restlet.http.headers";
 
     /**
      * The state machine context of this message.
@@ -146,18 +139,10 @@ public class COAPMessage extends ProtocolMessage{
             }
         }
 
-        try {
-            /**
-             * URL must be a full and valid URL [RESTLET uses strings so we must
-             * convert to string later.
-             */
-            if (urlstr.startsWith("component")) {
-                this.url = new URL(XMLStateMachine.getURLEntryFromXML(urlstr, this.stateMachine));
-            } else {
-                this.url = new URL(urlstr);
-            }
-        } catch (MalformedURLException ex) {
-            throw new InvalidRESTMessage("URL: " + urlstr + " is invalid", ex);
+        if (urlstr.startsWith("component")) {
+            this.url = XMLStateMachine.getURLEntryFromXML(urlstr, this.stateMachine);
+        } else {
+            this.url = urlstr;
         }
         if (pathstr != null) {
             this.path = pathstr;
@@ -215,14 +200,14 @@ public class COAPMessage extends ProtocolMessage{
     public final COAPEvent invokeMessage() throws UnexpectedEventException {
         try {
             String rPath = parseData(this.path);
-            this.url = new URL(url.toExternalForm() + rPath);
+            this.url = url + rPath;
 
             /**
              * Create the COAP client
              */
-            CoapClient client = new CoapClient(this.url.toExternalForm());
+            CoapClient client = new CoapClient(this.url);
             Request request = null;
-            switch (method) {
+            switch (method.toUpperCase()) {
                 case "GET": request = new Request(Code.GET);
                             break;
                 case "POST": request = new Request(Code.POST);
@@ -288,8 +273,6 @@ public class COAPMessage extends ProtocolMessage{
             return fromResponse(response);
         } catch (InvalidRESTMessage ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
-        } catch (MalformedURLException ex) {
-            throw new UnexpectedEventException(ex.getMessage(), ex);
         } catch (InvalidPatternReferenceException ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
         }
@@ -312,7 +295,9 @@ public class COAPMessage extends ProtocolMessage{
         */
 
         rResp.addParameter(new Parameter(COAPEvent.COAP_FROM, response.advanced().getSource().getHostAddress()));
-        rResp.addParameter(new Parameter(COAPEvent.COAP_TO, response.advanced().getDestination().getHostAddress()));
+        if(response.advanced().getDestination() != null) {
+            rResp.addParameter(new Parameter(COAPEvent.COAP_TO, response.advanced().getDestination().getHostAddress()));
+        }
         rResp.addParameter(new Parameter(COAPEvent.COAP_CODE, Integer.toString(response.getCode().value)));
 
         String responseText = response.getResponseText();

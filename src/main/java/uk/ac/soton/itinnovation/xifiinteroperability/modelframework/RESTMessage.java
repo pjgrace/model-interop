@@ -28,8 +28,6 @@
 package uk.ac.soton.itinnovation.xifiinteroperability.modelframework;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentMap;
 import org.restlet.Client;
@@ -106,14 +104,14 @@ public class RESTMessage extends ProtocolMessage{
     /**
      * The REST URL to send the request to.
      */
-    private transient URL url;
+    private transient String url;
 
     /**
      * Getter for the full URL.
      * @return the url as a java url object.
      */
     @Override
-    public URL getURL() {
+    public String getURL() {
         return url;
     }
 
@@ -177,18 +175,10 @@ public class RESTMessage extends ProtocolMessage{
             }
         }
 
-        try {
-            /**
-             * URL must be a full and valid URL [RESTLET uses strings so we must
-             * convert to string later.
-             */
-            if (urlstr.startsWith("component")) {
-                this.url = new URL(XMLStateMachine.getURLEntryFromXML(urlstr, this.stateMachine));
-            } else {
-                this.url = new URL(urlstr);
-            }
-        } catch (MalformedURLException ex) {
-            throw new InvalidRESTMessage("URL: " + urlstr + " is invalid", ex);
+        if (urlstr.startsWith("component")) {
+            this.url = XMLStateMachine.getURLEntryFromXML(urlstr, this.stateMachine);
+        } else {
+            this.url = urlstr;
         }
         if (pathstr != null) {
             this.path = pathstr;
@@ -245,8 +235,8 @@ public class RESTMessage extends ProtocolMessage{
             Client client = new Client(new Context(), Protocol.HTTPS);
             client.getContext().getParameters().add("useForwardedForHeader","false");
 
-            this.url = new URL(url.toExternalForm() + rPath);
-            final ClientResource clientRes =   new ClientResource(url.toExternalForm());
+            this.url = url + rPath;
+            final ClientResource clientRes =   new ClientResource(url);
             clientRes.setNext(client);
             if (headers != null) {
                 for (Parameter param : headers) {
@@ -306,8 +296,6 @@ public class RESTMessage extends ProtocolMessage{
             Response response = clientRes.getResponse();
             return fromResponse(response, mediaType);
         } catch (InvalidRESTMessage ex) {
-            throw new UnexpectedEventException(ex.getMessage(), ex);
-        } catch (MalformedURLException ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
         } catch (InvalidPatternReferenceException ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);

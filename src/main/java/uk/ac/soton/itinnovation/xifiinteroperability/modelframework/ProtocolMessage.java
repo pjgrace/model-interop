@@ -28,7 +28,6 @@
 package uk.ac.soton.itinnovation.xifiinteroperability.modelframework;
 
 import java.io.Serializable;
-import java.net.URL;
 
 /**
  * The RESTMessage object is a test event. It stores the content for a test
@@ -121,13 +120,13 @@ public abstract class ProtocolMessage implements Serializable {
     /**
      * The REST URL to send the request to.
      */
-    private transient URL url;
+    private transient String url;
 
     /**
      * Getter for the full URL.
      * @return the url as a java url object.
      */
-    public URL getURL() {
+    public String getURL() {
         return url;
     }
 

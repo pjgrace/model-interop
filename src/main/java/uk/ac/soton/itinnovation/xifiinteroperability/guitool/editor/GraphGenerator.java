@@ -271,7 +271,8 @@ public class GraphGenerator {
                 for(int i=0; i<interfacesData.getLength(); i++){
                     final Element interfa = (Element) interfacesData.item(i);
                     gNode.addInterfaceData(interfa.getElementsByTagName("id").item(0).getTextContent(),
-                            interfa.getElementsByTagName("url").item(0).getTextContent());
+                            interfa.getElementsByTagName("url").item(0).getTextContent(),
+                            interfa.getElementsByTagName("protocol").item(0).getTextContent());
                 }
                 this.currentHorizontal += 100;
             }
@@ -364,7 +365,7 @@ public class GraphGenerator {
             throw new InvalidPatternException("XML description of state is invalid", ex);
         }
     }
-    
+
     /**
      * a method to ensure the uniqueness of all components when importing a graph
      * @param dom the document of the graph
@@ -374,13 +375,13 @@ public class GraphGenerator {
         Set<String> usedIDs = new HashSet<>();
         Set<String> followingIDs;
         NodeList nList = dom.getElementsByTagName("component");
-        
+
         for (int i = 0; i < nList.getLength(); i++) {
             followingIDs = new HashSet<>();
             for(int k=i+1; k<nList.getLength(); k++){
                 followingIDs.add(((Element) nList.item(k)).getElementsByTagName("id").item(0).getTextContent().toLowerCase());
             }
-            
+
             final Element eElement = (Element) nList.item(i);
             String label = eElement.getElementsByTagName("id").item(0).getTextContent();
             label = label.replaceAll("\\s+", "_");
@@ -393,7 +394,7 @@ public class GraphGenerator {
                 if (label != null){
                     label = label.replaceAll("\\s+", "_");
                 }
-                
+
                 while (label != null && (this.dataModel.getComponentByLabel(label) != null || usedIDs.contains(label.toLowerCase()) || followingIDs.contains(label.toLowerCase()))) {
                     label = JOptionPane.showInputDialog(UIEditor,
                             "The new component id '" + label + "' is also not unique, please choose a diferent id before importing",
@@ -403,13 +404,13 @@ public class GraphGenerator {
                     }
                 }
             }
-            
+
             if (label != null) {
                 usedIDs.add(label.toLowerCase());
-                
+
                 if (!originalLabel.equalsIgnoreCase(label)) {
                     eElement.getElementsByTagName("id").item(0).setTextContent(label);
-                    
+
                     /* going to the url of all states with url element to check if they contain
                        the original label of the renamed component */
                     NodeList testStates = dom.getElementsByTagName("state");
@@ -434,22 +435,22 @@ public class GraphGenerator {
     /**
      * a method to ensure the uniqueness of all state labels when importing a graph
      * @param dom the document of the graph to import
-     * @throws InvalidPatternException thrown when a state's label is not unique but 
+     * @throws InvalidPatternException thrown when a state's label is not unique but
      * the user rejects to change it
      */
     private void ensureStatesUniqueness(final Document dom) throws InvalidPatternException {
         Set<String> usedLabels = new HashSet<>();
         Set<String> followingLabels;
         NodeList nList = dom.getElementsByTagName("state");
-        
+
         for (int i = 0; i < nList.getLength(); i++) {
             followingLabels = new HashSet<>();
             for(int k=i+1; k<nList.getLength(); k++){
                 followingLabels.add(((Element) nList.item(k)).getElementsByTagName("label").item(0).getTextContent().toLowerCase());
             }
-            
+
             final Element eElement = (Element) nList.item(i);
-            
+
             String label = eElement.getElementsByTagName("label").item(0).getTextContent();
             label = label.replaceAll("\\s+", "_");
             String title = "Unique state label error : Label '" + label + "'";
@@ -461,7 +462,7 @@ public class GraphGenerator {
                 if (label != null){
                     label = label.replaceAll("\\s+", "_");
                 }
-                
+
                 while (label != null && (this.dataModel.getNodeByLabel(label) != null || usedLabels.contains(label.toLowerCase()) || followingLabels.contains(label.toLowerCase()))) {
                     label = JOptionPane.showInputDialog(UIEditor,
                             "The new state label '" + label + "' is also not unique, please choose a diferent label before importing",
@@ -471,10 +472,10 @@ public class GraphGenerator {
                     }
                 }
             }
-            
+
             if (label != null){
                 usedLabels.add(label.toLowerCase());
-                
+
                 if (!originalLabel.equalsIgnoreCase(label)) {
                     eElement.getElementsByTagName("label").item(0).setTextContent(label);
 
@@ -494,7 +495,7 @@ public class GraphGenerator {
             }
         }
     }
-    
+
     /**
      * a method to ensure the uniqueness of a start or triggerstart node
      * @param dom the document of the graph to import
@@ -502,7 +503,7 @@ public class GraphGenerator {
      */
     private void ensureStartStateUniqueness(Document dom) throws InvalidPatternException {
         NodeList nList = dom.getElementsByTagName("state");
-        
+
         for (int i = 0; i < nList.getLength(); i++) {
             final Element eElement = (Element) nList.item(i);
             String type = eElement.getElementsByTagName("type").item(0).getTextContent();
@@ -511,7 +512,7 @@ public class GraphGenerator {
             }
         }
     }
-    
+
      /**
      * Public method to create a visual graph from the xml specification. There
      * are two graph views displayed in the GUI: 1) the system graph, and 2)
@@ -527,18 +528,18 @@ public class GraphGenerator {
         catch (InvalidPatternException ex){
             return;
         }
-        
+
         try {
             ensureStartStateUniqueness(dom);
         }
         catch (InvalidPatternException ex){
-            JOptionPane.showMessageDialog(UIEditor, 
+            JOptionPane.showMessageDialog(UIEditor,
                     "Warning! There are more than one start nodes in the graph. "
                             + "Your pattern will not be verified as correct when testing. "
                             + "Please ensure you have only one start or triggerstart node when running the test.",
                     "Duplicate start nodes", JOptionPane.WARNING_MESSAGE);
         }
-        
+
         createGraph(dom);
     }
 

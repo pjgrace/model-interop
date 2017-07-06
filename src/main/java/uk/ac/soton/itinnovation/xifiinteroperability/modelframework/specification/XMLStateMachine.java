@@ -314,11 +314,12 @@ public final class XMLStateMachine {
             throw new InvalidRESTMessage("XML input does not contain correct structure");
         }
 
-        String url = tOut.getChildTextTrim(ProtocolMessage.URL_LABEL);
-        if (url == null) {
+        String urlRef = tOut.getChildTextTrim(ProtocolMessage.URL_LABEL);
+        String url = null;
+        if (urlRef == null) {
             throw new InvalidRESTMessage("XML input does not contain correct structure");
         } else {
-            url = getURLEntryFromXML(url, archDesc);
+            url = getURLEntryFromXML(urlRef, archDesc);
         }
 
         final String method = tOut.getChildTextTrim(ProtocolMessage.METHOD_LABEL);
@@ -326,7 +327,7 @@ public final class XMLStateMachine {
         final String body = (String) tOut.getChildText(ProtocolMessage.BODY_LABEL);
         final String path = (String) tOut.getChildText(ProtocolMessage.PATH_LABEL);
 
-        String protocol = getProtocolFromXML(url, archDesc);
+        String protocol = getProtocolFromXML(urlRef, archDesc);
         switch(protocol) {
             case "http": return new RESTMessage(url, path, method, type, body, getHeaders(msgRoot), archDesc);
             case "coap": return new COAPMessage(url, path, method, type, body, getHeaders(msgRoot), archDesc);
@@ -368,7 +369,7 @@ public final class XMLStateMachine {
         final List<RESTInterface> riList = rComp.getInterfaces();
         for (RESTInterface ri : riList) {
             if (ri.getInterface().equalsIgnoreCase(delim)) {
-                return ri.getURL().toExternalForm();
+                return ri.getProtocol();
             }
         }
 
@@ -414,7 +415,7 @@ public final class XMLStateMachine {
             final List<RESTInterface> riList = rComp.getInterfaces();
             for (RESTInterface ri : riList) {
                 if (ri.getInterface().equalsIgnoreCase(delim)) {
-                    return ri.getURL().toExternalForm();
+                    return ri.getURL();
                 }
             }
         }
