@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DataModelState;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 import static uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine.START_LABEL;
@@ -60,18 +61,18 @@ public class DataModel {
      * a trigger-based graph may not require component elements. Although
      * for completeness may include the interface to comply check
      */
-    private final transient List<ArchitectureNode> archElements;
-
+    private transient List<ArchitectureNode> archElements;
+    
     /**
      * The Graph is a set of nodes (vertices).
      * @see GraphNode
      */
-    private final transient List<GraphNode> graphElements;
+    private transient List<GraphNode> graphElements;
 
     /**
      * Index of connection IDs to the source node.
      */
-    private final transient Map<String, GraphNode> connectionIndex;
+    private transient Map<String, GraphNode> connectionIndex;
     
     /**
      * Boolean to represent if the model has a start state.
@@ -292,10 +293,12 @@ public class DataModel {
                }
            }
            /* deleting the transitions to be removed */
-           for (String transitionToRemove: transitionsToRemove){
+           transitionsToRemove.stream().map((transitionToRemove) -> {
                this.connectionIndex.get(transitionToRemove).deleteTransition(transitionToRemove);
+               return transitionToRemove;
+           }).forEachOrdered((transitionToRemove) -> {
                this.connectionIndex.remove(transitionToRemove);
-           }
+           });
        } 
        else {
            ArchitectureNode aDelete = null;
@@ -305,7 +308,9 @@ public class DataModel {
                     break;
                 }
             }
-            this.archElements.remove(aDelete);
+           if (aDelete != null){
+                this.archElements.remove(aDelete);
+           }
         }
    }
 
@@ -386,7 +391,7 @@ public class DataModel {
                 final Guard grd = (Guard) connx.getTransition(connID);
                 if (grd != null) {
                     grd.setTarget(getNode(trgtID).getLabel());
-                }
+                            }
            } else if (type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL) || type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL)) {
                 final Message msg = (Message) connx.getTransition(connID);
                 if (msg != null) {
@@ -434,5 +439,37 @@ public class DataModel {
        this.graphElements.clear();
        this.hasStart = false;
    }
+   
+    public final void updateState(DataModelState state) {
+        if (state == null) {
+            return;
+        }
 
+        this.hasStart = state.getHasStart();
+
+        this.graphElements = new ArrayList<>();
+        state.getGraphElements().forEach((graphNode) -> {
+            this.graphElements.add((GraphNode) ObjectDeepCloner.deepCopy(graphNode));
+        });
+        
+        this.archElements = new ArrayList<>();
+        state.getArchitectureElements().forEach((archNode) -> {
+            this.archElements.add((ArchitectureNode) ObjectDeepCloner.deepCopy(archNode));
+        });
+        
+        this.connectionIndex = new HashMap<>();
+        for(String index: state.getConnectionIndex().keySet()){
+            for (GraphNode testNode: this.graphElements){
+                if (testNode.getLabel().equals(state.getConnectionIndex().get(index).getLabel())){
+                    this.connectionIndex.put(index, testNode);
+                    break;
+                }
+            }
+        }
+    }
+
+   public final DataModelState getState() {
+       return new DataModelState(this.graphElements, this.archElements, this.connectionIndex, this.hasStart);
+   }
+   
 }

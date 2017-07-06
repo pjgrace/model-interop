@@ -27,6 +27,7 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Function.FunctionType;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +39,17 @@ import java.util.List;
  *
  * @author pjg
  */
-public class Guard extends AbstractGraphElement {
+public class Guard extends AbstractGraphElement implements Serializable {
 
     /**
      * The set of guards attached to the transition.
      */
-    private final transient List<GuardData> data = new ArrayList();
+    private final List<GuardData> data = new ArrayList();
 
     /**
      * The target id of this guard.
      */
-    private transient String targetLabel;
+    private String targetLabel;
 
     /**
      * Getter for the set of guard of data.

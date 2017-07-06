@@ -27,18 +27,20 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
+
 /**
  * Simple constant name/value pair for adding pattern constants to a start
  * node in the graph.
  *
  * @author pjg
  */
-public class ConstantData {
+public class ConstantData implements Serializable {
 
     /**
      * Data value field name.
      */
-    private transient String data;
+    private String data;
 
     /**
      * Read the constant data field name.
@@ -59,7 +61,7 @@ public class ConstantData {
     /**
      * The constant data field's value.
      */
-    private transient String value;
+    private String value;
 
     /**
      * Read the constant data field value.

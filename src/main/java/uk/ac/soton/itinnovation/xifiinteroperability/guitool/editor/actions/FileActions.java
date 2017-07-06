@@ -296,9 +296,10 @@ public class FileActions {
                  * Clear the data model.
                  */
                 editor.getDataModel().clearData();
-                editor.getUndoManager().clear();
+                editor.resetUndoManagers();
                 editor.updateTableView(null);
-
+                editor.getXmlUndoManager().add(editor.getDataModel().getState());
+          
                 /**
                  * Clear the graph views.
                  */
@@ -377,8 +378,8 @@ public class FileActions {
             agraph.getModel().setRoot(root2);
             
             editor.setModified(false);
-            editor.getUndoManager().clear();
             editor.getDataModel().clearData();
+            editor.resetUndoManagers();
             editor.updateTableView(null);
             editor.getCodePanel().getReportsPanel().clearTabbedPane();
         }
@@ -399,6 +400,7 @@ public class FileActions {
                 editor.setCurrentFile(file);
                 resetEditor();
                 gGenerate.createGraph(doc);
+                editor.getXmlUndoManager().add(editor.getDataModel().getState());
 
                 final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
                 layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());

@@ -27,6 +27,7 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,18 +40,18 @@ import java.util.List;
  *
  * @author pjg
  */
-public class Message extends AbstractGraphElement {
+public class Message extends AbstractGraphElement implements Serializable {
 
     /**
      * The target transition label of the message. When message is execute - the
      * state machine goes to this state.
      */
-    private transient String targetLabel;
+    private String targetLabel;
 
     /**
      * The urlEndpoint to send the message to.
      */
-    private transient String urlEndpoint;
+    private String urlEndpoint;
 
     /**
      * Get field for the message endpoint url.
@@ -63,7 +64,7 @@ public class Message extends AbstractGraphElement {
     /**
      * The resource path of the REST operation.
      */
-    private transient String path;
+    private String path;
 
     /**
      * Get field for the message endpoint path.
@@ -76,7 +77,7 @@ public class Message extends AbstractGraphElement {
     /**
      * The http method type.
      */
-    private transient String method;
+    private String method;
 
     /**
      * Get the HTTP method name (GET, etc.).
@@ -89,7 +90,7 @@ public class Message extends AbstractGraphElement {
     /**
      * The type of the message data e.g. XML or JSON.
      */
-    private transient String datatype;
+    private String datatype;
 
     /**
      * Get the data type of the message.
@@ -102,7 +103,7 @@ public class Message extends AbstractGraphElement {
     /**
      * The HTTP body content (of the datatype).
      */
-    private transient String body;
+    private String body;
 
     /**
      * Get the body of the HTTP message.
@@ -115,7 +116,7 @@ public class Message extends AbstractGraphElement {
     /**
      * The list of http headers (name value pairs).
      */
-    private final transient List<ConstantData> headers = new ArrayList();
+    private final List<ConstantData> headers = new ArrayList();
 
     /**
      * Get the constant data elements i.e. the http headers.

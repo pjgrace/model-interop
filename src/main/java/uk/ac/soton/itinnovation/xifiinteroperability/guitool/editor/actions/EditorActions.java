@@ -314,17 +314,20 @@ public final class EditorActions {
                 for (int i = 0; i < graph.getSelectionCount(); i++) {
                     dModel.deleteNode(((mxCell) selectionCells[i]).getId());
                 }
-
                 graph.removeCells(selectionCells);
-
+                
                 selectionCells = graph2.getSelectionCells();
                 for (int i = 0; i < graph2.getSelectionCount(); i++) {
                     final String identf = ((mxCell) selectionCells[i]).getId();
                     dModel.deleteNode(GUIdentifier.setArchID(identf));
                 }
                 graph2.removeCells(selectionCells);
+                    
+                editor.getXmlUndoManager().add(dModel.getState());
 
                 mxGraphActions.getDeleteAction().actionPerformed(actionEvent);
+                graph.setSelectionCells(new Object[0]);
+                graph2.setSelectionCells(new Object[0]);
                 editor.updateTableView(null);
             }
 	}

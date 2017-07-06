@@ -52,6 +52,8 @@ public class BehaviourGraphComponent extends mxGraphComponent {
      */
     private transient DataModel dataModel;
 
+    private transient BasicGraphEditor editor;
+    
     /**
      * Constant: file location of the GUI style - in resources location.
      */
@@ -91,6 +93,10 @@ public class BehaviourGraphComponent extends mxGraphComponent {
      */
     public final void setDataModel(final DataModel data) {
         this.dataModel = data;
+    }
+    
+    public final void setEditor(final BasicGraphEditor editor){
+        this.editor = editor;
     }
 
     /**
@@ -179,6 +185,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
             if (newCells[0] != null) {
                 this.dataModel.addNode(((mxCell) newCells[0]).getId(), label, type);
+                editor.getXmlUndoManager().add(this.dataModel.getState());
             }
             return newCells;
         }

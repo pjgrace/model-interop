@@ -27,6 +27,7 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables;
 
+import java.io.Serializable;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLReader;
 
 
@@ -34,13 +35,13 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLReader;
  * A REST Interface is an identifier and the url description.
  * @author pjg
  */
-public class InterfaceData {
+public class InterfaceData implements Serializable {
 
     /**
      * Unique label to identify the REST interface within the GUI and the pattern
      * e.g.
      */
-    private transient String restID;
+    private String restID;
 
     /**
      * Getter for the ID of the REST interface.
@@ -79,7 +80,7 @@ public class InterfaceData {
     /**
      * The full URL of the rest interface in String form.
      */
-    private transient String url;
+    private String url;
 
 
     /**
