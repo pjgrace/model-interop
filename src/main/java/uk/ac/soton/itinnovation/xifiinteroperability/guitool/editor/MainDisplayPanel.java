@@ -57,7 +57,7 @@ public class MainDisplayPanel {
      * Constant to switch to the testing output card.
      */
     public static final String REPORTPANEL = "exe";
-    
+
     /**
      * Constant to switch to previous reports card
      */
@@ -91,12 +91,12 @@ public class MainDisplayPanel {
     public final TestingOutputPanel getTestingPanel() {
         return exDocument;
     }
-    
+
     /**
      * The privious reports panel.
      */
     private final transient PreviousReportsPanel reportsDocument;
-    
+
     /**
      * Get the reference to the previous reports panel
      * @return the old reports panel
@@ -104,7 +104,7 @@ public class MainDisplayPanel {
     public final PreviousReportsPanel getReportsPanel(){
         return reportsDocument;
     }
-    
+
     /**
      * Create a new instance of the main display panel.
      * @param parent The parent panel in the UI.
@@ -120,22 +120,30 @@ public class MainDisplayPanel {
 
             final JPanel controls = new JPanel();
             controls.setLayout(new GridLayout(1 , 2));
-            final JLabel arcLabel = new JLabel("  System components");
-            final Font font = arcLabel.getFont();
 
+            /**
+             * Add the Interoperability Model Label
+             */
+            final JLabel gLabel = new JLabel("Interoperability Behaviour Model");
+            final Font font = gLabel.getFont();
             final Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
-            arcLabel.setFont(boldFont);
-
-            controls.add(arcLabel);
-
-            final JLabel gLabel = new JLabel("  FSM: Behaviour specification");
             gLabel.setFont(boldFont);
             controls.add(gLabel);
 
+            /**
+             * Add the Deployment Model Label
+             */
+            final JLabel arcLabel = new JLabel("Deployment Model");
+            arcLabel.setFont(boldFont);
+            controls.add(arcLabel);
+
+            /**
+             * Create the two panels for drag and drop of models
+             */
             final JPanel graphs = new JPanel();
             graphs.setLayout(new GridLayout(1 , 2));
-            graphs.add(editor.getSystemGraph());
             graphs.add(editor.getBehaviourGraph());
+            graphs.add(editor.getSystemGraph());
 
             final JSplitPane boxSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, controls, graphs);
             boxSplit.setOneTouchExpandable(true);
