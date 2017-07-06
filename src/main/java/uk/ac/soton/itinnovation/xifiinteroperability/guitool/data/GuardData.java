@@ -27,18 +27,19 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Function.FunctionType;
 
 /**
  * The data structure describing a single guard e.g. A must equal B
  * @author pjg
  */
-public class GuardData {
+public class GuardData implements Serializable {
 
     /**
      * The function type of the guard.
      */
-    private transient FunctionType function;
+    private FunctionType function;
 
     /**
      * The type of this guard function: equals, contains, etc.
@@ -59,7 +60,7 @@ public class GuardData {
     /**
      * Field name of the guard.
      */
-    private transient String data;
+    private String data;
 
     /**
      * Get the data value of the guard.
@@ -80,7 +81,7 @@ public class GuardData {
     /**
      * required rule value.
      */
-    private transient String value;
+    private String value;
 
     /**
      * Get the value of the rule.

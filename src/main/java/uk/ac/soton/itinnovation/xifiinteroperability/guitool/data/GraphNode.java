@@ -27,6 +27,7 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,18 +38,18 @@ import java.util.List;
  *
  * @author pjg
  */
-public class GraphNode extends AbstractGraphElement {
+public class GraphNode extends AbstractGraphElement implements Serializable {
 
     /**
      * The list of transitions from this node to other nodes.
      */
-    private final transient List<AbstractGraphElement> transitions = new ArrayList();
+    private final List<AbstractGraphElement> transitions = new ArrayList();
 
     /**
      * IF the node is a Start node - parameter data can be attached. These
      * act as global constants only.
      */
-    private final transient List<ConstantData> data = new ArrayList();
+    private final List<ConstantData> data = new ArrayList();
 
     /**
      * IF the node is an end node - report data can be attached.
