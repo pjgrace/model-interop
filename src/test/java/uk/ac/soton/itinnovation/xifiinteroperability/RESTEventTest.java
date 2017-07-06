@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.Assert;
 import org.junit.Test;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidRESTMessage;
@@ -153,8 +154,8 @@ public class RESTEventTest {
     public final void testGetInvocation() {
         try {
             final RESTMessage rMsg = new RESTMessage(TESTURL, "/", GETINPUT, null, null, null, null);
-            final RESTEvent responseEvent = rMsg.invokeMessage();
-            Assert.assertEquals(RESTEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
+            final MsgEvent responseEvent = rMsg.invokeMessage();
+            Assert.assertEquals(MsgEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
             Assert.assertEquals("text/html", responseEvent.getDataBody().getType());
             Assert.assertEquals("www.it-innovation.soton.ac.uk", responseEvent.getParameterMap().get(RESTEvent.HTTP_FROM).getValue());
             Assert.assertEquals(HTTPOK, responseEvent.getParameterMap().get(RESTEvent.HTTP_CODE).getValue());
@@ -178,7 +179,7 @@ public class RESTEventTest {
                     POSTINPUT, "xml", "<name>valune</name>", null, null);
 
             final RESTEvent responseEvent = rMsg.invokeMessage();
-            Assert.assertEquals(RESTEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
+            Assert.assertEquals(MsgEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
             Assert.assertEquals("text/xml", responseEvent.getDataBody().getType());
             Assert.assertEquals("api.flickr.com", responseEvent.getParameterMap().get(RESTEvent.HTTP_FROM).getValue());
             Assert.assertEquals(HTTPOK, responseEvent.getParameterMap().get(RESTEvent.HTTP_CODE).getValue());
@@ -201,7 +202,7 @@ public class RESTEventTest {
                     POSTINPUT, "xml", "<name>valune</name>", null, null);
 
             RESTEvent responseEvent = rMsg.invokeMessage();
-            Assert.assertEquals(RESTEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
+            Assert.assertEquals(MsgEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
             Assert.assertEquals("text/xml", responseEvent.getDataBody().getType());
             Assert.assertEquals("api.flickr.com", responseEvent.getParameterMap().get(RESTEvent.HTTP_FROM).getValue());
             Assert.assertEquals(HTTPOK, responseEvent.getParameterMap().get(RESTEvent.HTTP_CODE).getValue());
@@ -210,7 +211,7 @@ public class RESTEventTest {
             rMsg = new RESTMessage(FLICKRURLREST, "/?method=flickr.panda.getPhotos&api_key=c05e3c0911a1e399cf42b086062dd5d2&panda_name=ling ling",
                     POSTINPUT, "xml", "<name>valune</name>", null, null);
             responseEvent = rMsg.invokeMessage();
-            Assert.assertEquals(RESTEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
+            Assert.assertEquals(MsgEvent.REPLY_LABEL, responseEvent.getParameterMap().get(RESTEvent.HTTP_MSG).getValue());
             Assert.assertEquals("text/xml", responseEvent.getDataBody().getType());
             Assert.assertEquals("api.flickr.com", responseEvent.getParameterMap().get(RESTEvent.HTTP_FROM).getValue());
             Assert.assertEquals(HTTPOK, responseEvent.getParameterMap().get(RESTEvent.HTTP_CODE).getValue());

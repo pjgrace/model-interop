@@ -42,8 +42,9 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architect
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.RESTComponent;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.RESTInterface;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.COAPMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.State;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.StateMachine;
@@ -54,6 +55,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidTransitionException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidGuard;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidRESTMessage;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.ProtocolMessage;
 
 /**
  * XML operations specific to the creation of a state machine in memory
@@ -218,50 +220,50 @@ public final class XMLStateMachine {
 
          final List<Guard> arrayOfGuards = new ArrayList();
          try {
-            final List<Element> tOut = transition.getChild(RESTEvent.GUARDS_LABEL).getChildren();
+            final List<Element> tOut = transition.getChild(MsgEvent.GUARDS_LABEL).getChildren();
             for (Element eltIndex : tOut) {
-                String guardValue = eltIndex.getChildTextTrim(RESTEvent.VALUE_LABEL);
+                String guardValue = eltIndex.getChildTextTrim(MsgEvent.VALUE_LABEL);
                 if (guardValue.startsWith(COMPONENT_LABEL)) {
                     guardValue = getURLEntryFromXML(guardValue, archDesc);
                 }
-                if (eltIndex.getName().equalsIgnoreCase(RESTEvent.EQUALS_LABEL)) {
+                if (eltIndex.getName().equalsIgnoreCase(MsgEvent.EQUALS_LABEL)) {
                     arrayOfGuards.add(new Guard(
-                        eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                        eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),
                         String.class,
                         Guard.ComparisonType.EQUALS,
                         guardValue, archDesc));
                 }
-                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.CONTAINS_LABEL)) {
+                else if (eltIndex.getName().equalsIgnoreCase(MsgEvent.CONTAINS_LABEL)) {
                     arrayOfGuards.add(new Guard(
-                        eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                        eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),
                         Map.class,
                         Guard.ComparisonType.CONTAINS,
                         guardValue, archDesc));
                 }
-                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.NOTEQUALS_LABEL)) {
+                else if (eltIndex.getName().equalsIgnoreCase(MsgEvent.NOTEQUALS_LABEL)) {
                     arrayOfGuards.add(new Guard(
-                        eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                        eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),
                         String.class,
                         Guard.ComparisonType.NOTEQUALS,
                         guardValue, archDesc));
                 }
-                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.GREATERTHAN_LABEL)) {
+                else if (eltIndex.getName().equalsIgnoreCase(MsgEvent.GREATERTHAN_LABEL)) {
                     arrayOfGuards.add(new Guard(
-                            eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                            eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),
                             String.class,
                             Guard.ComparisonType.GREATERTHAN,
                             guardValue, archDesc));
                 }
-                else if (eltIndex.getName().equalsIgnoreCase(RESTEvent.LESSTHAN_LABEL)){
+                else if (eltIndex.getName().equalsIgnoreCase(MsgEvent.LESSTHAN_LABEL)){
                     arrayOfGuards.add(new Guard(
-                            eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                            eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),
                             String.class,
                             Guard.ComparisonType.LESSTHAN,
                             guardValue, archDesc));
                 }
                 else if (eltIndex.getName().equalsIgnoreCase("counter")) {
                     arrayOfGuards.add(new Guard(
-                        eltIndex.getChildTextTrim(RESTEvent.PARAM_LABEL),
+                        eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),
                         String.class,
                         Guard.ComparisonType.COUNTER,
                         guardValue, archDesc));
@@ -304,27 +306,74 @@ public final class XMLStateMachine {
       * @return The created REST message object.
       * @throws InvalidRESTMessage Error during parsing of XML into a rest message
       */
-     private static RESTMessage getMessage(final Element msgRoot, final Architecture archDesc)
+     private static ProtocolMessage getMessage(final Element msgRoot, final Architecture archDesc)
         throws InvalidRESTMessage {
 
-        final Element tOut = msgRoot.getChild(RESTMessage.MESSAGE_LABEL);
+        final Element tOut = msgRoot.getChild(ProtocolMessage.MESSAGE_LABEL);
         if (tOut == null) {
             throw new InvalidRESTMessage("XML input does not contain correct structure");
         }
 
-        String url = tOut.getChildTextTrim(RESTMessage.URL_LABEL);
+        String url = tOut.getChildTextTrim(ProtocolMessage.URL_LABEL);
         if (url == null) {
             throw new InvalidRESTMessage("XML input does not contain correct structure");
         } else {
             url = getURLEntryFromXML(url, archDesc);
         }
 
-        final String method = tOut.getChildTextTrim(RESTMessage.METHOD_LABEL);
-        final String type = tOut.getChildTextTrim(RESTMessage.TYPE_LABEL);
-        final String body = (String) tOut.getChildText(RESTMessage.BODY_LABEL);
-        final String path = (String) tOut.getChildText(RESTMessage.PATH_LABEL);
+        final String method = tOut.getChildTextTrim(ProtocolMessage.METHOD_LABEL);
+        final String type = tOut.getChildTextTrim(ProtocolMessage.TYPE_LABEL);
+        final String body = (String) tOut.getChildText(ProtocolMessage.BODY_LABEL);
+        final String path = (String) tOut.getChildText(ProtocolMessage.PATH_LABEL);
+
+        String protocol = getProtocolFromXML(url, archDesc);
+        switch(protocol) {
+            case "http": return new RESTMessage(url, path, method, type, body, getHeaders(msgRoot), archDesc);
+            case "coap": return new COAPMessage(url, path, method, type, body, getHeaders(msgRoot), archDesc);
+        }
         return new RESTMessage(url, path, method, type, body, getHeaders(msgRoot), archDesc);
      }
+
+     /**
+      * Operation returns the protocol associated with a URL identifier
+      * in the deployment model.
+      *
+      * @param entry The string that represents the url explicitly or implicitly
+      * @param archDesc The architecture where the referenced url is stored.
+      * @return The value of the reference pointer in the specification e.g. http.
+     * @throws InvalidRESTMessage Error message while parsing a URL entry in XML
+      */
+     public static String getProtocolFromXML(final String entry, final Architecture archDesc)
+                    throws InvalidRESTMessage {
+
+        /**
+         * If this is not a referenced "component." then simply return the string
+         */
+        if (!entry.startsWith(COMPONENT_LABEL)) {
+            return "http";
+        }
+
+        final String initial = entry;
+        final StringTokenizer tokenize = new StringTokenizer(initial, ".");
+        // needs to be 3 elements
+        if (tokenize.countTokens() != 3) {
+            return "http";
+        }
+
+        tokenize.nextToken();
+
+        final RESTComponent rComp = archDesc.getArchitectureComponents().get(tokenize.nextToken());
+        final String delim = tokenize.nextToken();
+        // find interface
+        final List<RESTInterface> riList = rComp.getInterfaces();
+        for (RESTInterface ri : riList) {
+            if (ri.getInterface().equalsIgnoreCase(delim)) {
+                return ri.getURL().toExternalForm();
+            }
+        }
+
+        return initial;
+    }
 
      /**
       * Operation determines whether the string url is a pointer to a
@@ -373,7 +422,7 @@ public final class XMLStateMachine {
     }
 
     private static String getReport(final Element transition) {
-        Element reportTag = transition.getChild(RESTEvent.REPORT_LABEL);
+        Element reportTag = transition.getChild(MsgEvent.REPORT_LABEL);
         if (reportTag!=null) {
             return reportTag.getText();
         }
@@ -467,7 +516,7 @@ public final class XMLStateMachine {
                 // Get the state label
                 final String label = eltIndex.getChildText(LABEL_LABEL);
                 final State.StateType type = getStateType(eltIndex.getChildText(STATE_TYPE));
-                final String report = eltIndex.getChildText(RESTEvent.REPORT_LABEL);
+                final String report = eltIndex.getChildText(MsgEvent.REPORT_LABEL);
                 final String success = eltIndex.getChildText(SUCCESS_LABEL);
 
                 states.put(label, new StateNode(label, type, arch, report, success));

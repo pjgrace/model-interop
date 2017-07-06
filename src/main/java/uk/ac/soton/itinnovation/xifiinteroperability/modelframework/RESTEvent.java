@@ -38,42 +38,13 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter
  * multiple sources, and the event is built up over time.
  * @author pjg
  */
-public class RESTEvent implements Serializable {
+public class RESTEvent extends MsgEvent implements  Serializable {
 
     /**
      * Portable serializable class.
      */
     public static final long serialVersionUID = 1L;
 
-    /** XML <guards> tag constant. */
-    public static final String GUARDS_LABEL = "guards";
-
-    /** XML <guards><equal> tag constant. */
-    public static final String EQUALS_LABEL = "equal";
-
-    /** XML <guards><notequal> tag constant. */
-    public static final String NOTEQUALS_LABEL = "notequal";
-
-    /** XML <guards><contains> tag constant. */
-    public static final String CONTAINS_LABEL = "contains";
-
-    /** XML <guards><greaterthan> tag constant. */
-    public static final String GREATERTHAN_LABEL = "greaterthan";
-
-    /** XML <guards><lessthan> tag constant. */
-    public static final String LESSTHAN_LABEL = "lessthan";
-
-    /** XML <param>tag constant. */
-    public static final String PARAM_LABEL = "param";
-
-    /** XML <value>tag constant. */
-    public static final String VALUE_LABEL = "value";
-
-    /** Message type (only capture reply messages as events for now). */
-    public static final String REPLY_LABEL = "reply";
-
-    /** Message type (only capture reply messages as events for now). */
-    public static final String REPORT_LABEL = "reply";
 
     /**
      * REST Events have fixed constants for parameter values specific to
@@ -109,7 +80,8 @@ public class RESTEvent implements Serializable {
      * Getter for the data content of the event.
      * @return The data content.
      */
-    public final Content getDataBody() {
+    @Override
+    public Content getDataBody() {
         return dataBody;
     }
 
@@ -123,6 +95,7 @@ public class RESTEvent implements Serializable {
      * get the event time stamp
      * @return the time stamp in milliseconds
      */
+    @Override
     public long getResponseTime() {
         return this.responseTime;
     }
@@ -131,6 +104,7 @@ public class RESTEvent implements Serializable {
      * Set the event time response
      * @respTime the time stamp in milliseconds
      */
+    @Override
     public void setResponseTime(long respTime) {
         this.responseTime = respTime;
     }
@@ -139,7 +113,7 @@ public class RESTEvent implements Serializable {
      * Set the event content.
      * @param newBody Content to set.
      */
-    public final void setDataBody(final Content newBody) {
+    public void setDataBody(final Content newBody) {
         dataBody = newBody;
     }
 
@@ -153,7 +127,7 @@ public class RESTEvent implements Serializable {
      * Retrieve the parameters list.
      * @return The list of parameters.
      */
-    public final Map<String, Parameter> getParameterMap() {
+    public Map<String, Parameter> getParameterMap() {
         return this.inputParams;
     }
 
@@ -164,7 +138,7 @@ public class RESTEvent implements Serializable {
      * @param pNew The new parameter to add.
      * @return True if the parameter added successfully.
      */
-    public final boolean addParameter(final Parameter pNew) {
+    public boolean addParameter(final Parameter pNew) {
         if (this.inputParams.put(pNew.getName(), pNew) == null) {
             return false;
         }
@@ -176,7 +150,7 @@ public class RESTEvent implements Serializable {
      * @param type The type of the data content
      * @param body The data content itself.
      */
-    public final void addContent(final String type, final String body) {
+    public void addContent(final String type, final String body) {
         setDataBody(new Content(type, body));
         addParameter(new Parameter("content", body));
     }

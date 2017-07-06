@@ -45,7 +45,6 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Interoperabi
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.PatternValidation;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLDocument;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.State;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.StateMachine;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidStateMachineException;
@@ -53,6 +52,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidRESTM
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
 
 /**
@@ -162,7 +162,7 @@ public class Architecture {
         } catch (InvalidArchitectureException ex) {
             cleanup();
             throw new InvalidStateMachineException("Invalid architecture specification " + ex.getMessage(), ex);
-        } 
+        }
     }
 
 
@@ -323,7 +323,7 @@ public class Architecture {
         if (stateS == null) {
             throw new InvalidPatternReferenceException("State label does not match a state label in this architecture");
         }
-        final RESTEvent rEv = stateS.getStoredEvent();
+        final MsgEvent rEv = stateS.getStoredEvent();
         if (rEv == null) {
             throw new InvalidPatternReferenceException("Error reading event - not yet occured");
         }

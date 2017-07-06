@@ -40,6 +40,36 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter
  */
 public abstract class MsgEvent implements Serializable {
 
+    /** XML <guards> tag constant. */
+    public static final String GUARDS_LABEL = "guards";
+
+    /** XML <guards><equal> tag constant. */
+    public static final String EQUALS_LABEL = "equal";
+
+    /** XML <guards><notequal> tag constant. */
+    public static final String NOTEQUALS_LABEL = "notequal";
+
+    /** XML <guards><contains> tag constant. */
+    public static final String CONTAINS_LABEL = "contains";
+
+    /** XML <guards><greaterthan> tag constant. */
+    public static final String GREATERTHAN_LABEL = "greaterthan";
+
+    /** XML <guards><lessthan> tag constant. */
+    public static final String LESSTHAN_LABEL = "lessthan";
+
+    /** XML <param>tag constant. */
+    public static final String PARAM_LABEL = "param";
+
+    /** XML <value>tag constant. */
+    public static final String VALUE_LABEL = "value";
+
+    /** Message type (only capture reply messages as events for now). */
+    public static final String REPLY_LABEL = "reply";
+
+    /** Report tag. */
+    public static final String REPORT_LABEL = "report";
+
     /**
      * The content of the message - optional, not all REST events will
      * have associated data.
@@ -50,7 +80,7 @@ public abstract class MsgEvent implements Serializable {
      * Getter for the data content of the event.
      * @return The data content.
      */
-    public final Content getDataBody() {
+    public Content getDataBody() {
         return dataBody;
     }
 
@@ -70,6 +100,7 @@ public abstract class MsgEvent implements Serializable {
 
     /**
      * Set the event time response
+     * @param respTime
      * @respTime the time stamp in milliseconds
      */
     public void setResponseTime(long respTime) {
@@ -80,7 +111,7 @@ public abstract class MsgEvent implements Serializable {
      * Set the event content.
      * @param newBody Content to set.
      */
-    public final void setDataBody(final Content newBody) {
+    public void setDataBody(final Content newBody) {
         dataBody = newBody;
     }
 
@@ -88,13 +119,13 @@ public abstract class MsgEvent implements Serializable {
      * Each rest events has a series of parameters e.g. HTTP headers,
      * Query parameters, even parameters in the body.
      */
-    private final Map<String, Parameter> inputParams = new HashMap();
+    private Map<String, Parameter> inputParams = new HashMap();
 
     /**
      * Retrieve the parameters list.
      * @return The list of parameters.
      */
-    public final Map<String, Parameter> getParameterMap() {
+    public Map<String, Parameter> getParameterMap() {
         return this.inputParams;
     }
 
@@ -105,7 +136,7 @@ public abstract class MsgEvent implements Serializable {
      * @param pNew The new parameter to add.
      * @return True if the parameter added successfully.
      */
-    public final boolean addParameter(final Parameter pNew) {
+    public boolean addParameter(final Parameter pNew) {
         if (this.inputParams.put(pNew.getName(), pNew) == null) {
             return false;
         }
@@ -117,7 +148,7 @@ public abstract class MsgEvent implements Serializable {
      * @param type The type of the data content
      * @param body The data content itself.
      */
-    public final void addContent(final String type, final String body) {
+    public void addContent(final String type, final String body) {
         setDataBody(new Content(type, body));
         addParameter(new Parameter("content", body));
     }

@@ -38,7 +38,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter
  * multiple sources, and the event is built up over time.
  * @author pjg
  */
-public class COAPEvent implements Serializable {
+public class COAPEvent extends MsgEvent implements Serializable {
 
     /**
      * Portable serializable class.

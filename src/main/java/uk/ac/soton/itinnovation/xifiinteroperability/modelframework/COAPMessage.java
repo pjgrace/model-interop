@@ -51,87 +51,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specificatio
  *
  * @author pjg
  */
-public class COAPMessage {
-
-    /**
-     * Constant for the XML message tag:  &ltmessage&gt.
-     */
-    public static final String MESSAGE_LABEL = "message";
-
-    /**
-     * Constant for the XML message tag:  &lturl&gt.
-     */
-    public static final String URL_LABEL = "url";
-
-    /**
-     * Constant for the XML message tag:  &ltpath&gt.
-     */
-    public static final String PATH_LABEL = "path";
-
-    /**
-     * Constant for the XML message tag:  &ltbody&gt.
-     */
-    public static final String BODY_LABEL = "body";
-
-    /**
-     * Constant for the XML message tag:  &ltname&gt.
-     */
-    public static final String HEADERNAME_LABEL = "name";
-
-    /**
-     * Constant for the XML message tag:  &ltmethod&gt.
-     */
-    public static final String METHOD_LABEL = "method";
-
-    /**
-     * Constant for the XML message tag:  &ltget&gt.
-     */
-    public static final String GET_LABEL = "get";
-
-    /**
-     * Constant for the XML message tag:  &ltpost&gt.
-     */
-    public static final String POST_LABEL = "post";
-
-    /**
-     * Constant for the XML message tag:  &ltput&gt.
-     */
-    public static final String PUT_LABEL = "put";
-
-    /**
-     * Constant for the XML message tag:  &ltdelete&gt.
-     */
-    public static final String DELETE_LABEL = "delete";
-
-    /**
-     * Constant for the XML message tag:  &ltxml&gt.
-     */
-    public static final String XML_LABEL = "xml";
-
-    /**
-     * Constant for the OTHER message tag:  &ltxml&gt.
-     */
-    public static final String OTHER_LABEL = "other";
-
-    /**
-     * Constant for the XML message tag:  &ljson&gt.
-     */
-    public static final String JSON_LABEL = "json";
-
-    /**
-     * Constant for the XML message tag:  &lttype&gt.
-     */
-    public static final String TYPE_LABEL = "type";
-
-    /**
-     * Constant for the XML message tag:  &ltheaders&gt.
-     */
-    public static final String HEADERS_LABEL = "headers";
-
-    /**
-     * Constant for the XML message tag:  &ltheaderval&gt.
-     */
-    public static final String HEADERVALUE_LABEL = "value";
+public class COAPMessage extends ProtocolMessage{
 
     /**
      * The body of the HTTP request. This is the data type (xml, json, etc.) and
@@ -211,7 +131,8 @@ public class COAPMessage {
             throw new InvalidRESTMessage("Method cannot be null");
         }
 
-        if ((methodStr.equalsIgnoreCase(GET_LABEL)) || (methodStr.equalsIgnoreCase(POST_LABEL)) || (methodStr.equalsIgnoreCase(DELETE_LABEL)) || (methodStr.equalsIgnoreCase(PUT_LABEL))) {
+        if ((methodStr.equalsIgnoreCase(RESTMessage.GET_LABEL)) || (methodStr.equalsIgnoreCase(RESTMessage.POST_LABEL)) ||
+                (methodStr.equalsIgnoreCase(RESTMessage.DELETE_LABEL)) || (methodStr.equalsIgnoreCase(RESTMessage.PUT_LABEL))) {
             this.method = methodStr.toLowerCase(Locale.ENGLISH);
         } else {
             throw new InvalidRESTMessage("Method: " + methodStr + " must be: get, put, delete or post");

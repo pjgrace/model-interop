@@ -40,10 +40,10 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.JSON;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.XML;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTMessage;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEventException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.ProtocolMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidJSONPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidXPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult;
@@ -78,7 +78,7 @@ public class StateNode implements State {
      * After a transition has occurred, the event that this state receives
      * will be saved for future reference.
      */
-    private transient RESTEvent savedEvent;
+    private transient MsgEvent savedEvent;
 
     /**
      * The state machine that this state node belongs to.
@@ -260,16 +260,16 @@ public class StateNode implements State {
      * behaviour has happened to indicate and interoperability problem.
      */
     @Override
-    public final String executeTransition(final BlockingQueue<RESTEvent> input, final InteroperabilityReport outputReport)
+    public final String executeTransition(final BlockingQueue<MsgEvent> input, final InteroperabilityReport outputReport)
             throws UnexpectedEventException {
         try {
             if (!(this.isTrigger() || this.isLoop())) {
                 throw new UnexpectedEventException("Trying to execute a message trigger when the state"
                         + "is not a trigger");
             }
-            final RESTMessage action = this.nextStates.get(0).getTrigger();
+            final ProtocolMessage action = this.nextStates.get(0).getTrigger();
 
-            final RESTEvent retValue = action.invokeMessage();
+            final MsgEvent retValue = action.invokeMessage();
             input.put(retValue);
 
             outputReport.println("Invoked action - moving to state: " + this.nextStates.get(0).readLabel());
@@ -296,7 +296,7 @@ public class StateNode implements State {
      * @throws UnexpectedEventException event error - no transition matches the event.
      */
     @Override
-    public final String evaluateTransition(final RESTEvent input, final InteroperabilityReport outputReport)
+    public final String evaluateTransition(final MsgEvent input, final InteroperabilityReport outputReport)
             throws UnexpectedEventException {
         // Find transitions with matching resource locations
 
@@ -364,7 +364,7 @@ public class StateNode implements State {
             return null;
         }
         final State stateA = this.stateMachine.getState(exprSplit[0]);
-        final RESTEvent rEv = stateA.getStoredEvent();
+        final MsgEvent rEv = stateA.getStoredEvent();
 
         if (exprSplit[1].equalsIgnoreCase(CONTENTLABEL)) {
             final String content = rEv.getDataBody().getData();
@@ -449,16 +449,16 @@ public class StateNode implements State {
                     }
                     else {
                         String msg = "Guard test failed: '" + chGuard.getGuardLabel() + "' contains child fields (";
-                        
+
                         for (int i=0; i < childFields.size()-1; i++){
                             msg += "'" + childFields.get(i) + "' ";
                         }
-                        
+
                         msg += "'" + childFields.get(childFields.size()-1) + "') but doesn't contain child field '" + chGuard.getGuardCompare() + "'";
                         report.printtabline(msg);
                     }
                 }
-                
+
                 break;
             default:
                 report.printtabline("Guard test failed!");
@@ -486,7 +486,7 @@ public class StateNode implements State {
      */
     private boolean guardContainsEvaluation(final Guard chGuard, final Map<String, Parameter> conditions,
             final InteroperabilityReport report) {
-        
+
         if (chGuard.getGuardLabel().startsWith(CONTENTLABEL)) {
             final String xpathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
             final Parameter value = conditions.get(CONTENTLABEL);
@@ -754,7 +754,7 @@ public class StateNode implements State {
     }
 
     @Override
-    public final RESTEvent getStoredEvent() {
+    public final MsgEvent getStoredEvent() {
         return this.savedEvent;
     }
 }

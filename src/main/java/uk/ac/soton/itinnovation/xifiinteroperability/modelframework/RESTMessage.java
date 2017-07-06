@@ -59,37 +59,8 @@ import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
  *
  * @author pjg
  */
-public class RESTMessage {
+public class RESTMessage extends ProtocolMessage{
 
-    /**
-     * Constant for the XML message tag:  &ltmessage&gt.
-     */
-    public static final String MESSAGE_LABEL = "message";
-
-    /**
-     * Constant for the XML message tag:  &lturl&gt.
-     */
-    public static final String URL_LABEL = "url";
-
-    /**
-     * Constant for the XML message tag:  &ltpath&gt.
-     */
-    public static final String PATH_LABEL = "path";
-
-    /**
-     * Constant for the XML message tag:  &ltbody&gt.
-     */
-    public static final String BODY_LABEL = "body";
-
-    /**
-     * Constant for the XML message tag:  &ltname&gt.
-     */
-    public static final String HEADERNAME_LABEL = "name";
-
-    /**
-     * Constant for the XML message tag:  &ltmethod&gt.
-     */
-    public static final String METHOD_LABEL = "method";
 
     /**
      * Constant for the XML message tag:  &ltget&gt.
@@ -111,35 +82,6 @@ public class RESTMessage {
      */
     public static final String DELETE_LABEL = "delete";
 
-    /**
-     * Constant for the XML message tag:  &ltxml&gt.
-     */
-    public static final String XML_LABEL = "xml";
-
-    /**
-     * Constant for the OTHER message tag:  &ltxml&gt.
-     */
-    public static final String OTHER_LABEL = "other";
-
-    /**
-     * Constant for the XML message tag:  &ljson&gt.
-     */
-    public static final String JSON_LABEL = "json";
-
-    /**
-     * Constant for the XML message tag:  &lttype&gt.
-     */
-    public static final String TYPE_LABEL = "type";
-
-    /**
-     * Constant for the XML message tag:  &ltheaders&gt.
-     */
-    public static final String HEADERS_LABEL = "headers";
-
-    /**
-     * Constant for the XML message tag:  &ltheaderval&gt.
-     */
-    public static final String HEADERVALUE_LABEL = "value";
 
     /**
      * The body of the HTTP request. This is the data type (xml, json, etc.) and
@@ -156,7 +98,8 @@ public class RESTMessage {
      * Getter for the method field.
      * @return Return the method string.
      */
-    public final String getMethod() {
+    @Override
+    public String getMethod() {
         return method;
     }
 
@@ -169,7 +112,8 @@ public class RESTMessage {
      * Getter for the full URL.
      * @return the url as a java url object.
      */
-    public final URL getURL() {
+    @Override
+    public URL getURL() {
         return url;
     }
 
@@ -293,7 +237,8 @@ public class RESTMessage {
      * @return The Rest event received after the invocation complete.
      * @throws UnexpectedEventException Event not matching the state machine description.
      */
-    public final RESTEvent invokeMessage() throws UnexpectedEventException {
+    @Override
+    public RESTEvent invokeMessage() throws UnexpectedEventException {
         try {
             String rPath = parseData(this.path);
             // Instantiate the client connector, and configure it.

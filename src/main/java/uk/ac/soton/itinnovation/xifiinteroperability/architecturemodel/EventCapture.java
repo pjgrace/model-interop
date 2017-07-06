@@ -27,7 +27,7 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel;
 
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 
 /**
  * Interface between the Interoperability cradle (that monitors the applications
@@ -43,7 +43,7 @@ public interface EventCapture {
      * @param httpMessage The new RESTEvent generated.
      * @see Interop.PatternEngine.RESTEvent
      */
-    void pushEvent(RESTEvent httpMessage);
+    void pushEvent(MsgEvent httpMessage);
 
     /**
      * Exceptions relevant to interoperation need to be passed from the cradle

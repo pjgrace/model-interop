@@ -32,6 +32,8 @@ of components and interfaces that are part of the interoperability tests.
        can have the same identifier  -->
   <xs:element name="id" type="xs:NCName"/>
   
+  <xs:element name="protocol" type="xs:NCName"/>
+  
   <!-- Physical address of the component. This can be either the IPv4 or
        IPv6 Address  -->
   <xs:element name="address" type="xs:string"/>
@@ -42,6 +44,7 @@ of components and interfaces that are part of the interoperability tests.
             <xs:sequence>
                 <xs:element ref="id"/> 
                 <xs:element name = "url" />
+                <xs:element  minOccurs="0" maxOccurs="1" name = "protocol" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>

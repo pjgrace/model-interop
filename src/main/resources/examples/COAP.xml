@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<pattern  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <architecture>
+        <component>
+            <id>f_coap_comp</id>
+            <address>coap.me</address>
+            <interface>
+                <id>rest1</id>
+                <url>coap://coap.me:5683</url>
+                <protocol>coap</protocol>
+            </interface>
+        </component>
+    </architecture>
+    
+     <behaviour>
+        <state>
+          <label>A1</label>
+          <type>triggerstart</type>
+          <transition>    
+                <to>A2</to>
+                <message>
+                    <url>component.f_rest_comp.rest1</url>
+                    <path>/test</path>
+                    <method>get</method>
+                    <type>xml</type>
+                </message>
+           </transition>
+        </state>
+        <state>
+          <label>A2</label>
+          <type>normal</type>
+          <transition>    
+                <to>A3</to>
+                <guards>
+                    <equal>
+                        <param>COAP.from</param>
+                        <value>component.f_rest_comp.address</value>
+                    </equal>
+                    <equal>
+                        <param>COAP.Code</param>
+                        <value>2.00</value>
+                    </equal>
+                </guards>
+           </transition>
+        </state>
+        <state>
+            <label>A3</label>
+            <type>end</type>
+            <success>true</success>
+            <report>COAP Test Succeeded</report>
+        </state>
+    </behaviour>
+
+</pattern>
