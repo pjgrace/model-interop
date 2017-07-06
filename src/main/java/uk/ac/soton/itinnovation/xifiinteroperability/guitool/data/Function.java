@@ -27,13 +27,15 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
+
 /**
  * Enumeration of function types for guards: to extend add a new function
  * to the list; the UI will be updated automatically to handle inputs.
  *
  * @author pjg
  */
-public final class Function {
+public final class Function implements Serializable {
 
     /**
      * Use private constructor as all methods are static.

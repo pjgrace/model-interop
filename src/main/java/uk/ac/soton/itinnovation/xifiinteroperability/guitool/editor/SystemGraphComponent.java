@@ -55,6 +55,8 @@ public  class SystemGraphComponent extends mxGraphComponent {
      * is a view onto the system graph portion of the data model.
      */
     private transient DataModel dataModel;
+    
+    private BasicGraphEditor editor;
 
     /**
      * Construct the UI component using the graph of the system elements.
@@ -90,6 +92,10 @@ public  class SystemGraphComponent extends mxGraphComponent {
      */
     public final void setDataModel(final DataModel dModel) {
         this.dataModel = dModel;
+    }
+    
+    public final void setEditor(final BasicGraphEditor editor){
+        this.editor = editor;
     }
 
     /**
@@ -165,6 +171,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
             if (newCells[0] != null) {
                 dataModel.addNode(((mxCell) newCells[0]).getId(), label, type);
+                editor.getXmlUndoManager().add(this.dataModel.getState());
             }
             return newCells;
         }

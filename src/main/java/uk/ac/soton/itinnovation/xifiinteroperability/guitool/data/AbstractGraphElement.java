@@ -27,28 +27,30 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
+
 /**
  * Each element of the data model is an implementation of the abstract class
  * AbstractGraphElement which represents an element of the drawn graph.
  * @author pjg
  */
-public abstract class AbstractGraphElement {
+public abstract class AbstractGraphElement implements Serializable{
 
     /**
      * The user interface generates an ID for each graph element drawn. This
      * is used to relate the UI to the data model
      */
-    private final transient String uiIdentifier;
+    private final String uiIdentifier;
 
     /**
      * Each data element has a short label description e.g. node1, connection2,
      */
-    private transient String label;
+    private String label;
 
     /**
      * The type of the graph element: node, connection, interface, etc.
      */
-    private final transient String type;
+    private final String type;
 
     /**
      * Create a new Graph element data node. This is a label and a type with

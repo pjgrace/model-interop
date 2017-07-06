@@ -27,6 +27,7 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data;
 
+import java.io.Serializable;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +40,12 @@ import java.util.List;
  * @see AbstractGraphElement
  * @author pjg
  */
-public class ArchitectureNode extends AbstractGraphElement {
+public class ArchitectureNode extends AbstractGraphElement implements Serializable {
     
     /**
      * The address of the interface or client - typically the IP address in string.
      */
-    private transient String address;
+    private String address;
 
     /**
      * Getter for the distributed system node address.
@@ -57,7 +58,7 @@ public class ArchitectureNode extends AbstractGraphElement {
     /**
      * The id of the graph label of this component node
      */
-    private transient final String nodeLabelID;
+    private final String nodeLabelID;
     
     /**
      * Getter for the id of the node graph label 
@@ -71,7 +72,7 @@ public class ArchitectureNode extends AbstractGraphElement {
      * The list of data parameters attached to the node. These are the
      * descriptive params adding additional information e.g. urls, ...
      */
-    private final transient List<InterfaceData> data = new ArrayList();
+    private final List<InterfaceData> data = new ArrayList();
 
     /**
      * Getter for the data parameters.

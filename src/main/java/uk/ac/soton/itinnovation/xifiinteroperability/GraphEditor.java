@@ -144,8 +144,10 @@ public class GraphEditor extends BasicGraphEditor {
 
         getBehaviourGraph().getConnectionHandler().setCreateTarget(false);
         ((BehaviourGraphComponent) getBehaviourGraph()).setDataModel(getDataModel());
+        ((BehaviourGraphComponent) getBehaviourGraph()).setEditor(this);
         getSystemGraph().getConnectionHandler().setCreateTarget(false);
         ((SystemGraphComponent) getSystemGraph()).setDataModel(getDataModel());
+        ((SystemGraphComponent) getSystemGraph()).setEditor(this);
 
         setListeners(getBehaviourGraph());
         setListeners(getSystemGraph());
@@ -288,6 +290,7 @@ public class GraphEditor extends BasicGraphEditor {
          * Listen for a newly created edge between two vertices in the
          * drawn graph.
          */
+        GraphEditor editor = this;
         graphComponent.getConnectionHandler().addListener(mxEvent.CONNECT,
             new mxIEventListener() {
                 @Override
@@ -312,6 +315,7 @@ public class GraphEditor extends BasicGraphEditor {
                     connData.setConnectable(false);
                     getDataModel().addConnection(connData.getId(), connData.getSource().getId(),
                             connData.getTarget().getId());
+                    editor.getXmlUndoManager().add(getDataModel().getState());
                 };
             }
         );
@@ -357,6 +361,12 @@ public class GraphEditor extends BasicGraphEditor {
                             grpghM = getDataModel().getTransition(ident);
                         }
                         if (grpghM != null) {
+                            if (grpghM instanceof ArchitectureNode){
+                                editor.getBehaviourGraph().getGraph().setSelectionCells(new Object[0]);
+                            }
+                            else {
+                                editor.getSystemGraph().getGraph().setSelectionCells(new Object[0]);
+                            }
                             final CardLayout cardLayout = (CardLayout) getAttributePanel().getLayout();
                             String type = grpghM.getType();
                             if (type.contains(XMLStateMachine.START_LABEL)) {
