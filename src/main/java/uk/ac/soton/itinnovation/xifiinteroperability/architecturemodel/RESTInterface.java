@@ -160,10 +160,11 @@ public class RESTInterface {
             throws InvalidInterfaceException {
         try {
             url = eltIntIndex.getChildText(URLXMLTAG);
-            String changedURL = null;
+            String changedURL = url;
             if(url.startsWith("coap")) {
                 changedURL = url.replaceFirst("coap", "http");
             }
+
             URL urlInFormat = new URL(changedURL);
             this.interfaceID = eltIntIndex.getChildText(INTERFACEIDXMLTAG);
             this.protocol = eltIntIndex.getChildText(PROTOCOLXMLTAG);

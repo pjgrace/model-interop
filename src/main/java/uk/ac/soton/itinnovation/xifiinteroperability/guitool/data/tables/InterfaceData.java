@@ -107,7 +107,10 @@ public class InterfaceData {
     public InterfaceData(final String ident, final String addr, String protocol) {
         this.restID = ident;
         this.url = addr;
-        this.protocol = protocol;
+        if (protocol == null)
+            this.protocol = "http";
+        else
+            this.protocol = protocol;
     }
 
     /**

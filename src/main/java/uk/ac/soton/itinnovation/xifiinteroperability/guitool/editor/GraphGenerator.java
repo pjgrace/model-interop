@@ -270,9 +270,14 @@ public class GraphGenerator {
                 final NodeList interfacesData = eElement.getElementsByTagName(XMLStateMachine.INTERFACE_LABEL);
                 for(int i=0; i<interfacesData.getLength(); i++){
                     final Element interfa = (Element) interfacesData.item(i);
+                    // protocol is optional - so check before retrieving
+                    String protocolTag = null;
+                    if(interfa.getElementsByTagName("protocol").item(0) != null) {
+                        protocolTag = interfa.getElementsByTagName("protocol").item(0).getTextContent();
+                    }
+
                     gNode.addInterfaceData(interfa.getElementsByTagName("id").item(0).getTextContent(),
-                            interfa.getElementsByTagName("url").item(0).getTextContent(),
-                            interfa.getElementsByTagName("protocol").item(0).getTextContent());
+                            interfa.getElementsByTagName("url").item(0).getTextContent(), protocolTag );
                 }
                 this.currentHorizontal += 100;
             }
