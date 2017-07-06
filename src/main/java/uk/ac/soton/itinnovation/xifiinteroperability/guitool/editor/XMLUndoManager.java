@@ -106,7 +106,6 @@ public class XMLUndoManager {
      */
     public void add(DataModelState state){
         undoXMLs.add(state);
-        System.out.println("added, size is " + undoXMLs.size());
         
         redoXMLs = new ArrayList<>();
     }
