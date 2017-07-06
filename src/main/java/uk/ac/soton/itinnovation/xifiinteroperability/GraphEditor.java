@@ -166,9 +166,9 @@ public class GraphEditor extends BasicGraphEditor {
         super(appTitle, component, arcComponent);
 
         // Creates the two palettes: i) arch shapes, ii) behaviour shapes
-        final EditorPalette arcPalette = insertPalette(mxResources.get("images"));
         final EditorPalette shapesPalette = insertPalette(mxResources.get("shapes"));
-
+        final EditorPalette arcPalette = insertPalette(mxResources.get("images"));
+ 
         // Add the two node types to the architecture palette
          /**
          * The REST component. A web service interface implementing a REST
