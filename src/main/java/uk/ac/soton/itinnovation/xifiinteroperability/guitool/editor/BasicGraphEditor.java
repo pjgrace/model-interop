@@ -68,6 +68,10 @@ import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.layout.mxOrganicLayout;
 import com.mxgraph.layout.mxStackLayout;
+import com.mxgraph.model.mxGraphModel.mxChildChange;
+import com.mxgraph.model.mxGraphModel.mxGeometryChange;
+import com.mxgraph.model.mxGraphModel.mxTerminalChange;
+import com.mxgraph.model.mxGraphModel.mxValueChange;
 import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.mxGraphOutline;
@@ -249,7 +253,28 @@ public class BasicGraphEditor extends JPanel {
      * Handle undo events.
      */
     private final transient mxUndoManager undoManager;
-
+    
+    /**
+     * Handle XML undo events
+     */
+    private final transient XMLUndoManager xmlUndoManager;
+    
+    /**
+     * get the xmlUndoManager
+     * @return the xmlUndoManager
+     */
+    public XMLUndoManager getXmlUndoManager(){
+        return xmlUndoManager;
+    }
+    
+    /**
+     * a method to reset the Undo managers
+     */
+    public void resetUndoManagers(){
+        undoManager.clear();
+        xmlUndoManager.clear();
+    }
+    
     /**
      * Frame title.
      */
@@ -277,8 +302,38 @@ public class BasicGraphEditor extends JPanel {
     private final transient mxIEventListener undoHandler = new mxIEventListener() {
         @Override
         public void invoke(final Object source, final mxEventObject evt) {
-                undoManager.undoableEditHappened((mxUndoableEdit) evt
-                                .getProperty("edit"));
+            List<mxUndoableEdit.mxUndoableChange> changes = ((mxUndoableEdit) evt
+                    .getProperty("edit")).getChanges();
+            if (changes.size() == 1){
+                if (changes.get(0) instanceof mxValueChange){
+                    return;
+                    // renaming should be added as an event TODO 
+                }
+            }
+            else if (changes.size() == 4){
+                // this is to avoid adding invalid transitions as an event for the undo manager
+                if (changes.get(0) instanceof mxChildChange && changes.get(3) instanceof mxChildChange){
+                    if (changes.get(1) instanceof mxTerminalChange && changes.get(2) instanceof mxTerminalChange){
+                        return;
+                    }
+                }
+            }     
+            undoManager.undoableEditHappened((mxUndoableEdit) evt
+                    .getProperty("edit"));
+//            for (mxUndoableEdit.mxUndoableChange change: ((mxUndoableEdit) evt
+//                    .getProperty("edit")).getChanges()){
+//                System.out.println(change);
+//            }
+            if (changes.size() == 1){
+                // manually adding event when there is just a change in the location of a node
+                if (changes.get(0) instanceof mxGeometryChange){
+                    xmlUndoManager.add(dataModel.getState());
+                }
+                // manually adding event when there is just a change in the transition target node
+                else if (changes.get(0) instanceof mxTerminalChange){
+                    xmlUndoManager.add(dataModel.getState());
+                }
+            }   
         }
     };
 
@@ -306,7 +361,7 @@ public class BasicGraphEditor extends JPanel {
     public final DataModel getDataModel() {
         return dataModel;
     }
-
+    
     /**
      * Getter for the history model underpinning the GUI graph views.
      * @return The reference to the history model.
@@ -336,6 +391,8 @@ public class BasicGraphEditor extends JPanel {
         final mxGraph graph = graphComponent.getGraph();
         final mxGraph sysGraph = arcGraphComponent.getGraph();
         undoManager = createUndoManager();
+        xmlUndoManager = new XMLUndoManager();
+        xmlUndoManager.add(dataModel.getState());
 
         // Do not change the scale and translation after files have been loaded
         graph.setResetViewOnRootChange(false);

@@ -29,6 +29,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.view.mxGraph;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -39,6 +40,7 @@ import javax.swing.JOptionPane;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DataModelState;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPopupMenu;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
@@ -77,16 +79,34 @@ public final class PopUpMenuActions {
             @Override
             public final void actionPerformed(final ActionEvent actEvent) {
                     if (editor == null) {
-                        editor = EditorActions.getEditor(actEvent);
+                      editor = EditorActions.getEditor(actEvent);
+                }
+                if (editor != null) {
+                    if (undo && editor.getXmlUndoManager().canUndo()) {
+                        editor.getUndoManager().undo();
+                        DataModelState state = editor.getXmlUndoManager().undo();
+                        if (state != null){
+                            editor.getDataModel().clearData();
+                            editor.getDataModel().updateState(state);
+                        }
+                    } 
+                    else if (!undo && editor.getXmlUndoManager().canRedo()) {
+                        editor.getUndoManager().redo();
+                        DataModelState state = editor.getXmlUndoManager().redo();
+                        if (state != null){
+                            editor.getDataModel().clearData();
+                            editor.getDataModel().updateState(state);
+                        }
                     }
-                    if (editor != null) {
-                            if (undo) {
-                                    editor.getUndoManager().undo();
-                            } else {
-                                    editor.getUndoManager().redo();
-                            }
-                    }
+                editor.updateTableView(null);
+                final mxGraphComponent graphComponent = editor.getBehaviourGraph();
+                final mxGraphComponent arcgraphComponent = editor.getSystemGraph();
+                final mxGraph graph = graphComponent.getGraph();
+                final mxGraph graph2 = arcgraphComponent.getGraph();
+                graph.setSelectionCells(new Object[0]);
+                graph2.setSelectionCells(new Object[0]);
             }
+        }
     }
 
     /**
