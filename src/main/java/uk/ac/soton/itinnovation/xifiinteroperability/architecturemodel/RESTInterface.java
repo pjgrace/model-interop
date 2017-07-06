@@ -29,6 +29,9 @@ package uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.proxy.resources.ForwardingResource;
+import org.eclipse.californium.proxy.resources.ProxyCoapClientResource;
 import org.jdom.Element;
 import uk.ac.soton.itinnovation.xifiinteroperability.ConfigurationException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelcomponent.InvalidWrapperException;
@@ -61,21 +64,24 @@ public class RESTInterface {
     /** XML tag string url to relate to the URL field. */
     private static final String URLXMLTAG = "url";
 
-    /** XML tag string url to relate to the URL field. */
+    /** XML tag string interface id to relate to the URL field. */
     private static final String INTERFACEIDXMLTAG = "id";
+
+    /** XML tag string protocol to relate to the URL field. */
+    private static final String PROTOCOLXMLTAG = "protocol";
 
     /**
      * Data content specific to the building of the interface representation
         - The url to use the interface
         - The port to access the interface.
      */
-    private final transient URL url;
+    private final transient String url;
 
     /**
      * Access the URL field value of this object.
      * @return The URL field in full form.
      */
-    public final URL getURL() {
+    public final String getURL() {
         return url;
     }
 
@@ -83,6 +89,7 @@ public class RESTInterface {
      * The unique identifier of this interface. Specified by the user.
      */
     private final transient String interfaceID;
+    private CoapServer coapProxy = null;
 
     /**
      * Access the Identifier field value of this object.
@@ -90,6 +97,19 @@ public class RESTInterface {
      */
     public final String getInterface() {
         return interfaceID;
+    }
+
+    /**
+     * The unique identifier of this interface. Specified by the user.
+     */
+    private final transient String protocol;
+
+    /**
+     * Access the protocol field value of this object.
+     * @return The protocol (http, coap, etc.).
+     */
+    public final String getProtocol() {
+        return protocol;
     }
 
     /**
@@ -139,13 +159,24 @@ public class RESTInterface {
     public RESTInterface(final Element eltIntIndex, final EventCapture capture)
             throws InvalidInterfaceException {
         try {
-            url = new URL(eltIntIndex.getChildText(URLXMLTAG));
+            url = eltIntIndex.getChildText(URLXMLTAG);
+            String changedURL = url;
+            if(url.startsWith("coap")) {
+                changedURL = url.replaceFirst("coap", "http");
+            }
+
+            URL urlInFormat = new URL(changedURL);
             this.interfaceID = eltIntIndex.getChildText(INTERFACEIDXMLTAG);
-            this.port = SystemProperties.getAvailablePort(url.getPort());
+            this.protocol = eltIntIndex.getChildText(PROTOCOLXMLTAG);
+
+            this.port = SystemProperties.getAvailablePort(urlInFormat.getPort());
 
             this.pushEvents = capture;
-            addProxy();
+
+            addProxy(urlInFormat);
+
         } catch (MalformedURLException ex) {
+
             throw new InvalidInterfaceException("REST interface specification error (must be http://address:port)", ex);
         } catch (ConfigurationException ex) {
             throw new InvalidInterfaceException("Specified port fail", ex);
@@ -159,11 +190,25 @@ public class RESTInterface {
      * https).
      * @throws InvalidWrapperException Error building the proxy.
      */
-    private void addProxy() throws InvalidWrapperException {
+    private void addProxy(URL urlIn) throws InvalidWrapperException {
         try {
-            interfaceRedirect = new Proxy(url, org.restlet.data.Protocol.HTTP,
+            switch (this.protocol) {
+                case "coap":
+
+                    String newUrl = "coap://" + urlIn.getHost() + ":" + port;
+                    ForwardingResource coap2coap = new ProxyCoapClientResource(urlIn.getPath(), newUrl);
+
+                    // Create CoAP Server on PORT with proxy resources form CoAP to CoAP and HTTP
+                    coapProxy = new CoapServer(port);
+                    coapProxy.add(coap2coap);
+                    coapProxy.start();
+                    break;
+                default: interfaceRedirect = new Proxy(urlIn, org.restlet.data.Protocol.HTTP,
                     port, pushEvents);
-            interfaceRedirect.startup();
+                    interfaceRedirect.startup();
+            }
+
+
         } catch (Exception ex) {
             throw new InvalidWrapperException(ex.getMessage(), ex);
         }
@@ -176,6 +221,10 @@ public class RESTInterface {
     public final void release() throws WrapperDeploymentException {
         if (this.interfaceRedirect != null) {
             this.interfaceRedirect.shutdown();
+        }
+        if (this.coapProxy != null) {
+            coapProxy.stop();
+            coapProxy.destroy();
         }
     }
 }

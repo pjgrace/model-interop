@@ -34,7 +34,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.EventCapture;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEventException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 
@@ -66,7 +66,7 @@ public class StateMachine implements EventCapture {
      * framework captures REST operations and pushes them as events to
      * this queue.
      */
-    private final transient BlockingQueue<RESTEvent> eventQueue;
+    private final transient BlockingQueue<MsgEvent> eventQueue;
 
     /**
      * Each state machine is a set of states. We use a hash map to
@@ -153,7 +153,7 @@ public class StateMachine implements EventCapture {
      * rest message.
      */
     @Override
-    public final void pushEvent(final RESTEvent restEvent) {
+    public final void pushEvent(final MsgEvent restEvent) {
         try {
             this.eventQueue.put(restEvent);
         } catch (InterruptedException ex) {
@@ -184,7 +184,7 @@ public class StateMachine implements EventCapture {
             outputReport.addReport("{\"Begin Testing\":\"Error in test model\"");
             return outputReport;
         }
-        
+
         outputReport.clear();
         outputReport.println("Test started - run the application");
         outputReport.println("----------------------------------");

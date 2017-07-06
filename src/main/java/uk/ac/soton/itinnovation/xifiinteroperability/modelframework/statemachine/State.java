@@ -30,7 +30,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachin
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEventException;
 
 /**
@@ -144,7 +144,7 @@ public interface State {
      * and only after the state has been transitioned through.
      * @return The saved .
      */
-    RESTEvent getStoredEvent();
+    MsgEvent getStoredEvent();
 
     /**
      * Adds a guard transition between two states in the state machine. If both
@@ -177,7 +177,7 @@ public interface State {
      * @throws UnexpectedEventException Event detected that doesn't match the
      * behaviour described in the state machine.
      */
-    String evaluateTransition(RESTEvent input, InteroperabilityReport out)
+    String evaluateTransition(MsgEvent input, InteroperabilityReport out)
             throws UnexpectedEventException;
 
     /**
@@ -210,6 +210,6 @@ public interface State {
      * @throws UnexpectedEventException Event detected that doesn't match the
      * behaviour described in the state machine.
      */
-    String executeTransition(BlockingQueue<RESTEvent> input, InteroperabilityReport outputReport)
+    String executeTransition(BlockingQueue<MsgEvent> input, InteroperabilityReport outputReport)
             throws UnexpectedEventException;
  }

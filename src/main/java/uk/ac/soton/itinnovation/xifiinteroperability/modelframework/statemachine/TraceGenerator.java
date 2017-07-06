@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 
 /**
@@ -59,14 +59,14 @@ public final class TraceGenerator {
      */
     public static void generateEvents(final String rawDataFile, final StateMachine sMachine) {
 
-        ArrayList<RESTEvent> fileContent = null;
+        ArrayList<MsgEvent> fileContent = null;
 
         // Open the trace file
         try {
             final InputStream file = new FileInputStream(rawDataFile);
             final InputStream input = new BufferedInputStream(file);
             final ObjectInputStream httpEvents = new ObjectInputStream(input);
-            fileContent = (ArrayList<RESTEvent>) httpEvents.readObject();
+            fileContent = (ArrayList<MsgEvent>) httpEvents.readObject();
         } catch (IOException e) {
             ServiceLogger.LOG.error("Unable to open trace file: " + rawDataFile, e);
             return;
@@ -77,7 +77,7 @@ public final class TraceGenerator {
 
         if (fileContent != null) {
             // Read an HTTP event one at a time until the end of the file
-            for (RESTEvent e : fileContent) {
+            for (MsgEvent e : fileContent) {
                 // Notify the state machine of the event
                 sMachine.pushEvent(e);
             }

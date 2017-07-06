@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.ProtocolMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTMessage;
 
 /**
@@ -62,7 +63,7 @@ public class Transition {
      * The rest event where this transition is a message not a guard. The
      * transition cannot be both.
      */
-    private transient RESTMessage event;
+    private transient ProtocolMessage event;
 
     /**
      * The value of the <report> tag in the transition to specify what could
@@ -95,7 +96,7 @@ public class Transition {
      * @param label The to label.
      * @param rMesg The message to be sent when transition is triggered.
      */
-    public Transition(final String label, final RESTMessage rMesg, String report) {
+    public Transition(final String label, final ProtocolMessage rMesg, String report) {
         this(label);
         this.event = rMesg;
         this.interopReport = report;
@@ -121,7 +122,7 @@ public class Transition {
      * Get the REST message of the trigger.
      * @return The Rest message object.
      */
-    public final RESTMessage getTrigger() {
+    public final ProtocolMessage getTrigger() {
         return this.event;
     }
 

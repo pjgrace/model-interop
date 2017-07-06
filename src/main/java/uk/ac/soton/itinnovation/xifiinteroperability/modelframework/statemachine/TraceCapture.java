@@ -34,7 +34,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.EventCapture;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 
 /**
@@ -47,7 +47,7 @@ public class TraceCapture implements EventCapture {
     /**
      * The list of events in the repeatable trace.
      */
-    private final transient List<RESTEvent> resourceName;
+    private final transient List<MsgEvent> resourceName;
 
     /**
      * The file location of the trace.
@@ -64,7 +64,7 @@ public class TraceCapture implements EventCapture {
     }
 
     @Override
-    public final void pushEvent(final RESTEvent httpMessage) {
+    public final void pushEvent(final MsgEvent httpMessage) {
         resourceName.add(httpMessage);
     }
 

@@ -147,7 +147,7 @@ public class ComponentForm extends JPanel {
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                
+
                 if (mirrorNode.getLabel().equalsIgnoreCase(ident.getText()) || !editor.getDataModel().archIdentExist(ident.getText())){
                     mxGraphModel model = (mxGraphModel) editor.getSystemGraph().getGraph().getModel();
                     mxCell cellChanged = (mxCell) model.getCell(mirrorNode.getNodeLabelID());
@@ -156,7 +156,7 @@ public class ComponentForm extends JPanel {
                     mirrorNode.setData(ident.getText(), address.getText());
                 }
                 else {
-                    JOptionPane.showMessageDialog(editor, 
+                    JOptionPane.showMessageDialog(editor,
                             "Component id '" + ident.getText() + "' is already used. Please choose another label."
                             , "Renaming error", JOptionPane.ERROR_MESSAGE);
                     ident.setText(mirrorNode.getLabel());
@@ -189,7 +189,7 @@ public class ComponentForm extends JPanel {
         addIntf.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-              mirrorNode.addInterfaceData(urlID.getText(), url.getText());
+              mirrorNode.addInterfaceData(urlID.getText(), url.getText(), "http");
               componentView.clearData();
               componentView.setData(mirrorNode);
               url.setText("");
@@ -217,11 +217,11 @@ public class ComponentForm extends JPanel {
                 } else {
                     nodetable.clearSelection();
                 }
-                
+
                 int rowindex = nodetable.getSelectedRow();
                 if (rowindex < 0)
                     return;
-                
+
                 if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
                     JPopupMenu popup = new ChangeTable(editor, componentView, r, mirrorNode);
                     popup.show(e.getComponent(), e.getX(), e.getY());

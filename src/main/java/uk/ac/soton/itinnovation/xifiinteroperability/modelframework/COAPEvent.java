@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// Â© University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -38,37 +38,37 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter
  * multiple sources, and the event is built up over time.
  * @author pjg
  */
-public abstract class MsgEvent implements Serializable {
+public class COAPEvent extends MsgEvent implements Serializable {
 
-    /** XML <guards> tag constant. */
-    public static final String GUARDS_LABEL = "guards";
+    /**
+     * Portable serializable class.
+     */
+    public static final long serialVersionUID = 1L;
 
-    /** XML <guards><equal> tag constant. */
-    public static final String EQUALS_LABEL = "equal";
 
-    /** XML <guards><notequal> tag constant. */
-    public static final String NOTEQUALS_LABEL = "notequal";
+    /**
+     * COAP Events have fixed constants for parameter values specific to
+     * the tool (generally these represent the absolute base for COAP
+     * exchange - from, to, message, ...
+     */
 
-    /** XML <guards><contains> tag constant. */
-    public static final String CONTAINS_LABEL = "contains";
+    /** Where is the message from = IP address of the originator. */
+    public static final String COAP_FROM = "coap.from";
 
-    /** XML <guards><greaterthan> tag constant. */
-    public static final String GREATERTHAN_LABEL = "greaterthan";
+     /**  Where is the message to = IP address of the location sent to. */
+    public static final String COAP_TO = "coap.to";
 
-    /** XML <guards><lessthan> tag constant. */
-    public static final String LESSTHAN_LABEL = "lessthan";
+    /** What is the URL path i.e. the HTTP interface of the request. */
+    public static final String COAP_TOINTERFACE = "coap.tointerface";
 
-    /** XML <param>tag constant. */
-    public static final String PARAM_LABEL = "param";
+     /**  What is the message type - get, put, delete, post ...*/
+    public static final String COAP_MSG = "coap.msg";
 
-    /** XML <value>tag constant. */
-    public static final String VALUE_LABEL = "value";
+    /** What is the result code of the message (200, 404). */
+    public static final String COAP_CODE = "coap.code";
 
-    /** Message type (only capture reply messages as events for now). */
-    public static final String REPLY_LABEL = "reply";
-
-    /** Report tag. */
-    public static final String REPORT_LABEL = "report";
+    /** A creatable header field. */
+    public static final String COAP_CONFIG_HEAD = "coap.";
 
     /**
      * The content of the message - optional, not all REST events will
@@ -80,7 +80,7 @@ public abstract class MsgEvent implements Serializable {
      * Getter for the data content of the event.
      * @return The data content.
      */
-    public Content getDataBody() {
+    public final Content getDataBody() {
         return dataBody;
     }
 
@@ -100,7 +100,6 @@ public abstract class MsgEvent implements Serializable {
 
     /**
      * Set the event time response
-     * @param respTime
      * @respTime the time stamp in milliseconds
      */
     public void setResponseTime(long respTime) {
@@ -111,7 +110,7 @@ public abstract class MsgEvent implements Serializable {
      * Set the event content.
      * @param newBody Content to set.
      */
-    public void setDataBody(final Content newBody) {
+    public final void setDataBody(final Content newBody) {
         dataBody = newBody;
     }
 
@@ -119,13 +118,13 @@ public abstract class MsgEvent implements Serializable {
      * Each rest events has a series of parameters e.g. HTTP headers,
      * Query parameters, even parameters in the body.
      */
-    private Map<String, Parameter> inputParams = new HashMap();
+    private final Map<String, Parameter> inputParams = new HashMap();
 
     /**
      * Retrieve the parameters list.
      * @return The list of parameters.
      */
-    public Map<String, Parameter> getParameterMap() {
+    public final Map<String, Parameter> getParameterMap() {
         return this.inputParams;
     }
 
@@ -136,7 +135,7 @@ public abstract class MsgEvent implements Serializable {
      * @param pNew The new parameter to add.
      * @return True if the parameter added successfully.
      */
-    public boolean addParameter(final Parameter pNew) {
+    public final boolean addParameter(final Parameter pNew) {
         if (this.inputParams.put(pNew.getName(), pNew) == null) {
             return false;
         }
@@ -148,7 +147,7 @@ public abstract class MsgEvent implements Serializable {
      * @param type The type of the data content
      * @param body The data content itself.
      */
-    public void addContent(final String type, final String body) {
+    public final void addContent(final String type, final String body) {
         setDataBody(new Content(type, body));
         addParameter(new Parameter("content", body));
     }
