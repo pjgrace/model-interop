@@ -191,8 +191,6 @@ public class ComponentForm extends JPanel {
             @Override
             public void keyReleased(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_ENTER){
-                    ke.getComponent().setBackground(UIManager.getColor("TextField.background"));
-                    update.doClick();
                     panel.requestFocusInWindow();
                 }
             }

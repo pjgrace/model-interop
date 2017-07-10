@@ -128,8 +128,6 @@ public class EndForm extends JPanel {
             @Override
             public void keyReleased(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_ENTER){
-                    ke.getComponent().setBackground(UIManager.getColor("TextField.background"));
-                    mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
                     panel.requestFocusInWindow();
                 }
             }

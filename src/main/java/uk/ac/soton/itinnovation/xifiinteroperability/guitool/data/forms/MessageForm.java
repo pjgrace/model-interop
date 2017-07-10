@@ -326,10 +326,6 @@ public class MessageForm extends JPanel {
             @Override
             public void keyReleased(KeyEvent ke) {
                 if (ke.getKeyCode() == KeyEvent.VK_ENTER){
-                    ke.getComponent().setBackground(UIManager.getColor("TextField.background"));
-                    mirrorNode.updateMessage(url.getText(),
-                        path.getText(), method.getSelectedItem().toString(),
-                        contentType.getSelectedItem().toString(), body.getText());
                     panel.requestFocusInWindow();
                 }
             }
