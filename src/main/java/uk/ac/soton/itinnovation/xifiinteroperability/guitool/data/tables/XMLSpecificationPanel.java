@@ -27,13 +27,14 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables;
 
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLEditorKit;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -57,7 +58,7 @@ public class XMLSpecificationPanel extends JPanel {
     /**
      * The core element of the panel - the text area to display the xml.
      */
-    private final transient JTextArea xmlSpecification;
+    private final transient JEditorPane xmlSpecification;
 
     /**
      * Create the UI panel element with the given data model.
@@ -73,11 +74,14 @@ public class XMLSpecificationPanel extends JPanel {
             content.append(dModel.getGraphXML());
         }
 
-        xmlSpecification = new JTextArea(content.toString());
+        xmlSpecification = new JEditorPane("text/xml", content.toString());
+        xmlSpecification.setEditable(false);
         xmlSpecification.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
-        xmlSpecification.setLineWrap(true);
-        xmlSpecification.setWrapStyleWord(true);
+        xmlSpecification.setEditorKit(new XMLEditorKit(this));
+        
+//        xmlSpecification.setLineWrap(true);
+//        xmlSpecification.setWrapStyleWord(true);
 
         // Create the scrolling text area with the content.
         final JScrollPane areaScrollPane = new JScrollPane(xmlSpecification);
@@ -94,7 +98,8 @@ public class XMLSpecificationPanel extends JPanel {
      */
     public final void displayXMLSpecification() {
         if (dataModel != null) {
-            this.xmlSpecification.setText(dataModel.getGraphXML());
+            this.xmlSpecification.setDocument(this.xmlSpecification.getEditorKit().createDefaultDocument());
+            this.xmlSpecification.setText(dataModel.getGraphXML().replaceAll("\t", ""));
         }
     }
 }

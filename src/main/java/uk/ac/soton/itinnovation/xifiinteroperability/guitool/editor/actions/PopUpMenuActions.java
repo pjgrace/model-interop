@@ -99,6 +99,7 @@ public final class PopUpMenuActions {
                         }
                     }
                 editor.updateTableView(null);
+                editor.getCodePanel().getXMLPanel().displayXMLSpecification();
                 final mxGraphComponent graphComponent = editor.getBehaviourGraph();
                 final mxGraphComponent arcgraphComponent = editor.getSystemGraph();
                 final mxGraph graph = graphComponent.getGraph();
