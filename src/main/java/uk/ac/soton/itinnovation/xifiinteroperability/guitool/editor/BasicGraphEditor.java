@@ -304,13 +304,8 @@ public class BasicGraphEditor extends JPanel {
         public void invoke(final Object source, final mxEventObject evt) {
             List<mxUndoableEdit.mxUndoableChange> changes = ((mxUndoableEdit) evt
                     .getProperty("edit")).getChanges();
-            if (changes.size() == 1){
-                if (changes.get(0) instanceof mxValueChange){
-                    return;
-                    // renaming should be added as an event TODO 
-                }
-            }
-            else if (changes.size() == 4){
+            
+            if (changes.size() == 4){
                 // this is to avoid adding invalid transitions as an event for the undo manager
                 if (changes.get(0) instanceof mxChildChange && changes.get(3) instanceof mxChildChange){
                     if (changes.get(1) instanceof mxTerminalChange && changes.get(2) instanceof mxTerminalChange){
@@ -318,12 +313,10 @@ public class BasicGraphEditor extends JPanel {
                     }
                 }
             }     
+            
             undoManager.undoableEditHappened((mxUndoableEdit) evt
                     .getProperty("edit"));
-//            for (mxUndoableEdit.mxUndoableChange change: ((mxUndoableEdit) evt
-//                    .getProperty("edit")).getChanges()){
-//                System.out.println(change);
-//            }
+            
             if (changes.size() == 1){
                 // manually adding event when there is just a change in the location of a node
                 if (changes.get(0) instanceof mxGeometryChange){
@@ -331,6 +324,9 @@ public class BasicGraphEditor extends JPanel {
                 }
                 // manually adding event when there is just a change in the transition target node
                 else if (changes.get(0) instanceof mxTerminalChange){
+                    xmlUndoManager.add(dataModel.getState());
+                }
+                else if (changes.get(0) instanceof mxValueChange){
                     xmlUndoManager.add(dataModel.getState());
                 }
             }   
