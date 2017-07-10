@@ -145,7 +145,7 @@ public class Message extends AbstractGraphElement implements Serializable {
      * @param type The data type of the message
      * @param bodymsg  The body content of the message
      */
-    public final void addMessage(final String url, final String pthStr, final String mthStr, final String type, final String bodymsg) {
+    public final void updateMessage(final String url, final String pthStr, final String mthStr, final String type, final String bodymsg) {
         this.urlEndpoint = url;
         this.path = pthStr;
         this.method = mthStr;

@@ -37,6 +37,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -53,6 +55,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -163,6 +166,22 @@ public class ComponentForm extends JPanel {
                 }
             }
           });
+        
+        final FocusListener focusListener = new FocusListener(){
+            @Override
+            public void focusGained(FocusEvent fe) {
+                fe.getComponent().setBackground(new Color(230, 242, 255));
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
+                update.doClick();
+            }
+            
+        };
+        ident.addFocusListener(focusListener);
+        address.addFocusListener(focusListener);
 
         listPane.add(update);
         topPanel.add(listPane);
@@ -184,7 +203,9 @@ public class ComponentForm extends JPanel {
 
 
         newIntfPane.add(urlID);
+        urlID.addFocusListener(MessageForm.COLOUR_CHANGER);
         newIntfPane.add(url);
+        url.addFocusListener(MessageForm.COLOUR_CHANGER);
         final JButton addIntf = new JButton("Add Interface Info");
         addIntf.addActionListener(new ActionListener() {
             @Override
@@ -233,6 +254,12 @@ public class ComponentForm extends JPanel {
         add(topPanel, BorderLayout.NORTH);
         add(compScrollPane, BorderLayout.CENTER);
 
+        this.addMouseListener(MessageForm.FOCUS_CHANGER);
+        topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
+        listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
+        newIntfPane.addMouseListener(MessageForm.FOCUS_CHANGER);
+        nodetable.addMouseListener(MessageForm.FOCUS_CHANGER);
+        compScrollPane.addMouseListener(MessageForm.FOCUS_CHANGER);
     }
 
     /**

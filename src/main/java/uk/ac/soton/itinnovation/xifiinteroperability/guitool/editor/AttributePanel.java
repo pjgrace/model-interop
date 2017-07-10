@@ -154,6 +154,10 @@ public class AttributePanel {
     private static final String NORMALPANEL = "normal";
 
     /**
+     * The attribute panel for loop nodes
+     */
+    private static final String LOOPPANEL = "loop";
+    /**
      * The attribute panel for trigger nodes.
      */
     private static final String TRIGGERPANEL = "trigger";
@@ -196,6 +200,7 @@ public class AttributePanel {
         parent.add(mForm, MESSAGEPANEL);
         parent.add(eForm, ENDPANEL);
         parent.add(new EmptyForm(), NORMALPANEL);
+        parent.add(new EmptyForm(), LOOPPANEL);
         parent.add(new EmptyForm(), TRIGGERPANEL);
 
     }

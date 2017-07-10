@@ -161,7 +161,7 @@ public class GraphGenerator {
             body = bodyTag.item(0).getTextContent();
         }
 
-        message.addMessage(url, path, method, type, body);
+        message.updateMessage(url, path, method, type, body);
 
         final NodeList headers = eElement.getElementsByTagName("header");
         for (int j = 0; j < headers.getLength(); j++) {

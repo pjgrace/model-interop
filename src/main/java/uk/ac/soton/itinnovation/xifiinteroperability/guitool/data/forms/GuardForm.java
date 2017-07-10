@@ -164,10 +164,12 @@ public class GuardForm extends JPanel {
 
         listPane.add(new JLabel("Guard description:",  JLabel.RIGHT));
         ident = new JTextField();
+        ident.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(ident);
 
         listPane.add(new JLabel("Required guard value:", JLabel.RIGHT));
         address = new JTextField();
+        address.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(address);
         listPane.add(new JLabel(""));
 
@@ -201,7 +203,13 @@ public class GuardForm extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
         add(guardScrollPane, BorderLayout.CENTER);
-
+        
+        this.addMouseListener(MessageForm.FOCUS_CHANGER);
+        topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
+        listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
+        comboPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
+        guardTable.addMouseListener(MessageForm.FOCUS_CHANGER);
+        guardScrollPane.addMouseListener(MessageForm.FOCUS_CHANGER);
     }
 
     /**

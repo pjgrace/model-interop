@@ -136,10 +136,12 @@ public class NodeForm extends JPanel {
 
         listPane.add(new JLabel("node parameter:",  JLabel.RIGHT));
         ident = new JTextField();
+        ident.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(ident);
 
         listPane.add(new JLabel("parameter value:", JLabel.RIGHT));
         address = new JTextField();
+        address.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(address);
         listPane.add(new JLabel(""));
 
@@ -193,7 +195,12 @@ public class NodeForm extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
         add(nodeScrollPane, BorderLayout.CENTER);
-
+        
+        this.addMouseListener(MessageForm.FOCUS_CHANGER);
+        topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
+        listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
+        nodeTable.addMouseListener(MessageForm.FOCUS_CHANGER);
+        nodeScrollPane.addMouseListener(MessageForm.FOCUS_CHANGER);
     }
 
     /**

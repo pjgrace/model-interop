@@ -32,6 +32,8 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -39,6 +41,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 /**
  * Table related to the data attached to end states in the graph nodes.
@@ -97,6 +100,26 @@ public class EndForm extends JPanel {
 
         listPane.add(new JLabel("Test report:", JLabel.RIGHT));
         listPane.add(reasonInput);
+        
+        FocusListener focusListener = new FocusListener(){
+            @Override
+            public void focusGained(FocusEvent fe) {
+                if (fe.getComponent() instanceof JTextField){
+                    fe.getComponent().setBackground(new Color(230,242,255));
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                if (fe.getComponent() instanceof JTextField){
+                    fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
+                }
+                
+                mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
+            }
+        };
+        reasonInput.addFocusListener(focusListener);
+        successBox.addFocusListener(focusListener);
 
         listPane.add(new JLabel("",  JLabel.RIGHT));
         final JButton update = new JButton("Update end state");
@@ -110,6 +133,10 @@ public class EndForm extends JPanel {
         listPane.add(update);
         topPanel.add(listPane);
         add(topPanel, BorderLayout.NORTH);
+        
+        this.addMouseListener(MessageForm.FOCUS_CHANGER);
+        topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
+        listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
     }
 
     /**

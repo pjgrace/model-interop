@@ -35,8 +35,11 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
 import java.util.Locale;
 import java.util.Map;
@@ -45,6 +48,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -53,6 +57,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -68,6 +73,30 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
  */
 public class MessageForm extends JPanel {
 
+    /**
+     * a focus listener used to change background color of JTextFields when focused
+     */
+    public static final FocusListener COLOUR_CHANGER = new FocusListener() {
+        @Override
+        public void focusGained(FocusEvent fe) {
+            fe.getComponent().setBackground(new Color(230, 242, 255));
+        }
+
+        @Override
+        public void focusLost(FocusEvent fe) {
+            fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
+        }
+    };
+    
+    public static final MouseListener FOCUS_CHANGER = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent me) {
+            if (me.getSource() instanceof JComponent) {
+                ((JComponent) me.getSource()).requestFocusInWindow();
+            }
+        }
+    };
+    
     /**
      * The form first contains text fields to input the main content about
      * the message.
@@ -231,7 +260,7 @@ public class MessageForm extends JPanel {
 
         newIntfPane.add(header);
         newIntfPane.add(headerValue);
-
+        
         final JButton addIntf = new JButton("Add Header");
         addIntf.addActionListener(new ActionListener() {
             @Override
@@ -253,14 +282,48 @@ public class MessageForm extends JPanel {
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                mirrorNode.addMessage(url.getText(),
+                mirrorNode.updateMessage(url.getText(),
                     path.getText(), method.getSelectedItem().toString(),
                         contentType.getSelectedItem().toString(), body.getText());
             }
           });
 
         add(update, BorderLayout.SOUTH);
+        
+        final FocusListener focusListener = new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent fe) {
+                if (fe.getComponent() instanceof JTextField || fe.getComponent() instanceof JTextArea){
+                    fe.getComponent().setBackground(new Color(230,242,255));
+                }
+            }
 
+            @Override
+            public void focusLost(FocusEvent fe) {
+                if (fe.getComponent() instanceof JTextField || fe.getComponent() instanceof JTextArea){
+                    fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
+                }
+                
+                mirrorNode.updateMessage(url.getText(),
+                        path.getText(), method.getSelectedItem().toString(),
+                        contentType.getSelectedItem().toString(), body.getText());
+            }
+
+        };
+
+        url.addFocusListener(focusListener);
+        path.addFocusListener(focusListener);
+        method.addFocusListener(focusListener);
+        contentType.addFocusListener(focusListener);
+        body.addFocusListener(focusListener);
+
+        this.addMouseListener(FOCUS_CHANGER);
+        topPanel.addMouseListener(FOCUS_CHANGER);
+        nodetable.addMouseListener(FOCUS_CHANGER);
+        messageScrollPane.addMouseListener(FOCUS_CHANGER);
+        
+        header.addFocusListener(COLOUR_CHANGER);
+        headerValue.addFocusListener(COLOUR_CHANGER);
     }
 
     /**
