@@ -34,6 +34,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -120,6 +122,19 @@ public class EndForm extends JPanel {
         };
         reasonInput.addFocusListener(focusListener);
         successBox.addFocusListener(focusListener);
+        
+        JPanel panel = this;
+        reasonInput.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_ENTER){
+                    ke.getComponent().setBackground(UIManager.getColor("TextField.background"));
+                    mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
+                    panel.requestFocusInWindow();
+                }
+            }
+            
+        });
 
         listPane.add(new JLabel("",  JLabel.RIGHT));
         final JButton update = new JButton("Update end state");

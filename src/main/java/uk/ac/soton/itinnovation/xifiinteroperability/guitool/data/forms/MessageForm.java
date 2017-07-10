@@ -37,6 +37,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -317,6 +320,23 @@ public class MessageForm extends JPanel {
         contentType.addFocusListener(focusListener);
         body.addFocusListener(focusListener);
 
+        
+        JPanel panel = this; // reference to the panel
+        KeyListener keyListener = new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_ENTER){
+                    ke.getComponent().setBackground(UIManager.getColor("TextField.background"));
+                    mirrorNode.updateMessage(url.getText(),
+                        path.getText(), method.getSelectedItem().toString(),
+                        contentType.getSelectedItem().toString(), body.getText());
+                    panel.requestFocusInWindow();
+                }
+            }
+        };
+        url.addKeyListener(keyListener);
+        path.addKeyListener(keyListener);
+        
         this.addMouseListener(FOCUS_CHANGER);
         topPanel.addMouseListener(FOCUS_CHANGER);
         nodetable.addMouseListener(FOCUS_CHANGER);

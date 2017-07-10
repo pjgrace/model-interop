@@ -39,6 +39,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -182,6 +185,20 @@ public class ComponentForm extends JPanel {
         };
         ident.addFocusListener(focusListener);
         address.addFocusListener(focusListener);
+        
+        JPanel panel = this;
+        KeyListener keyListener = new KeyAdapter(){
+            @Override
+            public void keyReleased(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_ENTER){
+                    ke.getComponent().setBackground(UIManager.getColor("TextField.background"));
+                    update.doClick();
+                    panel.requestFocusInWindow();
+                }
+            }
+        };
+        ident.addKeyListener(keyListener);
+        address.addKeyListener(keyListener);
 
         listPane.add(update);
         topPanel.add(listPane);
