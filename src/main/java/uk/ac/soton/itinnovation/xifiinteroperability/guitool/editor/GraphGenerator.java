@@ -330,7 +330,7 @@ public class GraphGenerator {
                     "image;image=/images/event.png");
                     break;
                 default:
-                    throw new InvalidPatternException("State is not one of the five types");
+                    throw new InvalidPatternException("State is not one of the six types");
             }
 
             // Insert the node into the graph ui

@@ -114,7 +114,7 @@ public class MainDisplayPanel {
     public MainDisplayPanel(final JPanel parent, final DataModel dModel,
             final BasicGraphEditor editor) {
 
-            xmlDocument = new XMLSpecificationPanel(dModel);
+            xmlDocument = new XMLSpecificationPanel(dModel, editor);
             exDocument = new TestingOutputPanel();
             reportsDocument = new PreviousReportsPanel(editor);
 

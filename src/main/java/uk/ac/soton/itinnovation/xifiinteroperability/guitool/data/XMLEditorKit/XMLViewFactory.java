@@ -66,11 +66,12 @@ class XMLViewFactory implements ViewFactory {
                     return new ComponentView(elem);
                 case StyleConstants.IconElementName:
                     return new IconView(elem);
+                case XMLDocument.PLAIN_TEXT_ELEMENT:
+                    return new PlainTextView(elem);
                 default:
                     break;
             }
         }
-
         // default to text display
         return new LabelView(elem);
     }

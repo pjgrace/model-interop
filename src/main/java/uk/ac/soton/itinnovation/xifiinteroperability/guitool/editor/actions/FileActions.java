@@ -364,10 +364,10 @@ public class FileActions {
          * Clear the editor information of data and history.
          */
         protected final void resetEditor() {
-            final mxGraph graph = editor.getBehaviourGraph().getGraph();
             // Check modified flag and display save dialog
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
-
+            
+            final mxGraph graph = editor.getBehaviourGraph().getGraph();
             final mxCell root = new mxCell();
             root.insert(new mxCell());
             graph.getModel().setRoot(root);

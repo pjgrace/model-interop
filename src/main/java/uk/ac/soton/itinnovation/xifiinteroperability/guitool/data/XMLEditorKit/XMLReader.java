@@ -58,7 +58,6 @@ public class XMLReader {
         }
 
         XMLDocument doc=(XMLDocument)d;
-        doc.setUserChanges(false);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setCoalescing(false);
         dbf.setValidating (false);
@@ -88,7 +87,6 @@ public class XMLReader {
             specs.toArray(data);
             doc.insert(pos, data);
             
-            doc.setUserChanges(true);
         } catch(SAXException pce) {
             JOptionPane.showMessageDialog(null, "Something went wrong while processing your xml pattern.", "Error", JOptionPane.ERROR_MESSAGE);
         } catch(ParserConfigurationException | IOException pce) {
@@ -138,7 +136,8 @@ public class XMLReader {
             String xml_tag = "xml";
             String xml_version_attr = "version";
             String xml_version_value = dd.getXmlVersion();
-
+            
+            // start tag name
             spec = new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES, 
                     DefaultStyledDocument.ElementSpec.ContentType, 
                     "?".toCharArray(), 0, 1);
@@ -215,7 +214,7 @@ public class XMLReader {
 //            >
             spec=new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,">".toCharArray(), 0, 1);
             specs.add(spec);
-            spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
+            spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
             specs.add(spec);
 
             for (int i=0; i<list.getLength(); i++) {
@@ -252,7 +251,7 @@ public class XMLReader {
                     spec=new DefaultStyledDocument.ElementSpec(XMLDocument.COMMENT_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,"\n".toCharArray(), 0, 1);
                     specs.add(spec);
 
-                    spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
+                    spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
                     specs.add(spec);
                 }
                 else {
@@ -262,14 +261,12 @@ public class XMLReader {
 
                     spec=new DefaultStyledDocument.ElementSpec(XMLDocument.PLAIN_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,n.getNodeValue().toCharArray(), 0, n.getNodeValue().length());
                     specs.add(spec);
-                    spec=new DefaultStyledDocument.ElementSpec(XMLDocument.PLAIN_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,"\n".toCharArray(), 0, 1);
-                    specs.add(spec);
-
-                    spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
+                    
+                    spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
                     specs.add(spec);
                 }
             }
-            spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.StartTagType);
+            spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.StartTagType);
             specs.add(spec);
             if (node instanceof org.w3c.dom.Document) {
                 spec=new DefaultStyledDocument.ElementSpec(XMLDocument.TAGNAME_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType," ".toCharArray(), 0, 1);

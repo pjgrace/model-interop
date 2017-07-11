@@ -41,6 +41,7 @@ public class XMLDocument extends DefaultStyledDocument {
     public final static String TAG_ELEMENT="tag_element";
     public final static String TAG_ROW_START_ELEMENT="tag_row_start_element";
     public final static String TAG_ROW_END_ELEMENT="tag_row_end_element";
+    public final static String PLAIN_TEXT_ELEMENT="plain_text_element";
 
     public final static SimpleAttributeSet BRACKET_ATTRIBUTES=new SimpleAttributeSet();
     public final static SimpleAttributeSet TAGNAME_ATTRIBUTES=new SimpleAttributeSet();
@@ -60,39 +61,14 @@ public class XMLDocument extends DefaultStyledDocument {
 
         StyleConstants.setFontSize(PLAIN_ATTRIBUTES, StyleConstants.getFontSize(PLAIN_ATTRIBUTES)-1);
         StyleConstants.setBold(PLAIN_ATTRIBUTES, true);
+        PLAIN_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, PLAIN_TEXT_ELEMENT);
 
         StyleConstants.setFontSize(COMMENT_ATTRIBUTES, StyleConstants.getFontSize(COMMENT_ATTRIBUTES)-1);
         StyleConstants.setForeground(COMMENT_ATTRIBUTES, Color.GRAY);
         StyleConstants.setItalic(COMMENT_ATTRIBUTES, true);
     }
     
-    private boolean isUserChanges=true;
-    
-    public XMLDocument() {
-
-    }
-
-    @Override
-    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-        if (!isUserChanges()) {
-            super.insertString(offs, str, a);
-        }
-    }
-
-    @Override
-    public void remove(int offs, int len) throws BadLocationException {
-        if (!isUserChanges()) {
-            super.remove(offs, len);
-        }
-    }
-
-    public boolean isUserChanges() {
-        return isUserChanges;
-    }
-
-    public void setUserChanges(boolean userChanges) {
-        isUserChanges = userChanges;
-    }
+    public XMLDocument() {}
     
     @Override
     protected void insert(int offset, ElementSpec[] data) throws BadLocationException {

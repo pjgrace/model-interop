@@ -43,9 +43,20 @@ public class XMLEditorKit extends StyledEditorKit {
     
     private final JPanel xmlPanel;
     
-    public XMLEditorKit(JPanel xmlPanel){
+    private boolean editingMode;
+    
+    public final boolean editingAllowed(){
+        return editingMode;
+    }
+    
+    public final void toggleEdittingMode(){
+        editingMode = !editingMode;
+    }
+    
+    public XMLEditorKit(JPanel xmlPanel, boolean editingMode){
         super();
         this.xmlPanel = xmlPanel;
+        this.editingMode = editingMode;
     }
     
     @Override
@@ -164,12 +175,65 @@ public class XMLEditorKit extends StyledEditorKit {
             JEditorPane src=(JEditorPane)e.getSource();
 
             int pos=src.viewToModel(e.getPoint());
+            
+            if (editingAllowed()){
+                // checking for plain text view click
+                View plainTextView = src.getUI().getRootView(src);
+
+                while (plainTextView != null && !(plainTextView instanceof PlainTextView)){
+                    int i = plainTextView.getViewIndex(pos, Position.Bias.Forward);
+                    plainTextView = plainTextView.getView(i);
+                }
+
+                PlainTextView deepestPlainTextView = (PlainTextView) plainTextView;
+                while (plainTextView != null && plainTextView instanceof LabelView) {
+                    deepestPlainTextView = (PlainTextView) plainTextView;
+                    int i = plainTextView.getViewIndex(pos, Position.Bias.Forward);
+                    plainTextView = plainTextView.getView(i);
+                }
+
+                if (deepestPlainTextView != null){
+                    Shape a = getAllocation(deepestPlainTextView, src);
+                    if (a != null){
+                        Rectangle r=a instanceof Rectangle ? (Rectangle)a : a.getBounds();
+                        if (r.contains(e.getPoint())){
+                            int start = deepestPlainTextView.getStartOffset();
+                            int end = deepestPlainTextView.getEndOffset();
+                            String newValue = (String) JOptionPane.showInputDialog(xmlPanel, 
+                                    "Please type a value to replace the chosen one", 
+                                    "Editting", JOptionPane.PLAIN_MESSAGE, 
+                                    null, null, deepestPlainTextView.getText(start, end).toString());
+                            
+                            if (newValue == null){
+                                return;
+                            }
+                            
+                            try{
+                                XMLDocument doc = (XMLDocument) deepestPlainTextView.getDocument();
+                                doc.remove(start, end-start);
+                                if (doc.getText(start-1, 1).equals("\n")){
+                                    doc.insertString(start, newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
+                                }
+                                else {
+                                    doc.insertString(start, "\n" + newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
+                                }
+                            }
+                            catch (BadLocationException ex){
+                                return;
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+            
             View v=src.getUI().getRootView(src);
-            boolean insideTagView=false;
+                        
             while (v!=null && !(v instanceof TagView)) {
                 int i=v.getViewIndex(pos, Position.Bias.Forward);
                 v=v.getView(i);
             }
+            
             TagView deepest=(TagView)v;
             while (v!=null && v instanceof TagView) {
                 deepest=(TagView)v;
@@ -193,11 +257,9 @@ public class XMLEditorKit extends StyledEditorKit {
 
                         XMLDocument doc= (XMLDocument)src.getDocument();
                         try {
-                            doc.setUserChanges(false);
                             pos++;
                             doc.insertString(pos, "\n", new SimpleAttributeSet());
                             doc.remove(pos,1);
-                            doc.setUserChanges(true);
                         } catch (BadLocationException e1) {
                             JOptionPane.showMessageDialog(xmlPanel, 
                                     "Something went wrong while processing your XML pattern.", 
@@ -217,7 +279,7 @@ public class XMLEditorKit extends StyledEditorKit {
             if (oldCursor==null) {
                 oldCursor=src.getCursor();
             }
-
+            
             int pos=src.viewToModel(e.getPoint());
             View v=src.getUI().getRootView(src);
             while (v!=null && !(v instanceof TagView)) {

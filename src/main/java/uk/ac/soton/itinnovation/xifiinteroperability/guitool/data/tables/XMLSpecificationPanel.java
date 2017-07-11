@@ -27,17 +27,37 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.view.mxGraph;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLEditorKit;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyleConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GraphGenerator;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 
 /**
  * The XMLSpecificationPanel is the portion of the UI where the XML representation
@@ -64,7 +84,7 @@ public class XMLSpecificationPanel extends JPanel {
      * Create the UI panel element with the given data model.
      * @param dModel The tool data model to build specification from.
      */
-    public XMLSpecificationPanel(final DataModel dModel) {
+    public XMLSpecificationPanel(final DataModel dModel, BasicGraphEditor editor) {
         super(new BorderLayout());
         this.dataModel = dModel;
 
@@ -78,10 +98,8 @@ public class XMLSpecificationPanel extends JPanel {
         xmlSpecification.setEditable(false);
         xmlSpecification.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
-        xmlSpecification.setEditorKit(new XMLEditorKit(this));
+        xmlSpecification.setEditorKit(new XMLEditorKit(this, false));
         
-//        xmlSpecification.setLineWrap(true);
-//        xmlSpecification.setWrapStyleWord(true);
 
         // Create the scrolling text area with the content.
         final JScrollPane areaScrollPane = new JScrollPane(xmlSpecification);
@@ -89,7 +107,79 @@ public class XMLSpecificationPanel extends JPanel {
                         JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         areaScrollPane.setPreferredSize(new Dimension(1000, 1000));
 
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
+        
+         // a button to toggle editing mode
+        JButton toggleEditingButton = new JButton("Enable XML pattern editing");
+        customizeButton(toggleEditingButton);
+        
+        JButton submitChangesButton = new JButton("Validate and update changes");
+        submitChangesButton.setVisible(false);
+        customizeButton(submitChangesButton);
+        submitChangesButton.addActionListener((ActionEvent ae) -> {
+            String xml;
+            try {
+                xml = xmlSpecification.getDocument().getText(0, xmlSpecification.getDocument().getLength()).replaceAll("\n", "");
+            } 
+            catch (BadLocationException ex) {
+                JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
+                        "Error", JOptionPane.ERROR_MESSAGE, null);
+                return;
+            }
+            
+            if (xml != null){
+                final mxGraph graph = editor.getBehaviourGraph().getGraph();
+                final mxCell root = new mxCell();
+                root.insert(new mxCell());
+                graph.getModel().setRoot(root);
+
+                final mxGraph agraph = editor.getSystemGraph().getGraph();
+                final mxCell root2 = new mxCell();
+                root2.insert(new mxCell());
+                agraph.getModel().setRoot(root2);
+                
+                editor.getDataModel().clearData();
+                
+                editor.updateTableView(null);
+                
+                GraphGenerator graphGenerator = new GraphGenerator(editor);
+                try {
+                    graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
+                        "Error", JOptionPane.ERROR_MESSAGE, null);
+                    return;
+                }
+                
+                toggleEditingButton.doClick();                
+            }
+            
+        });
+        
+        toggleEditingButton.addActionListener((ActionEvent ae) -> {
+            if (((XMLEditorKit)xmlSpecification.getEditorKit()).editingAllowed()){
+                toggleEditingButton.setText("Enable XML pattern editing");
+                ((XMLEditorKit)xmlSpecification.getEditorKit()).toggleEdittingMode();
+                submitChangesButton.setVisible(false);
+                StyleConstants.setBackground(PLAIN_ATTRIBUTES, Color.WHITE);
+                displayXMLSpecification();
+            }
+            else {
+                toggleEditingButton.setText("Disable XML pattern editing");
+                ((XMLEditorKit)xmlSpecification.getEditorKit()).toggleEdittingMode();
+                submitChangesButton.setVisible(true);
+                StyleConstants.setBackground(PLAIN_ATTRIBUTES, new Color(241, 218, 218));
+                displayXMLSpecification();
+            }
+        });
+        
+        buttonsPanel.add(toggleEditingButton);
+        buttonsPanel.add(Box.createRigidArea(new Dimension(10,0)));
+        buttonsPanel.add(submitChangesButton);
+        
         add(areaScrollPane, BorderLayout.CENTER);
+        add(buttonsPanel, BorderLayout.NORTH);
     }
 
     /**
@@ -98,9 +188,21 @@ public class XMLSpecificationPanel extends JPanel {
      */
     public final void displayXMLSpecification() {
         if (dataModel != null) {
+            int caretPosition = xmlSpecification.getCaretPosition();
             this.xmlSpecification.setDocument(this.xmlSpecification.getEditorKit().createDefaultDocument());
             this.xmlSpecification.setText(dataModel.getGraphXML().replaceAll("\t", ""));
+            xmlSpecification.setCaretPosition(caretPosition);
         }
+    }
+    
+    /**
+     * a method to customise buttons design
+     */
+    private void customizeButton(JButton button){
+        button.setForeground(new Color(0, 26, 102));
+        button.setBackground(new Color(204, 229, 255));
+        button.setFocusPainted(false);
+        button.setFont(new Font("Serif", Font.BOLD, 11));
     }
 }
 
