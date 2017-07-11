@@ -27,6 +27,7 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables;
 
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.view.mxGraph;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLEditorKit;
@@ -129,27 +130,27 @@ public class XMLSpecificationPanel extends JPanel {
             }
             
             if (xml != null){
-                final mxGraph graph = editor.getBehaviourGraph().getGraph();
-                final mxCell root = new mxCell();
-                root.insert(new mxCell());
-                graph.getModel().setRoot(root);
-
-                final mxGraph agraph = editor.getSystemGraph().getGraph();
-                final mxCell root2 = new mxCell();
-                root2.insert(new mxCell());
-                agraph.getModel().setRoot(root2);
+                String oldXml = editor.getDataModel().getGraphXML();
                 
-                editor.getDataModel().clearData();
-                
-                editor.updateTableView(null);
+                clearPattern(editor);
                 
                 GraphGenerator graphGenerator = new GraphGenerator(editor);
                 try {
                     graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
+                    final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
+                    layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
                         "Error", JOptionPane.ERROR_MESSAGE, null);
-                    return;
+                    try {
+                        clearPattern(editor);
+                        graphGenerator.createGraph(GraphGenerator.loadXMLFromString(oldXml));
+                        final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
+                        layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                    } catch (Exception e) {
+                        // since the old XML pattern is being generated we shouldn't
+                        // be entering this catch block
+                    }
                 }
                 
                 toggleEditingButton.doClick();                
@@ -203,6 +204,21 @@ public class XMLSpecificationPanel extends JPanel {
         button.setBackground(new Color(204, 229, 255));
         button.setFocusPainted(false);
         button.setFont(new Font("Serif", Font.BOLD, 11));
+    }
+    
+    private void clearPattern(BasicGraphEditor editor){
+        final mxGraph graph = editor.getBehaviourGraph().getGraph();
+        final mxCell root = new mxCell();
+        root.insert(new mxCell());
+        graph.getModel().setRoot(root);
+
+        final mxGraph agraph = editor.getSystemGraph().getGraph();
+        final mxCell root2 = new mxCell();
+        root2.insert(new mxCell());
+        agraph.getModel().setRoot(root2);
+        
+        editor.getDataModel().clearData();
+        editor.updateTableView(null);
     }
 }
 
