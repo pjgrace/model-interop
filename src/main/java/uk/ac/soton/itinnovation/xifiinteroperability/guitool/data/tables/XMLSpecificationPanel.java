@@ -37,10 +37,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -53,12 +49,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GraphGenerator;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 
 /**
  * The XMLSpecificationPanel is the portion of the UI where the XML representation
@@ -75,7 +68,15 @@ public class XMLSpecificationPanel extends JPanel {
      * display the specification.
      */
     private final transient DataModel dataModel;
-
+    
+    /**
+     * a getter for the reference to the data model
+     * @return the dataModel reference
+     */
+    public final DataModel getDataModel(){
+        return dataModel;
+    }
+    
     /**
      * The core element of the panel - the text area to display the xml.
      */
@@ -119,56 +120,70 @@ public class XMLSpecificationPanel extends JPanel {
         submitChangesButton.setVisible(false);
         customizeButton(submitChangesButton);
         submitChangesButton.addActionListener((ActionEvent ae) -> {
-            String xml;
-            try {
-                xml = xmlSpecification.getDocument().getText(0, xmlSpecification.getDocument().getLength()).replaceAll("\n", "");
-            } 
-            catch (BadLocationException ex) {
-                JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
-                        "Error", JOptionPane.ERROR_MESSAGE, null);
-                return;
-            }
-            
-            if (xml != null){
-                String oldXml = editor.getDataModel().getGraphXML();
-                
-                clearPattern(editor);
-                
-                GraphGenerator graphGenerator = new GraphGenerator(editor);
+            if (((XMLEditorKit) xmlSpecification.getEditorKit()).isChanged()){
+                String xml;
                 try {
-                    graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
-                    final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
-                    layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
-                } catch (Exception ex) {
+                    xml = xmlSpecification.getDocument().getText(0, xmlSpecification.getDocument().getLength()).replaceAll("\n", "");
+                } 
+                catch (BadLocationException ex) {
                     JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
-                        "Error", JOptionPane.ERROR_MESSAGE, null);
+                            "Error", JOptionPane.ERROR_MESSAGE, null);
+                    return;
+                }
+
+                if (xml != null){
+                    String oldXml = editor.getDataModel().getGraphXML();
+
+                    clearPattern(editor);
+
+                    GraphGenerator graphGenerator = new GraphGenerator(editor);
                     try {
-                        clearPattern(editor);
-                        graphGenerator.createGraph(GraphGenerator.loadXMLFromString(oldXml));
+                        graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
                         final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
                         layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
-                    } catch (Exception e) {
-                        // since the old XML pattern is being generated we shouldn't
-                        // be entering this catch block
-                    }
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
+                            "Error", JOptionPane.ERROR_MESSAGE, null);
+                        try {
+                            clearPattern(editor);
+                            graphGenerator.createGraph(GraphGenerator.loadXMLFromString(oldXml));
+                            final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
+                            layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                        } catch (Exception e) {
+                            // since the old XML pattern is being generated we shouldn't
+                            // be entering this catch block
+                        }
+                    }              
                 }
-                
-                toggleEditingButton.doClick();                
+                ((XMLEditorKit)xmlSpecification.getEditorKit()).resetSaved();
             }
-            
+            toggleEditingButton.doClick();  
         });
         
         toggleEditingButton.addActionListener((ActionEvent ae) -> {
-            if (((XMLEditorKit)xmlSpecification.getEditorKit()).editingAllowed()){
+            XMLEditorKit editorKit = ((XMLEditorKit)xmlSpecification.getEditorKit());
+            if (editorKit.editingAllowed()){
+                if (editorKit.isChanged() && !editorKit.changesSaved()){
+                    if (JOptionPane.showConfirmDialog(this, 
+                            "Your changes are not validated and will not be updated in the pattern unless "
+                                    + "you click the validation button on the top before disabling editing. "
+                                    + "Do you still want to continue ? ", 
+                            "Changes not updated", JOptionPane.YES_NO_OPTION, 
+                            JOptionPane.WARNING_MESSAGE, null) == JOptionPane.NO_OPTION){
+                        return;
+                    }
+                }
                 toggleEditingButton.setText("Enable XML pattern editing");
-                ((XMLEditorKit)xmlSpecification.getEditorKit()).toggleEdittingMode();
+                editorKit.toggleEditingMode();
                 submitChangesButton.setVisible(false);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, Color.WHITE);
                 displayXMLSpecification();
             }
             else {
                 toggleEditingButton.setText("Disable XML pattern editing");
-                ((XMLEditorKit)xmlSpecification.getEditorKit()).toggleEdittingMode();
+                editorKit.toggleEditingMode();
+                editorKit.resetChanged();
+                editorKit.resetSaved();
                 submitChangesButton.setVisible(true);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, new Color(241, 218, 218));
                 displayXMLSpecification();

@@ -304,7 +304,7 @@ public class GraphGenerator {
             final mxGeometry geo1 = new mxGeometry(currentHorizontal, currentVertical, 50, 50);
             mxCell nNode = null;
 
-            switch(nodeType) {
+            switch(nodeType.toLowerCase()) {
                 case XMLStateMachine.START_LABEL: nNode = new mxCell(
                     nodeType, geo1,
                     "image;image=/images/event_end.png");

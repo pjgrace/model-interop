@@ -37,26 +37,85 @@ import javax.swing.*;
 import java.io.*;
 import java.awt.event.*;
 import java.awt.*;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 
 public class XMLEditorKit extends StyledEditorKit {
     ViewFactory defaultFactory = new XMLViewFactory();
     
-    private final JPanel xmlPanel;
+    /**
+     * reference to the xmlPanel
+     */
+    private final XMLSpecificationPanel xmlPanel;
     
+    /**
+     * a boolean representing the state of the editor - enabled or disabled editing 
+     */
     private boolean editingMode;
     
+    /**
+     * a method to check if editing is allowed
+     * @return True if editing is allowed, false otherwise
+     */
     public final boolean editingAllowed(){
         return editingMode;
     }
     
-    public final void toggleEdittingMode(){
+    /**
+     * a method to toggle between editing modes
+     */
+    public final void toggleEditingMode(){
         editingMode = !editingMode;
     }
     
-    public XMLEditorKit(JPanel xmlPanel, boolean editingMode){
+    /**
+     * a boolean which represents if the XML data has been changed by the user
+     */
+    private boolean changed;
+    
+    /**
+     * a method to check if the XML data is changed
+     * @return True if the pattern has been changed
+     */
+    public final boolean isChanged(){
+        return changed;
+    }
+    
+    /**
+     * a method to reset the changed variable
+     */
+    public final void resetChanged(){
+        changed = false;
+    }
+    
+    /**
+     * a boolean to represent if changes were updated
+     */
+    private boolean saved;
+    
+    /**
+     * a method to check if the changes were updated
+     * @return True if changes were updated and False otherwise
+     */
+    public final boolean changesSaved(){
+        return saved;
+    }
+    
+    /**
+     * setting the saved variable
+     */
+    public final void resetSaved(){
+        this.saved = true;
+    }
+    
+    public XMLEditorKit(XMLSpecificationPanel xmlPanel, boolean editingMode){
         super();
         this.xmlPanel = xmlPanel;
         this.editingMode = editingMode;
+        this.changed = false;
+        this.saved = true;
     }
     
     @Override
@@ -177,7 +236,7 @@ public class XMLEditorKit extends StyledEditorKit {
             int pos=src.viewToModel(e.getPoint());
             
             if (editingAllowed()){
-                // checking for plain text view click
+                // checking for plain text view click, only if editing is allowed
                 View plainTextView = src.getUI().getRootView(src);
 
                 while (plainTextView != null && !(plainTextView instanceof PlainTextView)){
@@ -199,13 +258,20 @@ public class XMLEditorKit extends StyledEditorKit {
                         if (r.contains(e.getPoint())){
                             int start = deepestPlainTextView.getStartOffset();
                             int end = deepestPlainTextView.getEndOffset();
+                            String oldValue = deepestPlainTextView.getText(start, end).toString();
                             String newValue = (String) JOptionPane.showInputDialog(xmlPanel, 
                                     "Please type a value to replace the chosen one", 
                                     "Editting", JOptionPane.PLAIN_MESSAGE, 
-                                    null, null, deepestPlainTextView.getText(start, end).toString());
+                                    null, null, oldValue);
                             
-                            if (newValue == null){
+                            if (newValue == null)
                                 return;
+                            
+                            try {
+                                if (!validateData(oldValue, newValue, deepestPlainTextView))
+                                    return;
+                            } catch (BadLocationException ex) {
+                                return;                            
                             }
                             
                             try{
@@ -217,6 +283,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                 else {
                                     doc.insertString(start, "\n" + newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
                                 }
+                                changed = true;
+                                saved = false;
                             }
                             catch (BadLocationException ex){
                                 return;
@@ -227,6 +295,7 @@ public class XMLEditorKit extends StyledEditorKit {
                 }
             }
             
+            // checking for a click over an expanding tag
             View v=src.getUI().getRootView(src);
                         
             while (v!=null && !(v instanceof TagView)) {
@@ -240,7 +309,7 @@ public class XMLEditorKit extends StyledEditorKit {
                 int i=v.getViewIndex(pos, Position.Bias.Forward);
                 v=v.getView(i);
             }
-
+                
             if (deepest!=null && !deepest.isStartTag()) {
                 Shape a=getAllocation(deepest, src);
                 if (a!=null) {
@@ -351,6 +420,170 @@ public class XMLEditorKit extends StyledEditorKit {
         }
 
         return new Rectangle(x,y, (int)v.getPreferredSpan(View.X_AXIS), (int)v.getPreferredSpan(View.Y_AXIS));
+    }
+    
+    /**
+     * a method to validate the new value in the view
+     * @param value the value replacing the old data
+     * @param changedView the view that is being edited
+     * @return True if validation is successful and False otherwise
+     * @throws BadLocationException 
+     */
+    private boolean validateData(String oldValue, String value, View changedView) throws BadLocationException{
+        if (oldValue.equalsIgnoreCase(value)){
+            return true;
+        }
+        
+        View parentTagView = changedView.getParent().getParent();
+        String parentContent = parentTagView.getDocument().getText(parentTagView.getStartOffset(), parentTagView.getEndOffset()-parentTagView.getStartOffset());
+        
+        StringBuilder builder = new StringBuilder();
+        int index = 1;
+        while (parentContent.charAt(index) != ">".charAt(0)){
+            builder.append(parentContent.charAt(index));
+            index += 1;
+        }
+        
+        String parentTag = builder.toString();
+        
+        switch (parentTag){
+            // changing label identifier
+            case "label":
+                if (xmlPanel.getDataModel().graphIdentExist(value)){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "There already exists a state node with this label.", 
+                            "Renaming error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                break;
+                
+            // changing the target of a transition
+            case "to":
+                if (!xmlPanel.getDataModel().graphIdentExist(value)){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "A state node with this label doesn't exist.", 
+                            "Transition error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                
+                View stateView = parentTagView.getParent().getParent().getView(1).getView(1);
+                String fromLabel = stateView.getDocument().getText(stateView.getStartOffset(), stateView.getEndOffset()-stateView.getStartOffset());
+                if (fromLabel.equalsIgnoreCase(value)){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "You cannot have a transition with the same source and target node.", 
+                            "Transition error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                
+                if (xmlPanel.getDataModel().getNodeByLabel(value).getType().equalsIgnoreCase("start") || 
+                        xmlPanel.getDataModel().getNodeByLabel(value).getType().equalsIgnoreCase("triggerstart")){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "You cannot have a transition leading to a start or a trigger start node.", 
+                            "Transition error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                
+                break;
+                
+            case "id":
+                View upperView = parentTagView.getParent().getView(0);
+                String label = upperView.getDocument().getText(upperView.getStartOffset(), upperView.getEndOffset() - upperView.getStartOffset());
+                if (label.substring(1, label.length()-1).equalsIgnoreCase("component")){
+                    // component id check
+                    if (xmlPanel.getDataModel().archIdentExist(value)){
+                        JOptionPane.showMessageDialog(xmlPanel, 
+                            "There already exists a component node with this label.", 
+                            "Renaming error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                else if (label.substring(1, label.length()-1).equalsIgnoreCase("interface")){
+                    // interface id check
+                    View componentView = parentTagView.getParent().getParent().getParent().getView(1).getView(1).getView(1);
+                    String componentLabel = componentView.getDocument().getText(componentView.getStartOffset(), componentView.getEndOffset() - componentView.getStartOffset());
+                    AbstractGraphElement archNode = xmlPanel.getDataModel().getComponentByLabel(componentLabel);
+                    if (archNode == null) {
+                        return false;
+                    }
+                    
+                    ArchitectureNode node = (ArchitectureNode) archNode;
+                    if (!node.getData().stream().noneMatch((data) -> (data.getRestID().equalsIgnoreCase(value)))) {
+                        JOptionPane.showMessageDialog(xmlPanel, 
+                            "The component already has an interface with this id.", 
+                            "Renaming error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                else {
+                    // parent of id is either component or interface
+                    return false;
+                }
+                
+                break;
+                
+            
+            case "method":
+                if (!(value.equalsIgnoreCase("GET") || value.equalsIgnoreCase("POST")
+                        || value.equalsIgnoreCase("PUT") || value.equalsIgnoreCase("DELETE"))){
+                    JOptionPane.showMessageDialog(xmlPanel,
+                            "The method of a message transition can only be one "
+                            + "of the following: GET, POST, PUT and DELETE.",
+                            "Method error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+
+                break;
+            
+            case "success":
+                if(!(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"))){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "The success attribute of an end node can only be true or false.", 
+                            "End state error", JOptionPane.ERROR_MESSAGE);
+                    
+                    return false;
+                }
+            
+                break;
+            
+            case "protocol":
+                // changing of protocol through XML editing is not allowed
+                JOptionPane.showMessageDialog(xmlPanel, 
+                            "You are not allowed to change the interface protocol by editing the XML pattern.", 
+                            "Protocol error", JOptionPane.ERROR_MESSAGE);
+                return false;
+                
+            case "type":
+                View upperTypeView = parentTagView.getParent().getView(0);
+                String typeLabel = upperTypeView.getDocument().getText(upperTypeView.getStartOffset(), upperTypeView.getEndOffset()-upperTypeView.getStartOffset());
+                if (typeLabel.substring(1, typeLabel.length()-1).equalsIgnoreCase("message")){
+                    if (!(value.equalsIgnoreCase("XML") || value.equalsIgnoreCase("JSON") 
+                            || value.equalsIgnoreCase("OTHER"))) {
+                        JOptionPane.showMessageDialog(xmlPanel, 
+                            "The type of data can only be one of the following: XML, JSON and OTHER.", 
+                            "Data type error", JOptionPane.ERROR_MESSAGE);
+                        
+                        return false;
+                    }
+                }
+                else if (typeLabel.substring(1, typeLabel.length()-1).equalsIgnoreCase("state")){
+                    // changing state type through XML editing is not allowed
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "You are not allowed to change the type of a state node by editing the XML pattern.", 
+                            "State type error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                else {
+                    // parent of type is either message or state
+                    return false;
+                }
+                
+                break;
+                
+            default:
+                break;  
+        }
+        
+        return true;
     }
 
     @Override
