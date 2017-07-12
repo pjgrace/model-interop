@@ -141,6 +141,9 @@ public class XMLSpecificationPanel extends JPanel {
                         graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
                         final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
                         layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                        JOptionPane.showMessageDialog(this, 
+                                "Successfully validated and updated the edited XML pattern.", 
+                                "Success", JOptionPane.PLAIN_MESSAGE);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
                             "Error", JOptionPane.ERROR_MESSAGE, null);
