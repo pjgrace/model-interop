@@ -59,6 +59,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -221,15 +222,24 @@ public class ComponentForm extends JPanel {
         urlID.addFocusListener(MessageForm.COLOUR_CHANGER);
         newIntfPane.add(url);
         url.addFocusListener(MessageForm.COLOUR_CHANGER);
+        
         final JButton addIntf = new JButton("Add Interface Info");
         addIntf.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-              mirrorNode.addInterfaceData(urlID.getText(), url.getText(), "http");
-              componentView.clearData();
-              componentView.setData(mirrorNode);
-              url.setText("");
-              urlID.setText("");
+                for(InterfaceData data: mirrorNode.getData()){
+                    if (data.getRestID().equalsIgnoreCase(urlID.getText())){
+                        JOptionPane.showMessageDialog(newIntfPane, 
+                                "An interface with this id already exists.",
+                                "Interface error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                mirrorNode.addInterfaceData(urlID.getText(), url.getText(), "http");
+                componentView.clearData();
+                componentView.setData(mirrorNode);
+                url.setText("");
+                urlID.setText("");
             }
           });
         newIntfPane.add(new JLabel(""));
