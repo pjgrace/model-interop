@@ -40,6 +40,8 @@ import java.awt.*;
 import java.util.List;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ConstantData;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 
 public class XMLEditorKit extends StyledEditorKit {
@@ -592,6 +594,27 @@ public class XMLEditorKit extends StyledEditorKit {
                         return false;
                     }
                 }
+                
+                break;
+                
+            case "name":
+                GraphNode node = xmlPanel.getDataModel().getStartNode();
+                if (node == null){
+                    return false;
+                }
+                else {
+                    for(ConstantData data: node.getConstantData()){
+                        if (data.getFieldName().equalsIgnoreCase(value)){
+                            JOptionPane.showMessageDialog(xmlPanel, 
+                                "The new pattern data id is already used.", 
+                                "Pattern data error", JOptionPane.ERROR_MESSAGE);
+                            return false;
+                        }
+                    }
+                }
+                
+                break;                
+                
             default:
                 break;  
         }

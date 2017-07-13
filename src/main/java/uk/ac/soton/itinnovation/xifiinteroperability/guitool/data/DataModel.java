@@ -131,6 +131,20 @@ public class DataModel {
        }
        return null;
    }
+   
+    /**
+     * a getter for the start or tigger start node in the graph if it exists
+     *
+     * @return the graph start node
+     */
+    public final GraphNode getStartNode() {
+        for(GraphNode node: this.graphElements){
+            if (node.getType().equalsIgnoreCase("start") || node.getType().equalsIgnoreCase("triggerstart")){
+                return node;
+            }
+        }
+        return null;
+    }
 
    /**
     * Get the data node specified by the label from the graph. That is,
