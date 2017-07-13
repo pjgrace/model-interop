@@ -28,9 +28,14 @@
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -45,6 +50,11 @@ public class FormPopUpMenu extends JPopupMenu {
      * The textfield this pop up instance works with.
      */
     private final transient JTextComponent bufferField;
+    
+    /**
+     * reference to the data model
+     */
+    private final DataModel dataModel;
 
     /**
      * Create a new pop up menu associated with a text field.
@@ -56,7 +66,9 @@ public class FormPopUpMenu extends JPopupMenu {
         add(editor.bind("Copy", new CopyAction()));
         add(editor.bind("Paste", new PasteAction()));
         add(editor.bind("Cut", new CutAction()));
+        add(editor.bind("Insert pattern data", new InsertAction()));
         this.bufferField = txtField;
+        this.dataModel = editor.getDataModel();
     }
 
      /**
@@ -101,6 +113,42 @@ public class FormPopUpMenu extends JPopupMenu {
         public final void actionPerformed(final ActionEvent actEvent) {
             bufferField.paste();
 
+        }
+    }
+    
+    /**
+     * insert action for inserting pattern specific data
+     */
+    public class InsertAction extends AbstractAction {
+        /**
+         * Choose pattern data and insert it
+         * @param actEvent the UI event
+         */
+        @Override
+        public final void actionPerformed(final ActionEvent actEvent){
+            GraphNode startNode = dataModel.getStartNode();
+            List<String> patternDataIDs = new ArrayList<>();
+            startNode.getConstantData().forEach((data) -> {
+                patternDataIDs.add(data.getFieldName());
+            });
+            if (patternDataIDs.size() > 0){
+                Object result = JOptionPane.showInputDialog(bufferField, 
+                        "Please choose the ID of the pattern data you want to insert.", 
+                        "Inserting pattern data", JOptionPane.PLAIN_MESSAGE,
+                        null, patternDataIDs.toArray(), patternDataIDs.get(0));
+                
+                if (result == null){
+                    return;
+                }
+                String selected = result.toString();
+                selected = "$$patterndata." + selected + "$$";
+                bufferField.setText(bufferField.getText() + selected);
+            }
+            else {
+                JOptionPane.showMessageDialog(bufferField, 
+                        "You haven't added any pattern data, yet.",
+                        "No pattern data found", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
 

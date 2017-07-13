@@ -169,6 +169,7 @@ public class GuardForm extends JPanel {
 
         listPane.add(new JLabel("Required guard value:", JLabel.RIGHT));
         address = new JTextField();
+        address.setComponentPopupMenu(new FormPopUpMenu(editor, address));
         address.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(address);
         listPane.add(new JLabel(""));

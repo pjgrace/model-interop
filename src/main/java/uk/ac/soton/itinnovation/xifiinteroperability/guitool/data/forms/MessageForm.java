@@ -340,9 +340,10 @@ public class MessageForm extends JPanel {
         newIntfPane.add(new JLabel(" Header ", JLabel.LEFT));
         newIntfPane.add(new JLabel("Value", JLabel.LEFT));
 
-        newIntfPane.add(header);
         header.setToolTipText(null);
+        newIntfPane.add(header);
         
+        headerValue.setComponentPopupMenu(new FormPopUpMenu(editor, headerValue));
         newIntfPane.add(headerValue);
         
         final JPanel checkBoxPanel = new JPanel();
