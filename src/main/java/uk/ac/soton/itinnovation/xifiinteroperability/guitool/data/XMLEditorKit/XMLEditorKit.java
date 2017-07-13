@@ -37,6 +37,7 @@ import javax.swing.*;
 import java.io.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.List;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
@@ -577,7 +578,20 @@ public class XMLEditorKit extends StyledEditorKit {
                 }
                 
                 break;
-                
+            
+            case "url":
+                View upperMessageView = parentTagView.getParent().getView(0);
+                String messageLabel = upperMessageView.getDocument().getText(upperMessageView.getStartOffset(), upperMessageView.getEndOffset()-upperMessageView.getStartOffset());
+                if (messageLabel.substring(1, messageLabel.length()-1).equalsIgnoreCase("message")){
+                    List<String> componentUrls = xmlPanel.getDataModel().getRestUrls();
+                    if(!componentUrls.contains(value)){
+                        // message url pointers must be existing ones
+                        JOptionPane.showMessageDialog(xmlPanel, 
+                                "The new url pointer doesn't exist.", 
+                                "URL pointer error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
             default:
                 break;  
         }
