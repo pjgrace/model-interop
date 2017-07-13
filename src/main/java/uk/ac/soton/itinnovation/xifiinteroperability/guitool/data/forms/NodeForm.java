@@ -44,12 +44,14 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ConstantData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -134,7 +136,7 @@ public class NodeForm extends JPanel {
         listPane.add(title);
         listPane.add(new JLabel("", SwingConstants.LEFT));
 
-        listPane.add(new JLabel("node parameter:",  JLabel.RIGHT));
+        listPane.add(new JLabel("parameter ID:",  JLabel.RIGHT));
         ident = new JTextField();
         ident.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(ident);
@@ -149,6 +151,14 @@ public class NodeForm extends JPanel {
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
+                for (ConstantData data: mirrorNode.getConstantData()){
+                    if (data.getFieldName().equalsIgnoreCase(ident.getText())){
+                        JOptionPane.showMessageDialog(topPanel, 
+                                "Pattern data with this ID already exists.", 
+                                "Pattern data error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 mirrorNode.addConstantData(ident.getText(), address.getText());
                 nodeView.clearData();
                 nodeView.setData(mirrorNode);
