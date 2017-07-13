@@ -116,13 +116,13 @@ public class MessageForm extends JPanel {
      * a static variable for html content with common http headers
      */
     private final static String HEADERS = "<html><body><p><b>Common headers:</b></p><ul>"
-            + "<li>Accept</li><li>Accept-Charset</li><li>Accept-Encoding</li>"
-            + "<li>Accept-Language</li><li>Accept-Datetime</li><li>Authorization</li>"
-            + "<li>Cookie</li><li>Cache-Control</li><li>Connection</li><li>Content-Length</li>"
-            + "<li>Content-Type</li><li>Date</li><li>Forwarded</li><li>From</li>"
-            + "<li>Host</li><li>Max-Forwards</li><li>Origin</li><li>Proxy-Authorization</li>"
-            + "<li>Range</li><li>Referer</li><li>User-Agent</li><li>Upgrade</li>"
-            + "<li>Via</li><li>Warning</li>"
+            + "<li><i>Accept</i></li><li><i>Accept-Charset</i></li><li><i>Accept-Encoding</i></li>"
+            + "<li><i>Accept-Language</i></li><li><i>Accept-Datetime</i></li><li><i>Authorization</i></li>"
+            + "<li><i>Cookie</i></li><li><i>Cache-Control</i></li><li><i>Connection</i></li>"
+            + "<li><i>Content-Length</i></li><li><i>Content-Type</i></li><li><i>Date</i></li><li><i>Forwarded</i></li>"
+            + "<li><i>From</i></li><li><i>Host</i></li><li><i>Max-Forwards</i></li><li><i>Origin</i></li>"
+            + "<li><i>Proxy-Authorization</i></li><li><i>Range</i></li><li><i>Referer</i></li><li><i>User-Agent</i></li>"
+            + "<li><i>Upgrade</i></li><li><i>Via</i></li><li><i>Warning</i></li>"
             + "</ul>...</body></html>";
     
     /**
