@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DataModelState;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
@@ -62,6 +63,18 @@ public class DataModel {
      * for completeness may include the interface to comply check
      */
     private transient List<ArchitectureNode> archElements;
+    
+    public List<String> getRestUrls(){
+        List<String> restUrls = new ArrayList<>();
+        
+        archElements.forEach((archNode) -> {
+            archNode.getData().forEach((data) -> {
+                restUrls.add("component." + archNode.getLabel() + "." + data.getRestID());
+            });
+        });
+        
+        return restUrls;
+    }
     
     /**
      * The Graph is a set of nodes (vertices).

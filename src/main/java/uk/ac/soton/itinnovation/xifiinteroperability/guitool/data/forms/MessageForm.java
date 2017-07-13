@@ -37,6 +37,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -44,6 +46,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.font.TextAttribute;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.swing.BorderFactory;
@@ -53,6 +56,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -61,6 +65,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -108,7 +114,12 @@ public class MessageForm extends JPanel {
     /**
      * Text field to enter the urlEndpoint destination of the message.
      */
-    private final transient JTextField url;
+    private final transient JComboBox url;
+    
+    /**
+     * Label which shows the actual url of the pointer
+     */
+    private JLabel pointerLinkLabel;
 
      /**
      * Text field to enter the resource path destination of the message.
@@ -146,6 +157,11 @@ public class MessageForm extends JPanel {
      * The text field to enter the new header field value.
      */
     private final transient JTextField headerValue = new JTextField();
+    
+    /**
+     * reference to the editor
+     */
+    private BasicGraphEditor editor;
 
     /**
      * Each instance of a form reflects the values in the data model. This
@@ -163,6 +179,7 @@ public class MessageForm extends JPanel {
             final BasicGraphEditor editor) {
         super(new BorderLayout());
         messageView = new MessageTableModel();
+        this.editor = editor;
 
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
@@ -186,9 +203,49 @@ public class MessageForm extends JPanel {
         listPane.add(new JLabel("", SwingConstants.LEFT));
 
         listPane.add(new JLabel("URL pointer:",  JLabel.RIGHT));
-        url = new JTextField();
-        url.setComponentPopupMenu(new FormPopUpMenu(editor, url));
+        List<String> restUrls = editor.getDataModel().getRestUrls();
+        if (restUrls.size() > 0){
+            url = new JComboBox<>(editor.getDataModel().getRestUrls().toArray().clone());
+        }
+        else {
+            url = new JComboBox<>();
+            url.addItem("No url pointers available..");
+        }
         listPane.add(url);
+        
+        JLabel pointerLabel = new JLabel("Pointing to link: ", JLabel.RIGHT);
+        pointerLabel.setFont(new Font("serif", Font.ITALIC + Font.BOLD, pointerLabel.getFont().getSize() + 1));
+        listPane.add(pointerLabel);
+        pointerLinkLabel = new JLabel("N/A");
+        pointerLinkLabel.setFont(new Font("serif", Font.ITALIC + Font.BOLD, pointerLinkLabel.getFont().getSize()));
+        pointerLinkLabel.setOpaque(true);
+        pointerLinkLabel.setBackground(new Color(230, 242, 255));
+        pointerLinkLabel.setToolTipText(pointerLinkLabel.getText());
+        pointerLinkLabel.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                JOptionPane.showMessageDialog(listPane, 
+                        "The url pointer is pointing to the following link: " + pointerLinkLabel.getText(),
+                        "URL Pointer information", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        listPane.add(pointerLinkLabel);
+        
+        url.addItemListener(new ItemListener(){
+            @Override
+            public void itemStateChanged(ItemEvent ie) {
+                if (ie.getStateChange() == ItemEvent.SELECTED){
+                    String selected = url.getSelectedItem().toString();
+
+                    if (!selected.contains("component")){
+                        return;
+                    }
+
+                    pointerLinkLabel.setText(getUrlPointerLink());
+                    pointerLinkLabel.setToolTipText(pointerLinkLabel.getText());
+                }
+            }   
+        });
 
         listPane.add(new JLabel("Resource path:", JLabel.RIGHT));
         path = new JTextField();
@@ -285,9 +342,16 @@ public class MessageForm extends JPanel {
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                mirrorNode.updateMessage(url.getText(),
-                    path.getText(), method.getSelectedItem().toString(),
-                        contentType.getSelectedItem().toString(), body.getText());
+                if (url.getSelectedItem().toString().contains("component")){
+                    mirrorNode.updateMessage(url.getSelectedItem().toString(),
+                        path.getText(), method.getSelectedItem().toString(),
+                            contentType.getSelectedItem().toString(), body.getText());
+                }
+                else {
+                    JOptionPane.showMessageDialog(listPane,
+                            "Invalid component url pointer.", "Error", 
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
           });
 
@@ -307,9 +371,11 @@ public class MessageForm extends JPanel {
                     fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
                 }
                 
-                mirrorNode.updateMessage(url.getText(),
-                        path.getText(), method.getSelectedItem().toString(),
-                        contentType.getSelectedItem().toString(), body.getText());
+                if (url.getSelectedItem().toString().contains("component")){
+                    mirrorNode.updateMessage(url.getSelectedItem().toString(),
+                            path.getText(), method.getSelectedItem().toString(),
+                            contentType.getSelectedItem().toString(), body.getText());
+                }
             }
 
         };
@@ -349,13 +415,18 @@ public class MessageForm extends JPanel {
      */
     public final void setData(final Message msg) {
         mirrorNode = msg;
-        url.setText(msg.getEndpoint());
+        if (msg.getEndpoint() == null){
+            url.setSelectedIndex(0);
+        }
+        else {
+            url.setSelectedItem(msg.getEndpoint().toLowerCase(Locale.ENGLISH)); 
+        }
         path.setText(msg.getPath());
 
         if (msg.getHTTPMethod() == null) {
             method.setSelectedItem(0);
         } else {
-            method.setSelectedItem(msg.getHTTPMethod().toUpperCase(Locale.ENGLISH)); //setText(msg.method);
+            method.setSelectedItem(msg.getHTTPMethod().toUpperCase(Locale.ENGLISH));
         }
         if (msg.getDataType() == null) {
             method.setSelectedItem(0);
@@ -371,10 +442,39 @@ public class MessageForm extends JPanel {
      */
     public final void clearData() {
         messageView.clearData();
-        url.setText("");
+        List<String> restUrls = editor.getDataModel().getRestUrls();
+        if (restUrls.size() > 0){
+            url.removeAllItems();
+            restUrls.forEach((restUrl) -> {
+                url.addItem(restUrl);
+            });
+        }
+        else {
+            url.removeAllItems();
+            url.addItem("No url pointers available..");
+        }
+        url.setSelectedIndex(0);
+        pointerLinkLabel.setText(getUrlPointerLink());
+        pointerLinkLabel.setToolTipText(pointerLinkLabel.getText());
         path.setText("");
-        method.setSelectedIndex(0); //method.setText("");
+        method.setSelectedIndex(0); 
         contentType.setSelectedIndex(0);
         body.setText("");
+    }
+    
+    private String getUrlPointerLink(){
+        String link = "N/A";
+        if (url.getSelectedItem().toString().contains("component")){
+            String[] idParts = url.getSelectedItem().toString().split("\\.");
+            ArchitectureNode archNode = (ArchitectureNode) editor.getDataModel().getComponentByLabel(idParts[1]);
+            for (InterfaceData data: archNode.getData()){
+                if (data.getRestID().equals(idParts[2])){
+                    link = data.getRestURL();
+                    break;
+                }
+            }
+        }
+        
+        return link;
     }
 }
