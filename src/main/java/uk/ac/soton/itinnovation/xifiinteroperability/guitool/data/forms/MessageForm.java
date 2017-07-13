@@ -49,10 +49,12 @@ import java.awt.font.TextAttribute;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -64,6 +66,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
@@ -97,6 +100,9 @@ public class MessageForm extends JPanel {
         }
     };
     
+    /**
+     * a static mouse listener used to request the focus on click
+     */
     public static final MouseListener FOCUS_CHANGER = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent me) {
@@ -105,6 +111,19 @@ public class MessageForm extends JPanel {
             }
         }
     };
+    
+    /**
+     * a static variable for html content with common http headers
+     */
+    private final static String HEADERS = "<html><body><p><b>Common headers:</b></p><ul>"
+            + "<li>Accept</li><li>Accept-Charset</li><li>Accept-Encoding</li>"
+            + "<li>Accept-Language</li><li>Accept-Datetime</li><li>Authorization</li>"
+            + "<li>Cookie</li><li>Cache-Control</li><li>Connection</li><li>Content-Length</li>"
+            + "<li>Content-Type</li><li>Date</li><li>Forwarded</li><li>From</li>"
+            + "<li>Host</li><li>Max-Forwards</li><li>Origin</li><li>Proxy-Authorization</li>"
+            + "<li>Range</li><li>Referer</li><li>User-Agent</li><li>Upgrade</li>"
+            + "<li>Via</li><li>Warning</li>"
+            + "</ul>...</body></html>";
     
     /**
      * The form first contains text fields to input the main content about
@@ -180,7 +199,10 @@ public class MessageForm extends JPanel {
         super(new BorderLayout());
         messageView = new MessageTableModel();
         this.editor = editor;
-
+        
+        ToolTipManager.sharedInstance().setInitialDelay(75);
+        ToolTipManager.sharedInstance().setDismissDelay(ToolTipManager.sharedInstance().getDismissDelay()*10);
+        
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
@@ -319,7 +341,25 @@ public class MessageForm extends JPanel {
         newIntfPane.add(new JLabel("Value", JLabel.LEFT));
 
         newIntfPane.add(header);
+        header.setToolTipText(null);
+        
         newIntfPane.add(headerValue);
+        
+        final JPanel checkBoxPanel = new JPanel();
+        checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.LINE_AXIS));
+        checkBoxPanel.add(new JLabel("  Show suggestions on hover:  "));
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.addActionListener((ActionEvent ae) -> {
+            AbstractButton check = (AbstractButton) ae.getSource();
+            if (check.getModel().isSelected()){
+                header.setToolTipText(HEADERS);
+            }
+            else {
+                header.setToolTipText(null);
+            }
+        });
+        checkBoxPanel.add(checkBox);
+        newIntfPane.add(checkBoxPanel);
         
         final JButton addIntf = new JButton("Add Header");
         addIntf.addActionListener(new ActionListener() {
@@ -332,11 +372,10 @@ public class MessageForm extends JPanel {
               headerValue.setText("");
             }
           });
-        newIntfPane.add(new JLabel(""));
         newIntfPane.add(addIntf);
-
+        
         topPanel.add(newIntfPane);
-
+        
         add(topPanel, BorderLayout.CENTER);
         final JButton update = new JButton("Update Message");
         update.addActionListener(new ActionListener() {
