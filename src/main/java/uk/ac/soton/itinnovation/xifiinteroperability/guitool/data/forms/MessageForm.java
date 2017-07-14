@@ -201,7 +201,7 @@ public class MessageForm extends JPanel {
         this.editor = editor;
         
         ToolTipManager.sharedInstance().setInitialDelay(75);
-        ToolTipManager.sharedInstance().setDismissDelay(ToolTipManager.sharedInstance().getDismissDelay()*10);
+        ToolTipManager.sharedInstance().setDismissDelay(ToolTipManager.sharedInstance().getDismissDelay()*2);
         
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
@@ -253,20 +253,17 @@ public class MessageForm extends JPanel {
         });
         listPane.add(pointerLinkLabel);
         
-        url.addItemListener(new ItemListener(){
-            @Override
-            public void itemStateChanged(ItemEvent ie) {
-                if (ie.getStateChange() == ItemEvent.SELECTED){
-                    String selected = url.getSelectedItem().toString();
-
-                    if (!selected.contains("component")){
-                        return;
-                    }
-
-                    pointerLinkLabel.setText(getUrlPointerLink());
-                    pointerLinkLabel.setToolTipText(pointerLinkLabel.getText());
+        url.addItemListener((ItemEvent ie) -> {
+            if (ie.getStateChange() == ItemEvent.SELECTED){
+                String selected = url.getSelectedItem().toString();
+                
+                if (!selected.contains("component")){
+                    return;
                 }
-            }   
+   
+                pointerLinkLabel.setText(getUrlPointerLink());
+                pointerLinkLabel.setToolTipText(pointerLinkLabel.getText());
+            }
         });
 
         listPane.add(new JLabel("Resource path:", JLabel.RIGHT));
