@@ -80,7 +80,37 @@ public class GuardForm extends JPanel {
             + "<li>HTTP.date</li><li>HTTP.to</li><li>HTTP.expires</li><li>HTTP.content-type</li>"
             + "<li>HTTP.server</li><li>HTTP.transfer-encoding</li><li>HTTP.accept-ranges</li></ul>"
             + "2) Content extraction:<br>"
-            + "<ul><li>Use the following format - content[XPath/JSONPath]</li></ul>"
+            + "<ul><li>Use the following format - <b>content[XPath/JSONPath]</b></li></ul>"
+            + "</body></html>";
+    
+    /**
+     * the html helper text for guard value
+     */
+    private final static String VALUE_HELPER = "<html><body>"
+            + "<font size=+1><b><i>Guard value</i></b></font><br>"
+            + "This can be any value you want to compare against. "
+            + "There are two special cases.<br><br>"
+            + "1) If you want to use pattern data:"
+            + "<ul><li>Use the following format - <b>$$patterndata.id$$</b> - replace 'id' "
+            + "with the id of the pattern data you want to use</li>"
+            + "<li>You can also click the right button of the mouse and select "
+            + "the <b><i>'Insert pattern data'</i></b> option</li></ul>"
+            + "2) If you want to use data from previous states - you can use content or "
+            + "headers data from previous states:"
+            + "<ul><li>Use the following format - "
+            + "<b>$$state_label | {content or headers} | {XPath or JSONPath or header_id}$$</b>"
+            + "</li><br>"
+            + "<li>Example 1: <b>$$A2|content|//result/total_price$$</b><br>"
+            + "Here, A2 is a label of a state with content of XML type and "
+            + "the XPath '//result/total_price' is used to extract a value from the content.<br></li>"
+            + "<li>Example 2: <b>$$A4|content|tenants[0].id$$</b><br>"
+            + "Here, A4 is a label of a state with content of JSON type and "
+            + "the JSONpath 'tenants[0].id' is used to extract a value from the content.<br></li>"
+            + "<li> Example 3: <b>$$A1|headers|content-type$$</b><br>"
+            + "Here, A1 is a label of a state with headers and the value of the header with "
+            + "name 'content-type' is extracted.</li><br>"
+            + "<li>You can also click the right button of the mouse and select "
+            + "the <b><i>'Insert previous states data'</i></b> option</li></ul>"
             + "</body></html>";
     
     /**
@@ -215,6 +245,10 @@ public class GuardForm extends JPanel {
         
         JButton valueButton = new JButton("Helper for guard value");
         XMLSpecificationPanel.customizeButton(valueButton);
+        valueButton.addActionListener((ActionEvent ae) -> {
+            JOptionPane.showMessageDialog(listPane, VALUE_HELPER,
+                    "Helper wizard", JOptionPane.INFORMATION_MESSAGE);
+        });
         listPane.add(valueButton);
         
         topPanel.add(listPane);

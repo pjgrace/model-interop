@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DataModelState;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
@@ -82,6 +81,14 @@ public class DataModel {
      */
     private transient List<GraphNode> graphElements;
 
+    /**
+     * a getter for all graph elements
+     * @return all graph nodes
+     */
+    public final List<GraphNode> getGraphElements(){
+        return graphElements;
+    }
+    
     /**
      * Index of connection IDs to the source node.
      */

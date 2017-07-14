@@ -213,4 +213,13 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
         }
         return sBuilder.toString();
     }
+    
+    /**
+     * Overriding the toString method to return the label of the node
+     * @return the label of the state
+     */
+    @Override
+    public String toString(){
+        return this.getLabel();
+    }
 }

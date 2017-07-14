@@ -64,13 +64,13 @@ public class FormPopUpMenu extends JPopupMenu {
      */
     public FormPopUpMenu(final BasicGraphEditor editor, final JTextComponent txtField) {
         super();
+        add(editor.bind("Insert pattern data", new InsertPatternDataAction()));
+        add(editor.bind("Insert previous states data", new InsertPreviousStatesDataAction()));
         add(editor.bind("Copy", new CopyAction()));
         add(editor.bind("Paste", new PasteAction()));
         add(editor.bind("Cut", new CutAction()));
-        add(editor.bind("Insert pattern data", new InsertAction()));
         this.bufferField = txtField;
-        this.bufferField.setToolTipText("Pattern data can be inserted by clicking the "
-                + "mouse right button and choosing the option 'Insert pattern data'");
+        this.bufferField.setToolTipText("Click right button for helpers.");
         this.dataModel = editor.getDataModel();
     }
 
@@ -122,7 +122,7 @@ public class FormPopUpMenu extends JPopupMenu {
     /**
      * insert action for inserting pattern specific data
      */
-    public class InsertAction extends AbstractAction {
+    public class InsertPatternDataAction extends AbstractAction {
         /**
          * Choose pattern data and insert it
          * @param actEvent the UI event
@@ -158,5 +158,76 @@ public class FormPopUpMenu extends JPopupMenu {
             }
         }
     }
-
+    
+    /**
+     * insert data from previous states
+     */
+    public class InsertPreviousStatesDataAction extends AbstractAction {
+        /**
+         * Choose previous states data and insert it
+         * @param ae the UI event
+         */
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            StringBuilder expression = new StringBuilder();
+            expression.append("$$");
+            List<GraphNode> states = dataModel.getGraphElements();
+            if (states.isEmpty()){
+                JOptionPane.showMessageDialog(bufferField, 
+                        "There are no states available.",
+                        "No states found", JOptionPane.WARNING_MESSAGE);
+            }
+            
+            Object chosenState = JOptionPane.showInputDialog(bufferField, 
+                    "Please choose a state.", "Choosing state", 
+                    JOptionPane.PLAIN_MESSAGE, null, states.toArray(), states.get(0));
+            
+            if (chosenState == null){
+                return;
+            }
+            
+            expression.append(chosenState.toString());
+            expression.append("|");
+            
+            String[] dataTypes = {"Content", "Headers"};
+            Object chosenType = JOptionPane.showInputDialog(bufferField,
+                    "Please choose what data you want to extract.", "Choosing type",
+                    JOptionPane.PLAIN_MESSAGE, null, dataTypes, dataTypes[0]);
+            
+            if (chosenType == null){
+                return;
+            }
+            
+            expression.append(chosenType.toString().toLowerCase());
+            expression.append("|");
+            
+            String identifier;
+            if (chosenType.toString().equalsIgnoreCase("content")){
+                Object path = JOptionPane.showInputDialog(bufferField, "Please type your XPath or JSONPath", 
+                        "Choosing path", JOptionPane.PLAIN_MESSAGE);
+                if (path == null){
+                    return;
+                }
+                identifier = path.toString();
+            }
+            else {
+                Object id = JOptionPane.showInputDialog(bufferField, 
+                        "Please type the id of the header", 
+                        "Choosing ID", JOptionPane.PLAIN_MESSAGE);
+                if (id == null){
+                    return;
+                }
+                identifier = id.toString();
+            }
+            
+            expression.append(identifier);
+            expression.append("$$");
+            
+            try {
+                bufferField.getDocument().insertString(bufferField.getCaretPosition(), expression.toString(), null);
+            } catch (BadLocationException ex) {
+                // empty block since we shouldn't be entering this catch block
+            }
+        }
+    }
 }
