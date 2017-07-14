@@ -216,8 +216,9 @@ public class XMLSpecificationPanel extends JPanel {
     
     /**
      * a method to customise buttons design
+     * @param button the button to customize
      */
-    private void customizeButton(JButton button){
+    public static void customizeButton(JButton button){
         button.setForeground(new Color(0, 26, 102));
         button.setBackground(new Color(204, 229, 255));
         button.setFocusPainted(false);

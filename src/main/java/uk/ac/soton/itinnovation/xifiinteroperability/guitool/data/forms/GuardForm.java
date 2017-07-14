@@ -49,12 +49,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
@@ -66,6 +68,21 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
 
 public class GuardForm extends JPanel {
 
+    /**
+     * the html helper text for guard description
+     */
+    private final static String DESCRIPTION_HELPER = "<html><body>"
+            + "<font size=+1><b><i>Guard description</i></b></font><br>"
+            + "This can be either an HTTP field or a value from the content <br>"
+            + "extracted using XPath or JSONPath depending on the content-type.<br><br>"
+            + "1) Common HTTP fields:<br>"
+            + "<ul><li>HTTP.from</li></li><li>HTTP.code</li><li>HTTP.msg</li>"
+            + "<li>HTTP.date</li><li>HTTP.to</li><li>HTTP.expires</li><li>HTTP.content-type</li>"
+            + "<li>HTTP.server</li><li>HTTP.transfer-encoding</li><li>HTTP.accept-ranges</li></ul>"
+            + "2) Content extraction:<br>"
+            + "<ul><li>Use the following format - content[XPath/JSONPath]</li></ul>"
+            + "</body></html>";
+    
     /**
      * The user interface model i.e. this data is what this form is
      * viewing upon - list of guards on a particular transition.
@@ -139,7 +156,7 @@ public class GuardForm extends JPanel {
 
         // Info Panel
         final JPanel listPane = new JPanel();
-        final GridLayout gridLayout = new GridLayout(6 , 2);
+        final GridLayout gridLayout = new GridLayout(8 , 2);
         gridLayout.setHgap(5);
         gridLayout.setVgap(5);
         listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -173,7 +190,7 @@ public class GuardForm extends JPanel {
         address.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(address);
         listPane.add(new JLabel(""));
-
+        
         final JButton update = new JButton("Add guard");
         update.addActionListener(new ActionListener() {
             @Override
@@ -187,12 +204,22 @@ public class GuardForm extends JPanel {
           });
 
         listPane.add(update);
+        
+        JButton descriptionButton = new JButton("Helper for guard description");
+        XMLSpecificationPanel.customizeButton(descriptionButton);
+        descriptionButton.addActionListener((ActionEvent ae) -> {
+            JOptionPane.showMessageDialog(listPane, DESCRIPTION_HELPER,
+                    "Helper wizard", JOptionPane.INFORMATION_MESSAGE);
+        });
+        listPane.add(descriptionButton);
+        
+        JButton valueButton = new JButton("Helper for guard value");
+        XMLSpecificationPanel.customizeButton(valueButton);
+        listPane.add(valueButton);
+        
         topPanel.add(listPane);
-
-        topPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-
-        topPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        
+        topPanel.add(Box.createRigidArea(new Dimension(0, 25)));
         final JLabel tableTitle = new JLabel("Table of Guards", JLabel.RIGHT);
         tableTitle.setFont(font.deriveFont(attributes));
         topPanel.add(tableTitle);

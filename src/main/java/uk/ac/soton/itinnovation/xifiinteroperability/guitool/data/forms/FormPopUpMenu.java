@@ -28,12 +28,8 @@
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -73,7 +69,7 @@ public class FormPopUpMenu extends JPopupMenu {
         add(editor.bind("Cut", new CutAction()));
         add(editor.bind("Insert pattern data", new InsertAction()));
         this.bufferField = txtField;
-        this.bufferField.setToolTipText("Insert pattern data by clicking the "
+        this.bufferField.setToolTipText("Pattern data can be inserted by clicking the "
                 + "mouse right button and choosing the option 'Insert pattern data'");
         this.dataModel = editor.getDataModel();
     }
