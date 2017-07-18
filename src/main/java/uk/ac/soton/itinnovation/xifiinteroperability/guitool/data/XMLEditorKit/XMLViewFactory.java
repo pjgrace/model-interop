@@ -42,6 +42,10 @@ class XMLViewFactory implements ViewFactory {
             switch (kind) {
                 case AbstractDocument.ContentElementName:
                     return new LabelView(elem);
+                case XMLDocument.TAG_NAME_ELEMENT:
+                    return new TagNameView(elem);
+                case XMLDocument.ATTRIBUTE_NAME_ELEMENT:
+                    return new AttributeNameView(elem);
                 case XMLDocument.TAG_ELEMENT:
                     return new TagView(elem, false, false);
                 case XMLDocument.SECOND_TAG_ELEMENT:

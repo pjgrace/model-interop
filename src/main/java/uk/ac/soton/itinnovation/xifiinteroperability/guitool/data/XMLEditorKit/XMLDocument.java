@@ -42,6 +42,8 @@ public class XMLDocument extends DefaultStyledDocument {
     public final static String TAG_ROW_START_ELEMENT="tag_row_start_element";
     public final static String TAG_ROW_END_ELEMENT="tag_row_end_element";
     public final static String PLAIN_TEXT_ELEMENT="plain_text_element";
+    public final static String TAG_NAME_ELEMENT = "tag_name_element";
+    public final static String ATTRIBUTE_NAME_ELEMENT = "attribute_name_element";
 
     public final static SimpleAttributeSet BRACKET_ATTRIBUTES=new SimpleAttributeSet();
     public final static SimpleAttributeSet TAGNAME_ATTRIBUTES=new SimpleAttributeSet();
@@ -52,9 +54,11 @@ public class XMLDocument extends DefaultStyledDocument {
     static {
         StyleConstants.setBold(TAGNAME_ATTRIBUTES, true);
         StyleConstants.setForeground(TAGNAME_ATTRIBUTES, Color.BLUE.darker());
+        TAGNAME_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, TAG_NAME_ELEMENT);
 
         StyleConstants.setBold(ATTRIBUTENAME_ATTRIBUTES, true);
         StyleConstants.setForeground(ATTRIBUTENAME_ATTRIBUTES, Color.RED.brighter());
+        ATTRIBUTENAME_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, "attribute_name_element");
 
         StyleConstants.setItalic(ATTRIBUTEVALUE_ATTRIBUTES, true);
         StyleConstants.setForeground(ATTRIBUTEVALUE_ATTRIBUTES, Color.GREEN.darker());

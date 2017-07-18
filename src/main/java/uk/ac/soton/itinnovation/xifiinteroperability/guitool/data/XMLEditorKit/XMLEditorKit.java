@@ -239,20 +239,7 @@ public class XMLEditorKit extends StyledEditorKit {
             
             if (editingAllowed()){
                 // checking for plain text view click, only if editing is allowed
-                View plainTextView = src.getUI().getRootView(src);
-
-                while (plainTextView != null && !(plainTextView instanceof PlainTextView)){
-                    int i = plainTextView.getViewIndex(pos, Position.Bias.Forward);
-                    plainTextView = plainTextView.getView(i);
-                }
-
-                PlainTextView deepestPlainTextView = (PlainTextView) plainTextView;
-                while (plainTextView != null && plainTextView instanceof LabelView) {
-                    deepestPlainTextView = (PlainTextView) plainTextView;
-                    int i = plainTextView.getViewIndex(pos, Position.Bias.Forward);
-                    plainTextView = plainTextView.getView(i);
-                }
-
+                PlainTextView deepestPlainTextView = (PlainTextView) getDeepestView(pos, src, PlainTextView.class);
                 if (deepestPlainTextView != null){
                     Shape a = getAllocation(deepestPlainTextView, src);
                     if (a != null){
@@ -298,20 +285,7 @@ public class XMLEditorKit extends StyledEditorKit {
             }
             
             // checking for a click over an expanding tag
-            View v=src.getUI().getRootView(src);
-                        
-            while (v!=null && !(v instanceof TagView)) {
-                int i=v.getViewIndex(pos, Position.Bias.Forward);
-                v=v.getView(i);
-            }
-            
-            TagView deepest=(TagView)v;
-            while (v!=null && v instanceof TagView) {
-                deepest=(TagView)v;
-                int i=v.getViewIndex(pos, Position.Bias.Forward);
-                v=v.getView(i);
-            }
-                
+            TagView deepest = (TagView) getDeepestView(pos, src, TagView.class);
             if (deepest!=null && !deepest.isStartTag()) {
                 Shape a=getAllocation(deepest, src);
                 if (a!=null) {
@@ -352,18 +326,8 @@ public class XMLEditorKit extends StyledEditorKit {
             }
             
             int pos=src.viewToModel(e.getPoint());
-            View v=src.getUI().getRootView(src);
-            while (v!=null && !(v instanceof TagView)) {
-                int i=v.getViewIndex(pos, Position.Bias.Forward);
-                v=v.getView(i);
-            }
-            TagView deepest=(TagView)v;
-            while (v!=null && v instanceof TagView) {
-                deepest=(TagView)v;
-                int i=v.getViewIndex(pos, Position.Bias.Forward);
-                v=v.getView(i);
-            }
-
+            
+            TagView deepest = (TagView) getDeepestView(pos, src, TagView.class);
             if (deepest!=null && !deepest.isStartTag()) {
                 Shape a=getAllocation(deepest, src);
                 if (a!=null) {
@@ -422,6 +386,90 @@ public class XMLEditorKit extends StyledEditorKit {
         }
 
         return new Rectangle(x,y, (int)v.getPreferredSpan(View.X_AXIS), (int)v.getPreferredSpan(View.Y_AXIS));
+    }
+    
+    /**
+     * a method to get the deepest view of a given type on click
+     * @param pos the position of the click
+     * @param src the source
+     * @param c the class of the view we are searching for
+     * @return 
+     */
+    public View getDeepestView(int pos, JEditorPane src, Class c){
+        View rootView;
+        View deepestView;
+        switch (c.getSimpleName()){
+            case "PlainTextView":
+                rootView = src.getUI().getRootView(src);
+
+                while (rootView != null && !(rootView instanceof PlainTextView)){
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+
+                deepestView = (PlainTextView) rootView;
+                while (rootView != null && rootView instanceof PlainTextView) {
+                    deepestView = (PlainTextView) rootView;
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+                
+                return deepestView;
+            
+            case "TagNameView":
+                rootView = src.getUI().getRootView(src);
+
+                while (rootView != null && !(rootView instanceof TagNameView)){
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+
+                deepestView = (TagNameView) rootView;
+                while (rootView != null && rootView instanceof TagNameView) {
+                    deepestView = (TagNameView) rootView;
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+                
+                return deepestView;
+            
+            case "AttributeNameView":
+                rootView = src.getUI().getRootView(src);
+
+                while (rootView != null && !(rootView instanceof AttributeNameView)){
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+
+                deepestView = (AttributeNameView) rootView;
+                while (rootView != null && rootView instanceof AttributeNameView) {
+                    deepestView = (AttributeNameView) rootView;
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+                
+                return deepestView;
+                
+            case "TagView":
+                rootView = src.getUI().getRootView(src);
+
+                while (rootView != null && !(rootView instanceof TagView)){
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+
+                deepestView = (TagView) rootView;
+                while (rootView != null && rootView instanceof TagView) {
+                    deepestView = (TagView) rootView;
+                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                    rootView = rootView.getView(i);
+                }
+
+                return deepestView;
+                
+            default:
+                return null;
+        }
     }
     
     /**

@@ -30,19 +30,20 @@ import javax.swing.text.Element;
 import javax.swing.text.LabelView;
 
 /**
- * A view to represent plain text
+ * A view to represent tag names of xml tags
+ * 
  * @author ns17
  */
-public class PlainTextView extends LabelView {
+public class TagNameView extends LabelView{
     
     /**
-     * Constructor for PlainTextView
+     * Constructor for TagNameView
      * No overriding of methods or addition of new ones,
-     * The class is used to separate plain text in the XML from other text that uses
+     * The class is used to separate tag names in the XML from other text that uses
      * the LabelView.
      * @param elem the element associated with this view
      */
-    public PlainTextView(Element elem){
+    public TagNameView(Element elem){
         super(elem);
     }
     
