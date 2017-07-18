@@ -615,47 +615,4 @@ public class XMLEditorKit extends StyledEditorKit {
         
         return true;
     }
-
-    @Override
-    public Action[] getActions() {
-        Action[] res=super.getActions();
-        for (int i=0; i<res.length; i++) {
-            if (res[i] instanceof CopyAction) {
-                res[i]=new XMLCopyAction();
-            }
-        }
-        return res;
-    }
-
-    public class XMLCopyAction extends TextAction {
-
-        /** Create this object with the appropriate identifier. */
-        public XMLCopyAction() {
-            super(copyAction);
-        }
-
-        /**
-         * The operation to perform when this action is triggered.
-         *
-         * @param e the action event
-         */
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JTextComponent target = getTextComponent(e);
-            if (target != null) {
-                //adapt selection
-                int start=target.getSelectionStart();
-                int end=target.getSelectionEnd();
-                if (start!=end) {
-                    int[] sel=new int[2];
-                    sel[0]=start;
-                    sel[1]=end;
-                    XMLEditorKit.correctSelectionBounds(sel, target.getDocument());
-                    target.setSelectionStart(sel[0]);
-                    target.setSelectionEnd(sel[1]);
-                }
-                target.copy();
-            }
-        }
-    }
 }
