@@ -396,79 +396,25 @@ public class XMLEditorKit extends StyledEditorKit {
      * @return 
      */
     public View getDeepestView(int pos, JEditorPane src, Class c){
-        View rootView;
-        View deepestView;
-        switch (c.getSimpleName()){
-            case "PlainTextView":
-                rootView = src.getUI().getRootView(src);
+        try {
+            View rootView = src.getUI().getRootView(src);
 
-                while (rootView != null && !(rootView instanceof PlainTextView)){
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
+            while (rootView != null && !c.isInstance(rootView)) {
+                int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                rootView = rootView.getView(i);
+            }
 
-                deepestView = (PlainTextView) rootView;
-                while (rootView != null && rootView instanceof PlainTextView) {
-                    deepestView = (PlainTextView) rootView;
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
-                
-                return deepestView;
-            
-            case "TagNameView":
-                rootView = src.getUI().getRootView(src);
+            View deepestView = (View) c.cast(rootView);
+            while (rootView != null && c.isInstance(rootView)) {
+                deepestView = (View) c.cast(rootView);
+                int i = rootView.getViewIndex(pos, Position.Bias.Forward);
+                rootView = rootView.getView(i);
+            }
 
-                while (rootView != null && !(rootView instanceof TagNameView)){
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
-
-                deepestView = (TagNameView) rootView;
-                while (rootView != null && rootView instanceof TagNameView) {
-                    deepestView = (TagNameView) rootView;
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
-                
-                return deepestView;
-            
-            case "AttributeNameView":
-                rootView = src.getUI().getRootView(src);
-
-                while (rootView != null && !(rootView instanceof AttributeNameView)){
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
-
-                deepestView = (AttributeNameView) rootView;
-                while (rootView != null && rootView instanceof AttributeNameView) {
-                    deepestView = (AttributeNameView) rootView;
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
-                
-                return deepestView;
-                
-            case "TagView":
-                rootView = src.getUI().getRootView(src);
-
-                while (rootView != null && !(rootView instanceof TagView)){
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
-
-                deepestView = (TagView) rootView;
-                while (rootView != null && rootView instanceof TagView) {
-                    deepestView = (TagView) rootView;
-                    int i = rootView.getViewIndex(pos, Position.Bias.Forward);
-                    rootView = rootView.getView(i);
-                }
-
-                return deepestView;
-                
-            default:
-                return null;
+            return deepestView;
+        } 
+        catch (Exception ex) {
+            return null;
         }
     }
     
