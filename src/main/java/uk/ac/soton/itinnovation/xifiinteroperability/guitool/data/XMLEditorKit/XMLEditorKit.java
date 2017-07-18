@@ -230,7 +230,7 @@ public class XMLEditorKit extends StyledEditorKit {
         return pos;
     }
 
-    MouseListener lstCollapse=new MouseAdapter() {
+    protected MouseListener lstCollapse=new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             JEditorPane src=(JEditorPane)e.getSource();

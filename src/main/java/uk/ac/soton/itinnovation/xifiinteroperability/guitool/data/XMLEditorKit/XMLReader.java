@@ -45,10 +45,8 @@ import javax.swing.JOptionPane;
 
 public class XMLReader {
     static XMLReader instance=new XMLReader();
-    private boolean secondTag = false;
-    private XMLReader() {
-        
-    }
+    protected boolean secondTag = false;
+    protected XMLReader() {}
     public static XMLReader getInstance() {
         return instance;
     }
@@ -258,7 +256,7 @@ public class XMLReader {
                     //plain text
                     spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.StartTagType);
                     specs.add(spec);
-
+                    
                     spec=new DefaultStyledDocument.ElementSpec(XMLDocument.PLAIN_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,n.getNodeValue().toCharArray(), 0, n.getNodeValue().length());
                     specs.add(spec);
                     
