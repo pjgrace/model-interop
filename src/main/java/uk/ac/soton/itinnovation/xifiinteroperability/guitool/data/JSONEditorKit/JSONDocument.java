@@ -73,7 +73,7 @@ public class JSONDocument extends DefaultStyledDocument {
         StyleConstants.setItalic(VALUE_ATTRIBUTES, true);
         VALUE_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, JSON_VALUE_NAME);
         
-        StyleConstants.setForeground(STRING_VALUE_ATTRIBUTES, new Color(204, 153, 0));
+        StyleConstants.setForeground(STRING_VALUE_ATTRIBUTES, Color.MAGENTA.darker());
         StyleConstants.setItalic(STRING_VALUE_ATTRIBUTES, true);
         STRING_VALUE_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, JSON_VALUE_NAME);
     }
