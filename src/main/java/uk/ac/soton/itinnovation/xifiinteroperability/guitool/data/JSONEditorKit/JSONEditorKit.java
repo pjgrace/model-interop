@@ -29,6 +29,9 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONEditorKit
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -168,7 +171,13 @@ public class JSONEditorKit extends StyledEditorKit {
                     Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
                     if (r.contains(e.getPoint())) {
                         Element element = deepestLabelView.getElement();
-                        JOptionPane.showMessageDialog(src, "JSONPath: " + JSONPathGenerator.getJSONPath(((GeneratorLeafElement) element).getNode()));
+                        String path = JSONPathGenerator.getJSONPath(((GeneratorLeafElement) element).getNode());
+                        int ans = JOptionPane.showConfirmDialog(null, "<html>JSONPath: <b><i>" + path + "</i></b><br><br>Would you like to copy this JSONPath ?</html>", "JSONPath", JOptionPane.YES_NO_OPTION);
+                        if (ans == JOptionPane.YES_OPTION){
+                            StringSelection stringSelection = new StringSelection(path);
+                            Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+                            clpbrd.setContents(stringSelection, null);
+                        }
                     }
                 }
             }

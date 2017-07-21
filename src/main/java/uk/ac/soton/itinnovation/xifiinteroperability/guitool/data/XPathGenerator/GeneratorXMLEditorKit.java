@@ -28,6 +28,9 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerato
 
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -42,6 +45,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.View;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.AttributeNameView;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.PlainTextView;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.TagNameView;
@@ -127,49 +131,18 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
             
             // checking for a click over a PlainTextView
             PlainTextView deepestPlainTextView = (PlainTextView) getDeepestView(pos, src, PlainTextView.class);
-            if (deepestPlainTextView != null) {
-                Shape a = getAllocation(deepestPlainTextView, src);
-                if (a != null) {
-                    Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
-                    if (r.contains(e.getPoint())) {
-                        Element element = deepestPlainTextView.getElement();
-                        JOptionPane.showMessageDialog(src, "XPath: " + XPathGenerator.getXPath(((GeneratorLeafElement) element).getNode()));
-                        return;
-                    }
-                }
-            }
+            if (generateXPathDialog(deepestPlainTextView, src, e))
+                return;
             
             // checking for a click over a tag element name
             TagNameView deepestTagNameView = (TagNameView) getDeepestView(pos, src, TagNameView.class);
-            if (deepestTagNameView != null) {
-                Shape a = getAllocation(deepestTagNameView, src);
-                if (a != null) {
-                    Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
-                    if (r.contains(e.getPoint())) {
-                        Element element = deepestTagNameView.getElement();
-                        if (element instanceof GeneratorLeafElement){
-                            JOptionPane.showMessageDialog(src, "XPath: " + XPathGenerator.getXPath(((GeneratorLeafElement) element).getNode()));
-                        }
-                        return;
-                    }
-                }
-            }
+            if (generateXPathDialog(deepestTagNameView, src, e))
+                return;
             
             // checking for a click over a tag attribute name
             AttributeNameView deepestAttributeNameView = (AttributeNameView) getDeepestView(pos, src, AttributeNameView.class);
-            if (deepestAttributeNameView != null) {
-                Shape a = getAllocation(deepestAttributeNameView, src);
-                if (a != null) {
-                    Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
-                    if (r.contains(e.getPoint())) {
-                        Element element = deepestAttributeNameView.getElement();
-                        if (element instanceof GeneratorLeafElement){
-                            JOptionPane.showMessageDialog(src, "XPath: " + XPathGenerator.getXPath(((GeneratorLeafElement) element).getNode()));
-                        }
-                        return;
-                    }
-                }
-            }
+            if (generateXPathDialog(deepestAttributeNameView, src, e))
+                return;
             
             // checking for a click over an expanding tag
             TagView deepest = (TagView) getDeepestView(pos, src, TagView.class);
@@ -203,6 +176,36 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
         }
     };
 
+    /**
+     * a method, which checks if a view was clicked and generates a dialog with the appripriate XPath
+     * @param view the view to check
+     * @param src the editor pane
+     * @param e the mouse event
+     * @return true if the dialog was generated, false otherwise
+     */
+    private boolean generateXPathDialog(View view, JEditorPane src, MouseEvent e){
+        if (view != null) {
+            Shape a = getAllocation(view, src);
+            if (a != null) {
+                Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
+                if (r.contains(e.getPoint())) {
+                    Element element = view.getElement();
+                    if (element instanceof GeneratorLeafElement) {
+                        String path = XPathGenerator.getXPath(((GeneratorLeafElement) element).getNode());
+                        int ans = JOptionPane.showConfirmDialog(null, "<html>XPath: <b><i>" + path + "</i></b><br><br> Would you like to copy this XPath ?</html>", "XPath", JOptionPane.YES_NO_OPTION);
+                        if (ans == JOptionPane.YES_OPTION){
+                            StringSelection stringSelection = new StringSelection(path);
+                            Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+                            clpbrd.setContents(stringSelection, null);
+                        }
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
     /**
      * overriding the install method, so that it installs the altered mouse listener
      * and remove the old mouse listener

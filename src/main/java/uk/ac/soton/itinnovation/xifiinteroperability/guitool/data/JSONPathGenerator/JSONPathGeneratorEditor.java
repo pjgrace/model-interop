@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -48,50 +49,33 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONEditorKit.
  * 
  * @author ns17
  */
-public class JSONPathGeneratorEditor extends JFrame { 
+public class JSONPathGeneratorEditor extends JDialog { 
     
     public JSONPathGeneratorEditor(){
         super();
     }
     
-    private void initGUI() throws FileNotFoundException, IOException{
+    public void initGUI(String json) {
         this.setTitle("JSONPath Generator");
-        this.setSize(600, 900);
         this.setLayout(new BorderLayout());
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
-        StringBuilder sb = new StringBuilder();
-        BufferedReader br = new BufferedReader(new FileReader(new File("src/main/resources/test.json")));
-        String line = br.readLine();
-
-        while (line != null) {
-            sb.append(line);
-            line = br.readLine();
-        }
-        
-        JEditorPane editorPane = new JEditorPane("text/json", sb.toString());
+        JEditorPane editorPane = new JEditorPane("text/json", json);
         final JScrollPane areaScrollPane = new JScrollPane(editorPane);
         areaScrollPane.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        areaScrollPane.setPreferredSize(new Dimension(1000, 1000));
+        areaScrollPane.setPreferredSize(new Dimension(850, 850));
         this.add(areaScrollPane, BorderLayout.CENTER);
         editorPane.setEditable(false);
         editorPane.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
         editorPane.setEditorKit(new JSONEditorKit());
-        editorPane.setText(sb.toString());
+        int caret = editorPane.getCaretPosition();
+        editorPane.setText(json);
+        editorPane.setCaretPosition(caret);
         
+        this.pack();
+        this.setLocationRelativeTo(null);
         this.setVisible(true);
-    }
-    
-    public static void main(String[] args){
-        JSONPathGeneratorEditor generator = new JSONPathGeneratorEditor();
-        SwingUtilities.invokeLater(() -> {
-            try {
-                generator.initGUI();
-            } catch (IOException ex) {
-                System.err.println(ex.getMessage());
-            }
-        });
     }
 }

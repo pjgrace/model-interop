@@ -30,11 +30,19 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 import com.mxgraph.util.mxResources;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.AbstractAction;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.Delete;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExitAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.GraphAction;
@@ -138,6 +146,72 @@ public class EditorMenuBar extends JMenuBar {
                     editor.about();
             }
         });
+        
+        final JMenu pathMenuHelper = new JMenu("XPath/JSONPath helpers");
+        
+        JMenuItem xPathGeneratorItem = new JMenuItem("XPath Generator");
+        xPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
+            fChooser.setFileFilter(filter);
+            fChooser.setAcceptAllFileFilterUsed(false);
+            
+            final int check = fChooser.showDialog(editor, "Choose xml file");
+            
+            if (check == JFileChooser.APPROVE_OPTION) {
+                BufferedReader br;
+                try {
+                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+                    while (line != null){
+                        sb.append(line);
+                        line = br.readLine();
+                    }
+                    br.close();
+                    
+                    new XPathGeneratorEditor().initGUI(sb.toString());
+                }
+                catch (IOException ex){
+                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your xml file.", "File error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        
+        JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Generator");
+        jsonPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
+            fChooser.setFileFilter(filter);
+            fChooser.setAcceptAllFileFilterUsed(false);
+            
+            final int check = fChooser.showDialog(editor, "Choose json file");
+            
+            if (check == JFileChooser.APPROVE_OPTION) {
+                BufferedReader br;
+                try {
+                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+                    while (line != null) {
+                        sb.append(line);
+                        line = br.readLine();
+                    }
+                    br.close();
+                    
+                    new JSONPathGeneratorEditor().initGUI(sb.toString());
+                }
+                catch (IOException ex){
+                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        
+        pathMenuHelper.add(xPathGeneratorItem);
+        pathMenuHelper.add(jsonPathGeneratorItem);
+                
+        menu.add(pathMenuHelper);
+        
     }
 };
 
