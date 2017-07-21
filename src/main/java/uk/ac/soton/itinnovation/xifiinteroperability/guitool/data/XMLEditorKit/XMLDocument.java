@@ -72,7 +72,9 @@ public class XMLDocument extends DefaultStyledDocument {
         StyleConstants.setItalic(COMMENT_ATTRIBUTES, true);
     }
     
-    public XMLDocument() {}
+    public XMLDocument() {
+        super();
+    }
     
     @Override
     protected void insert(int offset, ElementSpec[] data) throws BadLocationException {

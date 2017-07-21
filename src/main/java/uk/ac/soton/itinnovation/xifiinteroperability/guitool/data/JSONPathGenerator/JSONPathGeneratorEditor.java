@@ -24,7 +24,7 @@
 //
 /////////////////////////////////////////////////////////////////////////
 
-package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator;
+package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,26 +41,27 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONEditorKit.JSONEditorKit;
 
 /**
- * An editor, which loads an xml file and generates XPath on click on elements
+ * An editor, which loads a json file and generates JSONPath on click on elements
  * 
  * @author ns17
  */
-public class XPathGeneratorEditor extends JFrame { 
+public class JSONPathGeneratorEditor extends JFrame { 
     
-    public XPathGeneratorEditor(){
+    public JSONPathGeneratorEditor(){
         super();
     }
     
     private void initGUI() throws FileNotFoundException, IOException{
-        this.setTitle("XPath Generator");
+        this.setTitle("JSONPath Generator");
         this.setSize(600, 900);
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         StringBuilder sb = new StringBuilder();
-        BufferedReader br = new BufferedReader(new FileReader(new File("src/main/resources/test.xml")));
+        BufferedReader br = new BufferedReader(new FileReader(new File("src/main/resources/test.json")));
         String line = br.readLine();
 
         while (line != null) {
@@ -68,7 +69,7 @@ public class XPathGeneratorEditor extends JFrame {
             line = br.readLine();
         }
         
-        JEditorPane editorPane = new JEditorPane("text/xml", sb.toString());
+        JEditorPane editorPane = new JEditorPane("text/json", sb.toString());
         final JScrollPane areaScrollPane = new JScrollPane(editorPane);
         areaScrollPane.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -77,14 +78,14 @@ public class XPathGeneratorEditor extends JFrame {
         editorPane.setEditable(false);
         editorPane.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
-        editorPane.setEditorKit(new GeneratorXMLEditorKit());
-        editorPane.setText(sb.toString().replaceAll("    ", "").replaceAll("\t", ""));
+        editorPane.setEditorKit(new JSONEditorKit());
+        editorPane.setText(sb.toString());
         
         this.setVisible(true);
     }
     
     public static void main(String[] args){
-        XPathGeneratorEditor generator = new XPathGeneratorEditor();
+        JSONPathGeneratorEditor generator = new JSONPathGeneratorEditor();
         SwingUtilities.invokeLater(() -> {
             try {
                 generator.initGUI();

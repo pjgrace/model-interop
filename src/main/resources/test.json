@@ -1,0 +1,32 @@
+{
+  "firstName": "John",
+  "working": true,
+  "wife": null,
+  "salary": 1000.50,
+  "age": 45,
+  "simple_list": ["string", 1, 1.1, false, null],
+  "simple_object": {
+	"int": 1,
+	"bool": false,
+	"double": 2.5,
+	"null_key": null
+  },
+  "complex_list": [1 , 2, [true, false, null], 3 , 4.5],
+  "complex_object": {
+	"int": 1,
+	"boolean": true,
+	"list": [12, null, false]
+  },
+  "very_complex_list": [
+	{
+		"name": "name1",
+		"age": 20,
+		"pets": ["pet1", "pet2", [10, 11]]
+	},
+	{
+		"name": "name2",
+		"age": 25,
+		"pets": ["pet3", "pet4", [5, 6]]
+	}
+  ]
+}
