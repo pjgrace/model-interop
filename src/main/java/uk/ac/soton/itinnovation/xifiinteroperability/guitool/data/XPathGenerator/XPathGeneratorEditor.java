@@ -29,13 +29,33 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerato
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyleConstants;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.ATTRIBUTENAME_ATTRIBUTES;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.ATTRIBUTEVALUE_ATTRIBUTES;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.TAGNAME_ATTRIBUTES;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 
 /**
  * An editor, which loads an xml file and generates XPath on click on elements
@@ -43,6 +63,8 @@ import javax.swing.border.LineBorder;
  * @author ns17
  */
 public class XPathGeneratorEditor extends JDialog{ 
+    
+    private JEditorPane editorPane;
     
     public XPathGeneratorEditor(){
         super();
@@ -53,7 +75,7 @@ public class XPathGeneratorEditor extends JDialog{
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
          
-        JEditorPane editorPane = new JEditorPane("text/xml", xml);
+        editorPane = new JEditorPane("text/xml", xml);
         final JScrollPane areaScrollPane = new JScrollPane(editorPane);
         areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         areaScrollPane.setPreferredSize(new Dimension(850, 850));
@@ -66,8 +88,105 @@ public class XPathGeneratorEditor extends JDialog{
         editorPane.setText(xml.replaceAll("    ", "").replaceAll("\t", ""));
         editorPane.setCaretPosition(caretPosition);
         
+        JPanel northPanel = new JPanel();
+        northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.PAGE_AXIS));
+        northPanel.add(Box.createRigidArea(new Dimension(0, 16)));
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
+        buttonsPanel.add(Box.createHorizontalGlue());
+        JButton open = new JButton("Open a different xml file");
+        open.addActionListener((ActionEvent e) -> {
+            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
+            fChooser.setFileFilter(filter);
+            fChooser.setAcceptAllFileFilterUsed(false);
+            
+            final int check = fChooser.showDialog(buttonsPanel, "Choose xml file");
+            
+            if (check == JFileChooser.APPROVE_OPTION) {
+                BufferedReader br;
+                try {
+                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+                    while (line != null) {
+                        sb.append(line);
+                        line = br.readLine();
+                    }
+                    br.close();
+                    
+                    resetEditor(sb.toString());
+                }
+                catch (IOException ex){
+                    JOptionPane.showMessageDialog(buttonsPanel, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        XMLSpecificationPanel.customizeButton(open);
+        buttonsPanel.add(open);
+        
+        buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        
+        JButton highlight = new JButton("Highlight tags");
+        XMLSpecificationPanel.customizeButton(highlight);
+        buttonsPanel.add(highlight);
+        highlight.addActionListener((ActionEvent e) -> {
+            if (highlight.getText().startsWith("Highlight")){
+                highlight.setText("Remove highlight from keys and values");
+                StyleConstants.setBackground(PLAIN_ATTRIBUTES, new Color(225, 234, 234));
+                StyleConstants.setBackground(TAGNAME_ATTRIBUTES, new Color(204, 255, 255));
+                StyleConstants.setBackground(ATTRIBUTENAME_ATTRIBUTES, new Color(241, 218, 218));
+                StyleConstants.setBackground(ATTRIBUTEVALUE_ATTRIBUTES, new Color(230, 255, 230));
+                resetEditor();
+            }
+            else {
+                highlight.setText("Highlight keys and values");
+                StyleConstants.setBackground(PLAIN_ATTRIBUTES, Color.WHITE);
+                StyleConstants.setBackground(TAGNAME_ATTRIBUTES, Color.WHITE);
+                StyleConstants.setBackground(ATTRIBUTENAME_ATTRIBUTES, Color.WHITE);
+                StyleConstants.setBackground(ATTRIBUTEVALUE_ATTRIBUTES, Color.WHITE);
+                resetEditor();
+            }
+        });
+        buttonsPanel.add(Box.createHorizontalGlue());
+        northPanel.add(buttonsPanel);
+        northPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        
+        JPanel labelPanel = new JPanel();
+        labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
+        labelPanel.add(Box.createHorizontalGlue());
+        JLabel label = new JLabel("Click on a tag, attribute or text element to generate the XPath");
+        label.setFont(new Font("serif", Font.ITALIC + Font.BOLD, label.getFont().getSize() + 2));
+        labelPanel.add(label);
+        labelPanel.add(Box.createHorizontalGlue());
+        northPanel.add(labelPanel);
+        northPanel.add(Box.createRigidArea(new Dimension(0, 16)));
+        
+        this.add(northPanel, BorderLayout.NORTH);
+        
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+    
+    private void resetEditor(){
+        try {
+            int caret = editorPane.getCaretPosition();
+            String text = editorPane.getDocument().getText(0, editorPane.getDocument().getLength());
+            editorPane.setDocument(editorPane.getEditorKit().createDefaultDocument());
+            editorPane.setText(text);
+            editorPane.setCaretPosition(caret);
+        }
+        catch (BadLocationException ex){
+            JOptionPane.showMessageDialog(this, "An error occured while reseting the text in the editor", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void resetEditor(String xml) {
+        int caret = editorPane.getCaretPosition();
+        editorPane.setDocument(editorPane.getEditorKit().createDefaultDocument());
+        editorPane.setText(xml.replaceAll("    ", "").replaceAll("\t", ""));
+        editorPane.setCaretPosition(caret);
     }
 }
