@@ -45,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -70,7 +71,7 @@ public class XPathGeneratorEditor extends JDialog{
         super();
     }
     
-    public void initGUI(String xml) {
+    public void initGUI(String xml, boolean insertPath, JTextField textField) {
         this.setTitle("XPath Generator");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -83,7 +84,7 @@ public class XPathGeneratorEditor extends JDialog{
         editorPane.setEditable(false);
         editorPane.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
-        editorPane.setEditorKit(new GeneratorXMLEditorKit());
+        editorPane.setEditorKit(new GeneratorXMLEditorKit(insertPath, textField, this));
         int caretPosition = editorPane.getCaretPosition();
         editorPane.setText(xml);
         editorPane.setCaretPosition(caretPosition);

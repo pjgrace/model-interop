@@ -45,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -68,7 +69,7 @@ public class JSONPathGeneratorEditor extends JDialog {
         super();
     }
     
-    public void initGUI(String json) {
+    public void initGUI(String json, boolean insertPath, JTextField textField) {
         this.setTitle("JSONPath Generator");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -83,7 +84,7 @@ public class JSONPathGeneratorEditor extends JDialog {
         editorPane.setEditable(false);
         editorPane.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
-        editorPane.setEditorKit(new JSONEditorKit());
+        editorPane.setEditorKit(new JSONEditorKit(insertPath, textField, this));
         int caret = editorPane.getCaretPosition();
         editorPane.setText(json);
         editorPane.setCaretPosition(caret);

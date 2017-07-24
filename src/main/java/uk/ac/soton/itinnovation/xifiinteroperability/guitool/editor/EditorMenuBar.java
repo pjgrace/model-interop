@@ -118,7 +118,7 @@ public class EditorMenuBar extends JMenuBar {
                     }
                     br.close();
                     
-                    new XPathGeneratorEditor().initGUI(sb.toString());
+                    new XPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){
                     JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your xml file.", "File error", JOptionPane.ERROR_MESSAGE);
@@ -147,7 +147,7 @@ public class EditorMenuBar extends JMenuBar {
                     }
                     br.close();
                     
-                    new JSONPathGeneratorEditor().initGUI(sb.toString());
+                    new JSONPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){
                     JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);

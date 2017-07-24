@@ -40,8 +40,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
 import javax.swing.text.Document;
@@ -93,10 +95,32 @@ public class JSONEditorKit extends StyledEditorKit {
     }
     
     /**
-     * constructor calls parent's constructor
+     * a boolean to represent if the XPath should be directly inserted to a text
+     * field
      */
-    public JSONEditorKit(){
+    private final boolean insertPath;
+
+    /**
+     * the field to insert the XPath into
+     */
+    private final JTextField insertField;
+
+    /**
+     * the parent dialog window
+     */
+    private final JDialog parentDialog;
+
+    /**
+     * constructor calls parent's constructor
+     * @param insertPath boolean to know whether to directly insert the path
+     * @param insertField the field to insert the path if required
+     * @param parentDialog the parent JDialog
+     */
+    public JSONEditorKit(boolean insertPath, JTextField insertField, JDialog parentDialog){
         super();
+        this.insertPath = insertPath;
+        this.insertField = insertField;
+        this.parentDialog = parentDialog;
     }
     
     /**
@@ -172,11 +196,27 @@ public class JSONEditorKit extends StyledEditorKit {
                     if (r.contains(e.getPoint())) {
                         Element element = deepestLabelView.getElement();
                         String path = JSONPathGenerator.getJSONPath(((GeneratorLeafElement) element).getNode());
-                        int ans = JOptionPane.showConfirmDialog(null, "<html>JSONPath: <b><i>" + path + "</i></b><br><br>Would you like to copy this JSONPath ?</html>", "JSONPath", JOptionPane.YES_NO_OPTION);
-                        if (ans == JOptionPane.YES_OPTION){
-                            StringSelection stringSelection = new StringSelection(path);
-                            Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            clpbrd.setContents(stringSelection, null);
+                        if (!insertPath){
+                            int ans = JOptionPane.showConfirmDialog(null, "<html>JSONPath: <b><i>" + path + "</i></b><br><br>Would you like to copy this JSONPath ?</html>", "JSONPath", JOptionPane.YES_NO_OPTION);
+                            if (ans == JOptionPane.YES_OPTION){
+                                StringSelection stringSelection = new StringSelection(path);
+                                Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                clpbrd.setContents(stringSelection, null);
+                            }
+                        }
+                        else {
+                            int check = JOptionPane.showConfirmDialog(null,
+                                    "<html>The JSONPath expression - '<b><i>" + path + "</i></b>' will be inserted into the text field and "
+                                            + "this dialog will be closed. Do you want to continue?", "User confirmation",
+                                            JOptionPane.YES_NO_OPTION);
+                            if (check == JOptionPane.YES_OPTION){
+                                try{
+                                    insertField.getDocument().insertString(insertField.getCaretPosition(), "content[" + path + "]",
+                                            null);
+                                    parentDialog.dispose();
+                                }
+                                catch(BadLocationException ex){}
+                            }
                         }
                     }
                 }

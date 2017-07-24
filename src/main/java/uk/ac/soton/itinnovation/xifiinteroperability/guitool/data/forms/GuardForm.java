@@ -56,6 +56,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
@@ -117,6 +121,12 @@ public class GuardForm extends JPanel {
             + "<li>You can also click the right button of the mouse and select "
             + "the <b><i>'Insert previous states data'</i></b> option</li></ul>"
             + "</body></html>";
+    
+    /**
+     * the posible header fields for guard description
+     */
+    private final String[] headerFields = {"From", "Code", "Msg", "Date", "To", "Expires", "Content-Type",
+        "Server", "Transfer-Encoding", "Accept-Ranges"};
     
     /**
      * The user interface model i.e. this data is what this form is
@@ -216,7 +226,53 @@ public class GuardForm extends JPanel {
 
         listPane.add(new JLabel("Guard description:",  JLabel.RIGHT));
         ident = new JTextField();
+        ident.setToolTipText("Click right button for selection dialog.");
         ident.addFocusListener(MessageForm.COLOUR_CHANGER);
+        ident.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if (SwingUtilities.isRightMouseButton(e)){
+                    String[] types = {"Header", "Message content"};
+                    String type = (String) JOptionPane.showInputDialog(topPanel,
+                            "Please choose the type of data to generate:", "Selection dialog",
+                            JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
+                    
+                    if (type != null && type.equals("Header")){
+                        String[] protocols = {"HTTP", "COAP"};
+                        String protocol = (String) JOptionPane.showInputDialog(topPanel,
+                            "Please choose the type of protocol you want to use:", "Selection dialog",
+                            JOptionPane.PLAIN_MESSAGE, null, protocols, protocols[0]);
+                        if (protocol != null){
+                            String header = (String) JOptionPane.showInputDialog(topPanel,
+                                    "Please choose the header field you want to use:", "Selection dialog",
+                                    JOptionPane.PLAIN_MESSAGE, null, headerFields, headerFields[0]);
+                            if (header != null){
+                                try {
+                                    ident.getDocument().insertString(ident.getCaretPosition(), protocol + "." + header, null);
+                                }
+                                catch (BadLocationException ex) {
+                                    JOptionPane.showMessageDialog(topPanel,
+                                            "An error occured while inserting your selection.",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                    }
+                    else if (type != null && type.equals("Message content")){
+                        String[] paths = {"XML", "JSON"};
+                        String path = (String) JOptionPane.showInputDialog(topPanel,
+                                "Please choose the content data type you want to use:", "Selection dialog",
+                                JOptionPane.PLAIN_MESSAGE, null, paths, paths[0]);
+                        if (path != null && path.equals("XML")){
+                            new XPathGeneratorEditor().initGUI("", true, ident);
+                        }
+                        else if (path != null && path.equals("JSON")){
+                            new JSONPathGeneratorEditor().initGUI("", true, ident);
+                        }
+                    }
+                }
+            }
+        });
         listPane.add(ident);
 
         listPane.add(new JLabel("Required guard value:", JLabel.RIGHT));

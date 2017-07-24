@@ -39,8 +39,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
@@ -62,10 +64,31 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator
 public class GeneratorXMLEditorKit extends XMLEditorKit {
 
     /**
-     * a constructor for the editor kit, initialises the extended kit
+     * a boolean to represent if the XPath should be directly inserted to a text field
      */
-    public GeneratorXMLEditorKit() {
+    private final boolean insertPath;
+    
+    /**
+     * the field to insert the XPath into
+     */
+    private final JTextField insertField;
+    
+    /**
+     * the parent dialog window
+     */
+    private final JDialog parentDialog;
+    
+    /**
+     * a constructor for the editor kit, initialises the extended kit
+     * @param insertPath boolean to know whether to directly insert the path
+     * @param insertField the field to insert the path if required
+     * @param parentDialog the parent JDialog
+     */
+    public GeneratorXMLEditorKit(boolean insertPath, JTextField insertField, JDialog parentDialog) {
         super(null, false);
+        this.insertPath = insertPath;
+        this.insertField = insertField;
+        this.parentDialog = parentDialog;
     }
 
     /**
@@ -192,13 +215,32 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
                     Element element = view.getElement();
                     if (element instanceof GeneratorLeafElement) {
                         String path = XPathGenerator.getXPath(((GeneratorLeafElement) element).getNode());
-                        int ans = JOptionPane.showConfirmDialog(null, "<html>XPath: <b><i>" + path + "</i></b><br><br> Would you like to copy this XPath ?</html>", "XPath", JOptionPane.YES_NO_OPTION);
-                        if (ans == JOptionPane.YES_OPTION){
-                            StringSelection stringSelection = new StringSelection(path);
-                            Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
-                            clpbrd.setContents(stringSelection, null);
+                        if (!this.insertPath){
+                            int ans = JOptionPane.showConfirmDialog(null, "<html>XPath: <b><i>" + path + "</i></b><br><br> Would you like to copy this XPath ?</html>", "XPath", JOptionPane.YES_NO_OPTION);
+                            if (ans == JOptionPane.YES_OPTION){
+                                StringSelection stringSelection = new StringSelection(path);
+                                Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+                                clpbrd.setContents(stringSelection, null);
+                            }
+                            return true;
                         }
-                        return true;
+                        else {
+                            int check = JOptionPane.showConfirmDialog(null,
+                                    "<html>The XPath expression - '<b><i>" + path + "</i></b>' will be inserted into the text field and "
+                                            + "this dialog will be closed. Do you want to continue?", "User confirmation",
+                                            JOptionPane.YES_NO_OPTION);
+                            if (check == JOptionPane.YES_OPTION){
+                                try{
+                                    insertField.getDocument().insertString(insertField.getCaretPosition(), "content[" + path + "]",
+                                            null);
+                                    parentDialog.dispose();
+                                    return true;
+                                }
+                                catch(BadLocationException ex){
+                                    return true;
+                                }
+                            }
+                        }
                     }
                 }
             }
