@@ -225,6 +225,11 @@ public class StateMachine implements EventCapture {
                 outputReport.setSuccess("false");
                 outputReport.addReport("{\"Test trace\":\""+ ex.getLocalizedMessage() + "\"");
                 return outputReport;
+            } catch (Exception ex){
+                outputReport.println("An unexpected error occurred, while running your pattern.");
+                outputReport.println("Please check all fields where you are using any of the following - pattern data,"
+                    + " components' data, previous states' data.");
+                return outputReport;
             }
         }
         outputReport.setSuccess(currentState.getSuccess());

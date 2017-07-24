@@ -29,6 +29,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachin
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +44,13 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Interoperabi
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEventException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.InvalidPatternReferenceException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.ProtocolMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidJSONPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidXPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult.DataFormat;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 /**
  * State in a state machine.
@@ -127,6 +130,10 @@ public class StateNode implements State {
         return this.InteroperabilitySuccess;
     }
 
+    /**
+     * a reference to the hash map of pattern data
+     */
+    private final transient Map<String, String> dataConstants;
 
     /**
      *
@@ -154,13 +161,17 @@ public class StateNode implements State {
 	this.name = nodeName;
         if (arc != null) {
             this.stateMachine = arc.getStateMachine();
+            this.dataConstants = arc.getDataConstants();
+        }
+        else {
+            this.dataConstants = null;
         }
         this.nextStates = new ArrayList();
         this.stateType = type;
 
                 this.InteroperabilityReport = report;
         this.InteroperabilitySuccess = success;
-
+            
     }
 
     /**
@@ -379,6 +390,30 @@ public class StateNode implements State {
         return null;
     }
 
+    /**
+     * get the pattern data based on the expression
+     * @param expression the expression to parse
+     * @return the pattern data
+     * @throws InvalidPatternReferenceException 
+     */
+    private String getData(String expression)
+            throws InvalidPatternReferenceException {
+        expression = expression.replaceAll("\\$", "");
+        final int indexElement = expression.indexOf('.') + 1;
+        if (indexElement != XMLStateMachine.DATA_TAG.length() + 1) {
+            throw new InvalidPatternReferenceException("Invalid data tag: " + expression.substring(0, indexElement));
+        }
+        final String dataName = expression.substring(indexElement);
+        if (dataName != null) {
+            final String dataValue = this.dataConstants.get(dataName);
+            if (dataValue == null) {
+                throw new InvalidPatternReferenceException("Data field does not exist");
+            }
+            return dataValue;
+        }
+        throw new InvalidPatternReferenceException("Data field does not exist");
+    }
+    
     /**
      * The guard failure is reported to the interoperability report.
      * @param chGuard The rule that has failed.
@@ -699,9 +734,20 @@ public class StateNode implements State {
             try {
                 final Guard chGuard = itCheck.next();
                 if (chGuard.getGuardCompare().contains("$$")) {
-                    chGuard.setGuardCompare(getStateValue(chGuard.getGuardCompare()));
+                    if (chGuard.getGuardCompare().contains(XMLStateMachine.DATA_TAG)){
+                        try {
+                            chGuard.setGuardCompare(getData(chGuard.getGuardCompare()));
+                        }
+                        catch (InvalidPatternReferenceException ex){
+                            chGuard.setGuardCompare(null);
+                        }
+                    }
+                    else {
+                        chGuard.setGuardCompare(getStateValue(chGuard.getGuardCompare()));
+                    }
                 }
-                else if (chGuard.getType() == Guard.ComparisonType.CONTAINS) {
+                
+                if (chGuard.getType() == Guard.ComparisonType.CONTAINS) {
                     if (!guardContainsEvaluation(chGuard, conditions, report)) {
                         return false;
                     }

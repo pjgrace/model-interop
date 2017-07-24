@@ -98,7 +98,10 @@ public class PatternCheckThread extends Thread {
                                 "Pattern is not valid: There are more than one start or triggerstart nodes in the graph",
                                 "Pattern verification",
                                 JOptionPane.ERROR_MESSAGE);
-        }
+        } catch (NullPointerException ex){
+            JOptionPane.showMessageDialog(editor, "Pattern is not valid: Please check all fields where you are using any of the following - pattern data,"
+                    + " components' data, previous states' data.", "Pattern verification", JOptionPane.ERROR_MESSAGE);
+        } 
     }
 
 }
