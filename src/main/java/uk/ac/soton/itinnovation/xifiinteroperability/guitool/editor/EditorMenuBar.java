@@ -94,6 +94,70 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/delete.gif"));
 
+        // creates the tools menu
+        menu = add(new JMenu("Tools"));
+        
+        JMenuItem xPathGeneratorItem = new JMenuItem("XPath Expression Generator");
+        xPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
+            fChooser.setFileFilter(filter);
+            fChooser.setAcceptAllFileFilterUsed(false);
+            
+            final int check = fChooser.showDialog(editor, "Choose xml file");
+            
+            if (check == JFileChooser.APPROVE_OPTION) {
+                BufferedReader br;
+                try {
+                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+                    while (line != null){
+                        sb.append(line);
+                        line = br.readLine();
+                    }
+                    br.close();
+                    
+                    new XPathGeneratorEditor().initGUI(sb.toString());
+                }
+                catch (IOException ex){
+                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your xml file.", "File error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        
+        JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Expression Generator");
+        jsonPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
+            fChooser.setFileFilter(filter);
+            fChooser.setAcceptAllFileFilterUsed(false);
+            
+            final int check = fChooser.showDialog(editor, "Choose json file");
+            
+            if (check == JFileChooser.APPROVE_OPTION) {
+                BufferedReader br;
+                try {
+                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+                    while (line != null) {
+                        sb.append(line);
+                        line = br.readLine();
+                    }
+                    br.close();
+                    
+                    new JSONPathGeneratorEditor().initGUI(sb.toString());
+                }
+                catch (IOException ex){
+                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        
+        menu.add(xPathGeneratorItem);
+        menu.add(jsonPathGeneratorItem);
+        
         // Creates the view menu
         menu = add(new JMenu(mxResources.get("view")));
 
@@ -145,73 +209,7 @@ public class EditorMenuBar extends JMenuBar {
             public void actionPerformed(final ActionEvent event) {
                     editor.about();
             }
-        });
-        
-        final JMenu pathMenuHelper = new JMenu("XPath/JSONPath helpers");
-        
-        JMenuItem xPathGeneratorItem = new JMenuItem("XPath Generator");
-        xPathGeneratorItem.addActionListener((ActionEvent ae) -> {
-            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
-            fChooser.setFileFilter(filter);
-            fChooser.setAcceptAllFileFilterUsed(false);
-            
-            final int check = fChooser.showDialog(editor, "Choose xml file");
-            
-            if (check == JFileChooser.APPROVE_OPTION) {
-                BufferedReader br;
-                try {
-                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
-                    StringBuilder sb = new StringBuilder();
-                    String line = br.readLine();
-                    while (line != null){
-                        sb.append(line);
-                        line = br.readLine();
-                    }
-                    br.close();
-                    
-                    new XPathGeneratorEditor().initGUI(sb.toString());
-                }
-                catch (IOException ex){
-                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your xml file.", "File error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        
-        JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Generator");
-        jsonPathGeneratorItem.addActionListener((ActionEvent ae) -> {
-            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
-            fChooser.setFileFilter(filter);
-            fChooser.setAcceptAllFileFilterUsed(false);
-            
-            final int check = fChooser.showDialog(editor, "Choose json file");
-            
-            if (check == JFileChooser.APPROVE_OPTION) {
-                BufferedReader br;
-                try {
-                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
-                    StringBuilder sb = new StringBuilder();
-                    String line = br.readLine();
-                    while (line != null) {
-                        sb.append(line);
-                        line = br.readLine();
-                    }
-                    br.close();
-                    
-                    new JSONPathGeneratorEditor().initGUI(sb.toString());
-                }
-                catch (IOException ex){
-                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-        
-        pathMenuHelper.add(xPathGeneratorItem);
-        pathMenuHelper.add(jsonPathGeneratorItem);
-                
-        menu.add(pathMenuHelper);
-        
+        });     
     }
 };
 
