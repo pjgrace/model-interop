@@ -29,20 +29,20 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 /**
@@ -63,7 +63,7 @@ public class EndForm extends JPanel {
     /**
      * The text field capturing the node identity field.
      */
-    private final transient JTextField reasonInput = new JTextField();
+    private final transient JTextArea reasonInput = new JTextArea();
 
 
     /**
@@ -84,36 +84,72 @@ public class EndForm extends JPanel {
 
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
-
-        // Info Panel
-        final JPanel listPane = new JPanel();
-        final GridLayout gridLayout = new GridLayout(3 , 2);
-        gridLayout.setHgap(5);
-        gridLayout.setVgap(5);
-        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        listPane.setLayout(gridLayout);
-
-
-        listPane.add(new JLabel("Success:",  JLabel.RIGHT));
+        topPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        
+        topPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        
+        JPanel successPanel = new JPanel();
+        successPanel.setLayout(new BoxLayout(successPanel, BoxLayout.X_AXIS));
+        successPanel.add(Box.createHorizontalGlue());
+        successPanel.add(new JLabel("Success:  "));
         successBox.addItem(true);
         successBox.addItem(false);
-
-        listPane.add(successBox);
-
-        listPane.add(new JLabel("Test report:", JLabel.RIGHT));
-        listPane.add(reasonInput);
+        successPanel.add(successBox);
+        successPanel.add(Box.createHorizontalGlue());
+        topPanel.add(successPanel);
+        
+        topPanel.add(Box.createRigidArea(new Dimension(0, 14)));
+        
+        JPanel labelPanel = new JPanel();
+        labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.X_AXIS));
+        labelPanel.add(Box.createHorizontalGlue());
+        labelPanel.add(new JLabel("Test Report:"));
+        labelPanel.add(Box.createHorizontalGlue());
+        topPanel.add(labelPanel);
+        
+        topPanel.add(Box.createRigidArea(new Dimension(0, 8)));
+        
+        JPanel textAreaPanel = new JPanel();
+        textAreaPanel.setLayout(new BoxLayout(textAreaPanel, BoxLayout.X_AXIS));
+        textAreaPanel.add(Box.createHorizontalGlue());
+        textAreaPanel.add(Box.createRigidArea(new Dimension(8, 0)));
+        reasonInput.setLineWrap(true);
+        reasonInput.setRows(5);
+        reasonInput.setToolTipText("Atach report data to the end node.");
+        textAreaPanel.add(new JScrollPane(reasonInput));
+        textAreaPanel.add(Box.createHorizontalGlue());
+        textAreaPanel.add(Box.createRigidArea(new Dimension(8, 0)));
+        topPanel.add(textAreaPanel);
+        
+        topPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.add(Box.createHorizontalGlue());
+        final JButton update = new JButton("Update end state");
+        update.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent event) {
+                mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
+            }
+        });
+        buttonPanel.add(update);
+        buttonPanel.add(Box.createHorizontalGlue());
+        topPanel.add(buttonPanel);
+        
+        topPanel.add(Box.createRigidArea(new Dimension(0, 8)));
         
         FocusListener focusListener = new FocusListener(){
             @Override
             public void focusGained(FocusEvent fe) {
-                if (fe.getComponent() instanceof JTextField){
+                if (fe.getComponent() instanceof JTextArea){
                     fe.getComponent().setBackground(new Color(230,242,255));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent fe) {
-                if (fe.getComponent() instanceof JTextField){
+                if (fe.getComponent() instanceof JTextArea){
                     fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
                 }
                 
@@ -123,33 +159,10 @@ public class EndForm extends JPanel {
         reasonInput.addFocusListener(focusListener);
         successBox.addFocusListener(focusListener);
         
-        JPanel panel = this;
-        reasonInput.addKeyListener(new KeyAdapter(){
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER){
-                    panel.requestFocusInWindow();
-                }
-            }
-            
-        });
-
-        listPane.add(new JLabel("",  JLabel.RIGHT));
-        final JButton update = new JButton("Update end state");
-        update.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
-            }
-          });
-
-        listPane.add(update);
-        topPanel.add(listPane);
         add(topPanel, BorderLayout.NORTH);
         
         this.addMouseListener(MessageForm.FOCUS_CHANGER);
         topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
-        listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
     }
 
     /**
