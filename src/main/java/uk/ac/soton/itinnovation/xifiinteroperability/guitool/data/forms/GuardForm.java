@@ -40,6 +40,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -48,6 +51,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -57,6 +61,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
@@ -258,16 +263,64 @@ public class GuardForm extends JPanel {
                             }
                         }
                     }
-                    else if (type != null && type.equals("Message content")){
+                    else if (type != null && type.equals("Message content")) {
                         String[] paths = {"XML", "JSON"};
                         String path = (String) JOptionPane.showInputDialog(topPanel,
                                 "Please choose the content data type you want to use:", "Selection dialog",
                                 JOptionPane.PLAIN_MESSAGE, null, paths, paths[0]);
-                        if (path != null && path.equals("XML")){
-                            new XPathGeneratorEditor().initGUI("", true, ident);
+                        
+                        if (path != null && path.equals("XML")) {
+                            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+                            FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
+                            fChooser.setFileFilter(filter);
+                            fChooser.setAcceptAllFileFilterUsed(false);
+
+                            final int check = fChooser.showDialog(editor, "Choose xml file");
+
+                            if (check == JFileChooser.APPROVE_OPTION) {
+                                BufferedReader br;
+                                try {
+                                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
+                                    StringBuilder sb = new StringBuilder();
+                                    String line = br.readLine();
+                                    while (line != null) {
+                                        sb.append(line);
+                                        line = br.readLine();
+                                    }
+                                    br.close();
+
+                                    new XPathGeneratorEditor().initGUI(sb.toString(), true, ident);
+                                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your xml file.", "File error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
                         }
                         else if (path != null && path.equals("JSON")){
-                            new JSONPathGeneratorEditor().initGUI("", true, ident);
+                            final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
+                            FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
+                            fChooser.setFileFilter(filter);
+                            fChooser.setAcceptAllFileFilterUsed(false);
+
+                            final int check = fChooser.showDialog(editor, "Choose json file");
+                            
+                            if (check == JFileChooser.APPROVE_OPTION) {
+                                BufferedReader br;
+                                try {
+                                    br = new BufferedReader(new FileReader(fChooser.getSelectedFile()));
+                                    StringBuilder sb = new StringBuilder();
+                                    String line = br.readLine();
+                                    while (line != null) {
+                                        sb.append(line);
+                                        line = br.readLine();
+                                    }
+                                    br.close();
+                                    
+                                    new JSONPathGeneratorEditor().initGUI(sb.toString(), true, ident);
+                                } 
+                                catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
                         }
                     }
                 }
