@@ -85,7 +85,7 @@ public class XPathGeneratorEditor extends JDialog{
                 new EmptyBorder(1, 3, 1, 1)));
         editorPane.setEditorKit(new GeneratorXMLEditorKit());
         int caretPosition = editorPane.getCaretPosition();
-        editorPane.setText(xml.replaceAll("    ", "").replaceAll("\t", ""));
+        editorPane.setText(xml);
         editorPane.setCaretPosition(caretPosition);
         
         JPanel northPanel = new JPanel();
@@ -186,7 +186,7 @@ public class XPathGeneratorEditor extends JDialog{
     private void resetEditor(String xml) {
         int caret = editorPane.getCaretPosition();
         editorPane.setDocument(editorPane.getEditorKit().createDefaultDocument());
-        editorPane.setText(xml.replaceAll("    ", "").replaceAll("\t", ""));
+        editorPane.setText(xml);
         editorPane.setCaretPosition(caret);
     }
 }

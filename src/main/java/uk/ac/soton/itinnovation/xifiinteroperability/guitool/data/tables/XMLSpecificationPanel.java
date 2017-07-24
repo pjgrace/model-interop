@@ -85,6 +85,7 @@ public class XMLSpecificationPanel extends JPanel {
     /**
      * Create the UI panel element with the given data model.
      * @param dModel The tool data model to build specification from.
+     * @param editor the graph editor
      */
     public XMLSpecificationPanel(final DataModel dModel, BasicGraphEditor editor) {
         super(new BorderLayout());
@@ -209,7 +210,7 @@ public class XMLSpecificationPanel extends JPanel {
         if (dataModel != null) {
             int caretPosition = xmlSpecification.getCaretPosition();
             this.xmlSpecification.setDocument(this.xmlSpecification.getEditorKit().createDefaultDocument());
-            this.xmlSpecification.setText(dataModel.getGraphXML().replaceAll("\t", ""));
+            this.xmlSpecification.setText(dataModel.getGraphXML());
             xmlSpecification.setCaretPosition(caretPosition);
         }
     }

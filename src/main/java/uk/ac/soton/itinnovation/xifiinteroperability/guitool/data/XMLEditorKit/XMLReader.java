@@ -222,46 +222,21 @@ public class XMLReader {
                     offs+=writeNode(doc, child, offs, specs);
                 }
                 else if (n.getNodeType()==Node.COMMENT_NODE) {
-                    //plain text
-                    String str=n.getNodeValue();
-                    int ii=str.indexOf("\n");
-                    while (ii>0) {
+                    // skip comments
+                }
+                else {
+                    if (n.getNodeValue() != null && !n.getNodeValue().trim().isEmpty()){
+                        //plain text
                         spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.StartTagType);
                         specs.add(spec);
 
-                        String value=str.substring(0,ii);
-                        spec=new DefaultStyledDocument.ElementSpec(XMLDocument.COMMENT_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,value.toCharArray(), 0, value.length());
-                        specs.add(spec);
-                        spec=new DefaultStyledDocument.ElementSpec(XMLDocument.COMMENT_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,"\n".toCharArray(), 0, 1);
+                        spec=new DefaultStyledDocument.ElementSpec(XMLDocument.PLAIN_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,n.getNodeValue().toCharArray(), 0, n.getNodeValue().length());
                         specs.add(spec);
 
-                        spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
+                        spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
                         specs.add(spec);
-
-                        str=str.substring(ii+1);
-                        ii=str.indexOf("\n");
+                
                     }
-                    spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.StartTagType);
-                    specs.add(spec);
-
-                    spec=new DefaultStyledDocument.ElementSpec(XMLDocument.COMMENT_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,str.toCharArray(), 0, str.length());
-                    specs.add(spec);
-                    spec=new DefaultStyledDocument.ElementSpec(XMLDocument.COMMENT_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,"\n".toCharArray(), 0, 1);
-                    specs.add(spec);
-
-                    spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
-                    specs.add(spec);
-                }
-                else {
-                    //plain text
-                    spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.StartTagType);
-                    specs.add(spec);
-                    
-                    spec=new DefaultStyledDocument.ElementSpec(XMLDocument.PLAIN_ATTRIBUTES, DefaultStyledDocument.ElementSpec.ContentType,n.getNodeValue().toCharArray(), 0, n.getNodeValue().length());
-                    specs.add(spec);
-                    
-                    spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
-                    specs.add(spec);
                 }
             }
             spec=new DefaultStyledDocument.ElementSpec(tagRowStartAttrs, DefaultStyledDocument.ElementSpec.StartTagType);

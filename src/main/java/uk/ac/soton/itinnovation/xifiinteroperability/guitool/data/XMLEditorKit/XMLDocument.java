@@ -50,7 +50,7 @@ public class XMLDocument extends DefaultStyledDocument {
     public final static SimpleAttributeSet ATTRIBUTENAME_ATTRIBUTES=new SimpleAttributeSet();
     public final static SimpleAttributeSet ATTRIBUTEVALUE_ATTRIBUTES=new SimpleAttributeSet();
     public final static SimpleAttributeSet PLAIN_ATTRIBUTES=new SimpleAttributeSet();
-    public final static SimpleAttributeSet COMMENT_ATTRIBUTES=new SimpleAttributeSet();
+
     static {
         StyleConstants.setBold(TAGNAME_ATTRIBUTES, true);
         StyleConstants.setForeground(TAGNAME_ATTRIBUTES, Color.BLUE.darker());
@@ -66,10 +66,6 @@ public class XMLDocument extends DefaultStyledDocument {
         StyleConstants.setFontSize(PLAIN_ATTRIBUTES, StyleConstants.getFontSize(PLAIN_ATTRIBUTES)-1);
         StyleConstants.setBold(PLAIN_ATTRIBUTES, true);
         PLAIN_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, PLAIN_TEXT_ELEMENT);
-
-        StyleConstants.setFontSize(COMMENT_ATTRIBUTES, StyleConstants.getFontSize(COMMENT_ATTRIBUTES)-1);
-        StyleConstants.setForeground(COMMENT_ATTRIBUTES, Color.GRAY);
-        StyleConstants.setItalic(COMMENT_ATTRIBUTES, true);
     }
     
     public XMLDocument() {
