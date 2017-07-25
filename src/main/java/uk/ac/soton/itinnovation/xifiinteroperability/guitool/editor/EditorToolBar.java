@@ -27,9 +27,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
+import javax.swing.AbstractAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions;
 import javax.swing.BorderFactory;
 import javax.swing.JToolBar;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.EmptyAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExecuteAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.GraphAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ReportsAction;
@@ -48,8 +50,8 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopU
  * @author pjg
  */
 public class EditorToolBar extends JToolBar {
-
-	/**
+        
+    /**
 	 * Construct a new instance of the editor toolbar.
          * @param editor The basic graph editor that the toolbar is added to.
          * @param orientation The orientation of the toolbar (horizontal)
@@ -74,7 +76,7 @@ public class EditorToolBar extends JToolBar {
 
                 addSeparator();
 		add(editor.bind("Delete", new EditorActions.Delete(editor),
-				"/images/delete.gif"));
+				"/images/cut.gif"));
 
 		addSeparator();
 
@@ -103,6 +105,10 @@ public class EditorToolBar extends JToolBar {
 		add(editor.bind("Run", new ExecuteAction(),
 				"/images/test.png"));
                 
+                addSeparator();
+                
+                add(editor.bind("Stop", new EmptyAction(), 
+                                "/images/delete.gif"));
                 
                 addSeparator();
                 

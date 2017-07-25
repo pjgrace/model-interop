@@ -45,7 +45,20 @@ public class PatternCheckThread extends Thread {
      * The pattern in XML to run the test with.
      */
     private final transient String patternToTest;
-
+    
+    /**
+     * reference to the architecture used to run the test
+     */
+    private transient Architecture arch;
+    
+    /**
+     * getter for the reference of the architecture
+     * @return the arch reference
+     */
+    public Architecture getArch(){
+        return arch;
+    }
+    
     /**
      * The reporting output.
      */
@@ -77,7 +90,7 @@ public class PatternCheckThread extends Thread {
     @Override
     public final void run() {
         try {
-            final Architecture arch = new Architecture(patternToTest, report);
+            arch = new Architecture(patternToTest, report);
             if (arch.getStateMachine().getStartState() == null) {
                 JOptionPane.showMessageDialog(editor,
                                 "Pattern is not valid:",

@@ -31,21 +31,27 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.util.mxGraphActions;
 import com.mxgraph.view.mxGraph;
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPopupMenu;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorToolBar;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.MainDisplayPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.PatternCheckThread;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.PatternValidation;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.StateMachine;
 
 /**
  * The set of GUI actions e.g. save, open, etc. that correspond to operations
@@ -139,7 +145,21 @@ public final class EditorActions {
             try {
                 final PatternCheckThread checkThread = new PatternCheckThread(editor.getDataModel().getGraphXML(),
                         editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor);
-                checkThread.start();
+                EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+                Component stopButton = toolBar.getComponentAtIndex(18);
+                if (stopButton.getMouseListeners() != null){
+                    stopButton.removeMouseListener(stopButton.getMouseListeners()[0]);
+                }
+                stopButton.addMouseListener(new MouseAdapter(){
+                    @Override
+                    public void mouseClicked(MouseEvent e){
+                        try {
+                            checkThread.getArch().getStateMachine().stop();
+                        }
+                        catch (NullPointerException ex){}
+                    }
+                });
+                checkThread.start();   
             } catch (HeadlessException ex) {
                 JOptionPane.showMessageDialog(editor,
                         "Pattern is not valid: " + ex.getMessage(),
@@ -147,6 +167,20 @@ public final class EditorActions {
                         JOptionPane.ERROR_MESSAGE);
             }
 
+        }
+    }
+    
+    /**
+     * Empty action for the initialization of the stop button
+     */
+    public static class EmptyAction extends AbstractAction {
+        /**
+         * empty action, hence empty method
+         * @param actionEvent
+         */
+        @Override
+        public final void actionPerformed(final ActionEvent actionEvent){
+            // skip
         }
     }
     

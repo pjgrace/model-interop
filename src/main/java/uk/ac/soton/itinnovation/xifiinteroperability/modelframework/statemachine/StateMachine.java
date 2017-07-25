@@ -79,13 +79,26 @@ public class StateMachine implements EventCapture {
      * Each state machine when executed traces an output report.
      */
     private final transient InteroperabilityReport outputReport;
-
+    
+    /**
+     * a boolean the represent if the test was manually stopped by the user
+     */
+    private transient boolean stopped;
+    
+    /**
+     * a setter for the stopped attribute, stops the state machine
+     */
+    public void stop(){
+        stopped = true;
+    }
+    
     /**
      * Construct a new state machine and create and interoperability report.
      */
     public StateMachine() {
         this.eventQueue = new ArrayBlockingQueue(50);
         outputReport = new InteroperabilityReport();
+        stopped = false;
     }
 
     /**
@@ -96,6 +109,7 @@ public class StateMachine implements EventCapture {
     public StateMachine(final InteroperabilityReport rep) {
         this.eventQueue = new ArrayBlockingQueue(50);
         outputReport = rep;
+        stopped = false;
     }
 
     /**
@@ -190,7 +204,7 @@ public class StateMachine implements EventCapture {
         outputReport.println("----------------------------------");
         outputReport.println("Starting trace at Node:" + currentState.getLabel());
 
-        while (!currentState.isEndNode()) {
+        while (!(currentState.isEndNode() || stopped)) {
             try {
                 if (currentState.isTrigger()) {
                     currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));
@@ -226,15 +240,23 @@ public class StateMachine implements EventCapture {
                 outputReport.addReport("{\"Test trace\":\""+ ex.getLocalizedMessage() + "\"");
                 return outputReport;
             } catch (Exception ex){
+                outputReport.setSuccess("false");
+                outputReport.addReport("{\"Test trace\":\""+ ex.getLocalizedMessage() + "\"");
                 outputReport.println("An unexpected error occurred, while running your pattern.");
                 outputReport.println("Please check all fields where you are using any of the following - pattern data,"
                     + " components' data, previous states' data.");
                 return outputReport;
             }
         }
-        outputReport.setSuccess(currentState.getSuccess());
-        outputReport.addReport(currentState.getReport());
-        outputReport.println("End node reached --> Interoperability Testing Complete");
+        if (!stopped){
+            outputReport.setSuccess(currentState.getSuccess());
+            outputReport.addReport(currentState.getReport());
+            outputReport.println("End node reached --> Interoperability Testing Complete");
+        } 
+        else {
+            outputReport.setSuccess("false");
+            outputReport.println("The test execution was stopped.");
+        }
 
         return outputReport;
     }
