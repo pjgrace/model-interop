@@ -56,6 +56,7 @@ import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEdit
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.ATTRIBUTEVALUE_ATTRIBUTES;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.TAGNAME_ATTRIBUTES;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 
 /**
@@ -124,13 +125,13 @@ public class XPathGeneratorEditor extends JDialog{
                 }
             }
         });
-        XMLSpecificationPanel.customizeButton(open);
+        ButtonCustomizer.customizeButton(open);
         buttonsPanel.add(open);
         
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         
         JButton highlight = new JButton("Highlight tags");
-        XMLSpecificationPanel.customizeButton(highlight);
+        ButtonCustomizer.customizeButton(highlight);
         buttonsPanel.add(highlight);
         highlight.addActionListener((ActionEvent e) -> {
             if (highlight.getText().startsWith("Highlight")){

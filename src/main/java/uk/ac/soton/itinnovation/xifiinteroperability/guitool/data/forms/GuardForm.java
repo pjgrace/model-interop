@@ -336,6 +336,7 @@ public class GuardForm extends JPanel {
         listPane.add(new JLabel(""));
         
         final JButton update = new JButton("Add guard");
+        ButtonCustomizer.customizeButton(update);
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -350,7 +351,7 @@ public class GuardForm extends JPanel {
         listPane.add(update);
         
         JButton descriptionButton = new JButton("Helper for guard description");
-        XMLSpecificationPanel.customizeButton(descriptionButton);
+        ButtonCustomizer.customizeButton(descriptionButton);
         descriptionButton.addActionListener((ActionEvent ae) -> {
             JOptionPane.showMessageDialog(listPane, DESCRIPTION_HELPER,
                     "Helper wizard", JOptionPane.INFORMATION_MESSAGE);
@@ -358,7 +359,7 @@ public class GuardForm extends JPanel {
         listPane.add(descriptionButton);
         
         JButton valueButton = new JButton("Helper for guard value");
-        XMLSpecificationPanel.customizeButton(valueButton);
+        ButtonCustomizer.customizeButton(valueButton);
         valueButton.addActionListener((ActionEvent ae) -> {
             JOptionPane.showMessageDialog(listPane, VALUE_HELPER,
                     "Helper wizard", JOptionPane.INFORMATION_MESSAGE);

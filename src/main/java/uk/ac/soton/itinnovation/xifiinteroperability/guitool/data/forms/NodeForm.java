@@ -148,6 +148,7 @@ public class NodeForm extends JPanel {
         listPane.add(new JLabel(""));
 
         final JButton update = new JButton("Add parameter");
+        ButtonCustomizer.customizeButton(update);
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {

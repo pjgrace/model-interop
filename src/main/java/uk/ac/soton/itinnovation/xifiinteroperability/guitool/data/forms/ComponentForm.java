@@ -151,6 +151,7 @@ public class ComponentForm extends JPanel {
         listPane.add(new JLabel(""));
 
         final JButton update = new JButton("Update");
+        ButtonCustomizer.customizeButton(update);
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -224,6 +225,7 @@ public class ComponentForm extends JPanel {
         url.addFocusListener(MessageForm.COLOUR_CHANGER);
         
         final JButton addIntf = new JButton("Add Interface Info");
+        ButtonCustomizer.customizeButton(addIntf);
         addIntf.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {

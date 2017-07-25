@@ -31,7 +31,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
@@ -40,6 +39,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -54,6 +54,19 @@ import javax.swing.UIManager;
  */
 
 public class EndForm extends JPanel {
+    
+    private final static String HELPER = "<html><body>"
+            + "<font size=+1><b><i>End state report</i></b></font><br><br>"
+            + "When creating a pattern, you are allowed to have more than one end states.<br>"
+            + "That's why you can also specify whether reaching a spcific end state should be treated as success or not.<br>"
+            + "You can also attach a test report to the end state to explain the reason it should be treated "
+            + "as a success or not.<br><br>"
+            + "This is useful if, for instance, you have a working pattern, but the interoperability test "
+            + "fails due to authorization.<br>"
+            + "To avoid the failure of the test, you can just create another end node, set its "
+            + "success property to false and provide an <br> explanatory test report to clarify that if the end node is reached there is a problem "
+            + "with the authorization.<br><br>"
+            + "If you do not need this feature. just set the end state success attribute to true with an empty test report.</body></html>";
 
     /**
      * Viewable data fields matched with the GUI element's data.
@@ -127,13 +140,19 @@ public class EndForm extends JPanel {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(Box.createHorizontalGlue());
         final JButton update = new JButton("Update end state");
-        update.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
-            }
+        ButtonCustomizer.customizeButton(update);
+        update.addActionListener((final ActionEvent event) -> {
+            mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
         });
         buttonPanel.add(update);
+        buttonPanel.add(Box.createRigidArea(new Dimension(12, 0)));
+        final JButton helper = new JButton("Helper wizard");
+        ButtonCustomizer.customizeButton(helper);
+        buttonPanel.add(helper);
+        helper.addActionListener((ActionEvent e) -> {
+            JOptionPane.showMessageDialog(buttonPanel, HELPER, "Helper wizard",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
         buttonPanel.add(Box.createHorizontalGlue());
         topPanel.add(buttonPanel);
         

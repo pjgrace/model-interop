@@ -54,6 +54,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONEditorKit.JSONDocument;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONEditorKit.JSONEditorKit;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 
 /**
@@ -124,7 +125,7 @@ public class JSONPathGeneratorEditor extends JDialog {
                 }
             }
         });
-        XMLSpecificationPanel.customizeButton(open);
+        ButtonCustomizer.customizeButton(open);
         buttonsPanel.add(open);
         
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -146,7 +147,7 @@ public class JSONPathGeneratorEditor extends JDialog {
                 resetEditor();
             }
         });
-        XMLSpecificationPanel.customizeButton(highlight);
+        ButtonCustomizer.customizeButton(highlight);
         buttonsPanel.add(highlight);
         buttonsPanel.add(Box.createHorizontalGlue());
         northPanel.add(buttonsPanel);

@@ -360,6 +360,7 @@ public class MessageForm extends JPanel {
         newIntfPane.add(checkBoxPanel);
         
         final JButton addIntf = new JButton("Add Header");
+        ButtonCustomizer.customizeButton(addIntf);
         addIntf.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -376,6 +377,7 @@ public class MessageForm extends JPanel {
         
         add(topPanel, BorderLayout.CENTER);
         final JButton update = new JButton("Update Message");
+        ButtonCustomizer.customizeButton(update);
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {

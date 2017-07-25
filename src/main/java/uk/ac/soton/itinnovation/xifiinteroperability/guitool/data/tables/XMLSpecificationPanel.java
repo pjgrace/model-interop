@@ -50,6 +50,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GraphGenerator;
 
@@ -115,11 +116,11 @@ public class XMLSpecificationPanel extends JPanel {
         
          // a button to toggle editing mode
         JButton toggleEditingButton = new JButton("Enable XML pattern editing");
-        customizeButton(toggleEditingButton);
+        ButtonCustomizer.customizeButton(toggleEditingButton);
         
         JButton submitChangesButton = new JButton("Validate and update changes");
         submitChangesButton.setVisible(false);
-        customizeButton(submitChangesButton);
+        ButtonCustomizer.customizeButton(submitChangesButton);
         submitChangesButton.addActionListener((ActionEvent ae) -> {
             if (((XMLEditorKit) xmlSpecification.getEditorKit()).isChanged()){
                 String xml;
@@ -213,17 +214,6 @@ public class XMLSpecificationPanel extends JPanel {
             this.xmlSpecification.setText(dataModel.getGraphXML());
             xmlSpecification.setCaretPosition(caretPosition);
         }
-    }
-    
-    /**
-     * a method to customise buttons design
-     * @param button the button to customize
-     */
-    public static void customizeButton(JButton button){
-        button.setForeground(new Color(0, 26, 102));
-        button.setBackground(new Color(204, 229, 255));
-        button.setFocusPainted(false);
-        button.setFont(new Font("Serif", Font.BOLD, 11));
     }
     
     private void clearPattern(BasicGraphEditor editor){
