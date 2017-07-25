@@ -57,7 +57,6 @@ import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEdit
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.TAGNAME_ATTRIBUTES;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 
 /**
  * An editor, which loads an xml file and generates XPath on click on elements

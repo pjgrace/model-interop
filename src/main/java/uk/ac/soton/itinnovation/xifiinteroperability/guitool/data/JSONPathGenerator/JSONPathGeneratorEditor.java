@@ -55,7 +55,6 @@ import javax.swing.text.StyleConstants;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONEditorKit.JSONDocument;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONEditorKit.JSONEditorKit;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 
 /**
  * An editor, which loads a json file and generates JSONPath on click on elements
