@@ -143,6 +143,7 @@ public class XMLSpecificationPanel extends JPanel {
                         graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
                         final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
                         layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                        
                         JOptionPane.showMessageDialog(this, 
                                 "Successfully validated and updated the edited XML pattern.", 
                                 "Success", JOptionPane.PLAIN_MESSAGE);
@@ -161,6 +162,7 @@ public class XMLSpecificationPanel extends JPanel {
                     }              
                 }
                 ((XMLEditorKit)xmlSpecification.getEditorKit()).resetSaved();
+                ((XMLEditorKit)xmlSpecification.getEditorKit()).resetFirstState();
             }
             toggleEditingButton.doClick();  
         });
@@ -189,6 +191,7 @@ public class XMLSpecificationPanel extends JPanel {
                 toggleEditingButton.setText("Disable XML pattern editing");
                 editorKit.toggleEditingMode();
                 editorKit.resetChanged();
+                editorKit.resetFirstState();
                 editorKit.resetSaved();
                 submitChangesButton.setVisible(true);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, new Color(241, 218, 218));
