@@ -81,7 +81,7 @@ public class StateMachine implements EventCapture {
     private final transient InteroperabilityReport outputReport;
     
     /**
-     * a boolean the represent if the test was manually stopped by the user
+     * a boolean to represent if the test was manually stopped by the user
      */
     private transient boolean stopped;
     
@@ -93,23 +93,61 @@ public class StateMachine implements EventCapture {
     }
     
     /**
-     * Construct a new state machine and create and interoperability report.
+     * a boolean to represent if we are in debug mode or not
      */
-    public StateMachine() {
+    private volatile boolean debugMode;
+    
+    /**
+     * a boolean to represent if next button is clicked
+     */
+    private volatile boolean nextClicked;
+            
+    /**
+     * a method to force the state machine to continue execution 
+     */
+    public void next(){
+        nextClicked = true;
+    }
+    
+    /**
+     * a boolean to represent if the test has ended
+     */
+    private transient boolean finished;
+    
+    /**
+     * a getter for the finished attribute
+     * @return True if the test has finished or has been stopped
+     */
+    public boolean isFinished(){
+        return finished;
+    }
+    
+    /**
+     * Construct a new state machine and create and interoperability report.
+     * @param debugMode whether the state machine is in debug mode or not
+     */
+    public StateMachine(boolean debugMode) {
         this.eventQueue = new ArrayBlockingQueue(50);
         outputReport = new InteroperabilityReport();
         stopped = false;
+        this.debugMode = debugMode;
+        nextClicked = true;
+        finished = false;
     }
 
     /**
      * Create a new state machine with the interoperability report output
      * already provided.
      * @param rep The interoperability report reference.
+     * @param debugMode whether the state machine is in debug mode or not
      */
-    public StateMachine(final InteroperabilityReport rep) {
+    public StateMachine(final InteroperabilityReport rep, boolean debugMode) {
         this.eventQueue = new ArrayBlockingQueue(50);
         outputReport = rep;
         stopped = false;
+        this.debugMode = debugMode;
+        nextClicked = true;
+        finished =false;
     }
 
     /**
@@ -205,7 +243,14 @@ public class StateMachine implements EventCapture {
         outputReport.println("Starting trace at Node:" + currentState.getLabel());
 
         while (!(currentState.isEndNode() || stopped)) {
+            if (debugMode && !nextClicked){
+                continue;
+            }
             try {
+                // TODO if statement to do nothing if in step-by-step execution mode and next button not yet clicked,
+                // can be achieved with 2 booleans - one for debug-mode-on/off and one for next button clicked/not clicked,
+                // on each click at the end if the if statement for the given node, button click is reset to false again 
+                // and waits for another button click
                 if (currentState.isTrigger()) {
                     currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));
                 }
@@ -225,19 +270,23 @@ public class StateMachine implements EventCapture {
                         ServiceLogger.LOG.error("Invalid state machine - could not find next state");
                         outputReport.setSuccess("false");
                         outputReport.addReport("{\"Test trace\":\"Invalid state machine - could not find next state, check traces\"");
+                        finished = true;
                         return outputReport;
                     }
                     outputReport.println("Transition Success - move to state:" + currentState.getLabel());
                 }
+                nextClicked = false;
             } catch (UnexpectedEventException ex) {
                logException(ex);
                outputReport.setSuccess("false");
                outputReport.addReport("{\"Test trace\":\""+ ex.getLocalizedMessage() + "\"");
+               finished = true;
                return outputReport;
             } catch (InterruptedException ex) {
                 ServiceLogger.LOG.error("Error processing events", ex);
                 outputReport.setSuccess("false");
                 outputReport.addReport("{\"Test trace\":\""+ ex.getLocalizedMessage() + "\"");
+                finished = true;
                 return outputReport;
             } catch (Exception ex){
                 outputReport.setSuccess("false");
@@ -245,6 +294,7 @@ public class StateMachine implements EventCapture {
                 outputReport.println("An unexpected error occurred, while running your pattern.");
                 outputReport.println("Please check all fields where you are using any of the following - pattern data,"
                     + " components' data, previous states' data.");
+                finished = true;
                 return outputReport;
             }
         }
@@ -257,7 +307,7 @@ public class StateMachine implements EventCapture {
             outputReport.setSuccess("false");
             outputReport.println("The test execution was stopped.");
         }
-
+        finished = true;
         return outputReport;
     }
 

@@ -52,6 +52,11 @@ public class PatternCheckThread extends Thread {
     private transient Architecture arch;
     
     /**
+     * whether the state machine should be run in debug mode
+     */
+    private transient boolean debugMode;
+    
+    /**
      * getter for the reference of the architecture
      * @return the arch reference
      */
@@ -76,11 +81,12 @@ public class PatternCheckThread extends Thread {
      * @param edit The editor context.
      */
     public PatternCheckThread(final String xmlInput, final InteroperabilityReport rep,
-            final BasicGraphEditor edit) {
+            final BasicGraphEditor edit, boolean debugMode) {
         super();
         patternToTest = xmlInput;
         report = rep;
         editor = edit;
+        this.debugMode = debugMode;
     }
 
     /**
@@ -90,7 +96,7 @@ public class PatternCheckThread extends Thread {
     @Override
     public final void run() {
         try {
-            arch = new Architecture(patternToTest, report);
+            arch = new Architecture(patternToTest, report, debugMode);
             if (arch.getStateMachine().getStartState() == null) {
                 JOptionPane.showMessageDialog(editor,
                                 "Pattern is not valid:",

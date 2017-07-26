@@ -70,7 +70,7 @@ public class LoopTest {
             Architecture stateMachine = null;
 
             try {
-                 stateMachine = new Architecture(sMachine, null);
+                 stateMachine = new Architecture(sMachine, null, false);
             } catch (InvalidStateMachineException e) {
                 System.err.println("Invalid input. File does not contain a valid pattern:" + e.getMessage());
                 System.exit(-1);

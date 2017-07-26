@@ -103,16 +103,17 @@ public class Architecture {
      * Construct a new architecture from a given specification in XML.
      * @param xml The architecture specification (pattern).
      * @param report The report to output tests to.
+     * @param debugMode whether the state machine is run in debug mode
      * @throws InvalidStateMachineException when the XML is invalid
      * @throws InvalidPatternException when there are more than one start nodes in the graph
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Architecture(final String xml, final InteroperabilityReport report) throws InvalidStateMachineException, InvalidPatternException {
+    public Architecture(final String xml, final InteroperabilityReport report, final boolean debugMode) throws InvalidStateMachineException, InvalidPatternException {
         try {
             if (report == null) {
-                this.behaviourSequence = new StateMachine();
+                this.behaviourSequence = new StateMachine(debugMode);
             } else {
-                this.behaviourSequence = new StateMachine(report);
+                this.behaviourSequence = new StateMachine(report, debugMode);
             }
             // Validate the pattern
             final URL schemaUrl = FileUtils.getURL(SystemProperties.PATTERNSCHEMA);

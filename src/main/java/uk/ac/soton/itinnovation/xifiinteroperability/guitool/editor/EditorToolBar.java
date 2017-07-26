@@ -112,6 +112,11 @@ public class EditorToolBar extends JToolBar {
                 
                 addSeparator();
                 
+                add(editor.bind("Next", new EmptyAction(),
+                                "/images/open_end.gif"));
+                
+                addSeparator();
+                
                 add(editor.bind("Reports", new ReportsAction(), 
                         "/images/outline.gif"));
 	}

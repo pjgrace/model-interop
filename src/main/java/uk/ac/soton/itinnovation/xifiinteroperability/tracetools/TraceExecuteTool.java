@@ -74,7 +74,7 @@ public final class TraceExecuteTool {
 
             // Create an architecture to test from the input pattern
             final String stateMachineSpec = FileUtils.readFile(args[0], Charset.defaultCharset());
-            final Architecture stateMachine = new Architecture(stateMachineSpec, null);
+            final Architecture stateMachine = new Architecture(stateMachineSpec, null, false);
 
             //Generate events from the trace file and send them to the state machine
             TraceGenerator.generateEvents(args[1], stateMachine.getStateMachine());

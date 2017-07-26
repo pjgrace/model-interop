@@ -80,7 +80,7 @@ public final class InteroperabilityTool {
                 throw new InvalidStateMachineException("Invalid input parameters");
             }
 
-            final Architecture architect = new Architecture(statemachine, null);
+            final Architecture architect = new Architecture(statemachine, null, false);
             /*
             * Start the cradle monitoring
             */

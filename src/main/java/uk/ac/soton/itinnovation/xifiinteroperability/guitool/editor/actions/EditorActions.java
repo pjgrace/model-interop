@@ -40,6 +40,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
@@ -137,6 +138,15 @@ public final class EditorActions {
          */
         @Override
         public final void actionPerformed(final ActionEvent actionEvent) {
+            String[] choices = {"Execution mode", "Step-by-step mode"};
+            String mode = (String) JOptionPane.showInputDialog(null, 
+                    "Which mode do you want to use to run the interoperability test?", 
+                    "Test running mode", JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
+            if (mode == null){
+                return;
+            }
+            boolean debugMode = mode.equals("Step-by-step mode");
+            
             final BasicGraphEditor editor = getEditor(actionEvent);
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
@@ -144,21 +154,50 @@ public final class EditorActions {
 
             try {
                 final PatternCheckThread checkThread = new PatternCheckThread(editor.getDataModel().getGraphXML(),
-                        editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor);
+                        editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor, debugMode);
                 EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+                
                 Component stopButton = toolBar.getComponentAtIndex(18);
-                if (stopButton.getMouseListeners() != null){
-                    stopButton.removeMouseListener(stopButton.getMouseListeners()[0]);
+                MouseListener[] listeners = stopButton.getMouseListeners();
+                if (listeners != null && listeners.length >= 2){
+                    stopButton.removeMouseListener(listeners[listeners.length-1]);
                 }
                 stopButton.addMouseListener(new MouseAdapter(){
                     @Override
                     public void mouseClicked(MouseEvent e){
                         try {
+                            if (checkThread.getArch().getStateMachine().isFinished()){
+                                JOptionPane.showMessageDialog(editor, "The test has either finished or has been stopped.",
+                                        "Warning", JOptionPane.WARNING_MESSAGE);
+                                return;
+                            }
                             checkThread.getArch().getStateMachine().stop();
                         }
                         catch (NullPointerException ex){}
                     }
                 });
+                
+                if (debugMode){
+                    Component nextButton = toolBar.getComponentAtIndex(20);
+                    MouseListener[] mouseListeners = nextButton.getMouseListeners();
+                    if (mouseListeners != null && mouseListeners.length >= 2) {
+                        nextButton.removeMouseListener(mouseListeners[mouseListeners.length-1]);
+                    }
+                    nextButton.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            try {
+                                if (checkThread.getArch().getStateMachine().isFinished()) {
+                                    JOptionPane.showMessageDialog(editor, "The test has either finished or has been stopped.",
+                                            "Waring", JOptionPane.WARNING_MESSAGE);
+                                    return;
+                                }
+                                checkThread.getArch().getStateMachine().next();
+                            } catch (NullPointerException ex) {}
+                        }
+                    });
+                }
+
                 checkThread.start();   
             } catch (HeadlessException ex) {
                 JOptionPane.showMessageDialog(editor,
