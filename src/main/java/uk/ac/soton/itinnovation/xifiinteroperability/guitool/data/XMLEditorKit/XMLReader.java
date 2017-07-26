@@ -177,9 +177,16 @@ public class XMLReader {
             specs.add(spec);
         }
         else {
-            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.TAGNAME_ATTRIBUTES,
-                    DefaultStyledDocument.ElementSpec.ContentType,
-                    node.getNodeName().toCharArray(), 0, node.getNodeName().length());
+            if (node.getNodeName().equals("state")){
+                spec=new DefaultStyledDocument.ElementSpec(XMLDocument.STATETAG_ATTRIBUTES,
+                        DefaultStyledDocument.ElementSpec.ContentType,
+                        node.getNodeName().toCharArray(), 0, node.getNodeName().length());
+            }
+            else {
+                spec = new DefaultStyledDocument.ElementSpec(XMLDocument.TAGNAME_ATTRIBUTES,
+                        DefaultStyledDocument.ElementSpec.ContentType,
+                        node.getNodeName().toCharArray(), 0, node.getNodeName().length());
+            }
             specs.add(spec);
         }
 

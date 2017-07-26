@@ -50,11 +50,16 @@ public class XMLDocument extends DefaultStyledDocument {
     public final static SimpleAttributeSet ATTRIBUTENAME_ATTRIBUTES=new SimpleAttributeSet();
     public final static SimpleAttributeSet ATTRIBUTEVALUE_ATTRIBUTES=new SimpleAttributeSet();
     public final static SimpleAttributeSet PLAIN_ATTRIBUTES=new SimpleAttributeSet();
+    public final static SimpleAttributeSet STATETAG_ATTRIBUTES = new SimpleAttributeSet();
 
     static {
         StyleConstants.setBold(TAGNAME_ATTRIBUTES, true);
         StyleConstants.setForeground(TAGNAME_ATTRIBUTES, Color.BLUE.darker());
         TAGNAME_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, TAG_NAME_ELEMENT);
+        
+        StyleConstants.setBold(STATETAG_ATTRIBUTES, true);
+        StyleConstants.setForeground(STATETAG_ATTRIBUTES, Color.BLUE.darker());
+        STATETAG_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, TAG_NAME_ELEMENT);
 
         StyleConstants.setBold(ATTRIBUTENAME_ATTRIBUTES, true);
         StyleConstants.setForeground(ATTRIBUTENAME_ATTRIBUTES, Color.RED.brighter());

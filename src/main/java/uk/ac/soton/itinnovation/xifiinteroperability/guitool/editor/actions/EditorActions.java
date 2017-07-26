@@ -189,7 +189,7 @@ public final class EditorActions {
                             try {
                                 if (checkThread.getArch().getStateMachine().isFinished()) {
                                     JOptionPane.showMessageDialog(editor, "The test has either finished or has been stopped.",
-                                            "Waring", JOptionPane.WARNING_MESSAGE);
+                                            "Warning", JOptionPane.WARNING_MESSAGE);
                                     return;
                                 }
                                 checkThread.getArch().getStateMachine().next();

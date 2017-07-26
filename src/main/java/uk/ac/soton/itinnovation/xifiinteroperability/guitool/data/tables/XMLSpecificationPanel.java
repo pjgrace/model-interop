@@ -35,7 +35,6 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,6 +49,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.STATETAG_ATTRIBUTES;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GraphGenerator;
@@ -182,6 +182,7 @@ public class XMLSpecificationPanel extends JPanel {
                 editorKit.toggleEditingMode();
                 submitChangesButton.setVisible(false);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, Color.WHITE);
+                StyleConstants.setBackground(STATETAG_ATTRIBUTES, Color.WHITE);
                 displayXMLSpecification();
             }
             else {
@@ -191,6 +192,7 @@ public class XMLSpecificationPanel extends JPanel {
                 editorKit.resetSaved();
                 submitChangesButton.setVisible(true);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, new Color(241, 218, 218));
+                StyleConstants.setBackground(STATETAG_ATTRIBUTES, new Color(204, 204, 255));
                 displayXMLSpecification();
             }
         });
@@ -212,7 +214,10 @@ public class XMLSpecificationPanel extends JPanel {
             int caretPosition = xmlSpecification.getCaretPosition();
             this.xmlSpecification.setDocument(this.xmlSpecification.getEditorKit().createDefaultDocument());
             this.xmlSpecification.setText(dataModel.getGraphXML());
-            xmlSpecification.setCaretPosition(caretPosition);
+            try{
+                xmlSpecification.setCaretPosition(caretPosition);
+            }
+            catch (IllegalArgumentException ex){}
         }
     }
     

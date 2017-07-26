@@ -43,6 +43,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNo
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ConstantData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DataModelState;
 
 public class XMLEditorKit extends StyledEditorKit {
     ViewFactory defaultFactory = new XMLViewFactory();
@@ -282,6 +283,48 @@ public class XMLEditorKit extends StyledEditorKit {
                         }
                     }
                 }
+                
+                 // checking for TagNameView, only if editing is allowed
+                TagNameView deepestTagNameView = (TagNameView) getDeepestView(pos, src, TagNameView.class);
+                if (deepestTagNameView != null){
+                    try {
+                        if (!deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1).equals("<state")) {
+                            return;
+                        }
+                    } catch (BadLocationException ex) {
+                        return;
+                    }
+                    Shape a = getAllocation(deepestTagNameView, src);
+                    Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
+                    if (r.contains(e.getPoint())) {
+                        try {
+                            int start = deepestTagNameView.getStartOffset() + 13;
+                            int end = start;
+                            while (!deepestTagNameView.getDocument().getText(end, 8).equals("</label>")){
+                                end += 1;
+                            }
+                            String stateLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                            int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete state '" + stateLabel + "' ? "
+                                    + "All transitions related to it will also be deleted.", "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
+                            
+                            if (check == JOptionPane.OK_OPTION){
+                                // retreving the state before deletion
+                                DataModelState state = xmlPanel.getDataModel().getState();
+                                xmlPanel.getDataModel().deleteNode(xmlPanel.getDataModel().getNodeByLabel(stateLabel).getUIIdentifier());
+                                xmlPanel.displayXMLSpecification();
+                                // returning to the old state after the deletion
+                                xmlPanel.getDataModel().updateState(state);
+                                changed = true;
+                                saved = false;
+                            }
+                            
+                            return;
+                        }
+                        catch(BadLocationException ex){
+                            return;
+                        }
+                    }
+                }
             }
             
             // checking for a click over an expanding tag
@@ -326,6 +369,39 @@ public class XMLEditorKit extends StyledEditorKit {
             }
             
             int pos=src.viewToModel(e.getPoint());
+            
+            if (editingAllowed()){
+                // checking for plain text view click, only if editing is allowed
+                PlainTextView deepestPlainTextView = (PlainTextView) getDeepestView(pos, src, PlainTextView.class);
+                if (deepestPlainTextView != null){
+                    Shape a = getAllocation(deepestPlainTextView, src);
+                    if (a != null) {
+                        Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
+                        if (r.contains(e.getPoint())) {
+                            src.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                            return;
+                        }
+                    }
+                }
+                
+                // checking for TagNameView, only if editing is allowed
+                TagNameView deepestTagNameView = (TagNameView) getDeepestView(pos, src, TagNameView.class);
+                if (deepestTagNameView != null){
+                    try {
+                        if (!deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1).equals("<state")) {
+                            return;
+                        }
+                    } catch (BadLocationException ex) {
+                        return;
+                    }
+                    Shape a = getAllocation(deepestTagNameView, src);
+                    Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
+                    if (r.contains(e.getPoint())) {
+                        src.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        return;
+                    }
+                }
+            }
             
             TagView deepest = (TagView) getDeepestView(pos, src, TagView.class);
             if (deepest!=null && !deepest.isStartTag()) {
