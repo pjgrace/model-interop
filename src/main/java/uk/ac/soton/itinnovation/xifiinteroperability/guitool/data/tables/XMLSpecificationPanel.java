@@ -148,6 +148,7 @@ public class XMLSpecificationPanel extends JPanel {
                     clearPattern(editor);
 
                     GraphGenerator graphGenerator = new GraphGenerator(editor);
+                    editor.resetUndoManagers();
                     try {
                         graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
                         final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
