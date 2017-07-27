@@ -50,6 +50,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.ADDTAG_ATTRIBUTES;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
@@ -65,7 +66,13 @@ import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEdit
  */
 
 public class XMLSpecificationPanel extends JPanel {
-
+    
+    public final static Color REPLACE_ATTRS_HIGHLIGHT = new Color(241, 218, 218);
+    
+    public final static Color DELETE_ATTRS_HIGHLIGHT = new Color(255, 204, 220);
+    
+    public final static Color APPEND_ATTRS_HIGHLIGHT = new Color(204, 204, 255);
+    
     /**
      * Reference to the tool's underlying data model, so we can generate and
      * display the specification.
@@ -187,6 +194,7 @@ public class XMLSpecificationPanel extends JPanel {
                 submitChangesButton.setVisible(false);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, Color.WHITE);
                 StyleConstants.setBackground(REMOVETAG_ATTRIBUTES, Color.WHITE);
+                StyleConstants.setBackground(ADDTAG_ATTRIBUTES, Color.WHITE);
                 displayXMLSpecification();
             }
             else {
@@ -196,8 +204,9 @@ public class XMLSpecificationPanel extends JPanel {
                 editorKit.resetFirstState();
                 editorKit.resetSaved();
                 submitChangesButton.setVisible(true);
-                StyleConstants.setBackground(PLAIN_ATTRIBUTES, new Color(241, 218, 218));
-                StyleConstants.setBackground(REMOVETAG_ATTRIBUTES, new Color(204, 204, 255));
+                StyleConstants.setBackground(PLAIN_ATTRIBUTES, REPLACE_ATTRS_HIGHLIGHT);
+                StyleConstants.setBackground(REMOVETAG_ATTRIBUTES, DELETE_ATTRS_HIGHLIGHT);
+                StyleConstants.setBackground(ADDTAG_ATTRIBUTES, APPEND_ATTRS_HIGHLIGHT);
                 displayXMLSpecification();
             }
         });
@@ -210,13 +219,14 @@ public class XMLSpecificationPanel extends JPanel {
         legendLabel.setFont(new Font("serif", Font.BOLD, legendLabel.getFont().getSize() + 5));
         legendLabel.setForeground(new Color(0, 0, 128));
         buttonsPanel.add(legendLabel);
-        buttonsPanel.add(Box.createRigidArea(new Dimension(12, 0)));
+        buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         Dimension dim = new Dimension(20,10);
+        
         JPanel purpleRect = new JPanel();
         purpleRect.setMinimumSize(dim);
         purpleRect.setMaximumSize(dim);
         purpleRect.setPreferredSize(dim);
-        purpleRect.setBackground(new Color(204, 204, 255));
+        purpleRect.setBackground(DELETE_ATTRS_HIGHLIGHT);
         buttonsPanel.add(purpleRect);
         JLabel purpleRectLabel = new JLabel("  -  Delete on click");
         purpleRectLabel.setFont(new Font("serif", Font.PLAIN, purpleRectLabel.getFont().getSize() + 1));
@@ -229,12 +239,25 @@ public class XMLSpecificationPanel extends JPanel {
         orangeRect.setMinimumSize(dim);
         orangeRect.setPreferredSize(dim);
         orangeRect.setMaximumSize(dim);
-        orangeRect.setBackground(new Color(241, 218, 218));
+        orangeRect.setBackground(REPLACE_ATTRS_HIGHLIGHT);
         buttonsPanel.add(orangeRect);
-        JLabel orangeRectLabel = new JLabel("  -  Replace value on click");
+        JLabel orangeRectLabel = new JLabel("  -  Replace on click");
         orangeRectLabel.setFont(new Font("serif", Font.PLAIN, orangeRectLabel.getFont().getSize() + 1));
         orangeRectLabel.setForeground(new Color(0, 0, 102));
         buttonsPanel.add(orangeRectLabel);
+        
+        buttonsPanel.add(Box.createRigidArea(new Dimension(6, 0)));
+        
+        JPanel redRect = new JPanel();
+        redRect.setMinimumSize(dim);
+        redRect.setPreferredSize(dim);
+        redRect.setMaximumSize(dim);
+        redRect.setBackground(APPEND_ATTRS_HIGHLIGHT);
+        buttonsPanel.add(redRect);
+        JLabel redRectLabel = new JLabel("  -  Append on click");
+        redRectLabel.setFont(new Font("serif", Font.PLAIN, redRectLabel.getFont().getSize() + 1));
+        redRectLabel.setForeground(new Color(0, 0, 102));
+        buttonsPanel.add(redRectLabel);
         buttonsPanel.add(Box.createRigidArea(new Dimension(25, 0)));
         
         add(areaScrollPane, BorderLayout.CENTER);

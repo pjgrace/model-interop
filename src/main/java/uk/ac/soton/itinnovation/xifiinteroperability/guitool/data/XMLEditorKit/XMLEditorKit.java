@@ -305,14 +305,14 @@ public class XMLEditorKit extends StyledEditorKit {
                  // checking for TagNameView, only if editing is allowed
                 TagNameView deepestTagNameView = (TagNameView) getDeepestView(pos, src, TagNameView.class);
                 if (deepestTagNameView != null){
-                    final String toDelete;
+                    final String chosenTag;
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
-                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<name"))) {
+                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") || nodeName.equals("<patterndata"))) {
                             return;
                         }
                         else {
-                            toDelete = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset(), deepestTagNameView.getEndOffset()-deepestTagNameView.getStartOffset())
+                            chosenTag = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset(), deepestTagNameView.getEndOffset()-deepestTagNameView.getStartOffset())
 ;                        }
                     } catch (BadLocationException ex) {
                         return;
@@ -321,7 +321,7 @@ public class XMLEditorKit extends StyledEditorKit {
                     Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
                     if (r.contains(e.getPoint())) {
                         try {
-                            if (toDelete.equals("state")){
+                            if (chosenTag.equals("state")){
                                 int start = deepestTagNameView.getStartOffset() + 13;
                                 int end = start;
                                 while (!deepestTagNameView.getDocument().getText(end, 8).equals("</label>")){
@@ -341,7 +341,9 @@ public class XMLEditorKit extends StyledEditorKit {
                                     else {
                                         xmlPanel.getDataModel().updateState(lastState);
                                     }
+                                    
                                     xmlPanel.getDataModel().deleteNode(xmlPanel.getDataModel().getNodeByLabel(stateLabel).getUIIdentifier());
+                                    
                                     xmlPanel.displayXMLSpecification();
                                     lastState = xmlPanel.getDataModel().getState();
                                     // returning to the old data model state after the deletion
@@ -350,7 +352,7 @@ public class XMLEditorKit extends StyledEditorKit {
                                     saved = false;
                                 }
                             }
-                            else if (toDelete.equals("component")) {
+                            else if (chosenTag.equals("component")) {
                                 int start = deepestTagNameView.getStartOffset() + 14;
                                 int end = start;
                                 while (!deepestTagNameView.getDocument().getText(end, 5).equals("</id>")){
@@ -369,7 +371,9 @@ public class XMLEditorKit extends StyledEditorKit {
                                     else {
                                         xmlPanel.getDataModel().updateState(lastState);
                                     }
+                                    
                                     xmlPanel.getDataModel().deleteNode(xmlPanel.getDataModel().getComponentByLabel(componentLabel).getUIIdentifier());
+                                    
                                     xmlPanel.displayXMLSpecification();
                                     lastState = xmlPanel.getDataModel().getState();
                                     // returning to the old state after the deletion
@@ -378,8 +382,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                     saved = false;
                                 }               
                             }
-                            else if (toDelete.equals("name")){
-                                int start = deepestTagNameView.getStartOffset() + 5;
+                            else if (chosenTag.equals("data")){
+                                int start = deepestTagNameView.getStartOffset() + 11;
                                 int end = start;
                                 while(!deepestTagNameView.getDocument().getText(end, 7).equals("</name>")){
                                     end += 1;
@@ -397,6 +401,7 @@ public class XMLEditorKit extends StyledEditorKit {
                                     else {
                                         xmlPanel.getDataModel().updateState(lastState);
                                     }
+                                    
                                     List<ConstantData> patternData = xmlPanel.getDataModel().getStartNode().getConstantData();
                                     ConstantData toRemove = null;
                                     for(ConstantData data : patternData){
@@ -407,6 +412,59 @@ public class XMLEditorKit extends StyledEditorKit {
                                     }
                                     if (toRemove != null){
                                         patternData.remove(toRemove);
+                                    }
+                                    
+                                    xmlPanel.displayXMLSpecification();
+                                    lastState = xmlPanel.getDataModel().getState();
+                                    // returning to the old state after the deletion
+                                    xmlPanel.getDataModel().updateState(firstState);
+                                    changed = true;
+                                    saved = false;
+                                }
+                            }
+                            else if (chosenTag.equals("patterndata")){
+                                int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append new pattern data ?",
+                                        "Append confirmation", JOptionPane.OK_CANCEL_OPTION);                     
+                                if (check == JOptionPane.OK_OPTION){
+                                    // retreving the state before appending
+                                    DataModelState state = xmlPanel.getDataModel().getState();
+                                    if (firstState == null){
+                                        firstState = state;
+                                        lastState = state;
+                                    }
+                                    else {
+                                        xmlPanel.getDataModel().updateState(lastState);
+                                    }
+                                    
+                                    String id = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose an id for the new pattern data.",
+                                            "Appending new pattern data", JOptionPane.PLAIN_MESSAGE);
+                                    if (id != null && !id.equals("")){
+                                        GraphNode startNode = xmlPanel.getDataModel().getStartNode();
+                                        if (startNode != null){
+                                            List<ConstantData> patternData = startNode.getConstantData();
+                                            boolean idExists = false;
+                                            for (ConstantData data: patternData){
+                                                if (data.getFieldName().equalsIgnoreCase(id)){
+                                                    idExists = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (idExists){
+                                                JOptionPane.showMessageDialog(xmlPanel, "Pattern data with this id already exists.",
+                                                        "Warning", JOptionPane.WARNING_MESSAGE);
+                                            }
+                                            else {
+                                                String value = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose a value for the new pattern data.",
+                                                        "Appending new pattern data", JOptionPane.PLAIN_MESSAGE);
+                                                if (value != null && !value.equals("")){
+                                                    startNode.addConstantData(id, value);
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            JOptionPane.showMessageDialog(xmlPanel, "There is no start or triggerstart node created in the graph.",
+                                                    "Error", JOptionPane.ERROR_MESSAGE);
+                                        }
                                     }
                                     xmlPanel.displayXMLSpecification();
                                     lastState = xmlPanel.getDataModel().getState();
@@ -488,7 +546,7 @@ public class XMLEditorKit extends StyledEditorKit {
                 if (deepestTagNameView != null){
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
-                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<name"))) {
+                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") || nodeName.equals("<patterndata"))) {
                             return;
                         }
                     } catch (BadLocationException ex) {
