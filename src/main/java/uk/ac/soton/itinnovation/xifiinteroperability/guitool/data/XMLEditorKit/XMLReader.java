@@ -177,8 +177,8 @@ public class XMLReader {
             specs.add(spec);
         }
         else {
-            if (node.getNodeName().equals("state") || node.getNodeName().equals("component")){
-                spec=new DefaultStyledDocument.ElementSpec(XMLDocument.STATETAG_ATTRIBUTES,
+            if (node.getNodeName().equals("state") || node.getNodeName().equals("component") || node.getNodeName().equals("name")){
+                spec=new DefaultStyledDocument.ElementSpec(XMLDocument.REMOVETAG_ATTRIBUTES,
                         DefaultStyledDocument.ElementSpec.ContentType,
                         node.getNodeName().toCharArray(), 0, node.getNodeName().length());
             }

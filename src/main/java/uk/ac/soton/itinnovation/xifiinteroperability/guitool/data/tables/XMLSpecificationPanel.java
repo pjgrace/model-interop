@@ -35,11 +35,13 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -49,10 +51,10 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
-import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.STATETAG_ATTRIBUTES;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GraphGenerator;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.REMOVETAG_ATTRIBUTES;
 
 /**
  * The XMLSpecificationPanel is the portion of the UI where the XML representation
@@ -115,10 +117,10 @@ public class XMLSpecificationPanel extends JPanel {
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
         
          // a button to toggle editing mode
-        JButton toggleEditingButton = new JButton("Enable XML pattern editing");
+        JButton toggleEditingButton = new JButton("Enable pattern editing");
         ButtonCustomizer.customizeButton(toggleEditingButton);
         
-        JButton submitChangesButton = new JButton("Validate and update changes");
+        JButton submitChangesButton = new JButton("Update changes");
         submitChangesButton.setVisible(false);
         ButtonCustomizer.customizeButton(submitChangesButton);
         submitChangesButton.addActionListener((ActionEvent ae) -> {
@@ -180,22 +182,22 @@ public class XMLSpecificationPanel extends JPanel {
                         return;
                     }
                 }
-                toggleEditingButton.setText("Enable XML pattern editing");
+                toggleEditingButton.setText("Enable pattern editing");
                 editorKit.toggleEditingMode();
                 submitChangesButton.setVisible(false);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, Color.WHITE);
-                StyleConstants.setBackground(STATETAG_ATTRIBUTES, Color.WHITE);
+                StyleConstants.setBackground(REMOVETAG_ATTRIBUTES, Color.WHITE);
                 displayXMLSpecification();
             }
             else {
-                toggleEditingButton.setText("Disable XML pattern editing");
+                toggleEditingButton.setText("Disable pattern editing");
                 editorKit.toggleEditingMode();
                 editorKit.resetChanged();
                 editorKit.resetFirstState();
                 editorKit.resetSaved();
                 submitChangesButton.setVisible(true);
                 StyleConstants.setBackground(PLAIN_ATTRIBUTES, new Color(241, 218, 218));
-                StyleConstants.setBackground(STATETAG_ATTRIBUTES, new Color(204, 204, 255));
+                StyleConstants.setBackground(REMOVETAG_ATTRIBUTES, new Color(204, 204, 255));
                 displayXMLSpecification();
             }
         });
@@ -203,6 +205,37 @@ public class XMLSpecificationPanel extends JPanel {
         buttonsPanel.add(toggleEditingButton);
         buttonsPanel.add(Box.createRigidArea(new Dimension(10,0)));
         buttonsPanel.add(submitChangesButton);
+        buttonsPanel.add(Box.createHorizontalGlue());
+        JLabel legendLabel = new JLabel("Editing legend: ");
+        legendLabel.setFont(new Font("serif", Font.BOLD, legendLabel.getFont().getSize() + 5));
+        legendLabel.setForeground(new Color(0, 0, 128));
+        buttonsPanel.add(legendLabel);
+        buttonsPanel.add(Box.createRigidArea(new Dimension(12, 0)));
+        Dimension dim = new Dimension(20,10);
+        JPanel purpleRect = new JPanel();
+        purpleRect.setMinimumSize(dim);
+        purpleRect.setMaximumSize(dim);
+        purpleRect.setPreferredSize(dim);
+        purpleRect.setBackground(new Color(204, 204, 255));
+        buttonsPanel.add(purpleRect);
+        JLabel purpleRectLabel = new JLabel("  -  Delete on click");
+        purpleRectLabel.setFont(new Font("serif", Font.PLAIN, purpleRectLabel.getFont().getSize() + 1));
+        purpleRectLabel.setForeground(new Color(0, 0, 102));
+        buttonsPanel.add(purpleRectLabel);
+        
+        buttonsPanel.add(Box.createRigidArea(new Dimension(6, 0)));
+        
+        JPanel orangeRect = new JPanel();
+        orangeRect.setMinimumSize(dim);
+        orangeRect.setPreferredSize(dim);
+        orangeRect.setMaximumSize(dim);
+        orangeRect.setBackground(new Color(241, 218, 218));
+        buttonsPanel.add(orangeRect);
+        JLabel orangeRectLabel = new JLabel("  -  Replace value on click");
+        orangeRectLabel.setFont(new Font("serif", Font.PLAIN, orangeRectLabel.getFont().getSize() + 1));
+        orangeRectLabel.setForeground(new Color(0, 0, 102));
+        buttonsPanel.add(orangeRectLabel);
+        buttonsPanel.add(Box.createRigidArea(new Dimension(25, 0)));
         
         add(areaScrollPane, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.NORTH);

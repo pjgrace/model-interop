@@ -307,8 +307,8 @@ public class XMLEditorKit extends StyledEditorKit {
                 if (deepestTagNameView != null){
                     final String toDelete;
                     try {
-                        if (!(deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1).equals("<state")
-                                || deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1).equals("<component"))) {
+                        String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
+                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<name"))) {
                             return;
                         }
                         else {
@@ -350,7 +350,7 @@ public class XMLEditorKit extends StyledEditorKit {
                                     saved = false;
                                 }
                             }
-                            else {
+                            else if (toDelete.equals("component")) {
                                 int start = deepestTagNameView.getStartOffset() + 14;
                                 int end = start;
                                 while (!deepestTagNameView.getDocument().getText(end, 5).equals("</id>")){
@@ -377,6 +377,44 @@ public class XMLEditorKit extends StyledEditorKit {
                                     changed = true;
                                     saved = false;
                                 }               
+                            }
+                            else if (toDelete.equals("name")){
+                                int start = deepestTagNameView.getStartOffset() + 5;
+                                int end = start;
+                                while(!deepestTagNameView.getDocument().getText(end, 7).equals("</name>")){
+                                    end += 1;
+                                }
+                                String patternDataLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                                int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete pattern data with name '" + patternDataLabel + "' ? ",
+                                        "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);                     
+                                if (check == JOptionPane.OK_OPTION){
+                                    // retreving the state before deletion
+                                    DataModelState state = xmlPanel.getDataModel().getState();
+                                    if (firstState == null){
+                                        firstState = state;
+                                        lastState = state;
+                                    }
+                                    else {
+                                        xmlPanel.getDataModel().updateState(lastState);
+                                    }
+                                    List<ConstantData> patternData = xmlPanel.getDataModel().getStartNode().getConstantData();
+                                    ConstantData toRemove = null;
+                                    for(ConstantData data : patternData){
+                                        if (data.getFieldName().equals(patternDataLabel)){
+                                            toRemove = data;
+                                            break;
+                                        }
+                                    }
+                                    if (toRemove != null){
+                                        patternData.remove(toRemove);
+                                    }
+                                    xmlPanel.displayXMLSpecification();
+                                    lastState = xmlPanel.getDataModel().getState();
+                                    // returning to the old state after the deletion
+                                    xmlPanel.getDataModel().updateState(firstState);
+                                    changed = true;
+                                    saved = false;
+                                }
                             }
                             
                             return;
@@ -449,8 +487,8 @@ public class XMLEditorKit extends StyledEditorKit {
                 TagNameView deepestTagNameView = (TagNameView) getDeepestView(pos, src, TagNameView.class);
                 if (deepestTagNameView != null){
                     try {
-                        if (!(deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1).equals("<state")
-                                || deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1).equals("<component"))) {
+                        String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
+                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<name"))) {
                             return;
                         }
                     } catch (BadLocationException ex) {
