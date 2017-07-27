@@ -267,11 +267,9 @@ public class XMLEditorKit extends StyledEditorKit {
                     if (a != null){
                         Rectangle r=a instanceof Rectangle ? (Rectangle)a : a.getBounds();
                         if (r.contains(e.getPoint())){
-                            
                             int start = deepestPlainTextView.getStartOffset();
                             int end = deepestPlainTextView.getEndOffset();
                             String oldValue = deepestPlainTextView.getText(start, end).toString();
-                            System.out.println(oldValue + " TEST");
                             String newValue = (String) JOptionPane.showInputDialog(xmlPanel, 
                                     "Please type a value to replace the chosen one", 
                                     "Editting", JOptionPane.PLAIN_MESSAGE, 
@@ -280,7 +278,7 @@ public class XMLEditorKit extends StyledEditorKit {
                             if (newValue == null)
                                 return;
                             
-                            // retreving the state before appending
+                            // retreving the state before editing
                             DataModelState state = xmlPanel.getDataModel().getState();
                             if (firstState == null) {
                                 firstState = state;
@@ -342,7 +340,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                         int end = start;
                                         while (!deepestTagNameView.getDocument().getText(end, 8).equals("</label>")){
                                             end += 1;
-                                        }       String stateLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                                        }       
+                                        String stateLabel = deepestTagNameView.getDocument().getText(start, end-start);
                                         int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete state '" + stateLabel + "' ? "
                                                 + "All transitions related to it will also be deleted.", "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
                                         if (check == JOptionPane.OK_OPTION){
@@ -372,7 +371,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                         int end = start;
                                         while (!deepestTagNameView.getDocument().getText(end, 5).equals("</id>")){
                                             end += 1;
-                                        }       String componentLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                                        }       
+                                        String componentLabel = deepestTagNameView.getDocument().getText(start, end-start);
                                         int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete component '" + componentLabel + "' ? "
                                                 + "All information related to it will also be deleted.", "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
                                         if (check == JOptionPane.OK_OPTION){
@@ -402,7 +402,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                         int end = start;
                                         while(!deepestTagNameView.getDocument().getText(end, 7).equals("</name>")){
                                             end += 1;
-                                        }       String patternDataLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                                        }       
+                                        String patternDataLabel = deepestTagNameView.getDocument().getText(start, end-start);
                                         int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete pattern data with name '" + patternDataLabel + "' ? ",
                                                 "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
                                         if (check == JOptionPane.OK_OPTION){
