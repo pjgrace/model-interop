@@ -41,9 +41,12 @@ import java.util.List;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ConstantData;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DataModelState;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 public class XMLEditorKit extends StyledEditorKit {
     ViewFactory defaultFactory = new XMLViewFactory();
@@ -264,9 +267,11 @@ public class XMLEditorKit extends StyledEditorKit {
                     if (a != null){
                         Rectangle r=a instanceof Rectangle ? (Rectangle)a : a.getBounds();
                         if (r.contains(e.getPoint())){
+                            
                             int start = deepestPlainTextView.getStartOffset();
                             int end = deepestPlainTextView.getEndOffset();
                             String oldValue = deepestPlainTextView.getText(start, end).toString();
+                            System.out.println(oldValue + " TEST");
                             String newValue = (String) JOptionPane.showInputDialog(xmlPanel, 
                                     "Please type a value to replace the chosen one", 
                                     "Editting", JOptionPane.PLAIN_MESSAGE, 
@@ -275,28 +280,36 @@ public class XMLEditorKit extends StyledEditorKit {
                             if (newValue == null)
                                 return;
                             
-                            try {
-                                if (!validateData(oldValue, newValue, deepestPlainTextView))
-                                    return;
-                            } catch (BadLocationException ex) {
-                                return;                            
+                            // retreving the state before appending
+                            DataModelState state = xmlPanel.getDataModel().getState();
+                            if (firstState == null) {
+                                firstState = state;
+                                lastState = state;
+                            } 
+                            else {
+                                xmlPanel.getDataModel().updateState(lastState);
                             }
                             
-                            try{
-                                XMLDocument doc = (XMLDocument) deepestPlainTextView.getDocument();
-                                doc.remove(start, end-start);
-                                if (doc.getText(start-1, 1).equals("\n")){
-                                    doc.insertString(start, newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
+                            try {
+                                if (validateData(oldValue, newValue, deepestPlainTextView)){
+                                    XMLDocument doc = (XMLDocument) deepestPlainTextView.getDocument();
+                                    doc.remove(start, end-start);
+                                    if (doc.getText(start-1, 1).equals("\n")){
+                                        doc.insertString(start, newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
+                                    }
+                                    else {
+                                        doc.insertString(start, "\n" + newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
+                                    }
+                                    changed = true;
+                                    saved = false;
                                 }
-                                else {
-                                    doc.insertString(start, "\n" + newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
-                                }
-                                changed = true;
-                                saved = false;
                             }
-                            catch (BadLocationException ex){
-                                return;
-                            }
+                            catch (BadLocationException ex){}
+                            
+                            lastState = xmlPanel.getDataModel().getState();
+                            // returning to the old data model state after the deletion
+                            xmlPanel.getDataModel().updateState(firstState);
+
                             return;
                         }
                     }
@@ -308,7 +321,8 @@ public class XMLEditorKit extends StyledEditorKit {
                     final String chosenTag;
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
-                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") || nodeName.equals("<patterndata"))) {
+                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") || nodeName.equals("<patterndata")
+                                || nodeName.equals("<architecture"))) {
                             return;
                         }
                         else {
@@ -321,158 +335,213 @@ public class XMLEditorKit extends StyledEditorKit {
                     Rectangle r = a instanceof Rectangle ? (Rectangle) a : a.getBounds();
                     if (r.contains(e.getPoint())) {
                         try {
-                            if (chosenTag.equals("state")){
-                                int start = deepestTagNameView.getStartOffset() + 13;
-                                int end = start;
-                                while (!deepestTagNameView.getDocument().getText(end, 8).equals("</label>")){
-                                    end += 1;
-                                }
-                                String stateLabel = deepestTagNameView.getDocument().getText(start, end-start);
-                                int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete state '" + stateLabel + "' ? "
-                                        + "All transitions related to it will also be deleted.", "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
-
-                                if (check == JOptionPane.OK_OPTION){
-                                    // retreving the data model state before deletion
-                                    DataModelState state = xmlPanel.getDataModel().getState();
-                                    if (firstState == null){
-                                        firstState = state;
-                                        lastState = state;
+                            switch (chosenTag) {
+                                case "state":
+                                    {
+                                        int start = deepestTagNameView.getStartOffset() + 13;
+                                        int end = start;
+                                        while (!deepestTagNameView.getDocument().getText(end, 8).equals("</label>")){
+                                            end += 1;
+                                        }       String stateLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete state '" + stateLabel + "' ? "
+                                                + "All transitions related to it will also be deleted.", "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
+                                        if (check == JOptionPane.OK_OPTION){
+                                            // retreving the data model state before deletion
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            xmlPanel.getDataModel().deleteNode(xmlPanel.getDataModel().getNodeByLabel(stateLabel).getUIIdentifier());
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old data model state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                            changed = true;
+                                            saved = false;
+                                        }       break;
                                     }
-                                    else {
-                                        xmlPanel.getDataModel().updateState(lastState);
+                                case "component":
+                                    {
+                                        int start = deepestTagNameView.getStartOffset() + 14;
+                                        int end = start;
+                                        while (!deepestTagNameView.getDocument().getText(end, 5).equals("</id>")){
+                                            end += 1;
+                                        }       String componentLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete component '" + componentLabel + "' ? "
+                                                + "All information related to it will also be deleted.", "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
+                                        if (check == JOptionPane.OK_OPTION){
+                                            // retreving the state before deletion
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            xmlPanel.getDataModel().deleteNode(xmlPanel.getDataModel().getComponentByLabel(componentLabel).getUIIdentifier());
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                            changed = true;
+                                            saved = false;
+                                        }       break;
                                     }
-                                    
-                                    xmlPanel.getDataModel().deleteNode(xmlPanel.getDataModel().getNodeByLabel(stateLabel).getUIIdentifier());
-                                    
-                                    xmlPanel.displayXMLSpecification();
-                                    lastState = xmlPanel.getDataModel().getState();
-                                    // returning to the old data model state after the deletion
-                                    xmlPanel.getDataModel().updateState(firstState);
-                                    changed = true;
-                                    saved = false;
-                                }
-                            }
-                            else if (chosenTag.equals("component")) {
-                                int start = deepestTagNameView.getStartOffset() + 14;
-                                int end = start;
-                                while (!deepestTagNameView.getDocument().getText(end, 5).equals("</id>")){
-                                    end += 1;
-                                }
-                                String componentLabel = deepestTagNameView.getDocument().getText(start, end-start);
-                                int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete component '" + componentLabel + "' ? "
-                                        + "All information related to it will also be deleted.", "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);                     
-                                if (check == JOptionPane.OK_OPTION){
-                                    // retreving the state before deletion
-                                    DataModelState state = xmlPanel.getDataModel().getState();
-                                    if (firstState == null){
-                                        firstState = state;
-                                        lastState = state;
-                                    }
-                                    else {
-                                        xmlPanel.getDataModel().updateState(lastState);
-                                    }
-                                    
-                                    xmlPanel.getDataModel().deleteNode(xmlPanel.getDataModel().getComponentByLabel(componentLabel).getUIIdentifier());
-                                    
-                                    xmlPanel.displayXMLSpecification();
-                                    lastState = xmlPanel.getDataModel().getState();
-                                    // returning to the old state after the deletion
-                                    xmlPanel.getDataModel().updateState(firstState);
-                                    changed = true;
-                                    saved = false;
-                                }               
-                            }
-                            else if (chosenTag.equals("data")){
-                                int start = deepestTagNameView.getStartOffset() + 11;
-                                int end = start;
-                                while(!deepestTagNameView.getDocument().getText(end, 7).equals("</name>")){
-                                    end += 1;
-                                }
-                                String patternDataLabel = deepestTagNameView.getDocument().getText(start, end-start);
-                                int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete pattern data with name '" + patternDataLabel + "' ? ",
-                                        "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);                     
-                                if (check == JOptionPane.OK_OPTION){
-                                    // retreving the state before deletion
-                                    DataModelState state = xmlPanel.getDataModel().getState();
-                                    if (firstState == null){
-                                        firstState = state;
-                                        lastState = state;
-                                    }
-                                    else {
-                                        xmlPanel.getDataModel().updateState(lastState);
-                                    }
-                                    
-                                    List<ConstantData> patternData = xmlPanel.getDataModel().getStartNode().getConstantData();
-                                    ConstantData toRemove = null;
-                                    for(ConstantData data : patternData){
-                                        if (data.getFieldName().equals(patternDataLabel)){
-                                            toRemove = data;
-                                            break;
-                                        }
-                                    }
-                                    if (toRemove != null){
-                                        patternData.remove(toRemove);
-                                    }
-                                    
-                                    xmlPanel.displayXMLSpecification();
-                                    lastState = xmlPanel.getDataModel().getState();
-                                    // returning to the old state after the deletion
-                                    xmlPanel.getDataModel().updateState(firstState);
-                                    changed = true;
-                                    saved = false;
-                                }
-                            }
-                            else if (chosenTag.equals("patterndata")){
-                                int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append new pattern data ?",
-                                        "Append confirmation", JOptionPane.OK_CANCEL_OPTION);                     
-                                if (check == JOptionPane.OK_OPTION){
-                                    // retreving the state before appending
-                                    DataModelState state = xmlPanel.getDataModel().getState();
-                                    if (firstState == null){
-                                        firstState = state;
-                                        lastState = state;
-                                    }
-                                    else {
-                                        xmlPanel.getDataModel().updateState(lastState);
-                                    }
-                                    
-                                    String id = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose an id for the new pattern data.",
-                                            "Appending new pattern data", JOptionPane.PLAIN_MESSAGE);
-                                    if (id != null && !id.equals("")){
-                                        GraphNode startNode = xmlPanel.getDataModel().getStartNode();
-                                        if (startNode != null){
-                                            List<ConstantData> patternData = startNode.getConstantData();
-                                            boolean idExists = false;
-                                            for (ConstantData data: patternData){
-                                                if (data.getFieldName().equalsIgnoreCase(id)){
-                                                    idExists = true;
+                                case "data":
+                                    {
+                                        int start = deepestTagNameView.getStartOffset() + 11;
+                                        int end = start;
+                                        while(!deepestTagNameView.getDocument().getText(end, 7).equals("</name>")){
+                                            end += 1;
+                                        }       String patternDataLabel = deepestTagNameView.getDocument().getText(start, end-start);
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete pattern data with name '" + patternDataLabel + "' ? ",
+                                                "Delete confirmation", JOptionPane.OK_CANCEL_OPTION);
+                                        if (check == JOptionPane.OK_OPTION){
+                                            // retreving the state before deletion
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            List<ConstantData> patternData = xmlPanel.getDataModel().getStartNode().getConstantData();
+                                            ConstantData toRemove = null;
+                                            for(ConstantData data : patternData){
+                                                if (data.getFieldName().equals(patternDataLabel)){
+                                                    toRemove = data;
                                                     break;
                                                 }
                                             }
-                                            if (idExists){
-                                                JOptionPane.showMessageDialog(xmlPanel, "Pattern data with this id already exists.",
-                                                        "Warning", JOptionPane.WARNING_MESSAGE);
+                                            if (toRemove != null){
+                                                patternData.remove(toRemove);
+                                            }
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                            changed = true;
+                                            saved = false;
+                                        }       break;
+                                    }
+                                case "patterndata":
+                                    {
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append new pattern data ?",
+                                                "Append confirmation", JOptionPane.YES_NO_OPTION);
+                                        if (check == JOptionPane.YES_OPTION){
+                                            // retreving the state before appending
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
                                             }
                                             else {
-                                                String value = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose a value for the new pattern data.",
-                                                        "Appending new pattern data", JOptionPane.PLAIN_MESSAGE);
-                                                if (value != null && !value.equals("")){
-                                                    startNode.addConstantData(id, value);
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            String id = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose an id for the new pattern data.",
+                                                    "Appending new pattern data", JOptionPane.PLAIN_MESSAGE);
+                                            if (id != null && !id.equals("")){
+                                                GraphNode startNode = xmlPanel.getDataModel().getStartNode();
+                                                if (startNode != null){
+                                                    List<ConstantData> patternData = startNode.getConstantData();
+                                                    boolean idExists = false;
+                                                    for (ConstantData data: patternData){
+                                                        if (data.getFieldName().equalsIgnoreCase(id)){
+                                                            idExists = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (idExists){
+                                                        JOptionPane.showMessageDialog(xmlPanel, "Pattern data with this id already exists.",
+                                                                "Warning", JOptionPane.WARNING_MESSAGE);
+                                                    }
+                                                    else {
+                                                        String value = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose a value for the new pattern data.",
+                                                                "Appending new pattern data", JOptionPane.PLAIN_MESSAGE);
+                                                        if (value != null && !value.equals("")){
+                                                            startNode.addConstantData(id, value);
+                                                        }
+                                                    }
+                                                }
+                                                else {
+                                                    JOptionPane.showMessageDialog(xmlPanel, "There is no start or triggerstart node created in the graph.",
+                                                            "Error", JOptionPane.ERROR_MESSAGE);
                                                 }
                                             }
-                                        }
-                                        else {
-                                            JOptionPane.showMessageDialog(xmlPanel, "There is no start or triggerstart node created in the graph.",
-                                                    "Error", JOptionPane.ERROR_MESSAGE);
-                                        }
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                            changed = true;
+                                            saved = false;
+                                        }       break;
                                     }
-                                    xmlPanel.displayXMLSpecification();
-                                    lastState = xmlPanel.getDataModel().getState();
-                                    // returning to the old state after the deletion
-                                    xmlPanel.getDataModel().updateState(firstState);
-                                    changed = true;
-                                    saved = false;
-                                }
+                                case "architecture": 
+                                    {
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append a new architecure component ?",
+                                                "Append confirmation", JOptionPane.YES_NO_OPTION);
+                                        if (check == JOptionPane.YES_OPTION){
+                                             // retreving the state before appending
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            String id = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose an id for the new component.",
+                                                    "Appending architecure component", JOptionPane.PLAIN_MESSAGE);
+                                            if (id != null && !id.equals("")){
+                                                id = id.replaceAll("\\s+", "_");
+                                                if (xmlPanel.getDataModel().archIdentExist(id)){
+                                                    JOptionPane.showMessageDialog(xmlPanel, "Architecture component with this id already exists.",
+                                                                "Warning", JOptionPane.WARNING_MESSAGE);
+                                                }
+                                                else {
+                                                    String[] types = {"Interface", "Client"};
+                                                    String type = (String) JOptionPane.showInputDialog(xmlPanel,
+                                                            "Please choose the type of the new component.", "Appending architecture component",
+                                                            JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
+                                                    if (type != null){
+                                                        if (type.equals("Interface")){
+                                                            ArchitectureNode arch = new ArchitectureNode(GUIdentifier.setArchID(id), id, XMLStateMachine.INTERFACE_LABEL, id);
+                                                            // adding null interface data so that the component is identified as interface
+                                                            arch.addInterfaceData("null", "null", "http");
+                                                            xmlPanel.getDataModel().addArchNode(arch);
+                                                        }
+                                                        else {
+                                                            xmlPanel.getDataModel().addNode(id, id, DataModel.CLIENT);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                            changed = true;
+                                            saved = false;
+                                        }       break;
+                                    }
+                                default:
+                                    break;
                             }
                             
                             return;
@@ -546,7 +615,8 @@ public class XMLEditorKit extends StyledEditorKit {
                 if (deepestTagNameView != null){
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
-                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") || nodeName.equals("<patterndata"))) {
+                        if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") 
+                                || nodeName.equals("<patterndata") || nodeName.equals("<architecture"))) {
                             return;
                         }
                     } catch (BadLocationException ex) {
@@ -729,7 +799,7 @@ public class XMLEditorKit extends StyledEditorKit {
                 }
                 else if (label.substring(1, label.length()-1).equalsIgnoreCase("interface")){
                     // interface id check
-                    View componentView = parentTagView.getParent().getParent().getParent().getView(1).getView(1).getView(1);
+                    View componentView = parentTagView.getParent().getParent().getView(1).getView(1);
                     String componentLabel = componentView.getDocument().getText(componentView.getStartOffset(), componentView.getEndOffset() - componentView.getStartOffset());
                     AbstractGraphElement archNode = xmlPanel.getDataModel().getComponentByLabel(componentLabel);
                     if (archNode == null) {

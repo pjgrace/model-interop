@@ -264,6 +264,14 @@ public class DataModel {
    }
    
    /**
+    * a method to add pre-made architecture nodes
+    * @param archNode the pre-made architecture node to add 
+    */
+   public final void addArchNode(ArchitectureNode archNode){
+       this.archElements.add(archNode);
+   }
+   
+   /**
     * Check if a label identifier is already in use with another arch node
     * @param ident The label identifier to check
     * @return boolean to represent if the identification label  is already in use

@@ -182,7 +182,7 @@ public class XMLReader {
                         DefaultStyledDocument.ElementSpec.ContentType,
                         node.getNodeName().toCharArray(), 0, node.getNodeName().length());
             }
-            else if (node.getNodeName().equals("patterndata")){
+            else if (node.getNodeName().equals("patterndata") || node.getNodeName().equals("architecture")){
                  spec = new DefaultStyledDocument.ElementSpec(XMLDocument.ADDTAG_ATTRIBUTES,
                         DefaultStyledDocument.ElementSpec.ContentType,
                         node.getNodeName().toCharArray(), 0, node.getNodeName().length());
