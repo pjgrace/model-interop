@@ -320,7 +320,7 @@ public class XMLEditorKit extends StyledEditorKit {
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
                         if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") || nodeName.equals("<patterndata")
-                                || nodeName.equals("<architecture"))) {
+                                || nodeName.equals("<architecture") || nodeName.equals("<behaviour"))) {
                             return;
                         }
                         else {
@@ -365,6 +365,7 @@ public class XMLEditorKit extends StyledEditorKit {
                                             saved = false;
                                         }       break;
                                     }
+                                    
                                 case "component":
                                     {
                                         int start = deepestTagNameView.getStartOffset() + 14;
@@ -396,6 +397,7 @@ public class XMLEditorKit extends StyledEditorKit {
                                             saved = false;
                                         }       break;
                                     }
+                                    
                                 case "data":
                                     {
                                         int start = deepestTagNameView.getStartOffset() + 11;
@@ -437,6 +439,7 @@ public class XMLEditorKit extends StyledEditorKit {
                                             saved = false;
                                         }       break;
                                     }
+                                    
                                 case "patterndata":
                                     {
                                         int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append new pattern data ?",
@@ -491,6 +494,7 @@ public class XMLEditorKit extends StyledEditorKit {
                                             saved = false;
                                         }       break;
                                     }
+                                    
                                 case "architecture": 
                                     {
                                         int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append a new architecure component ?",
@@ -541,6 +545,69 @@ public class XMLEditorKit extends StyledEditorKit {
                                             saved = false;
                                         }       break;
                                     }
+                                    
+                               case "behaviour":
+                                    {
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append a new state node ?",
+                                                "Append confirmation", JOptionPane.YES_NO_OPTION);
+                                        if (check == JOptionPane.YES_OPTION){
+                                            // retreving the state before appending
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            String id = (String) JOptionPane.showInputDialog(xmlPanel, "Please choose a label for the new state node.",
+                                                    "Appending state node", JOptionPane.PLAIN_MESSAGE);
+                                            if (id != null && !id.equals("")){
+                                                id = id.replaceAll("\\s+", "_");
+                                                if (xmlPanel.getDataModel().graphIdentExist(id)){
+                                                    JOptionPane.showMessageDialog(xmlPanel, "State node with this label already exists.",
+                                                                "Warning", JOptionPane.WARNING_MESSAGE);
+                                                }
+                                                else {
+                                                    String[] types = {"Start", "Triggerstart", "Trigger", "Loop", "Normal", "End"};
+                                                    String type = (String) JOptionPane.showInputDialog(xmlPanel,
+                                                            "Please choose the type of the new state node.", "State node",
+                                                            JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
+                                                    if (type != null){
+                                                        switch(type){
+                                                            case "Start":
+                                                            case "Triggerstart":
+                                                                if (xmlPanel.getDataModel().containsStart()){
+                                                                    JOptionPane.showMessageDialog(xmlPanel, 
+                                                                            "There is already one start node in the graph.", "Error",
+                                                                            JOptionPane.ERROR_MESSAGE);
+                                                                }
+                                                                else {
+                                                                    xmlPanel.getDataModel().addNode(id, id, type.toLowerCase());
+                                                                }
+                                                                break;
+                                                            case "Trigger":
+                                                            case "Loop":
+                                                            case "Normal":
+                                                            case "End":
+                                                                xmlPanel.getDataModel().addNode(id, id, type.toLowerCase());
+                                                            default:
+                                                                break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                            changed = true;
+                                            saved = false;
+                                        }       break;                                     
+                                    }
+                                    
                                 default:
                                     break;
                             }
@@ -617,7 +684,8 @@ public class XMLEditorKit extends StyledEditorKit {
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
                         if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") 
-                                || nodeName.equals("<patterndata") || nodeName.equals("<architecture"))) {
+                                || nodeName.equals("<patterndata") || nodeName.equals("<architecture")
+                                || nodeName.equals("<behaviour"))) {
                             return;
                         }
                     } catch (BadLocationException ex) {
