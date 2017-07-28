@@ -271,7 +271,7 @@ public class XMLEditorKit extends StyledEditorKit {
                         if (r.contains(e.getPoint())){
                             int start = deepestPlainTextView.getStartOffset();
                             int end = deepestPlainTextView.getEndOffset();
-                            String oldValue = deepestPlainTextView.getText(start, end).toString();
+                            String oldValue = deepestPlainTextView.getText(start, end).toString().trim();
                             String newValue = (String) JOptionPane.showInputDialog(xmlPanel, 
                                     "Please type a value to replace the chosen one", 
                                     "Editting", JOptionPane.PLAIN_MESSAGE, 
@@ -280,36 +280,38 @@ public class XMLEditorKit extends StyledEditorKit {
                             if (newValue == null)
                                 return;
                             
-                            // retreving the state before editing
-                            DataModelState state = xmlPanel.getDataModel().getState();
-                            if (firstState == null) {
-                                firstState = state;
-                                lastState = state;
-                            } 
-                            else {
-                                xmlPanel.getDataModel().updateState(lastState);
-                            }
-                            
-                            try {
-                                if (validateData(oldValue, newValue, deepestPlainTextView)){
-                                    XMLDocument doc = (XMLDocument) deepestPlainTextView.getDocument();
-                                    doc.remove(start, end-start);
-                                    if (doc.getText(start-1, 1).equals("\n")){
-                                        doc.insertString(start, newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
-                                    }
-                                    else {
-                                        doc.insertString(start, "\n" + newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
-                                    }
-                                    changed = true;
-                                    saved = false;
+                            if (!newValue.equals(oldValue)){
+                                // retreving the state before editing
+                                DataModelState state = xmlPanel.getDataModel().getState();
+                                if (firstState == null) {
+                                    firstState = state;
+                                    lastState = state;
+                                } 
+                                else {
+                                    xmlPanel.getDataModel().updateState(lastState);
                                 }
-                            }
-                            catch (BadLocationException ex){}
-                            
-                            lastState = xmlPanel.getDataModel().getState();
-                            // returning to the old data model state after the deletion
-                            xmlPanel.getDataModel().updateState(firstState);
 
+                                try {
+                                    if (validateData(oldValue, newValue, deepestPlainTextView)) {
+                                        XMLDocument doc = (XMLDocument) deepestPlainTextView.getDocument();
+                                        doc.remove(start, end - start);
+                                        if (doc.getText(start - 1, 1).equals("\n")) {
+                                            doc.insertString(start, newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
+                                        } else {
+                                            // TODO inserts a no needed empty space at the end ..
+                                            doc.insertString(start, "\n" + newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
+                                        }
+                                        changed = true;
+                                        saved = false;
+                                    }
+                                } 
+                                catch (BadLocationException ex){}
+
+                                lastState = xmlPanel.getDataModel().getState();
+                                // returning to the old data model state after the deletion
+                                xmlPanel.getDataModel().updateState(firstState);
+                            }
+                            
                             return;
                         }
                     }
