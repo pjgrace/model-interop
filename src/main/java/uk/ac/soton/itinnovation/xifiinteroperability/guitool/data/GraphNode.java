@@ -162,6 +162,32 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
         }
         this.transitions.remove(toDelete);
     }
+    
+    /**
+     * a method to delete a transition bu giving its target label as argument
+     * @param toLabel the target label
+     */
+    public final void deleteTransitionByLabel(String toLabel){
+        AbstractGraphElement toDelete = null;
+        for (AbstractGraphElement e: this.transitions){
+            if (e instanceof Message){
+                if (((Message) e).getTarget().equalsIgnoreCase(toLabel)){
+                    toDelete = e;
+                    break;
+                }
+            }
+            else {
+                if (((Guard) e).getTarget().equalsIgnoreCase(toLabel)){
+                    toDelete = e;
+                    break;
+                }
+            }
+        }
+
+        if (toDelete != null) {
+            this.transitions.remove(toDelete);
+        }
+    }
 
     /**
      * Get the number of transitions from this node.

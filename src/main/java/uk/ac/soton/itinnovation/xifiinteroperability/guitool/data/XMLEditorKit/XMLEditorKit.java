@@ -43,6 +43,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNo
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ConstantData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DataModelState;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
@@ -251,8 +252,9 @@ public class XMLEditorKit extends StyledEditorKit {
 
         return pos;
     }
-
-    protected MouseListener lstCollapse=new MouseAdapter() {
+    
+    // the mouse listener, which handles mouse clicks over elements of the xml tree
+    protected MouseListener clickListener=new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             JEditorPane src=(JEditorPane)e.getSource();
@@ -320,7 +322,9 @@ public class XMLEditorKit extends StyledEditorKit {
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
                         if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") || nodeName.equals("<patterndata")
-                                || nodeName.equals("<architecture") || nodeName.equals("<behaviour"))) {
+                                || nodeName.equals("<interface") || nodeName.equals("<transition")
+                                || nodeName.equals("<architecture") || nodeName.equals("<behaviour") 
+                                || nodeName.equals("<address") || nodeName.equals("<label"))) {
                             return;
                         }
                         else {
@@ -429,7 +433,83 @@ public class XMLEditorKit extends StyledEditorKit {
                                             }
                                             if (toRemove != null){
                                                 patternData.remove(toRemove);
+                                                changed = true;
+                                                saved = false;
                                             }
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                        }       break;
+                                    }
+                                
+                                case "interface":
+                                    {
+                                        int start = deepestTagNameView.getStartOffset() + 14;
+                                        int end = start;
+                                        while(!deepestTagNameView.getDocument().getText(end, 5).equals("</id>")){
+                                            end += 1;
+                                        }
+                                        String interfaceId = deepestTagNameView.getDocument().getText(start, end - start);
+
+                                        View componentView = deepestTagNameView.getParent().getParent().getParent().getView(1).getView(1);
+                                        String componentId = componentView.getDocument().getText(componentView.getStartOffset(), componentView.getEndOffset()-componentView.getStartOffset());
+
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete interface with id '" + interfaceId + "' from component "
+                                                + "with id '" + componentId + "' ? ",
+                                                "Delete confirmation", JOptionPane.YES_NO_OPTION);
+                                        if (check == JOptionPane.YES_OPTION) {
+                                            // retreving the state before deletion
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            ArchitectureNode archNode = (ArchitectureNode) xmlPanel.getDataModel().getComponentByLabel(componentId);
+                                            archNode.removeInterfaceData(interfaceId);
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                            changed = true;
+                                            saved = false;
+                                        }       break;
+                                    }     
+                                    
+                                case "transition":
+                                    {
+                                        int start = deepestTagNameView.getStartOffset() + 15;
+                                        int end = start;
+                                        while(!deepestTagNameView.getDocument().getText(end, 5).equals("</to>")){
+                                            end += 1;
+                                        }
+                                        String toLabel = deepestTagNameView.getDocument().getText(start, end - start);
+                                        
+                                        View fromView = deepestTagNameView.getParent().getParent().getParent().getView(1).getView(1);
+                                        String fromLabel = fromView.getDocument().getText((fromView.getStartOffset()), fromView.getEndOffset()-fromView.getStartOffset());
+                                        
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to delete transition from state '" + fromLabel + "' to state '"
+                                                + toLabel + "' ? ",
+                                                "Delete confirmation", JOptionPane.YES_NO_OPTION);
+                                        if (check == JOptionPane.YES_OPTION) {
+                                            // retreving the state before deletion
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            GraphNode fromNode = (GraphNode) xmlPanel.getDataModel().getNodeByLabel(fromLabel);
+                                            fromNode.deleteTransitionByLabel(toLabel);
                                             
                                             xmlPanel.displayXMLSpecification();
                                             lastState = xmlPanel.getDataModel().getState();
@@ -477,6 +557,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                                                 "Appending new pattern data", JOptionPane.PLAIN_MESSAGE);
                                                         if (value != null && !value.equals("")){
                                                             startNode.addConstantData(id, value);
+                                                            changed = true;
+                                                            saved = false;
                                                         }
                                                     }
                                                 }
@@ -488,10 +570,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                             
                                             xmlPanel.displayXMLSpecification();
                                             lastState = xmlPanel.getDataModel().getState();
-                                            // returning to the old state after the deletion
+                                            // returning to the old state after appending
                                             xmlPanel.getDataModel().updateState(firstState);
-                                            changed = true;
-                                            saved = false;
                                         }       break;
                                     }
                                     
@@ -533,16 +613,16 @@ public class XMLEditorKit extends StyledEditorKit {
                                                         else {
                                                             xmlPanel.getDataModel().addNode(id, id, DataModel.CLIENT);
                                                         }
+                                                        changed = true;
+                                                        saved = false;
                                                     }
                                                 }
                                             }
                                             
                                             xmlPanel.displayXMLSpecification();
                                             lastState = xmlPanel.getDataModel().getState();
-                                            // returning to the old state after the deletion
+                                            // returning to the old state after appending
                                             xmlPanel.getDataModel().updateState(firstState);
-                                            changed = true;
-                                            saved = false;
                                         }       break;
                                     }
                                     
@@ -585,6 +665,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                                                 }
                                                                 else {
                                                                     xmlPanel.getDataModel().addNode(id, id, type.toLowerCase());
+                                                                    changed = true;
+                                                                    saved = false;
                                                                 }
                                                                 break;
                                                             case "Trigger":
@@ -592,6 +674,8 @@ public class XMLEditorKit extends StyledEditorKit {
                                                             case "Normal":
                                                             case "End":
                                                                 xmlPanel.getDataModel().addNode(id, id, type.toLowerCase());
+                                                                changed = true;
+                                                                saved = false;
                                                             default:
                                                                 break;
                                                         }
@@ -601,11 +685,144 @@ public class XMLEditorKit extends StyledEditorKit {
                                             
                                             xmlPanel.displayXMLSpecification();
                                             lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after appending
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                        }       break;                                     
+                                    }
+                            
+                                case "address": 
+                                    {
+                                        View componentView = deepestTagNameView.getParent().getParent().getParent().getView(1).getView(1);
+                                        String componentId = componentView.getDocument().getText(componentView.getStartOffset(), componentView.getEndOffset() - componentView.getStartOffset());
+
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append a new rest interface url to component"
+                                                + " with id '" + componentId + "' ?",
+                                                "Append confirmation", JOptionPane.YES_NO_OPTION);
+                                        if (check == JOptionPane.YES_OPTION){
+                                            // retreving the state before appending
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+                                            
+                                            ArchitectureNode archNode = (ArchitectureNode) xmlPanel.getDataModel().getComponentByLabel(componentId);
+                                            String restId = (String) JOptionPane.showInputDialog(xmlPanel,
+                                                    "Please choose an id for the new rest url.", "Appending rest url", 
+                                                    JOptionPane.PLAIN_MESSAGE);
+                                            if (restId != null){
+                                                boolean idExists = false;
+                                                for(InterfaceData data: archNode.getData()){
+                                                    if (data.getRestID().equalsIgnoreCase(restId)){
+                                                        idExists = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (idExists){
+                                                    JOptionPane.showMessageDialog(xmlPanel, "Rest interface url with this id already exists.",
+                                                                    "Warning", JOptionPane.WARNING_MESSAGE);
+                                                }
+                                                else {
+                                                    String restUrl = (String) JOptionPane.showInputDialog(xmlPanel,
+                                                            "Please choose a url for the new rest interface.", "Appending rest url",
+                                                            JOptionPane.PLAIN_MESSAGE);
+                                                    if (restUrl != null){
+                                                        String[] protocols = {"HTTP", "COAP"};
+                                                        String protocol = (String) JOptionPane.showInputDialog(xmlPanel,
+                                                                "Please choose the protocol of the new rest interface url.", "Rest interface url",
+                                                                JOptionPane.PLAIN_MESSAGE, null, protocols, protocols[0]);
+                                                        if (protocol != null){
+                                                            archNode.addInterfaceData(restId, restUrl, protocol);
+                                                            changed = true;
+                                                            saved = false;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
                                             // returning to the old state after the deletion
                                             xmlPanel.getDataModel().updateState(firstState);
-                                            changed = true;
-                                            saved = false;
-                                        }       break;                                     
+                                        }       break;
+                                    }
+                               
+                               case "label":
+                                    {
+                                        View fromView = deepestTagNameView.getParent().getParent().getView(1);
+                                        String fromLabel = fromView.getDocument().getText((fromView.getStartOffset()), fromView.getEndOffset()-fromView.getStartOffset());
+                                        
+                                        View typeView = deepestTagNameView.getParent().getParent().getParent().getView(2).getView(1);
+                                        String type = typeView.getDocument().getText(typeView.getStartOffset(), typeView.getEndOffset()-typeView.getStartOffset());
+                                        
+                                        int check = JOptionPane.showConfirmDialog(xmlPanel, "Are you sure you want to append a transition from state node"
+                                                + " with label '" + fromLabel + "' ?",
+                                                "Append confirmation", JOptionPane.YES_NO_OPTION);
+                                        if (check == JOptionPane.YES_OPTION){
+                                            // retreving the state before appending
+                                            DataModelState state = xmlPanel.getDataModel().getState();
+                                            if (firstState == null){
+                                                firstState = state;
+                                                lastState = state;
+                                            }
+                                            else {
+                                                xmlPanel.getDataModel().updateState(lastState);
+                                            }
+
+                                            GraphNode fromNode = (GraphNode) xmlPanel.getDataModel().getNodeByLabel(fromLabel);
+                                            switch(type.toLowerCase()){
+                                                case "start":
+                                                case "triggerstart":
+                                                case "trigger":
+                                                    if (fromNode.getNumberTransitions() > 0){
+                                                        JOptionPane.showMessageDialog(xmlPanel,
+                                                                "You cannot have more than one transitions for states of type start, trigger and triggerstart.",
+                                                                "Transition error", JOptionPane.ERROR_MESSAGE);
+                                                        break;
+                                                    }
+                                                    
+                                                case "normal":
+                                                case "loop":
+                                                    Object[] arrayNodes = xmlPanel.getDataModel().getGraphElements().toArray();
+                                                    GraphNode toNode = (GraphNode) JOptionPane.showInputDialog(xmlPanel,
+                                                            "Please choose the label of the target state for the new transition", "Creating transition",
+                                                            JOptionPane.PLAIN_MESSAGE, null, arrayNodes, arrayNodes[0]);
+                                                    if (toNode == null){
+                                                        break;
+                                                    }
+                                                    
+                                                    if (toNode.getType().equals("start") || toNode.getType().equals("triggerstart")){
+                                                        JOptionPane.showMessageDialog(xmlPanel,
+                                                                "You cannot have a transition with a start or triggerstart node as a target.",
+                                                                "Transition error", JOptionPane.ERROR_MESSAGE);
+                                                        break;
+                                                    }
+                                                    
+                                                    xmlPanel.getDataModel().addConnection(fromNode.getUIIdentifier() + "_" + toNode.getUIIdentifier(), fromNode.getUIIdentifier(), toNode.getUIIdentifier());
+                                                    changed = true;
+                                                    saved = false;
+                                                    
+                                                    break;
+                                                    
+                                                case "end":
+                                                    JOptionPane.showMessageDialog(xmlPanel, "You cannot append transitions starting from an end node.",
+                                                            "Tansition error", JOptionPane.ERROR_MESSAGE);
+                                                    break;
+                                                default: 
+                                                    break;       
+                                            }
+                                            
+                                            xmlPanel.displayXMLSpecification();
+                                            lastState = xmlPanel.getDataModel().getState();
+                                            // returning to the old state after the deletion
+                                            xmlPanel.getDataModel().updateState(firstState);
+                                        }
+                                        
+                                        break;
                                     }
                                     
                                 default:
@@ -684,8 +901,10 @@ public class XMLEditorKit extends StyledEditorKit {
                     try {
                         String nodeName = deepestTagNameView.getDocument().getText(deepestTagNameView.getStartOffset() - 1, deepestTagNameView.getEndOffset() - deepestTagNameView.getStartOffset() + 1);
                         if (!(nodeName.equals("<state") || nodeName.equals("<component") || nodeName.equals("<data") 
+                                || nodeName.equals("<interface") || nodeName.equals("<transition")
                                 || nodeName.equals("<patterndata") || nodeName.equals("<architecture")
-                                || nodeName.equals("<behaviour"))) {
+                                || nodeName.equals("<behaviour") || nodeName.equals("<address") 
+                                || nodeName.equals("<label"))) {
                             return;
                         }
                     } catch (BadLocationException ex) {
@@ -726,13 +945,13 @@ public class XMLEditorKit extends StyledEditorKit {
     @Override
     public void install(JEditorPane c) {
         super.install(c);
-        c.addMouseListener(lstCollapse);
+        c.addMouseListener(clickListener);
         c.addMouseMotionListener(lstMoveCollapse);
     }
     
     @Override
     public void deinstall(JEditorPane c) {
-        c.removeMouseListener(lstCollapse);
+        c.removeMouseListener(clickListener);
         c.removeMouseMotionListener(lstMoveCollapse);
         super.deinstall(c);
     }

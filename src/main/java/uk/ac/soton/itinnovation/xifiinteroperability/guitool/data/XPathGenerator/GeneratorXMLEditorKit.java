@@ -256,7 +256,7 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
     @Override
     public void install(JEditorPane c) {
         super.install(c);
-        c.removeMouseListener(lstCollapse);
+        c.removeMouseListener(clickListener);
         c.addMouseListener(mouseListener);
     }
 

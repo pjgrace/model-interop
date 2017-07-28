@@ -177,13 +177,15 @@ public class XMLReader {
             specs.add(spec);
         }
         else {
-            if (node.getNodeName().equals("state") || node.getNodeName().equals("component") || node.getNodeName().equals("data")){
+            if (node.getNodeName().equals("state") || node.getNodeName().equals("component") || node.getNodeName().equals("data")
+                    || node.getNodeName().equals("transition") || node.getNodeName().equals("interface")){
                 spec=new DefaultStyledDocument.ElementSpec(XMLDocument.REMOVETAG_ATTRIBUTES,
                         DefaultStyledDocument.ElementSpec.ContentType,
                         node.getNodeName().toCharArray(), 0, node.getNodeName().length());
             }
             else if (node.getNodeName().equals("patterndata") || node.getNodeName().equals("architecture") 
-                    || node.getNodeName().equals("behaviour")){
+                    || node.getNodeName().equals("behaviour") || node.getNodeName().equals("label") 
+                    || node.getNodeName().equals("address")){
                  spec = new DefaultStyledDocument.ElementSpec(XMLDocument.ADDTAG_ATTRIBUTES,
                         DefaultStyledDocument.ElementSpec.ContentType,
                         node.getNodeName().toCharArray(), 0, node.getNodeName().length());
