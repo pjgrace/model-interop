@@ -123,7 +123,10 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
 
 
     @Override
-    public final void setValueAt(final Object value, final int rowVal, final int colVal) {
+    public final void setValueAt(final Object value, int rowVal, final int colVal) {
+        if (rowVal >= data.size()){
+            rowVal = data.size() - 1;
+        }
         final GuardData row = data.get(rowVal);
         switch (colVal) {
             case 0: row.setGuardData((String) value);
