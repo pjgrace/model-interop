@@ -1,4 +1,4 @@
- # connect-iot
+# connect-iot  
 A set of model driven engineering tools to engineer interoperable IoT and Web solutions 
 
 ## Brief Introduction
@@ -18,8 +18,8 @@ mvn clean test
 
 ### Interoperability patterns
 The interoperability patterns a.k.a models are simply xml data with all the information required to build the state machine and the states graph for the test.
-* **_I have an interoperability pattern I want to test against_** - if you have a pre-made model you want to test against, you can load the xml file of the model using the toolbar of the tool and everything will be generated from the loaded information. Here is the sequence to follow in the toolbar.
-**File** -> **Open File** -> _choose XML file_
+* **_I have an interoperability pattern I want to test against_** - if you have a pre-made model you want to test against, you can load the xml file of the model using the toolbar of the tool and everything will be generated from the loaded information. Here is the sequence to follow in the toolbar.  
+**File** -> **Open File** -> _choose XML file_  
 Pre-made interoperability patterns can be found on the [Fiesta IoT](http://fiesta-iot.eu/) website.
 
 * **_I want to create an interoperablity pattern and test against it or let others test against it_** - if you want to create your own interoperability pattern and test against it or let others test against it, you can use the drag-and-drop method of the tool to create the state diagram (a directed graph with nodes representing states and edges representing transitions) and fill in the details you want to test.
@@ -45,11 +45,13 @@ On the top left of the tool, you can see a bunch of icons under the behaviour ta
 Drag and drop the **Triggerstart** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.
 ![Drag screenshot][drag_screenshot]
 
+
 * **Adding global pattern data**
 Pattern data is global data for which you assign IDs so that you can easily assess it troughout the whole model. This data is assigned to the start node in the graph. In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click on the icon of the trigger start node we created. On the left, you see a form to add new node attributes (pattern data) and a table with all the pattern data this node has. We haven't added any pattern data, yet, so the table should be empty.
 ![Pattern data screenshot][patterndata_screenshot]
 A model can be valid even if it doesn't contain eny pattern data, but for the sake of the tutorial I am going to add data with ID _base_ and value _GBP_. This will be the base currency we are going to use for the **Fixer** API. Use the form to add the pattern data and you are done with this step.
 ![Add pattern data screenshot][adddata_screenshot]
+
 
 * **Adding a normal state**
 Normal states are just event-observing states with no special function. Usually, a **Normal** node follows after a **Trigger** or **Triggerstart** node, so that the triggered event can be captured and evaluated against a set of rules (guards).  
