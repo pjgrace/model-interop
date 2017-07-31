@@ -89,11 +89,21 @@ The data type, as explained above, is **JSON**.
 We skip the message content because we do not need to pass any content for this API request.  
 However, we should add a header for the content type. Using the form at the bottom, add a header **Content-Type** with value **application/json**.  
 To make sure everything is updated, click the **Update Message** button at the bottom and you are done with this step.
-![Adding transition's information][addtransitioninfo_screenshot]
+![Adding transition's information][addtransitioninfo_screenshot]  
+
+
+* **Adding a trigger state**  
+Trigger states are similar to Triggerstart states with the difference being that Trigger states can be a target of a transition and that you can have as many Trigger states as you want in your pattern. Let's add a Trigger state, which will be used to trigger another rest event.  
+The icon being used for a **Trigger** node is:  
+![Trigger node][trigger_node]  
+On the top-left of the tool, switch back to the **Behaviour** tab. From the icons drag and drop the **Trigger** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.  
+![Adding a trigger node][addtrigger_screenshot]
+
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
 [normal_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event.png "Normal node"
+[trigger_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/link.png "Trigger node"
 [start_screenshot]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/start-screenshot.png "Start screenshot"
 [drag_screenshot]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/drag-screenshot.png "Drag screenshot"
 [patterndata_screenshot]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/patterndata-screenshot.png "Pattern data screenshot"
@@ -105,3 +115,4 @@ To make sure everything is updated, click the **Update Message** button at the b
 [infocomponent_screenshot]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/infocomponent-screenshot.png "Adding data about a component"
 [transitioninfo_screenshot]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/transitioninfo-screenshot.png "Transition information"
 [addtransitioninfo_screenshot]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/addtransitioninfo-screenshot.png "Adding transition information"
+[addtrigger_screenshot]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/addtrigger-screenshot.png "Adding a trigger node"-screenshot.png "Adding transition information"
