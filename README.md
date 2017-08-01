@@ -47,7 +47,7 @@ Drag and drop the **Triggerstart** icon to the panel under the _Interoperability
 
 
 * **Adding global pattern data**  
-Pattern data is global data for which you assign IDs so that you can easily access it troughout the whole model. This data is assigned to the start node in the graph. In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click on the icon of the trigger start node we created. On the left, you see a form to add new node attributes (pattern data) and a table with all the pattern data this node has. We haven't added any pattern data, yet, so the table should be empty.  
+Pattern data is global data for which you assign IDs so that you can easily access it throughout the whole model. This data is assigned to the start node in the graph. In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click on the icon of the trigger start node we created. On the left, you see a form to add new node attributes (pattern data) and a table with all the pattern data this node has. We haven't added any pattern data, yet, so the table should be empty.  
 ![Pattern data screenshot][screenshot-3]  
 A model can be valid even if it doesn't contain any pattern data, but for the sake of the tutorial I am going to add data with ID _base_ and value _GBP_. This will be the base currency we are going to use for the **Fixer** API. Use the form to add the pattern data and you are done with this step.
 ![Add pattern data screenshot][screenshot-4]
@@ -105,13 +105,13 @@ Now let's link the **Normal** node to the **Trigger** node. Thus, a **Guard** tr
 ![Adding a guard transition][screenshot-13]  
 The helpers contain information about the guard description and the guard value. Let's add a few guards for this transition.  
 First I am going to set some rules for the HTTP headers.  
-I want to test that the responce is coming from the **Fixer** API. In the guard description type **HTTP.from**. We want the value to be api.fixer.io . However, instead of manually typing the address, we will use the shortcut format **component.id.address**. This gives us the address of the component with the given ID. Hence, for value type **component.fixer.address**. Now set the guard function to **equal** and then click the **Add guard** button.  
+I want to test that the response is coming from the **Fixer** API. In the guard description type **HTTP.from**. We want the value to be api.fixer.io . However, instead of manually typing the address, we will use the shortcut format **component.id.address**. This gives us the address of the component with the given ID. Hence, for value type **component.fixer.address**. Now set the guard function to **equal** and then click the **Add guard** button.  
 ![Adding a guard rule][screenshot-14]  
-I also want to test the status code of the responce and the message type. Hence, add two more guard rules:  
-first, with guard description **HTTP.code**, guard value **200** (we want only successful responces) and guard function **equal**,  
+I also want to test the status code of the response and the message type. Hence, add two more guard rules:  
+first, with guard description **HTTP.code**, guard value **200** (we want only successful responses) and guard function **equal**,  
 second, with guard description **HTTP.msg**, guard value **REPLY** and guard function **equal** again.  
 ![Adding more guards][screenshot-15]
-In fact, we can also test the content of the returned responce using XPath (for XML content) and JSONPath (for JSON content). For our example, lets test that the JSON responce contains a key _rates_ (which should have the conversion rates for value) and that the value of the USD is greater than 0.  
+In fact, we can also test the content of the returned response using XPath (for XML content) and JSONPath (for JSON content). For our example, lets test that the JSON response contains a key _rates_ (which should have the conversion rates for value) and that the value of the USD is greater than 0.  
 When testing content we use the following format: **content[XPath/JSONPath]**.  
 So for our first rule we will type **content[$]** for guard description (this is the JSONPath to take the whole content), for guard function we choose **contains** and for guard value we type **rates**.  
 For the second rule we type **content[$.rates.USD]** for guard description (the JSONPath to the USD value), for guard function we choose **greaterthan** and for guard value we type **0**.  
@@ -132,7 +132,7 @@ Now let's add a transition between the **Trigger** node and the new **Loop** nod
 ![Adding another transition][screenshot-18]  
 We would use pretty much the same details to fill this transition with the difference that this time we will use our second component URL interface (the one with id _rest2_).  
 Hence, for a URL pointer choose the second URL interface. You will see that it's pointing to link https://api.fixer.io:443/2000-01-03.  
-For resource path, use the following **?base=$$patterndata.base$$&symbols=[USD,EUR]** , which will will return conversions only for USD and EUR.  
+For resource path, use the following **?base=$$patterndata.base$$&symbols=[USD,EUR]** , which will return conversions only for USD and EUR.  
 Method is still **GET**.  
 The data type used is **JSON** again.  
 Add the **Content-Type** header again and set it to **application/json**.  
@@ -155,7 +155,7 @@ Headers - **Content-Type** with value **application/json**
 
 
 * **Linking back to the loop state**  
-Since we use a loop state we have to link the normal state back to the loop state, too. This would be a guard transition, which will evaluate the responce data against the set of rules. We should see the form for adding guard rules again.  
+Since we use a loop state we have to link the normal state back to the loop state, too. This would be a guard transition, which will evaluate the response data against the set of rules. We should see the form for adding guard rules again.  
 ![Linking back to the loop state][screenshot-22]  
 
 
@@ -173,7 +173,7 @@ Now we are done with this step.
 
 
 * **Adding an end state**  
-End states are used to point where the interoperability test should end. You can have as many end states as you want. This is useful, since you can specify end states with differenet guard rules. For example, one of the end state would be if the content is in XML format and the other if the content is in JSON format.  
+End states are used to point where the interoperability test should end. You can have as many end states as you want. This is useful, since you can specify end states with different guard rules. For example, one of the end state would be if the content is in XML format and the other if the content is in JSON format.  
 The icon being used for an **End** node is:  
 ![End node][end_node]  
 From the icons on the top left, drag and drop the **End** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.  
@@ -182,7 +182,7 @@ From the icons on the top left, drag and drop the **End** icon to the panel unde
 
 * **Filling end state's data**  
 When clicking on the end node, you should see a form on the left.  
-The **success** dropdown let's you choose whether this end state should be treated as success or not. Set this to **true**.  
+The **success** dropdown lets you choose whether this end state should be treated as success or not. Set this to **true**.  
 The **test report** is just data that you want to give if this end state is reached - an example is the reason this end state should be treated as success or not.  
 These attributes are useful if you have more than one end state. For instance, you have an end state, which is reached only if authorization for some API failed and another if authorization was successful. Then you can set the success attribute for the failing end state to **false** and explain in the test report that the reason is **authorization failure** using JSON format, for example.  
 For our case, just set the **success** attribute to **true** and leave the test report empty.  
@@ -206,7 +206,7 @@ You should see a message whether your pattern is verified as correct. For our ex
 Now, in order to run the test, click the test icon next to the verification icon.  
 ![Run test icon][screenshot-30]  
 You should see a dialog to choose the running mode: **execution mode** is the mode, which runs the test directly, while **step-by-step mode** waits the user to click on the arrow icon in order to continue to the next step.  
-![Choosing running mode][screenshot-31] 
+![Choosing running mode][screenshot-31]  
 For now choose execution mode. You should see the **Test report panel** and a lot of text output. This is basically the interoperability report generating a message for all covered steps in the test and all evaluated guards. You should see the last message being **_End node reached --> Interoperability Testing Complete_**, which means that the **Fixer** API is compliant with the model we created and the test is successful.  
 ![Running the test][screenshot-32]  
 
