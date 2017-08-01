@@ -118,10 +118,91 @@ For the second rule we type **content[$.rates.USD]** for guard description (the 
 Now we are done with this step.  
 ![Adding more guards][screenshot-16]
 
+
+* **Adding a loop state**  
+Loop states are states, which allow the repetition of a given event. This could be useful if you want, for example, to check if an API doesn't crash after a few consecutive calls.  
+The icon being used for a **Loop** node is:  
+![Loop node][loop_node]  
+From the icons on the top left, drag and drop the **Loop** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.  
+![Adding a loop node][screenshot-17]
+
+
+* **Adding another transition**  
+Now let's add a transition between the **Trigger** node and the new **Loop** node. Click on the transition and you should see the form for a **Message** transition - the one that triggers an event.  
+![Adding another transition][screenshot-18]  
+We would use pretty much the same details to fill this transition with the difference that this time we will use our second component URL interface (the one with id _rest2_).  
+Hence, for a URL pointer choose the second URL interface. You will see that it's pointing to link https://api.fixer.io:443/2000-01-03.  
+For resource path, use the following **?base=$$patterndata.base$$&symbols=[USD,EUR]** , which will will return conversions only for USD and EUR.  
+Method is still **GET**.  
+The data type used is **JSON** again.  
+Add the **Content-Type** header again and set it to **application/json**.  
+Now we are done with this step.  
+![Adding transition data][screenshot-19]  
+
+
+* **Adding another normal state**  
+Once more, we need a normal state to which to link the loop state. From the icons on the top left, drag and drop the **Normal** icon to the panel under the _Interoperability Behaviour Model_ label. Keep in mind that since you already have a node with label **normal**, you will be asked to choose a different label for the new node.  
+![Adding another normal state][screenshot-20]  
+
+
+* **Linking the loop state to the normal state**  
+Now make a transition from the loop state to the new normal state. Since this is a loop state, the transition will be a message transition again. In this case, for the new transition, we have to fill the same data we filled for our last transition.  
+Resource path - **?base=$$patterndata.base$$&symbols=[USD,EUR]**  
+Method - **GET**  
+Data type - **JSON**  
+Headers - **Content-Type** with value **application/json**  
+![Adding another transition][Screenshot-21]  
+
+
+* **Linking back to the loop state**  
+Since we use a loop state we have to link the normal state back to the loop state, too. This would be a guard transition, which will evaluate the responce data against the set of rules. We should see the form for adding guard rules again.  
+![Linking back to the loop state][screenshot-22]  
+
+
+* **Adding new guard rules**  
+Now let's add some guards for our new guard transition. I will add the same rules we used for the HTTP headers in our last guard transition.  
+**HTTP.from** - **equal** - **component.fixer.address**  
+**HTTP.code** - **equal** - **200**  
+**HTTP.msg** - **equal** - **REPLY**  
+For content rules, let's test again that the content contains a key _rates_, but also test that the values for both EUR and USD are less than 2.  
+First, for guard description type **content[$]**, choose **contains** for guard function and for guard value type **rates**. Click **Add guard**.  
+Then, for guard description type **content[$.rates.USD]**, choose **lessthan** for guard function and for guard value type **2**. Click **Add guard**.  
+Finally, for guard description type **content[$.rates.EUR]**, choose **lessthan** for guard function and for guard value type **2**. Click **Add guard**.  
+Now we are done with this step.  
+![Adding new guards][screenshot-23]  
+
+
+* **Adding an end state**  
+End states are used to point where the interoperability test should end. You can have as many end states as you want. This is useful, since you can specify end states with differenet guard rules. For example, one of the end state would be if the content is in XML format and the other if the content is in JSON format.  
+The icon being used for an **End** node is:  
+![End node][end_node]  
+From the icons on the top left, drag and drop the **End** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.  
+![Adding end node][screenshot-24]  
+
+
+* **Filling end state's data**  
+When clicking on the end node, you should see a form on the left.  
+The **success** dropdown let's you choose whether this end state should be treated as success or not. Set this to **true**.  
+The **test report** is just data that you want to give if this end state is reached - an example is the reason this end state should be treated as success or not.  
+These attributes are useful if you have more than one end state. For instance, you have an end state, which is reached only if authorization for some API failed and another if authorization was successful. Then you can set the success attribute for the failing end state to **false** and explain in the test report that the reason is **authorization failure** using JSON format, for example.  
+For our case, just set the **success** attribute to **true** and leave the test report empty.  
+![Adding end node data][screenshot-25]  
+
+
+* **Breaking from the loop**  
+In order to break from the loop we need to create a guard transition, which will include a **counter** guard function. So we create a transition from the **Loop** node to the **End** node. By clicking on it, we see the form for adding guards again.  
+![Adding the last transition][screenshot-26]  
+Here, we add only one guard rule, which is to break the loop after a number of iterations.  
+For the guard description type **Index**, choose **counter** for guard function and for guard value type **5**. Then click **Add guard** and we are done with this step.  
+![Adding counter guard][screenshot-27]  
+
+
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
 [normal_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event.png "Normal node"
 [trigger_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/link.png "Trigger node"
+[loop_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/loop.png "Loop node"
+[end_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/terminate.png "End node"
 [screenshot-1]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-1.png "Start screenshot"
 [screenshot-2]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-2.png "Drag screenshot"
 [screenshot-3]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-3.png "Pattern data screenshot"
@@ -138,3 +219,14 @@ Now we are done with this step.
 [screenshot-14]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-14.png "Adding guard rule"
 [screenshot-15]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-15.png "Adding more guards"
 [screenshot-16]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-16.png "Adding more guards"
+[screenshot-17]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-17.png "Adding a loop node"
+[screenshot-18]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-18.png "Adding another transition"
+[screenshot-19]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-19.png "Adding transition data"
+[screenshot-20]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-20.png "Adding a normal node"
+[screenshot-21]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-21.png "Adding another transition"
+[screenshot-22]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-22.png "Linking back to the loop state"
+[screenshot-23]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-23.png "Adding new guard rules"
+[screenshot-24]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-24.png "Adding an end node"
+[screenshot-25]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-25.png "Adding end node data"
+[screenshot-26]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-26.png "Adding the last transition"
+[screenshot-27]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-27.png "Adding counter guard"
