@@ -197,6 +197,19 @@ For the guard description type **Index**, choose **counter** for guard function 
 ![Adding counter guard][screenshot-27]  
 
 
+#### Executing the interoperability test
+So far we managed to create an interoperability pattern, which can be used for interoperability and compliance testing for the [**Fixer**](http://fixer.io) API. Now let's use this pattern and run the test.  
+First, we need to verify that our pattern is correct. From the icons on the top of the tool (under the toolbar) click the green tick icon.  
+![Pattern verification][screenshot-28]  
+You should see a message whether your pattern is verified as correct. For our example, we should get a valid pattern message. If you get an error message, please go through the tutorial above and find out what's wrong.  
+![Pattern verification message][screenshot-29]  
+Now, in order to run the test, click the test icon next to the verification icon.  
+![Run test icon][screenshot-30]  
+You should see a dialog to choose the running mode: **execution mode** is the mode, which runs the test directly, while **step-by-step mode** waits the user to click on the arrow icon in order to continue to the next step.  
+![Choosing running mode](screenshot-31)  
+For now choose execution mode. You should see the **Test report panel** and a lot of text output. This is basically the interoperability report generating a message for all covered steps in the test and all evaluated guards. You should see the last message being **_End node reached --> Interoperability Testing Complete_**, which means that the **Fixer** API is compliant with the model we created and the test is successful.  
+![Running the test][screenshot-32]  
+
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
 [normal_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event.png "Normal node"
@@ -230,3 +243,8 @@ For the guard description type **Index**, choose **counter** for guard function 
 [screenshot-25]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-25.png "Adding end node data"
 [screenshot-26]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-26.png "Adding the last transition"
 [screenshot-27]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-27.png "Adding counter guard"
+[screenshot-28]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-28.png "Pattern verification"
+[screenshot-29]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-29.png "Pattern verification message"
+[screenshot-30]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-30.png "Run test icon"
+[screenshot-31]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-31.png "Choosing running mode"
+[screenshot-32]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-32.png "Running the test"
