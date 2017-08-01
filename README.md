@@ -209,6 +209,16 @@ You should see a dialog to choose the running mode: **execution mode** is the mo
 ![Choosing running mode][screenshot-31]  
 For now choose execution mode. You should see the **Test report panel** and a lot of text output. This is basically the interoperability report generating a message for all covered steps in the test and all evaluated guards. You should see the last message being **_End node reached --> Interoperability Testing Complete_**, which means that the **Fixer** API is compliant with the model we created and the test is successful.  
 ![Running the test][screenshot-32]  
+Before showing you how to execute the test in step-by-step mode, I am going to introduce you to another feature of the tool - using previous states data. It is possible to use data returned in previous states as a guard value for another state.  
+Click on the graph icon, which returns you to the graph view of the model  
+![Graph view icon][screenshot-33]  
+Now click on the guard transition from node with label **state** to node with label **loop**. You should see the form for adding guards on the left along with all the guards we added to this transition in one of the previous steps.  
+![Guards][screenshot-34]  
+Now, we are going to add a guard, which includes data from a previous state. For instance, we want to check if the value of the EUR returned by this response is less than the value of the NOK returned by the response of the first event captured in node **normal**.  
+![captured data][screenshot-35]  
+For guard description type **content[$.rates.EUR]** and choose **lessthan** for guard function. For guard value use the format for previous states data, which is **$$state_label|{content or headers}|XPath or JSONPath or header_id$$**. This could be generated for you by clicking right button on the guard value text field and choosing the _Insert previous states data_ option. For our example the state_label is **normal** (the previous data is captured there), we choose content since we want to extract information from the content of the response and the JSONPath would be **rates.NOK** (note that here we miss the **$.** part in the JSONPath)  
+Thus, for guard value we type **$$normal|content|rates.NOK$$**. Now, click **Add guard**.  
+![added guard][screenshot-36]
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
@@ -248,3 +258,7 @@ For now choose execution mode. You should see the **Test report panel** and a lo
 [screenshot-30]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-30.png "Run test icon"
 [screenshot-31]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-31.png "Choosing running mode"
 [screenshot-32]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-32.png "Running the test"
+[screenshot-33]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-33.png "Graph view icon"
+[screenshot-34]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-34.png "Guards"
+[screenshot-35]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-35.png "captured data"
+[screenshot-36]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-36.png "captured data"
