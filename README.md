@@ -216,9 +216,16 @@ Now click on the guard transition from node with label **state** to node with la
 ![Guards][screenshot-34]  
 Now, we are going to add a guard, which includes data from a previous state. For instance, we want to check if the value of the EUR returned by this response is less than the value of the NOK returned by the response of the first event captured in node **normal**.  
 ![captured data][screenshot-35]  
-For guard description type **content[$.rates.EUR]** and choose **lessthan** for guard function. For guard value use the format for previous states data, which is **$$state_label|{content or headers}|XPath or JSONPath or header_id$$**. This could be generated for you by clicking right button on the guard value text field and choosing the _Insert previous states data_ option. For our example the state_label is **normal** (the previous data is captured there), we choose content since we want to extract information from the content of the response and the JSONPath would be **rates.NOK** (note that here we miss the **$.** part in the JSONPath)  
+For guard description type **content[$.rates.EUR]** and choose **lessthan** for guard function. For guard value use the format for previous states data, which is **$$state_label|{content or headers}|XPath or JSONPath or header_id$$**. This could be generated for you by clicking right button on the guard value text field and choosing the _Insert previous states data_ option. For our example the state_label is **normal** (the previous data is captured there), we choose content since we want to extract information from the content of the response and the JSONPath would be **rates.NOK** (note that here we skip the **$.** part in the JSONPath)  
 Thus, for guard value we type **$$normal|content|rates.NOK$$**. Now, click **Add guard**.  
-![added guard][screenshot-36]
+![added guard][screenshot-36]  
+Back to executing the test now. Click test icon again, but this time choose **step-by-step** mode.  
+![step-by-step mode][screenshot-37]  
+You should see the **Test report panel** again with a few output. Now, you have two optios, either stop the test by clicking the cross icon next to the run test icon or you can go to the next step in the test by clickng the right arrow icon.  
+![step-by-step mode][screenshot-38]  
+By clicking the right arrow icon enough times, you will get to the final state of the test, which should again be a successful message.  
+![finish test][screenshot-39]
+
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
@@ -262,3 +269,6 @@ Thus, for guard value we type **$$normal|content|rates.NOK$$**. Now, click **Add
 [screenshot-34]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-34.png "Guards"
 [screenshot-35]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-35.png "captured data"
 [screenshot-36]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-36.png "captured data"
+[screenshot-37]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-37.png "step-by-step mode"
+[screenshot-38]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-38.png "step-by-step mode"
+[screenshot-39]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-39.png "finish test"
