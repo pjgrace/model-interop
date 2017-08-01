@@ -206,7 +206,7 @@ You should see a message whether your pattern is verified as correct. For our ex
 Now, in order to run the test, click the test icon next to the verification icon.  
 ![Run test icon][screenshot-30]  
 You should see a dialog to choose the running mode: **execution mode** is the mode, which runs the test directly, while **step-by-step mode** waits the user to click on the arrow icon in order to continue to the next step.  
-![Choosing running mode](screenshot-31)  
+![Choosing running mode][screenshot-31] 
 For now choose execution mode. You should see the **Test report panel** and a lot of text output. This is basically the interoperability report generating a message for all covered steps in the test and all evaluated guards. You should see the last message being **_End node reached --> Interoperability Testing Complete_**, which means that the **Fixer** API is compliant with the model we created and the test is successful.  
 ![Running the test][screenshot-32]  
 
