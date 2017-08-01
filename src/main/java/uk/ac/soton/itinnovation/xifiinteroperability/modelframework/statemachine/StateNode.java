@@ -29,7 +29,6 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachin
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -382,7 +381,7 @@ public class StateNode implements State {
             if (rEv.getDataBody().getType().contains("xml")) {
                 return XML.readValue(content, exprSplit[2]);
             } else {
-                return JSON.readValue("$."+content, exprSplit[2]);
+                return JSON.readValue(content.toLowerCase(), "$." + exprSplit[2].toLowerCase());
             }
         } else if (exprSplit[1].equalsIgnoreCase("headers")) {
             return rEv.getParameterMap().get(exprSplit[2]).getValue();
