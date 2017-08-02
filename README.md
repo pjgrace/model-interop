@@ -196,6 +196,9 @@ Here, we add only one guard rule, which is to break the loop after a number of i
 For the guard description type **Index**, choose **counter** for guard function and for guard value type **5**. Then click **Add guard** and we are done with this step.  
 ![Adding counter guard][screenshot-27]  
 
+#### Saving your interoperability model
+The next step is to save our new pattern into an xml file. From the icons under the toolbar, click on the save icon. Then choose a location to save your model to.  
+![Saving your pattern][screenshot-42]
 
 #### Executing the interoperability test
 So far we managed to create an interoperability pattern, which can be used for interoperability and compliance testing for the [**Fixer**](http://fixer.io) API. Now let's use this pattern and run the test.  
@@ -224,7 +227,19 @@ Back to executing the test now. Click test icon again, but this time choose **st
 You should see the **Test report panel** again with a few output. Now, you have two optios, either stop the test by clicking the cross icon next to the run test icon or you can go to the next step in the test by clickng the right arrow icon.  
 ![step-by-step mode][screenshot-38]  
 By clicking the right arrow icon enough times, you will get to the final state of the test, which should again be a successful message.  
-![finish test][screenshot-39]
+![finish test][screenshot-39]  
+
+
+#### Viewing previous test reports  
+When running the test, you see the test report panel, which displays the report of the test you are currently running. However, there are cases when you want to view previously generated reports. In order to do that click the previous reports icon, which is the last one from the bunch of icons under the toolbar.  
+![previous reports][screenshot-40]  
+You should then see the previous reports panel, which shows all generated test reports by the tool. Currently, I have 2 reports since we executed the test twice - in execution mode and in step-by-step mode. Each report is displayed by clicking on its tab. The name of the tab shows the time the report was generated.  
+![previous reports tabs][screenshot-41]  
+By clicking on the save icon, you can save your report into a text file. By default the name of the text file will be in the format - **report-{time it was generated}.txt**. For example, **_report-08h59m03s.txt_**.  
+If you've followed the tutorial and saved your pattern into an xml file, the report will be saved in the same folder as the pattern. Otherwise, you will have to choose the location to save the report.  
+![saving a report][screenshot-43]  
+If there is a file with the same name in the saving directory, you will be asked if you want to overwrite this file.  
+![overwriting file][screenshot-44]  
 
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
@@ -272,3 +287,8 @@ By clicking the right arrow icon enough times, you will get to the final state o
 [screenshot-37]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-37.png "step-by-step mode"
 [screenshot-38]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-38.png "step-by-step mode"
 [screenshot-39]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-39.png "finish test"
+[screenshot-40]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-40.png "previous reports"
+[screenshot-41]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-41.png "previous reports"
+[screenshot-42]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-42.png "saving model"
+[screenshot-43]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-43.png "saving a previous report"
+[screenshot-44]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-44.png "overwriting file"
