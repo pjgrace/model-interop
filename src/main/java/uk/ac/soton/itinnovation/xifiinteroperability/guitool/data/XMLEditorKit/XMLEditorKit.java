@@ -298,7 +298,6 @@ public class XMLEditorKit extends StyledEditorKit {
                                         if (doc.getText(start - 1, 1).equals("\n")) {
                                             doc.insertString(start, newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
                                         } else {
-                                            // TODO inserts a no needed empty space at the end ..
                                             doc.insertString(start, "\n" + newValue + "\n", XMLDocument.PLAIN_ATTRIBUTES);
                                         }
                                         changed = true;

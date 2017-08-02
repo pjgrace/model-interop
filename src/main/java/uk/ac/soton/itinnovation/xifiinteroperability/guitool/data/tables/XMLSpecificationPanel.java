@@ -50,6 +50,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
+import org.xml.sax.SAXParseException;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.ADDTAG_ATTRIBUTES;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
@@ -150,6 +151,7 @@ public class XMLSpecificationPanel extends JPanel {
                     GraphGenerator graphGenerator = new GraphGenerator(editor);
                     editor.resetUndoManagers();
                     try {
+                        xml = xml.replaceAll("&(?!amp;)", "&amp;");
                         graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
                         final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
                         layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
