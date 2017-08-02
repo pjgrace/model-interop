@@ -268,8 +268,24 @@ Update the change again by clicking on **Update changes**. Now go back to the gr
 ![updated data][screenshot-54]  
 For the sake of the example, let's now delete the newly added pattern data through XML editing. Go back to teh XML view, **Enable pattern editing** and click on the second **data** tag. It is red, which, as explained in the legend, means that it will be deleted on click.  
 ![delete data][screenshot-55]  
-You will be asked to confirm that you want to delete the pattern data with ID **testID**. Click **Yes**. Then click on **Update changes** again.  
-![deleted data][screenshot-56]
+You will be asked to confirm that you want to delete the pattern data with ID **testID**. Click **Yes**. Then click on **Update changes** again. The second pattern data block will be removed.  
+![deleted data][screenshot-56]  
+    
+**Keep in mind** that whenever you do a replace edition - you replace the text value of something - you should update the changes and then continue editing the XML view if appropriate.
+
+#### XPath expression generator
+
+There are many cases in which it is not easy to track and derive the full XPath for some tag in XML data. The XPath expression generator will do that for you. You just have to load an XML file and then click on the tag, for which you want to generate the XPath expression.  
+To open the tool, go to the **Tools** option from the toolbar and choose **XPath expression generator**.  
+![xpath generator][screenshot-57]  
+You will have to choose your XML file. I chose the XML file of the pattern we created in the previous steps.  
+![xpath generator][screenshot-58]  
+You can click on the **Highlight tags** button for easier navigation. Now click on some tag, text or attribute. I will click on the url address for the **rest1** URL interface.  
+![generating xpath][screenshot-59]  
+You should now see the generated XPath expression and in a confirmation dialog asking whether you want to copy the XPath.  
+![generating xpath][screenshot-60]  
+
+#### JSONPath expression generator
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
@@ -333,3 +349,7 @@ You will be asked to confirm that you want to delete the pattern data with ID **
 [screenshot-54]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-54.png "updated pattern data"
 [screenshot-55]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-55.png "delete pattern data"
 [screenshot-56]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-56.png "deleted pattern data"
+[screenshot-57]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-57.png "xpath generator"
+[screenshot-58]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-58.png "xpath generator"
+[screenshot-59]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-59.png "xpath generator"
+[screenshot-60]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-60.png "xpath generator"
