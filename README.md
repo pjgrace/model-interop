@@ -295,7 +295,29 @@ You will have to choose your JSON file. I chose a simple JSON file I wrote as an
 You can click on the **Highlight keys and values** button for easier navigation. Now click on some key or value.  
 ![generating jsonpath][screenshot-63]  
 You should now see the generated JSONPath expression in a confirmation dialog asking whether you want to copy the JSONPath.  
-![generating jsonpath][screenshot-64]
+![generating jsonpath][screenshot-64]  
+
+#### Undo manager
+
+Another feature worth mentioning is the undo manager. However, keep in mind that the undo manager can only be used when you are editing the graph pattern. Hence, when you edit your pattern through the XML view you will not be able to **undo** or **redo**.  
+The icons used for **undo** and **redo** are:  
+![undo][undo] - **undo**, &nbsp;&nbsp; ![redo][redo] - **redo**  
+For example, let's add a **client** component to our model. From the **Deployment** tab on the top-left of the tool drag and drop the **client** icon to the panel under the **Deployment Model**.  
+![adding client][screenshot-65]  
+Now, click on the **undo** icon under the toolbar.  
+![undo addition][screenshot-66]  
+![undo addition][screenshot-67]  
+Now, click on the **redo** icon just to demonstrate how it works.  
+![redo addition][screenshot-68]  
+
+#### Cut feature
+
+The **cut** feature is used to delete a component, state or transition.  
+The icon used for the **cut** feature is: ![cut][cut]  
+In the previous step we have redone the addition of the **client** component. We don't really need it for our model, so let's cut it. Click on it and then click the **cut** icon.  
+![cut client][screenshot-69]  
+After this, the **client** component is deleted.  
+![deleted client][screenshot-70]
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
@@ -303,6 +325,9 @@ You should now see the generated JSONPath expression in a confirmation dialog as
 [trigger_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/link.png "Trigger node"
 [loop_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/loop.png "Loop node"
 [end_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/terminate.png "End node"
+[undo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/undo.gif "undo"
+[redo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/redo.gif "redo"
+[cut]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/cut.gif "cut"
 [screenshot-1]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-1.png "Start screenshot"
 [screenshot-2]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-2.png "Drag screenshot"
 [screenshot-3]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-3.png "Pattern data screenshot"
@@ -367,3 +392,9 @@ You should now see the generated JSONPath expression in a confirmation dialog as
 [screenshot-62]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-62.png "jsonpath generator"
 [screenshot-63]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-63.png "jsonpath generator"
 [screenshot-64]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-64.png "jsonpath generator"
+[screenshot-65]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-65.png "adding client"
+[screenshot-66]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-66.png "undo addition"
+[screenshot-67]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-67.png "undo addition"
+[screenshot-68]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-68.png "redo addition"
+[screenshot-69]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-69.png "cut"
+[screenshot-70]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-70.png "cut"
