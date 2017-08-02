@@ -224,7 +224,7 @@ Thus, for guard value we type **$$normal|content|rates.NOK$$**. Now, click **Add
 ![added guard][screenshot-36]  
 Back to executing the test now. Click test icon again, but this time choose **step-by-step** mode.  
 ![step-by-step mode][screenshot-37]  
-You should see the **Test report panel** again with a few output. Now, you have two optios, either stop the test by clicking the cross icon next to the run test icon or you can go to the next step in the test by clickng the right arrow icon.  
+You should see the **Test report panel** again with a few output. Now, you have two options, either stop the test by clicking the cross icon next to the run test icon or you can go to the next step in the test by clicking the right arrow icon.  
 ![step-by-step mode][screenshot-38]  
 By clicking the right arrow icon enough times, you will get to the final state of the test, which should again be a successful message.  
 ![finish test][screenshot-39]  
@@ -243,7 +243,7 @@ If there is a file with the same name in the saving directory, you will be asked
 
 ### Other features
 
-So far, you've explored the tool by creating an interoperability pattern, executing interoperability tests and viewing test reports. Now, I am going to guide you through some addition feautures of the tool.  
+So far, you've explored the tool by creating an interoperability pattern, executing interoperability tests and viewing test reports. Now, I am going to guide you through some addition features of the tool.  
 
 #### XML view of the pattern
 The tool allows you to view the data of your model in xml format (the xml file that will be generated when you save your pattern will contain this data) and even partially modify it. Click on the XML view icon and then you should see the XML view panel.  
@@ -252,7 +252,7 @@ On the top you should see the **Enable pattern editing** button and the **Editin
 ![Editing XML pattern][screenshot-46]  
 Now, you should see two new buttons: **Disable pattern editing** and **Update changes**. All changes made in the XML view will only be updated on the actual pattern if you click on **Update changes**. You should also see that there are highlighted XML tags with different colors.  
 ![Editing XML mode][screenshot-47]  
-As explained in the legend, clicking on an light-orange tag will let you replace the text value. For instance, let's click on the **GBP** value and try to change it to something else.  
+As explained in the legend, clicking on a light-orange tag will let you replace the text value. For instance, let's click on the **GBP** value and try to change it to something else.  
 ![Editing XML mode][screenshot-48]  
 You should see a dialog asking you to type the new value. For this example, let's type **EUR** and then click **OK**.  
 ![Editing pattern data][screenshot-49]  
@@ -266,7 +266,7 @@ For ID type **testID**. Then you will be asked to enter value for the new patter
 ![appended pattern data][screenshot-53]  
 Update the change again by clicking on **Update changes**. Now go back to the graph view and click on the **triggerstart** node. You should see that the pattern data is updated.  
 ![updated data][screenshot-54]  
-For the sake of the example, let's now delete the newly added pattern data through XML editing. Go back to teh XML view, **Enable pattern editing** and click on the second **data** tag. It is red, which, as explained in the legend, means that it will be deleted on click.  
+For the sake of the example, let's now delete the newly added pattern data through XML editing. Go back to the XML view, **Enable pattern editing** and click on the second **data** tag. It is red, which, as explained in the legend, means that it will be deleted on click.  
 ![delete data][screenshot-55]  
 You will be asked to confirm that you want to delete the pattern data with ID **testID**. Click **Yes**. Then click on **Update changes** again. The second pattern data block will be removed.  
 ![deleted data][screenshot-56]  
