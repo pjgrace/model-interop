@@ -282,10 +282,20 @@ You will have to choose your XML file. I chose the XML file of the pattern we cr
 ![xpath generator][screenshot-58]  
 You can click on the **Highlight tags** button for easier navigation. Now click on some tag, text or attribute. I will click on the url address for the **rest1** URL interface.  
 ![generating xpath][screenshot-59]  
-You should now see the generated XPath expression and in a confirmation dialog asking whether you want to copy the XPath.  
+You should now see the generated XPath expression in a confirmation dialog asking whether you want to copy the XPath.  
 ![generating xpath][screenshot-60]  
 
 #### JSONPath expression generator
+
+The JSONPath expression generator is pretty much the same as the XPath expression generator with the difference being that it works for JSON data format. Again, you load a JSON file and then click on the key or value, for which you want to generate the JSONPath expression.  
+To open the tool go to the **Tools** option from the toolbar and choose **JSONPath expression generator**.  
+![jsonpath generator][screenshot-61]  
+You will have to choose your JSON file. I chose a simple JSON file I wrote as an example.  
+![jsonpath generator][screenshot-62]  
+You can click on the **Highlight keys and values** button for easier navigation. Now click on some key or value.  
+![generating jsonpath][screenshot-63]  
+You should now see the generated JSONPath expression in a confirmation dialog asking whether you want to copy the JSONPath.  
+![generating jsonpath][screenshot-64]
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
@@ -353,3 +363,7 @@ You should now see the generated XPath expression and in a confirmation dialog a
 [screenshot-58]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-58.png "xpath generator"
 [screenshot-59]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-59.png "xpath generator"
 [screenshot-60]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-60.png "xpath generator"
+[screenshot-61]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-61.png "jsonpath generator"
+[screenshot-62]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-62.png "jsonpath generator"
+[screenshot-63]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-63.png "jsonpath generator"
+[screenshot-64]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-64.png "jsonpath generator"
