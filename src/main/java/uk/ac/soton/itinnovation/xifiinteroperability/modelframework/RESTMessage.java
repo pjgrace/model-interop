@@ -279,7 +279,9 @@ public class RESTMessage extends ProtocolMessage{
                     }
                 }
             }
+            long time=0;
             try {
+                time = System.currentTimeMillis();
                 switch(method) {
                     case GET_LABEL: clientRes.get();
                         break;
@@ -290,11 +292,12 @@ public class RESTMessage extends ProtocolMessage{
                     case DELETE_LABEL: clientRes.delete();
                        break;
                  }
+                time = System.currentTimeMillis() - time;
             } catch (ResourceException excep) {
                 ServiceLogger.LOG.error("Error constructing HTTP message", excep);
             }
             Response response = clientRes.getResponse();
-            return fromResponse(response, mediaType);
+            return fromResponse(response, mediaType, time);
         } catch (InvalidRESTMessage ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
         } catch (InvalidPatternReferenceException ex) {
@@ -309,7 +312,7 @@ public class RESTMessage extends ProtocolMessage{
      * @return A generated Rest event object.
      * @throws InvalidRESTMessage Error creating event from message.
      */
-    private static RESTEvent fromResponse(final Response response, MediaType acceptType)
+    private static RESTEvent fromResponse(final Response response, MediaType acceptType, long time)
         throws InvalidRESTMessage {
         final RESTEvent rResp = new RESTEvent();
         try {
@@ -317,7 +320,8 @@ public class RESTMessage extends ProtocolMessage{
             * Create a REST event about the Service Response i.e. capture and
             * uniform the data to be understood by the state machine rule checker
             */
-
+            
+            rResp.addParameter(new Parameter(RESTEvent.RESPONSE_TIME, Long.toString(time)));
             rResp.addParameter(new Parameter(RESTEvent.HTTP_FROM, response.getServerInfo().getAddress()));
             rResp.addParameter(new Parameter(RESTEvent.HTTP_TO, SystemProperties.getIP()));
             rResp.addParameter(new Parameter(RESTEvent.HTTP_MSG, RESTEvent.REPLY_LABEL));

@@ -605,7 +605,7 @@ public final class AOPRedirector extends Restlet {
          */
         final RESTEvent rResp = new RESTEvent();
         rResp.setResponseTime(time);
-
+        rResp.addParameter(new Parameter(RESTEvent.RESPONSE_TIME, Long.toString(time)));
         rResp.addParameter(new Parameter(RESTEvent.HTTP_FROM, response.getServerInfo().getAddress()));
         rResp.addParameter(new Parameter(RESTEvent.HTTP_TO, req.getClientInfo().getAddress()));
         rResp.addParameter(new Parameter(RESTEvent.HTTP_MSG, RESTEvent.REPLY_LABEL));

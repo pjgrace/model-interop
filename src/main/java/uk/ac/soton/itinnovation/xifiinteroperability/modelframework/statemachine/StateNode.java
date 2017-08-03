@@ -45,6 +45,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEv
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.InvalidPatternReferenceException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.ProtocolMessage;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidJSONPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidXPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult;
@@ -420,6 +421,12 @@ public class StateNode implements State {
      * @param report The output location to report the failure.
      */
     private void reportGuardFailure(final Guard chGuard, final Parameter value, final InteroperabilityReport report) {
+        String originalGuardCompare = chGuard.getGuardCompare();
+        String originalValue = value.getValue();
+        if (chGuard.getGuardLabel().equalsIgnoreCase(RESTEvent.RESPONSE_TIME)) {
+            chGuard.setGuardCompare(originalGuardCompare + "ms");
+            value.setValue(originalValue + "ms");            
+        }
         switch (chGuard.getType()) {
             case EQUALS:
                 report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue() + "', while it was supposed to be equal to the guard value: '" + chGuard.getGuardCompare() + "'");
@@ -435,6 +442,10 @@ public class StateNode implements State {
                 break;
             default:
                 report.printtabline("Guard test failed!");
+        }
+        if (chGuard.getGuardLabel().equalsIgnoreCase(RESTEvent.RESPONSE_TIME)) {
+            chGuard.setGuardCompare(originalGuardCompare);
+            value.setValue(originalValue);
         }
     }
 
@@ -768,7 +779,11 @@ public class StateNode implements State {
                         return false;
                     }
                 }
-
+                
+                String originalGuardCompare = chGuard.getGuardCompare();
+                if (chGuard.getGuardLabel().equalsIgnoreCase(RESTEvent.RESPONSE_TIME)){
+                    chGuard.setGuardCompare(originalGuardCompare + "ms");
+                }
                 switch (chGuard.getType()) {
                     case NOTEQUALS:
                         report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is not equal to '" + chGuard.getGuardCompare() + "'");
@@ -788,6 +803,9 @@ public class StateNode implements State {
                     default:
                         report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is '" + chGuard.getGuardCompare() + "'");
                         break;
+                }
+                if (chGuard.getGuardLabel().equalsIgnoreCase(RESTEvent.RESPONSE_TIME)){
+                    chGuard.setGuardCompare(originalGuardCompare);
                 }
             }
             catch (InvalidInputException ex) {
