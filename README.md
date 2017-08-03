@@ -35,6 +35,6 @@ mvn  test
 
 The following are a list of further documents in order to use the tool to develop different types of interoperability tests.
 * [How to create a compliance test with the tool](docs/userguide.md)
-* [How to create an interoperability test with the tool](docs/interop.md)
-* [COAP testing](docs/coap.md)
+* [How to create an interoperability test with the tool](docs/interop.md) (Tutorial in development)
+* [COAP testing](docs/coap.md) (Tutorial in development)
 
