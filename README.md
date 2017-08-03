@@ -317,7 +317,11 @@ The icon used for the **cut** feature is: ![cut][cut]
 In the previous step we have redone the addition of the **client** component. We don't really need it for our model, so let's cut it. Click on it and then click the **cut** icon.  
 ![cut client][screenshot-69]  
 After this, the **client** component is deleted.  
-![deleted client][screenshot-70]
+![deleted client][screenshot-70]  
+
+## Conclusion
+
+In this tutorial, I showed how you can create specification models (patterns) and perform compliance and interoperability testing using the tool. The model-driven approach we used can help you face the issues of highly heterogeneous communication protocols and data formats used within IoT systems. One of the main advantages of the tool is the utilization of lightweight models - simple **XML** files - that can be easily created and re-used.
 
 [start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
