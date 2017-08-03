@@ -7,15 +7,15 @@ represent the conditions and rules that a system must follow in order to pass a 
 that it acheives a level of interoperability.
 
 * **_I have an interoperability Test Model I want to test against_** - if you have a pre-made model you want to test a system against, 
-* you can load the xml file of the model using the toolbar of the tool and everything will be generated from the loaded information. Here is the 
-* sequence to follow in the toolbar.  
+you can load the xml file of the model using the toolbar of the tool and everything will be generated from the loaded information. Here is the 
+sequence to follow in the toolbar.  
 **File** -> **Open File** -> _choose XML file_  
 Pre-made interoperability test models can be found on the [Fiesta IoT](http://fiesta-iot.eu/) website.
 
 * **_I want to create a new interoperability test model and test a system against it or let others test against it_** - if you want to 
-* create your own interoperability test model and test a platform or system against it (or let others test against it), you can use the drag-and-drop 
-* functionality of the tool to create the state diagram that represents the test model (a directed graph with nodes representing states and 
-* edges representing transitions) and fill in the details you want to test.
+create your own interoperability test model and test a platform or system against it (or let others test against it), you can use the drag-and-drop 
+functionality of the tool to create the state diagram that represents the test model (a directed graph with nodes representing states and 
+edges representing transitions) and fill in the details you want to test.
 
 This tutorial is going to concentrate mainly on the latter since the former could be interpreted as a subcase of the second case.
 
