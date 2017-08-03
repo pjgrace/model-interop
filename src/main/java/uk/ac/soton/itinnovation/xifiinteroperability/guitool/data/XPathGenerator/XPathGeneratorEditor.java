@@ -175,6 +175,7 @@ public class XPathGeneratorEditor extends JDialog{
         try {
             int caret = editorPane.getCaretPosition();
             String text = editorPane.getDocument().getText(0, editorPane.getDocument().getLength());
+            text = text.replaceAll("&(?!amp;)", "&amp;");
             editorPane.setDocument(editorPane.getEditorKit().createDefaultDocument());
             editorPane.setText(text);
             editorPane.setCaretPosition(caret);
@@ -185,6 +186,7 @@ public class XPathGeneratorEditor extends JDialog{
     }
     
     private void resetEditor(String xml) {
+        xml = xml.replaceAll("&(?!amp;)", "&amp;");
         int caret = editorPane.getCaretPosition();
         editorPane.setDocument(editorPane.getEditorKit().createDefaultDocument());
         editorPane.setText(xml);

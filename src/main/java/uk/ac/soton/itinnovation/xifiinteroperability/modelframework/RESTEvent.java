@@ -70,6 +70,9 @@ public class RESTEvent extends MsgEvent implements  Serializable {
     /** A creatable header field. */
     public static final String HTTP_CONFIG_HEAD = "http.";
 
+    /** A response time label **/
+    public static final String RESPONSE_TIME = "response-time";
+    
     /**
      * The content of the message - optional, not all REST events will
      * have associated data.

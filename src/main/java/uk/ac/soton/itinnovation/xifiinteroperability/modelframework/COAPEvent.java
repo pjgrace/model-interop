@@ -69,6 +69,9 @@ public class COAPEvent extends MsgEvent implements Serializable {
 
     /** A creatable header field. */
     public static final String COAP_CONFIG_HEAD = "coap.";
+    
+    /** A label for response time **/
+    public static final String RESPONSE_TIME = "response-time";
 
     /**
      * The content of the message - optional, not all REST events will

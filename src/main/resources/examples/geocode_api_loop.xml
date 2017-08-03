@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <pattern xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation ="Pattern.xsd">
+	<patterndata>
+		<data>
+			<name>city</name>
+			<value>London</value>
+		</data>
+	</patterndata>
 	<architecture>		
 		<component>
 			<id>geocode</id>
@@ -7,10 +13,12 @@
 				<interface>
 					<id>rest1</id>
 					<url>https://maps.googleapis.com:443/maps/api/geocode/xml</url>
+					<protocol>null</protocol>
 				</interface>
 				<interface>
 					<id>rest2</id>
 					<url>https://maps.googleapis.com:443/maps/api/geocode/json</url>
+					<protocol>null</protocol>
 				</interface>
 		</component>
 	</architecture>
@@ -22,7 +30,7 @@
 				<to>A2</to>
 				<message>
 					<url>component.geocode.rest1</url>
-					<path>?address=London</path>
+					<path>?address=$$patterndata.city$$</path>
 					<method>GET</method>
 					<type>XML</type>
 					<headers>
@@ -77,6 +85,10 @@
 						<param>content[//GEOMETRY]</param>
 						<value>VIEWPORT</value>
 					</contains>
+					<lessthan>
+						<param>response-time</param>
+						<value>100</value>
+					</lessthan>
 				</guards>
 			</transition>
 		</state>		
@@ -140,10 +152,6 @@
 						<value>component.geocode.address</value>
 					</equal>
 					<equal>
-						<param>HTTP.msg</param>
-						<value>REPLY</value>
-					</equal>
-					<equal>
 						<param>HTTP.code</param>
 						<value>200</value>
 					</equal>
@@ -151,10 +159,6 @@
 						<param>content[$.results[0].place_id]</param>
 						<value>ChIJCSkVvleJc0gR8HHaTGpajKc</value>
 					</equal>
-					<notequal>
-						<param>content[$.status]</param>
-						<value>ZERO_RESULTS</value>
-					</notequal>
 					<greaterthan>
 						<param>content[$.results[0].geometry.bounds.northeast.lat]</param>
 						<value>0</value>
@@ -171,12 +175,22 @@
 						<param>HTTP</param>
 						<value>HTTP.code</value>
 					</contains>
+					<notequal>
+						<param>http.content-type</param>
+						<value>$$A2|headers|http.content-type$$</value>
+					</notequal>
+					<lessthan>
+						<param>response-time</param>
+						<value>100</value>
+					</lessthan>
 				</guards>
 			</transition>
 		</state>		
 		<state>
 			<label>A6</label>
 			<type>end</type>
+			<success>false</success>
+			<report>null</report>
 		</state>
 	</behaviour>
 </pattern>

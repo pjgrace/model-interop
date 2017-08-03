@@ -247,10 +247,6 @@ public class StateMachine implements EventCapture {
                 continue;
             }
             try {
-                // TODO if statement to do nothing if in step-by-step execution mode and next button not yet clicked,
-                // can be achieved with 2 booleans - one for debug-mode-on/off and one for next button clicked/not clicked,
-                // on each click at the end if the if statement for the given node, button click is reset to false again 
-                // and waits for another button click
                 if (currentState.isTrigger()) {
                     currentState = getState(currentState.executeTransition(this.eventQueue, outputReport));
                 }

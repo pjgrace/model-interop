@@ -269,8 +269,10 @@ public class COAPMessage extends ProtocolMessage{
             }
 
             request.setOptions(optionHeaders);
+            long time = System.currentTimeMillis();
             CoapResponse response = client.advanced(request);
-            return fromResponse(response);
+            time = System.currentTimeMillis() - time;
+            return fromResponse(response, time);
         } catch (InvalidRESTMessage ex) {
             throw new UnexpectedEventException(ex.getMessage(), ex);
         } catch (InvalidPatternReferenceException ex) {
@@ -285,7 +287,7 @@ public class COAPMessage extends ProtocolMessage{
      * @return A generated Rest event object.
      * @throws InvalidRESTMessage Error creating event from message.
      */
-    private COAPEvent fromResponse(final CoapResponse response)
+    private COAPEvent fromResponse(final CoapResponse response, long time)
         throws InvalidRESTMessage {
         final COAPEvent rResp = new COAPEvent();
 
@@ -293,7 +295,7 @@ public class COAPMessage extends ProtocolMessage{
         * Create a REST event about the Service Response i.e. capture and
         * uniform the data to be understood by the state machine rule checker
         */
-
+        rResp.addParameter(new Parameter(COAPEvent.RESPONSE_TIME, Long.toString(time)));
         rResp.addParameter(new Parameter(COAPEvent.COAP_FROM, response.advanced().getSource().getHostAddress()));
         if(response.advanced().getDestination() != null) {
             rResp.addParameter(new Parameter(COAPEvent.COAP_TO, response.advanced().getDestination().getHostAddress()));

@@ -42,6 +42,10 @@
 						<param>COAP.Code</param>
 						<value>69</value>
 					</equal>
+					<lessthan>
+						<param>response-time</param>
+						<value>100</value>
+					</lessthan>
 				</guards>
 			</transition>
 		</state>		
