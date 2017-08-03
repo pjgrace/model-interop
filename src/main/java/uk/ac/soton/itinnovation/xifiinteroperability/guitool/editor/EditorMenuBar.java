@@ -92,7 +92,7 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/delete.gif"));
+        menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/cut.gif"));
 
         // creates the tools menu
         menu = add(new JMenu("Tools"));
