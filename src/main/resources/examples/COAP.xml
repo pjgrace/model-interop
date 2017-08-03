@@ -44,7 +44,7 @@
 					</equal>
 					<lessthan>
 						<param>response-time</param>
-						<value>10</value>
+						<value>100</value>
 					</lessthan>
 				</guards>
 			</transition>
