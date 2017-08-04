@@ -79,6 +79,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphE
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.SystemGraphComponent;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.CustomGraph;
@@ -316,6 +317,10 @@ public class GraphEditor extends BasicGraphEditor {
                     getDataModel().addConnection(connData.getId(), connData.getSource().getId(),
                             connData.getTarget().getId());
                     editor.getXmlUndoManager().add(getDataModel().getState());
+                    updateTableView(connData.getId());
+                    String type = (getDataModel().getTransition(connData.getId()) instanceof Guard) ? "guard" : "message";
+                    final CardLayout cardLayout = (CardLayout) getAttributePanel().getLayout();
+                    cardLayout.show(getAttributePanel(), type);
                 };
             }
         );
@@ -350,6 +355,11 @@ public class GraphEditor extends BasicGraphEditor {
             public void invoke(final Object sender, final mxEventObject evt) {
                 graphComponent.validateGraph();
                 if (sender instanceof mxGraphSelectionModel) {
+                    if (((mxGraphSelectionModel) sender).getCells().length == 0){
+                        updateTableView(null);
+                        return;
+                    }
+                    
                     for (Object cell : ((mxGraphSelectionModel) sender).getCells()) {
                         // Get the user interface ID of the selection
                         final String ident = GUIdentifier.getGUIdentifier(((mxCell) cell).getId(), graphComponent);
@@ -363,7 +373,7 @@ public class GraphEditor extends BasicGraphEditor {
                         if (grpghM != null) {
                             if (grpghM instanceof ArchitectureNode){
                                 editor.getBehaviourGraph().getGraph().setSelectionCells(new Object[0]);
-                            }
+                            } 
                             else {
                                 editor.getSystemGraph().getGraph().setSelectionCells(new Object[0]);
                             }
