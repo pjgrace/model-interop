@@ -28,15 +28,18 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.EventCapture;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEventException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
 
 /**
  * The java data representation of a set of states that form a state machine.
@@ -261,7 +264,33 @@ public class StateMachine implements EventCapture {
                     }
                 }
                 else {
-                    currentState = getState(currentState.evaluateTransition(this.eventQueue.take(), outputReport));
+                    Long timeout = null;
+                    Transition timeoutTransition = null;
+                    for(Transition transition: currentState.getTransitions()){
+                        List<Guard> guards = transition.listGuards();
+                        if (guards.size() == 1){
+                            Guard guard = guards.get(0);
+                            if (guard.getGuardLabel().equalsIgnoreCase("timeout")){
+                                timeout = Long.parseLong(guard.getGuardCompare());
+                                timeoutTransition = transition;
+                                break;
+                            }
+                        }
+                    }
+                    MsgEvent event;
+                    if (timeout == null){
+                        event = this.eventQueue.take();
+                        currentState = getState(currentState.evaluateTransition(event, outputReport));
+                    }
+                    else {
+                        event = this.eventQueue.poll(timeout, TimeUnit.MILLISECONDS);
+                        if (event == null){
+                            currentState = getState(timeoutTransition.readLabel());
+                        }
+                        else {
+                            currentState = getState(currentState.evaluateTransition(event, outputReport));
+                        }
+                    }
                     if (currentState == null) {
                         ServiceLogger.LOG.error("Invalid state machine - could not find next state");
                         outputReport.setSuccess("false");
