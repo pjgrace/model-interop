@@ -80,7 +80,7 @@ public class PatternSpecificationTest {
     @Test
     public final void testValidApplicationPattern() {
         try {
-            final String pattern = readFile("examples/Loop.xml", Charset.defaultCharset());
+            final String pattern = readFile("examples/COAP.xml", Charset.defaultCharset());
 
             final boolean valid = PatternValidation.validatePattern(pattern, schemaUrl);
 
@@ -100,7 +100,7 @@ public class PatternSpecificationTest {
     @Test
     public final void testValidAPIPattern() {
         try {
-            final String pattern = readFile("examples/Loop.xml", Charset.defaultCharset());
+            final String pattern = readFile("examples/COAP.xml", Charset.defaultCharset());
 
             final boolean valid = PatternValidation.validatePattern(pattern, schemaUrl);
 
