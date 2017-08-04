@@ -81,7 +81,7 @@ public class EditorPopupMenu extends JPopupMenu {
             addSeparator();
 
             add(
-                editor.bind(mxResources.get("delete"), /*mxGraphActions.getDeleteAction()*/ new Delete(editor), "/images/cut.gif")).setEnabled(selected);
+                editor.bind(mxResources.get("delete"), /*mxGraphActions.getDeleteAction()*/ new Delete(editor), "/images/delete.gif")).setEnabled(selected);
 
             addSeparator();
 

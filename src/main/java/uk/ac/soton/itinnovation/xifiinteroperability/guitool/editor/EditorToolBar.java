@@ -27,9 +27,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
-import javax.swing.AbstractAction;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions;
+import java.awt.Dimension;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JToolBar;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.EmptyAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExecuteAction;
@@ -41,7 +43,6 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.File
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.VerifyAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.XMLAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopUpMenuActions.HistoryAction;
 
 /**
  * The editor toolbar at the top of the GUI. Simply a set of buttons
@@ -50,75 +51,62 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopU
  * @author pjg
  */
 public class EditorToolBar extends JToolBar {
-        
+
     /**
-	 * Construct a new instance of the editor toolbar.
-         * @param editor The basic graph editor that the toolbar is added to.
-         * @param orientation The orientation of the toolbar (horizontal)
-	 */
-	public EditorToolBar(final BasicGraphEditor editor, final int orientation) {
+     * Code to create a selectable button that is added to the toolbar
+     * @return
+     */
+    private JButton createToolbarButton(String actionCommand, String toolTip,
+            Action actionCmd, final BasicGraphEditor editor, String iconURL, String selectedIconURL) {
+
+        JButton button = new JButton();
+        button.setActionCommand(actionCommand);
+        button.setToolTipText(toolTip);
+        button.addActionListener(actionCmd);
+        button.setFocusPainted(false);
+        button.setSelectedIcon(new ImageIcon(BasicGraphEditor.class.getResource(selectedIconURL)));
+        button.setIcon(new ImageIcon(BasicGraphEditor.class.getResource(iconURL), actionCommand));
+        return button;
+    }
+
+    /**
+     * Construct a new instance of the editor toolbar.
+     * @param editor The basic graph editor that the toolbar is added to.
+     * @param orientation The orientation of the toolbar (horizontal)
+     */
+    public EditorToolBar(final BasicGraphEditor editor, final int orientation) {
 		super(orientation);
 		setBorder(BorderFactory.createCompoundBorder(BorderFactory
 				.createEmptyBorder(3, 3, 3, 3), getBorder()));
 		setFloatable(false);
 
-		add(editor.bind("New", new NewAction(editor),
-				"/images/new.gif"));
-		add(editor.bind("Open", new OpenAction(editor),
-				"/images/open.gif"));
-		add(editor.bind("Save", new SaveAction(editor, false),
-				"/images/save.gif"));
+                add(createToolbarButton("New", "New File", new NewAction(editor), editor, "/images/new.png", "/images/newselect.png"));
 
-                		addSeparator();
+                add(createToolbarButton("Open", "Open File", new OpenAction(editor), editor, "/images/open.png", "/images/openselect.png"));
 
-                add(editor.bind("Import", new FileActions.ImportAction(editor),
-				"/images/import-icon.png"));
+                add(createToolbarButton("Save", "Save File", new SaveAction(editor, false), editor, "/images/save.png", "/images/saveselect.png"));
 
-                addSeparator();
-		add(editor.bind("Delete", new EditorActions.Delete(editor),
-				"/images/cut.gif"));
+                add(createToolbarButton("Import", "Import Model", new FileActions.ImportAction(editor), editor, "/images/import.png", "/images/importselect.png"));
 
-		addSeparator();
+                addSeparator(new Dimension(15,3));
 
-		add(editor.bind("Undo", new HistoryAction(true, editor),
-				"/images/undo.gif"));
-		add(editor.bind("Redo", new HistoryAction(false, editor),
-				"/images/redo.gif"));
+                add(createToolbarButton("XML", "View as XML", new XMLAction(editor), editor, "/images/xml.png", "/images/xmlselect.png"));
 
-		addSeparator();
+                add(createToolbarButton("Model", "View as Model", new GraphAction(editor), editor, "/images/model.png", "/images/modelselect.png"));
 
-                add(editor.bind("XML", new XMLAction(editor),
-				"/images/xml.png"));
+                addSeparator(new Dimension(15,3));
 
-                add(editor.bind("Graph", new GraphAction(editor),
-				"/images/graph.png"));
+                add(createToolbarButton("Check", "Check Model", new VerifyAction(), editor, "/images/check.png", "/images/checkselect.png"));
 
+                add(createToolbarButton("Run", "Run Test", new ExecuteAction(), editor, "/images/run.png", "/images/runselect.png"));
 
-                addSeparator();
+                add(createToolbarButton("Stop", "Stop Test", new EmptyAction(), editor, "/images/stop.png", "/images/stopselect.png"));
 
-                add(editor.bind("Verify", new VerifyAction(),
-				"/images/validate.png"));
+                add(createToolbarButton("Step", "Next step", new EmptyAction(), editor, "/images/step.png", "/images/stepselect.png"));
 
-                addSeparator();
+                addSeparator(new Dimension(15,3));
 
-
-		add(editor.bind("Run", new ExecuteAction(),
-				"/images/test.png"));
-                
-                addSeparator();
-                
-                add(editor.bind("Stop", new EmptyAction(), 
-                                "/images/delete.gif"));
-                
-                addSeparator();
-                
-                add(editor.bind("Next", new EmptyAction(),
-                                "/images/open_end.gif"));
-                
-                addSeparator();
-                
-                add(editor.bind("Reports", new ReportsAction(), 
-                        "/images/outline.gif"));
+                add(createToolbarButton("Reports", "View Previous Reports", new ReportsAction(), editor, "/images/tests.png", "/images/testsselect.png"));
 	}
 }
 

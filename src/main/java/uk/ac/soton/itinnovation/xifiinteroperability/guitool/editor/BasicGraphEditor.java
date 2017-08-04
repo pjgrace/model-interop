@@ -253,12 +253,12 @@ public class BasicGraphEditor extends JPanel {
      * Handle undo events.
      */
     private final transient mxUndoManager undoManager;
-    
+
     /**
      * Handle XML undo events
      */
     private final transient XMLUndoManager xmlUndoManager;
-    
+
     /**
      * get the xmlUndoManager
      * @return the xmlUndoManager
@@ -266,7 +266,7 @@ public class BasicGraphEditor extends JPanel {
     public XMLUndoManager getXmlUndoManager(){
         return xmlUndoManager;
     }
-    
+
     /**
      * a method to reset the Undo managers
      */
@@ -274,7 +274,7 @@ public class BasicGraphEditor extends JPanel {
         undoManager.clear();
         xmlUndoManager.clear();
     }
-    
+
     /**
      * Frame title.
      */
@@ -304,7 +304,7 @@ public class BasicGraphEditor extends JPanel {
         public void invoke(final Object source, final mxEventObject evt) {
             List<mxUndoableEdit.mxUndoableChange> changes = ((mxUndoableEdit) evt
                     .getProperty("edit")).getChanges();
-            
+
             if (changes.size() == 4){
                 // this is to avoid adding invalid transitions as an event for the undo manager
                 if (changes.get(0) instanceof mxChildChange && changes.get(3) instanceof mxChildChange){
@@ -312,11 +312,11 @@ public class BasicGraphEditor extends JPanel {
                         return;
                     }
                 }
-            }     
-            
+            }
+
             undoManager.undoableEditHappened((mxUndoableEdit) evt
                     .getProperty("edit"));
-            
+
             if (changes.size() == 1){
                 // manually adding event when there is just a change in the location of a node
                 if (changes.get(0) instanceof mxGeometryChange){
@@ -329,7 +329,7 @@ public class BasicGraphEditor extends JPanel {
                 else if (changes.get(0) instanceof mxValueChange){
                     xmlUndoManager.add(dataModel.getState());
                 }
-            }   
+            }
         }
     };
 
@@ -357,7 +357,7 @@ public class BasicGraphEditor extends JPanel {
     public final DataModel getDataModel() {
         return dataModel;
     }
-    
+
     /**
      * Getter for the history model underpinning the GUI graph views.
      * @return The reference to the history model.
@@ -455,7 +455,9 @@ public class BasicGraphEditor extends JPanel {
         final JSplitPane inner = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
                         libraryPane, topPanel);
         inner.setDividerLocation(150);
-        inner.setResizeWeight(0);
+        inner.setResizeWeight(0.5);
+        inner.setOneTouchExpandable(true);
+        inner.setContinuousLayout(true);
         inner.setDividerSize(6);
         inner.setBorder(null);
 
@@ -463,9 +465,12 @@ public class BasicGraphEditor extends JPanel {
         // the graph behaveGraph on the right side of the window
         final JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inner,
                         codePanel);
-        outer.setOneTouchExpandable(false);
-        outer.setDividerLocation(200);
-        outer.setDividerSize(3);
+        //outer.setOneTouchExpandable(false);
+        outer.setResizeWeight(0.5);
+        outer.setOneTouchExpandable(true);
+        outer.setContinuousLayout(true);
+        outer.setDividerLocation(250);
+        //outer.setDividerSize(3);
         outer.setBorder(null);
 
         // Creates the status bar at the bottom of the GUI
@@ -1105,7 +1110,7 @@ public class BasicGraphEditor extends JPanel {
             ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), "EmptyPanel");
             return;
         }
-        
+
         // Get the attribut information
         AbstractGraphElement transition = dataModel.getNode(uiID);
 

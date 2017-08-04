@@ -94,7 +94,7 @@ public class EditorAboutFrame extends JDialog {
      */
     public EditorAboutFrame(final Frame owner) {
         super(owner);
-        setTitle("Interoperability Patterns");
+        setTitle("Model Based Interoperability Testing Tool");
         setLayout(new BorderLayout());
 
         // Creates the gradient panel
@@ -118,18 +118,11 @@ public class EditorAboutFrame extends JDialog {
                             .createEmptyBorder(8, 8, 12, 8)));
 
             // Adds title
-            final JLabel titleLabel = new JLabel("Interoperability");
+            final JLabel titleLabel = new JLabel("Interoperability Testing");
             titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
             titleLabel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
             titleLabel.setOpaque(false);
             panel.add(titleLabel, BorderLayout.NORTH);
-
-            // Adds optional subtitle
-            final JLabel subtitleLabel = new JLabel(
-                            "Interoperability Model editor");
-            subtitleLabel.setBorder(BorderFactory.createEmptyBorder(4, 18, 0, 0));
-            subtitleLabel.setOpaque(false);
-            panel.add(subtitleLabel, BorderLayout.CENTER);
 
             getContentPane().add(panel, BorderLayout.NORTH);
 
@@ -137,10 +130,10 @@ public class EditorAboutFrame extends JDialog {
             content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
             content.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-            content.add(new JLabel("Editing models for interoperability testing"));
-            content.add(new JLabel(" "));
+            content.add(new JLabel("This tool supports the development of interoperability tests for distributed systems"));
+            content.add(new JLabel(""));
 
-            content.add(new JLabel("Copyright (C) 2014 IT Innovation."));
+            content.add(new JLabel("Copyright (C) 2017 IT Innovation"));
             content.add(new JLabel("All rights reserved."));
             content.add(new JLabel(" "));
 

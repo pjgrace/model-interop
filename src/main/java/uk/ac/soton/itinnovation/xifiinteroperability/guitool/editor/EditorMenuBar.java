@@ -68,17 +68,17 @@ public class EditorMenuBar extends JMenuBar {
         super();
         JMenu menu = add(new JMenu(mxResources.get("file")));
 
-        menu.add(editor.bind(mxResources.get("new"), new NewAction(editor), "/images/new.gif"));
-        menu.add(editor.bind(mxResources.get("openFile"), new OpenAction(editor), "/images/open.gif"));
+        menu.add(editor.bind(mxResources.get("new"), new NewAction(editor), "/images/new.png"));
+        menu.add(editor.bind(mxResources.get("openFile"), new OpenAction(editor), "/images/open.png"));
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("save"), new SaveAction(editor, false), "/images/save.gif"));
+        menu.add(editor.bind(mxResources.get("save"), new SaveAction(editor, false), "/images/save.png"));
         menu.add(editor.bind(mxResources.get("saveAs"), new SaveAction(editor, true), "/images/saveas.gif"));
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("import"), new ImportAction(editor), "/images/import-icon.png"));
+        menu.add(editor.bind(mxResources.get("import"), new ImportAction(editor), "/images/import.png"));
 
         menu.addSeparator();
 
@@ -92,20 +92,20 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/cut.gif"));
+        menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/delete.gif"));
 
         // creates the tools menu
         menu = add(new JMenu("Tools"));
-        
+
         JMenuItem xPathGeneratorItem = new JMenuItem("XPath Expression Generator");
         xPathGeneratorItem.addActionListener((ActionEvent ae) -> {
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-            
+
             final int check = fChooser.showDialog(editor, "Choose xml file");
-            
+
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -117,7 +117,7 @@ public class EditorMenuBar extends JMenuBar {
                         line = br.readLine();
                     }
                     br.close();
-                    
+
                     new XPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){
@@ -125,16 +125,16 @@ public class EditorMenuBar extends JMenuBar {
                 }
             }
         });
-        
+
         JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Expression Generator");
         jsonPathGeneratorItem.addActionListener((ActionEvent ae) -> {
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-            
+
             final int check = fChooser.showDialog(editor, "Choose json file");
-            
+
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -146,7 +146,7 @@ public class EditorMenuBar extends JMenuBar {
                         line = br.readLine();
                     }
                     br.close();
-                    
+
                     new JSONPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){
@@ -154,10 +154,10 @@ public class EditorMenuBar extends JMenuBar {
                 }
             }
         });
-        
+
         menu.add(xPathGeneratorItem);
         menu.add(jsonPathGeneratorItem);
-        
+
         // Creates the view menu
         menu = add(new JMenu(mxResources.get("view")));
 
@@ -209,7 +209,7 @@ public class EditorMenuBar extends JMenuBar {
             public void actionPerformed(final ActionEvent event) {
                     editor.about();
             }
-        });     
+        });
     }
 };
 

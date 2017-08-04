@@ -250,12 +250,20 @@ public class GraphGenerator {
             if (interfaceData == null) {
                 port1 = new mxCell(
                     label, geo1,
-                    "image;image=/images/workplace.png");
+                    "image;image=/images/client.png");
             }
             else {
-                port1 = new mxCell(
+                final String protocol = eElement.getElementsByTagName("protocol").item(0).getTextContent();
+                if(protocol.equalsIgnoreCase("http")) {
+                    port1 = new mxCell(
                     label, geo1,
-                    "image;image=/images/server.png");
+                    "image;image=/images/http.png");
+                }
+                else if (protocol.equalsIgnoreCase("coap")) {
+                    port1 = new mxCell(
+                    label, geo1,
+                    "image;image=/images/coap.png");
+                }
             }
 
             port1.setVertex(true);

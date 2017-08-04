@@ -72,6 +72,7 @@ import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.BasicConfigurator;
@@ -88,7 +89,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPalett
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidTransitionException;
-
+import com.seaglasslookandfeel.SeaGlassLookAndFeel;
 
 /**
  * Executable GUI framework that extends the BasicGraphEditor class. This
@@ -170,24 +171,33 @@ public class GraphEditor extends BasicGraphEditor {
         // Creates the two palettes: i) arch shapes, ii) behaviour shapes
         final EditorPalette shapesPalette = insertPalette(mxResources.get("shapes"));
         final EditorPalette arcPalette = insertPalette(mxResources.get("images"));
- 
+
         // Add the two node types to the architecture palette
          /**
          * The REST component. A web service interface implementing a REST
          * API. Invoked by client components.
          */
-        arcPalette.addTemplate(XMLStateMachine.INTERFACE_LABEL,
-                new ImageIcon(GraphEditor.class.getResource("/images/server.png")),
-                "image;image=/images/server.png",
-                50, 50, XMLStateMachine.INTERFACE_LABEL);
+        arcPalette.addTemplate("HTTP Interface",
+                new ImageIcon(GraphEditor.class.getResource("/images/http.png")),
+                "image;image=/images/http.png",
+                64, 64, XMLStateMachine.INTERFACE_LABEL);
+
+        /**
+         * The REST component. A web service interface implementing a REST
+         * API. Invoked by client components.
+         */
+        arcPalette.addTemplate("COAP Interface",
+                new ImageIcon(GraphEditor.class.getResource("/images/coap.png")),
+                "image;image=/images/coap.png",
+                64, 64, XMLStateMachine.INTERFACE_LABEL);
 
         /**
          * A REST client. The user of a particular interface.
          */
         arcPalette.addTemplate(DataModel.CLIENT,
-                new ImageIcon(GraphEditor.class.getResource("/images/workplace.png")),
-                "image;image=/images/workplace.png",
-                50, 50, DataModel.CLIENT);
+                new ImageIcon(GraphEditor.class.getResource("/images/client.png")),
+                "image;image=/images/client.png",
+                64, 64, DataModel.CLIENT);
 
         // Adds the six node types to the behaviour pallete
 
@@ -253,11 +263,7 @@ public class GraphEditor extends BasicGraphEditor {
         String type = getDataModel().getNode(ident).getType();
 
 //        AbstractGraphElement transition = getDataModel().getTransition(connectionCell.getSource().getId());
-        if (type.equalsIgnoreCase("component")) {
-            throw new InvalidTransitionException("Cannot connect client component nodes");
-        } else if (type.equalsIgnoreCase(XMLStateMachine.INTERFACE_LABEL)) {
-            throw new InvalidTransitionException("Cannot connect interface component nodes");
-        } else if (type.equalsIgnoreCase(XMLStateMachine.END_LABEL)) {
+        if (type.equalsIgnoreCase(XMLStateMachine.END_LABEL)) {
             throw new InvalidTransitionException("An end node cannot have an output transition");
         } else if ((type.equalsIgnoreCase(XMLStateMachine.TRIGGER_LABEL)) || (type.equalsIgnoreCase(XMLStateMachine.TRIGGERSTART_LABEL))) {
             final GraphNode node = (GraphNode) getDataModel().getNode(ident);
@@ -441,14 +447,9 @@ public class GraphEditor extends BasicGraphEditor {
      */
     public static void main(final String[] args) {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e1) {
-            ServiceLogger.LOG.error("Look and feel class missing " + e1.getMessage());
-        } catch (InstantiationException e1) {
-            ServiceLogger.LOG.error("Unable to construct GUI: " + e1.getMessage());
-        } catch (IllegalAccessException e1) {
-             ServiceLogger.LOG.error("Illegal Access: " + e1.getMessage());
-        } catch (UnsupportedLookAndFeelException e1) {
+            LookAndFeel laf = new SeaGlassLookAndFeel();
+            UIManager.setLookAndFeel(laf);
+        }  catch (UnsupportedLookAndFeelException e1) {
             ServiceLogger.LOG.error("Invalid Look and feel try: " + e1.getMessage());
         }
 
