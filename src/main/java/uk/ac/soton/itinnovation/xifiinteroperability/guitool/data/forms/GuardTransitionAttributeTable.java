@@ -147,13 +147,56 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
             case 0: 
                 String strValue = (String) value;
                 if (strValue != null && strValue.equalsIgnoreCase("timeout")){
-                   if (mirrorNode.getData().size() > 0){
+                    if (mirrorNode.getData().size() > 1){
                         JOptionPane.showMessageDialog(comboBox, "Timeout transitions can only have one guard for the timeout value. "
                                 + "Delete your other guards first.", "Timeout transition erorr",
                                 JOptionPane.ERROR_MESSAGE);
                         return;
                     }
+                    else {
+                        if (row.getFuntionType() != FunctionType.Equals) {
+                            JOptionPane.showMessageDialog(comboBox, "A timeout guard can only be used with the 'equals' function.",
+                                    "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        else {
+                            try {
+                                Integer.parseInt(row.getGuardValue());
+                            }
+                            catch (NumberFormatException ex){
+                                JOptionPane.showMessageDialog(comboBox, "A timeout guard can only have integers as its guard value.", 
+                                        "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                        }
+                    }
                 }
+                else if (strValue != null && strValue.equalsIgnoreCase("index")){
+                    if (mirrorNode.getData().size() > 1){
+                        JOptionPane.showMessageDialog(comboBox, "Counter transitions can only have one guard for the index value. "
+                                + "Delete your other guards first.", "Counter transition erorr",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    else {
+                        if (row.getFuntionType() != FunctionType.Counter) {
+                            JOptionPane.showMessageDialog(comboBox, "A counter guard can only be used with the 'counter' function.",
+                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        else {
+                            try {
+                                Integer.parseInt(row.getGuardValue());
+                            }
+                            catch (NumberFormatException ex){
+                                JOptionPane.showMessageDialog(comboBox, "A counter guard can only have integers as its guard value.", 
+                                        "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                        }
+                    }
+                }                
+                
                 row.setGuardData(strValue);
                 break;
             case 1: 
@@ -164,6 +207,14 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         return;
                     }
                 }
+                else if (row.getGuardData().equalsIgnoreCase("index")) {
+                    if (((FunctionType) value) != FunctionType.Counter){
+                        JOptionPane.showMessageDialog(comboBox, "The only function that can be used for an index guard is the 'counter' function.",
+                                "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                
                 row.setFunctionType((FunctionType) value);
                 break;
             case 2:
@@ -172,11 +223,22 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         Long.parseLong((String) value);
                     }
                     catch (NumberFormatException ex){
-                        JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be an integer representing the time in milliseconds",
+                        JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be an integer representing the time in milliseconds.",
                                 "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
+                else if (row.getGuardData().equalsIgnoreCase("index")) {
+                    try {
+                        Integer.parseInt((String) value);
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be an integer representing the number of iterations.",
+                                "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                
                 row.setGuardValue((String) value);
         }
         fireTableCellUpdated(rowVal, colVal);

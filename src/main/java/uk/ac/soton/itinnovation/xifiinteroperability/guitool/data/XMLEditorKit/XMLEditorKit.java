@@ -1082,6 +1082,12 @@ public class XMLEditorKit extends StyledEditorKit {
                             "Timeout guard error", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
+                else if (value.equalsIgnoreCase("index")){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "You are not allowed to create an index guard through XML editing",
+                            "Counter guard error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
                 
                 break;
             
@@ -1099,6 +1105,18 @@ public class XMLEditorKit extends StyledEditorKit {
                         return false;
                     }
                 }
+                
+                else if (param.equalsIgnoreCase("index")){
+                    try {
+                        Long.parseLong(value);
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(xmlPanel, "The value for an index guard must be an integer representing the number of iterations",
+                                "Counter guard error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                
                 break;
                 
             case "id":
