@@ -3,7 +3,7 @@
 	<patterndata>
 		<data>
 			<name>resource-id</name>
-			<value>CAE526543222</value>
+			<value>CAE107523917</value>
 		</data>
 	</patterndata>
 	<architecture>		
@@ -38,7 +38,7 @@
 					</contains>
 					<equal>
 						<param>content[/*[local-name()='ae']/ri]</param>
-						<value>/in-cse/CAE526543222</value>
+						<value>/in-cse/CAE107523917</value>
 					</equal>
 					<equal>
 						<param>content[/*[local-name()='ae']/pi]</param>
@@ -66,7 +66,7 @@
 					</equal>
 					<equal>
 						<param>HTTP.X-M2M-RI</param>
-						<value>CAE526543222</value>
+						<value>CAE107523917</value>
 					</equal>
 					<equal>
 						<param>HTTP.X-M2M-RSC</param>
@@ -76,14 +76,18 @@
 						<param>HTTP.content-type</param>
 						<value>application/xml;charset=ISO-8859-1</value>
 					</equal>
+					<equal>
+						<param>content[/*[local-name()='ae']/ty]</param>
+						<value>2</value>
+					</equal>
 				</guards>
 			</transition>
 		</state>		
 		<state>
 			<label>end</label>
 			<type>end</type>
-			<success>false</success>
-			<report>null</report>
+			<success>true</success>
+			<report>Compliance testing successful.</report>
 		</state>		
 		<state>
 			<label>triggerstart</label>
