@@ -40,7 +40,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
@@ -52,7 +51,6 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.MainDisplayP
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.PatternCheckThread;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.PatternValidation;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.StateMachine;
 
 /**
  * The set of GUI actions e.g. save, open, etc. that correspond to operations
@@ -139,14 +137,14 @@ public final class EditorActions {
         @Override
         public final void actionPerformed(final ActionEvent actionEvent) {
             String[] choices = {"Execution mode", "Step-by-step mode"};
-            String mode = (String) JOptionPane.showInputDialog(null, 
-                    "Which mode do you want to use to run the interoperability test?", 
+            String mode = (String) JOptionPane.showInputDialog(null,
+                    "Which mode do you want to use to run the interoperability test?",
                     "Test running mode", JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
             if (mode == null){
                 return;
             }
             boolean debugMode = mode.equals("Step-by-step mode");
-            
+
             final BasicGraphEditor editor = getEditor(actionEvent);
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
@@ -156,7 +154,7 @@ public final class EditorActions {
                 final PatternCheckThread checkThread = new PatternCheckThread(editor.getDataModel().getGraphXML(),
                         editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor, debugMode);
                 EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
-                
+
                 Component stopButton = toolBar.getComponentAtIndex(18);
                 MouseListener[] listeners = stopButton.getMouseListeners();
                 if (listeners != null && listeners.length >= 2){
@@ -176,7 +174,7 @@ public final class EditorActions {
                         catch (NullPointerException ex){}
                     }
                 });
-                
+
                 if (debugMode){
                     Component nextButton = toolBar.getComponentAtIndex(20);
                     MouseListener[] mouseListeners = nextButton.getMouseListeners();
@@ -198,7 +196,7 @@ public final class EditorActions {
                     });
                 }
 
-                checkThread.start();   
+                checkThread.start();
             } catch (HeadlessException ex) {
                 JOptionPane.showMessageDialog(editor,
                         "Pattern is not valid: " + ex.getMessage(),
@@ -208,7 +206,7 @@ public final class EditorActions {
 
         }
     }
-    
+
     /**
      * Empty action for the initialization of the stop button
      */
@@ -222,18 +220,32 @@ public final class EditorActions {
             // skip
         }
     }
-    
+
     /**
      * Perform the showing last reports action.
      */
     public static class ReportsAction extends AbstractAction {
+
+        /**
+         * The editor context for action to be associated with.
+         */
+        private transient BasicGraphEditor editor;
+
+        /**
+         * Create instance of the XML action with the editor context.
+         * @param edtr The GUI editor context for the action.
+         */
+        public ReportsAction(final BasicGraphEditor edtr) {
+            super();
+            this.editor = edtr;
+        }
+
         /**
          * The method to switch to a panel with all previous reports.
          * @param actionEvent The received UI event.
          */
         @Override
         public final void actionPerformed(final ActionEvent actionEvent) {
-            final BasicGraphEditor editor = getEditor(actionEvent);
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.PREVIOUSREPORTS);
             editor.getCodePanel().getReportsPanel().resetTabbedPane();
@@ -264,7 +276,7 @@ public final class EditorActions {
                         VER_DIALOGUE,
                         JOptionPane.ERROR_MESSAGE);
                 }
-            } 
+            }
             catch (SAXException ex) {
                 JOptionPane.showMessageDialog(editor,
                         "Pattern is not valid: " + ex.getMessage(),
@@ -388,14 +400,14 @@ public final class EditorActions {
                     dModel.deleteNode(((mxCell) selectionCells[i]).getId());
                 }
                 graph.removeCells(selectionCells);
-                
+
                 selectionCells = graph2.getSelectionCells();
                 for (int i = 0; i < graph2.getSelectionCount(); i++) {
                     final String identf = ((mxCell) selectionCells[i]).getId();
                     dModel.deleteNode(GUIdentifier.setArchID(identf));
                 }
                 graph2.removeCells(selectionCells);
-                    
+
                 editor.getXmlUndoManager().add(dModel.getState());
 
                 mxGraphActions.getDeleteAction().actionPerformed(actionEvent);

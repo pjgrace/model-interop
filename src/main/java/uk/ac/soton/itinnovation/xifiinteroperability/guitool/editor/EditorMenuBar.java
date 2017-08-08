@@ -43,6 +43,7 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.Delete;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExitAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.GraphAction;
@@ -68,17 +69,17 @@ public class EditorMenuBar extends JMenuBar {
         super();
         JMenu menu = add(new JMenu(mxResources.get("file")));
 
-        menu.add(editor.bind(mxResources.get("new"), new NewAction(editor), "/images/new.png"));
-        menu.add(editor.bind(mxResources.get("openFile"), new OpenAction(editor), "/images/open.png"));
+        menu.add(editor.bind(mxResources.get("new"), new NewAction(editor), "/images/new16.png"));
+        menu.add(editor.bind(mxResources.get("openFile"), new OpenAction(editor), "/images/open16.png"));
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("save"), new SaveAction(editor, false), "/images/save.png"));
-        menu.add(editor.bind(mxResources.get("saveAs"), new SaveAction(editor, true), "/images/saveas.gif"));
+        menu.add(editor.bind(mxResources.get("save"), new SaveAction(editor, false), "/images/save16.png"));
+        menu.add(editor.bind(mxResources.get("saveAs"), new SaveAction(editor, true), "/images/saveas16.png"));
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("import"), new ImportAction(editor), "/images/import.png"));
+        menu.add(editor.bind(mxResources.get("import"), new ImportAction(editor), "/images/import16.png"));
 
         menu.addSeparator();
 
@@ -87,12 +88,27 @@ public class EditorMenuBar extends JMenuBar {
         // Creates the edit menu
         menu = add(new JMenu(mxResources.get("edit")));
 
-        menu.add(editor.bind(mxResources.get("undo"), new HistoryAction(true, editor), "/images/undo.gif"));
-        menu.add(editor.bind(mxResources.get("redo"), new HistoryAction(false, editor), "/images/redo.gif"));
+        menu.add(editor.bind(mxResources.get("cut"), new HistoryAction(true, editor), "/images/cut16.png"));
+        menu.add(editor.bind(mxResources.get("copy"), new HistoryAction(false, editor), "/images/copy16.png"));
+        menu.add(editor.bind(mxResources.get("paste"), new HistoryAction(false, editor), "/images/paste16.png"));
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/delete.gif"));
+        menu.add(editor.bind(mxResources.get("undo"), new HistoryAction(true, editor), "/images/undo16.png"));
+        menu.add(editor.bind(mxResources.get("redo"), new HistoryAction(false, editor), "/images/redo16.png"));
+
+        menu.addSeparator();
+
+        menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/bin16.png"));
+
+         // Creates the view menu
+        menu = add(new JMenu(mxResources.get("view")));
+
+        menu.add(editor.bind("Model", new GraphAction(editor), "/images/graph16.png"));
+        menu.add(editor.bind(mxResources.get("XML"), new XMLAction(editor), "/images/xml16.png"));
+        menu.addSeparator();
+        menu.add(editor.bind("Test Reports", new EditorActions.ReportsAction(editor), "/images/report16.png"));
+
 
         // creates the tools menu
         menu = add(new JMenu("Tools"));
@@ -158,11 +174,7 @@ public class EditorMenuBar extends JMenuBar {
         menu.add(xPathGeneratorItem);
         menu.add(jsonPathGeneratorItem);
 
-        // Creates the view menu
-        menu = add(new JMenu(mxResources.get("view")));
 
-        menu.add(editor.bind(mxResources.get("Graph"), new GraphAction(editor)));
-        menu.add(editor.bind(mxResources.get("XML"), new XMLAction(editor)));
 
         // Creates the diagram menu
         menu = add(new JMenu(mxResources.get("layout")));

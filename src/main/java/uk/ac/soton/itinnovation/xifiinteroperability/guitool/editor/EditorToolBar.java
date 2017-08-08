@@ -106,7 +106,7 @@ public class EditorToolBar extends JToolBar {
 
                 addSeparator(new Dimension(15,3));
 
-                add(createToolbarButton("Reports", "View Previous Reports", new ReportsAction(), editor, "/images/tests.png", "/images/testsselect.png"));
+                add(createToolbarButton("Reports", "View Previous Test Reports", new ReportsAction(editor), editor, "/images/tests.png", "/images/testsselect.png"));
 	}
 }
 
