@@ -37,6 +37,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -167,6 +169,11 @@ public class GuardForm extends JPanel {
      * The text area to input a URL.
      */
     private final transient JTextField url = new JTextField();
+    
+    /**
+     * the combo box for the guard function
+     */
+    private final JComboBox comboBox = new JComboBox();
 
     /**
      * The form has a one-to-many relationship with an architecture node. The
@@ -228,19 +235,35 @@ public class GuardForm extends JPanel {
         listPane.add(new JLabel("", SwingConstants.LEFT));
 
         listPane.add(new JLabel("Guard Function:",  JLabel.RIGHT));
-        final JComboBox comboBox = new JComboBox();
         comboBox.setModel(new DefaultComboBoxModel(Function.FunctionType.values()));
         final JPanel comboPanel = new JPanel();
         comboPanel.add(comboBox, BorderLayout.CENTER);
         listPane.add(comboPanel);
 
-        listPane.add(new JLabel("Guard description:",  JLabel.RIGHT));
+        listPane.add(new JLabel("Guard description:", JLabel.RIGHT));
         ident = new JTextField();
+        comboBox.addItemListener((ItemEvent ie) -> {
+            if (ie.getStateChange() == ItemEvent.SELECTED) {
+                if (ie.getItem().toString().equalsIgnoreCase("counter")) {
+                    ident.setText("Index");
+                    ident.setEditable(false);
+                    ident.setToolTipText("Counter guards have a fixed value for guard description, which is Index.");
+                }
+                else {
+                    ident.setEditable(true);
+                    ident.setToolTipText("Click right button for selection dialog.");
+                }
+            }
+        });
         ident.setToolTipText("Click right button for selection dialog.");
         ident.addFocusListener(MessageForm.COLOUR_CHANGER);
         ident.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
+                if (!ident.isEditable()){
+                    return;
+                }
+                
                 if (SwingUtilities.isRightMouseButton(e)){
                     String[] types = {"Header", "Message content", "Non-functional"};
                     String type = (String) JOptionPane.showInputDialog(topPanel,
@@ -514,6 +537,15 @@ public class GuardForm extends JPanel {
         mirrorNode = guardData;
         guardView.setMirrorNode(mirrorNode);
         guardView.setData(guardData);
+        if (comboBox.getSelectedItem() == Function.FunctionType.Counter){
+            ident.setText("Index");
+            ident.setEditable(false);
+            ident.setToolTipText("Counter guards have a fixed value for guard description, which is Index.");
+        }
+        else {
+            ident.setEditable(true);
+            ident.setToolTipText("Click right button for selection dialog.");
+        }
     }
 
     /**
@@ -526,6 +558,15 @@ public class GuardForm extends JPanel {
         address.setText("");
         urlID.setText("");
         url.setText("");
+        if (comboBox.getSelectedItem() == Function.FunctionType.Counter) {
+            ident.setText("Index");
+            ident.setEditable(false);
+            ident.setToolTipText("Counter guards have a fixed value for guard description, which is Index.");
+        } 
+        else {
+            ident.setEditable(true);
+            ident.setToolTipText("Click right button for selection dialog.");
+        }
     }
 
 

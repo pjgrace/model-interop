@@ -48,7 +48,6 @@ public final class Function implements Serializable {
      */
     public enum FunctionType {
 
-        Counter ("counter"),
         /**
          * The equals function a==b.
          */
@@ -73,7 +72,12 @@ public final class Function implements Serializable {
         /**
          * < function, a > b
          */
-        GreaterThan ("greaterthan");
+        GreaterThan ("greaterthan"),
+        
+        /**
+         * The counter function - Index = NumIterations
+         */
+        Counter ("counter");
 
         /**
          * The string version of the type e.g. "equals"

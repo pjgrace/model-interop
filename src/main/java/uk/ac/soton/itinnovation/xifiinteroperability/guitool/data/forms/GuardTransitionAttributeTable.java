@@ -37,6 +37,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Function;
 
 /**
  * The Guard transition attribute table is the list of rules that
@@ -218,6 +219,13 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be an integer representing the time in milliseconds.",
                                 "Transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (strValue != null && !strValue.equalsIgnoreCase("index")){
+                    if (row.getFuntionType() == Function.FunctionType.Counter){
+                        JOptionPane.showMessageDialog(comboBox, "You cannot use a counter function with a guard description different than 'Index'",
+                                "Counter guard error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
