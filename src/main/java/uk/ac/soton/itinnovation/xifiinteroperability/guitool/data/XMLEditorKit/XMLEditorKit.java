@@ -1073,6 +1073,51 @@ public class XMLEditorKit extends StyledEditorKit {
                 }
                 
                 break;
+            
+            // changing the guard description
+            case "param":
+                if (value.equalsIgnoreCase("timeout")){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "You are not allowed to create a timeout guard through XML editing.", 
+                            "Timeout guard error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                else if (value.equalsIgnoreCase("index")){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "You are not allowed to create an index guard through XML editing",
+                            "Counter guard error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                
+                break;
+            
+            // changing guard value
+            case "value":
+                View paramView = parentTagView.getParent().getView(1).getView(1);
+                String param = paramView.getDocument().getText(paramView.getStartOffset(), paramView.getEndOffset()- paramView.getStartOffset());
+                if (param.equalsIgnoreCase("timeout")){
+                    try {
+                        Long.parseLong(value);
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(xmlPanel, "The value for a timeout guard must be an integer representing the time in milliseconds",
+                                "Timeout guard error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                
+                else if (param.equalsIgnoreCase("index")){
+                    try {
+                        Long.parseLong(value);
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(xmlPanel, "The value for an index guard must be an integer representing the number of iterations",
+                                "Counter guard error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                
+                break;
                 
             case "id":
                 View upperView = parentTagView.getParent().getView(0);

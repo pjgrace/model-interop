@@ -96,7 +96,23 @@ public class Guard extends AbstractGraphElement implements Serializable {
             data.remove(toRemove);
         }
     }
+    
+    /**
+     * this method checks if the guard has a GuardData for a timeout 
+     * @return True if the guard is a timeout guard
+     */
+    public final boolean hasTimeout(){
+        return data.stream().anyMatch((guardData) -> (guardData.getGuardData().equalsIgnoreCase("timeout")));
+    }
 
+    /**
+     * this method checks if the guard has a GuardData for an index (a loop state)
+     * @return True if the guard has an index guard
+     */
+    public final boolean hasCounter(){
+        return data.stream().anyMatch((guardData) -> (guardData.getGuardData().equalsIgnoreCase("index")));
+    }
+    
     /**
      * Update the target id of the connection.
      * @param newTarget The label id of the

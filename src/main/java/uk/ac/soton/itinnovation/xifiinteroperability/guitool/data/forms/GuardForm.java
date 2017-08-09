@@ -339,6 +339,66 @@ public class GuardForm extends JPanel {
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
+                if (mirrorNode.hasTimeout()){
+                    JOptionPane.showMessageDialog(editor, "You cannot have a timeout transition with guards other than the timeout guard.",
+                            "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                              
+                if (ident.getText().equalsIgnoreCase("timeout")){
+                    if (mirrorNode.getData().size() > 0){
+                        JOptionPane.showMessageDialog(editor, "Timeout transitions can only have one guard for the timeout value. "
+                                + "Delete your other guards first.", "Timeout transition erorr",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Equals){
+                        JOptionPane.showMessageDialog(editor, "The only function that can be used for a timeout guard is the 'equals' function.",
+                                "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    try {
+                        Long.parseLong(address.getText());
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be an integer representing the time in milliseconds",
+                                "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                
+                if (mirrorNode.hasCounter()) {
+                    JOptionPane.showMessageDialog(editor, "You cannot have a counter transition with guards other than the index guard.",
+                            "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if (ident.getText().equalsIgnoreCase("index")){
+                    if (mirrorNode.getData().size() > 0){
+                        JOptionPane.showMessageDialog(editor, "Counter transitions can only have one guard for the index value. "
+                                + "Delete your other guards first.", "Counter transition erorr",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Counter){
+                        JOptionPane.showMessageDialog(editor, "The only function that can be used for an index guard is the 'counter' function.",
+                                "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    
+                    try {
+                        Integer.parseInt(address.getText());
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(editor, "The value for an index guard must be an integer representing the number of iterations.",
+                                "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                
                 mirrorNode.addGuard((Function.FunctionType) comboBox.getSelectedItem(), ident.getText(), address.getText());
                 guardView.clearData();
                 guardView.setData(mirrorNode);
@@ -394,6 +454,7 @@ public class GuardForm extends JPanel {
      */
     public final void setData(final Guard guardData) {
         mirrorNode = guardData;
+        guardView.setMirrorNode(mirrorNode);
         guardView.setData(guardData);
     }
 
