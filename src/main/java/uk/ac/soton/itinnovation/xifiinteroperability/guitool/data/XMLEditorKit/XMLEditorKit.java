@@ -1088,6 +1088,12 @@ public class XMLEditorKit extends StyledEditorKit {
                             "Counter guard error", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
+                else if (value.equalsIgnoreCase("response-time")){
+                    JOptionPane.showMessageDialog(xmlPanel, 
+                            "You are not allowed to create a response-time guard through XML editing",
+                            "Response-time guard error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
                 
                 break;
             
@@ -1123,6 +1129,22 @@ public class XMLEditorKit extends StyledEditorKit {
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(xmlPanel, "The value for an index guard must be an integer representing the number of iterations",
                                 "Counter guard error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                
+                else if (param.equalsIgnoreCase("response-time")){
+                    try {
+                        Long responseTime = Long.parseLong(value);
+                        if (responseTime <= 0){
+                            JOptionPane.showMessageDialog(xmlPanel, "The value for a response-time guard must be a positive integer.",
+                                    "Transition error", JOptionPane.ERROR_MESSAGE);
+                            return false;
+                        }
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(xmlPanel, "The value for a response-time guard must be an integer representing the time in milliseconds.",
+                                "Transition error", JOptionPane.ERROR_MESSAGE);
                         return false;
                     }
                 }
