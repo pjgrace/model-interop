@@ -161,7 +161,12 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         }
                         else {
                             try {
-                                Integer.parseInt(row.getGuardValue());
+                                Long timeout = Long.parseLong(row.getGuardValue());
+                                if (timeout <= 0) {
+                                    JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be a positive integer.",
+                                            "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                                    return;
+                                }
                             }
                             catch (NumberFormatException ex){
                                 JOptionPane.showMessageDialog(comboBox, "A timeout guard can only have integers as its guard value.", 
@@ -186,8 +191,13 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         }
                         else {
                             try {
-                                Integer.parseInt(row.getGuardValue());
-                            }
+                                Integer counter = Integer.parseInt(row.getGuardValue());
+                                if (counter <= 0) {
+                                    JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be a positive integer.",
+                                            "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                                    return;
+                                }
+                            } 
                             catch (NumberFormatException ex){
                                 JOptionPane.showMessageDialog(comboBox, "A counter guard can only have integers as its guard value.", 
                                         "Counter transition error", JOptionPane.ERROR_MESSAGE);
@@ -220,7 +230,12 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
             case 2:
                 if (row.getGuardData().equalsIgnoreCase("timeout")) {
                     try {
-                        Long.parseLong((String) value);
+                        Long timeout = Long.parseLong((String) value);
+                        if (timeout <= 0) {
+                            JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be a positive integer.",
+                                    "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be an integer representing the time in milliseconds.",
@@ -230,7 +245,12 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                 }
                 else if (row.getGuardData().equalsIgnoreCase("index")) {
                     try {
-                        Integer.parseInt((String) value);
+                        Integer counter = Integer.parseInt((String) value);
+                        if (counter <= 0) {
+                            JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be a positive integer.",
+                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be an integer representing the number of iterations.",

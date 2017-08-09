@@ -392,7 +392,12 @@ public class GuardForm extends JPanel {
                     }
                     
                     try {
-                        Long.parseLong(address.getText());
+                        Long timeout = Long.parseLong(address.getText());
+                        if (timeout <= 0){
+                            JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be a positive integer.",
+                                    "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be an integer representing the time in milliseconds",
@@ -422,7 +427,12 @@ public class GuardForm extends JPanel {
                     }
                     
                     try {
-                        Integer.parseInt(address.getText());
+                        Integer counter = Integer.parseInt(address.getText());
+                        if (counter <= 0){
+                            JOptionPane.showMessageDialog(editor, "The value for an index guard must be a positive integer.",
+                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(editor, "The value for an index guard must be an integer representing the number of iterations.",
