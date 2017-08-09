@@ -1097,7 +1097,12 @@ public class XMLEditorKit extends StyledEditorKit {
                 String param = paramView.getDocument().getText(paramView.getStartOffset(), paramView.getEndOffset()- paramView.getStartOffset());
                 if (param.equalsIgnoreCase("timeout")){
                     try {
-                        Long.parseLong(value);
+                        Long timeout = Long.parseLong(value);
+                        if (timeout <= 0){
+                            JOptionPane.showMessageDialog(xmlPanel, "The value for a timeout guard must be a positive integer.",
+                                    "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                            return false;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(xmlPanel, "The value for a timeout guard must be an integer representing the time in milliseconds",
@@ -1108,7 +1113,12 @@ public class XMLEditorKit extends StyledEditorKit {
                 
                 else if (param.equalsIgnoreCase("index")){
                     try {
-                        Long.parseLong(value);
+                        Integer counter  = Integer.parseInt(value);
+                        if (counter <= 0){
+                            JOptionPane.showMessageDialog(xmlPanel, "The value for an index guard must be a positive integer.",
+                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                            return false;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(xmlPanel, "The value for an index guard must be an integer representing the number of iterations",
