@@ -30,28 +30,28 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 import com.mxgraph.util.mxResources;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.Delete;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExitAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.GraphAction;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.NewAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.OpenAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.SaveAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.XMLAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.ImportAction;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.NewAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopUpMenuActions.HistoryAction;
 
 /**
@@ -69,12 +69,22 @@ public class EditorMenuBar extends JMenuBar {
         super();
         JMenu menu = add(new JMenu(mxResources.get("file")));
 
-        menu.add(editor.bind(mxResources.get("new"), new NewAction(editor), "/images/new16.png"));
-        menu.add(editor.bind(mxResources.get("openFile"), new OpenAction(editor), "/images/open16.png"));
+        JMenuItem menuItem = new JMenuItem(mxResources.get("new"), new ImageIcon(BasicGraphEditor.class.getResource("/images/new16.png")));
+        menuItem.addActionListener(new NewAction(editor));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem(mxResources.get("openFile"), new ImageIcon(BasicGraphEditor.class.getResource("/images/open16.png")));
+        menuItem.addActionListener(new OpenAction(editor));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("save"), new SaveAction(editor, false), "/images/save16.png"));
+        menuItem = new JMenuItem(mxResources.get("openFile"), new ImageIcon(BasicGraphEditor.class.getResource("/images/save16.png")));
+        menuItem.addActionListener(new SaveAction(editor, false));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
         menu.add(editor.bind(mxResources.get("saveAs"), new SaveAction(editor, true), "/images/saveas16.png"));
 
         menu.addSeparator();
@@ -88,18 +98,38 @@ public class EditorMenuBar extends JMenuBar {
         // Creates the edit menu
         menu = add(new JMenu(mxResources.get("edit")));
 
-        menu.add(editor.bind(mxResources.get("cut"), new HistoryAction(true, editor), "/images/cut16.png"));
-        menu.add(editor.bind(mxResources.get("copy"), new HistoryAction(false, editor), "/images/copy16.png"));
-        menu.add(editor.bind(mxResources.get("paste"), new HistoryAction(false, editor), "/images/paste16.png"));
+        menuItem = new JMenuItem(mxResources.get("cut"), new ImageIcon(BasicGraphEditor.class.getResource("/images/cut16.png")));
+        menuItem.addActionListener(new SaveAction(editor, false));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem(mxResources.get("copy"), new ImageIcon(BasicGraphEditor.class.getResource("/images/copy16.png")));
+        menuItem.addActionListener(new SaveAction(editor, false));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem(mxResources.get("paste"), new ImageIcon(BasicGraphEditor.class.getResource("/images/paste16.png")));
+        menuItem.addActionListener(new SaveAction(editor, false));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
+
+        menu.addSeparator();
+        menuItem = new JMenuItem(mxResources.get("undo"), new ImageIcon(BasicGraphEditor.class.getResource("/images/undo16.png")));
+        menuItem.addActionListener(new HistoryAction(true, editor));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem(mxResources.get("redo"), new ImageIcon(BasicGraphEditor.class.getResource("/images/redo16.png")));
+        menuItem.addActionListener(new HistoryAction(false, editor));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_MASK));
+        menu.add(menuItem);
 
         menu.addSeparator();
 
-        menu.add(editor.bind(mxResources.get("undo"), new HistoryAction(true, editor), "/images/undo16.png"));
-        menu.add(editor.bind(mxResources.get("redo"), new HistoryAction(false, editor), "/images/redo16.png"));
-
-        menu.addSeparator();
-
-        menu.add(editor.bind(mxResources.get("delete"), new Delete(editor), "/images/bin16.png"));
+        menuItem = new JMenuItem(mxResources.get("delete"), new ImageIcon(BasicGraphEditor.class.getResource("/images/bin16.png")));
+        menuItem.addActionListener(new HistoryAction(false, editor));
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+        menu.add(menuItem);
 
          // Creates the view menu
         menu = add(new JMenu(mxResources.get("view")));
@@ -196,21 +226,6 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.add(editor.graphLayout("organicLayout", true));
         menu.add(editor.graphLayout("circleLayout", true));
-
-        // Creates the window menu
-        menu = add(new JMenu(mxResources.get("window")));
-
-        final UIManager.LookAndFeelInfo[] lafs = UIManager.getInstalledLookAndFeels();
-
-        for (UIManager.LookAndFeelInfo laf : lafs) {
-            final String clazz = laf.getClassName();
-            menu.add(new AbstractAction(laf.getName()) {
-                @Override
-                public void actionPerformed(final ActionEvent event) {
-                    editor.setLookAndFeel(clazz);
-                }
-            });
-        }
 
         // Creates the help menu
         menu = add(new JMenu(mxResources.get("help")));

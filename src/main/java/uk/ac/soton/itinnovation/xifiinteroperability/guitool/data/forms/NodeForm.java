@@ -29,7 +29,6 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.AttributePanel;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -39,7 +38,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.Map;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -115,48 +113,52 @@ public class NodeForm extends JPanel {
         super(new BorderLayout());
         nodeView = new GraphNodeAttributeTable();
 
+        /**
+         * Outer layout: two panels in box layout. The grid of inputs on top.
+         * The table of constants below.
+         */
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
         // Info Panel
-        final JPanel listPane = new JPanel();
+        final JPanel inputPanel = new JPanel();
         final GridLayout gridLayout = new GridLayout(6 , 2);
+        inputPanel.setLayout(gridLayout);
         gridLayout.setHgap(5);
         gridLayout.setVgap(5);
-        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        listPane.setLayout(gridLayout);
 
-        final JLabel title = new JLabel("Add new node attribute", JLabel.CENTER);
+        final JLabel title = new JLabel(" Model Variables", SwingConstants.LEFT);
         final Font font = title.getFont();
         final Map attributes = font.getAttributes();
-        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
         title.setFont(font.deriveFont(attributes));
+        inputPanel.add(title);
+        inputPanel.add(new JLabel("",  JLabel.RIGHT));
 
-        listPane.add(title);
-        listPane.add(new JLabel("", SwingConstants.LEFT));
-
-        listPane.add(new JLabel("parameter ID:",  JLabel.RIGHT));
+        inputPanel.add(new JLabel("Variable Name:",  JLabel.RIGHT));
         ident = new JTextField();
         ident.addFocusListener(MessageForm.COLOUR_CHANGER);
-        listPane.add(ident);
+        ident.setToolTipText("Enter the name to be used as the identifier for this variable value");
+        inputPanel.add(ident);
 
-        listPane.add(new JLabel("parameter value:", JLabel.RIGHT));
+        inputPanel.add(new JLabel("Variable Value:", JLabel.RIGHT));
         address = new JTextField();
         address.addFocusListener(MessageForm.COLOUR_CHANGER);
-        listPane.add(address);
-        listPane.add(new JLabel(""));
+        address.setToolTipText("Enter the initial value of this variable");
 
-        final JButton update = new JButton("Add parameter");
+        inputPanel.add(address);
+        inputPanel.add(new JLabel(""));
+
+        final JButton update = new JButton("Add Variable");
         ButtonCustomizer.customizeButton(update);
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 for (ConstantData data: mirrorNode.getConstantData()){
                     if (data.getFieldName().equalsIgnoreCase(ident.getText())){
-                        JOptionPane.showMessageDialog(topPanel, 
-                                "Pattern data with this ID already exists.", 
-                                "Pattern data error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(topPanel,
+                                "Constan with this name already exists.",
+                                "Constant data error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
@@ -168,17 +170,24 @@ public class NodeForm extends JPanel {
             }
           });
 
-        listPane.add(update);
-        topPanel.add(listPane);
+        inputPanel.add(update);
+        inputPanel.add(new JLabel("",  JLabel.RIGHT));
+        inputPanel.add(new JLabel("",  JLabel.RIGHT));
 
-        topPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-
-        topPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        final JLabel tableTitle = new JLabel("Table of nodes", JLabel.RIGHT);
+        final JLabel tableTitle = new JLabel(" Current Variables", JLabel.LEFT);
+        inputPanel.add(tableTitle);
+        inputPanel.add(new JLabel("",  JLabel.RIGHT));
         tableTitle.setFont(font.deriveFont(attributes));
-        topPanel.add(tableTitle);
-        topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+//        topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+
+//        topPanel.add(listPane);
+        topPanel.add(inputPanel);
+        topPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+//
+//        topPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+
 
         final JTable nodeTable = new JTable(nodeView);
         nodeTable.addMouseListener(new MouseAdapter() {
@@ -190,11 +199,11 @@ public class NodeForm extends JPanel {
                 } else {
                     nodeTable.clearSelection();
                 }
-                
+
                 int rowindex = nodeTable.getSelectedRow();
                 if (rowindex < 0)
                     return;
-                
+
                 if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
                     JPopupMenu popup = new ChangeTable(editor, nodeView, r, mirrorNode);
                     popup.show(e.getComponent(), e.getX(), e.getY());
@@ -206,10 +215,10 @@ public class NodeForm extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
         add(nodeScrollPane, BorderLayout.CENTER);
-        
+
         this.addMouseListener(MessageForm.FOCUS_CHANGER);
         topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
-        listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
+//        listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
         nodeTable.addMouseListener(MessageForm.FOCUS_CHANGER);
         nodeScrollPane.addMouseListener(MessageForm.FOCUS_CHANGER);
     }
