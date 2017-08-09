@@ -81,14 +81,20 @@ public class GuardForm extends JPanel {
      */
     private final static String DESCRIPTION_HELPER = "<html><body>"
             + "<font size=+1><b><i>Guard description</i></b></font><br>"
-            + "This can be either an HTTP field or a value from the content <br>"
-            + "extracted using XPath or JSONPath depending on the content-type.<br><br>"
+            + "This can be either an HTTP field, a value from the content extracted using XPath or JSONPath depending on the content-type<br>"
+            + " or a non-functional requirement - timeout for observing events or response time guard.<br><br>"
             + "1) Common HTTP fields:<br>"
             + "<ul><li>HTTP.from</li></li><li>HTTP.code</li><li>HTTP.msg</li>"
             + "<li>HTTP.date</li><li>HTTP.to</li><li>HTTP.expires</li><li>HTTP.content-type</li>"
             + "<li>HTTP.server</li><li>HTTP.transfer-encoding</li><li>HTTP.accept-ranges</li></ul>"
             + "2) Content extraction:<br>"
             + "<ul><li>Use the following format - <b>content[XPath/JSONPath]</b></li></ul>"
+            + "3) Non-functional requirements:<br>"
+            + "<ul><li>Response-time - to test the time it took to receive a response after a request was sent use<br>"
+            + " <b>response-time</b> for guard description and specify the time in milliseconds as a guard value.</li>"
+            + "<li>Timeout - to specify a maximum time a state should be waiting for an event to occur use <b>timeout</b> for<br>"
+            + " guard description and specify the time in milliseconds as a guard value. Then choose the equal function.<br>"
+            + " Keep in mind that timeout transitions can have only one guard, which is the timeout guard.</li></ul>"
             + "</body></html>";
     
     /**
@@ -236,7 +242,7 @@ public class GuardForm extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e){
                 if (SwingUtilities.isRightMouseButton(e)){
-                    String[] types = {"Header", "Message content"};
+                    String[] types = {"Header", "Message content", "Non-functional"};
                     String type = (String) JOptionPane.showInputDialog(topPanel,
                             "Please choose the type of data to generate:", "Selection dialog",
                             JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
@@ -320,6 +326,32 @@ public class GuardForm extends JPanel {
                                     JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
                                 }
                             }
+                        }
+                    }
+                    else if (type != null && type.equals("Non-functional")){
+                        String[] choices = {"Timeout", "Response-time"};
+                        String choice = (String) JOptionPane.showInputDialog(topPanel,
+                                "Please choose the type of non-functional requirement you want to use:", "Selection dialog",
+                                JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
+                        if (choice != null && choice.equals("Timeout")){
+                            try {
+                                ident.getDocument().insertString(ident.getCaretPosition(), "timeout", null);
+                            } 
+                            catch (BadLocationException ex) {
+                                JOptionPane.showMessageDialog(topPanel,
+                                        "An error occured while inserting your selection.",
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+                        }
+                        else if (choice != null && choice.equals("Response-time")){
+                            try {
+                                ident.getDocument().insertString(ident.getCaretPosition(), "response-time", null);
+                            } 
+                            catch (BadLocationException ex) {
+                                JOptionPane.showMessageDialog(topPanel,
+                                        "An error occured while inserting your selection.",
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+                                }
                         }
                     }
                 }
