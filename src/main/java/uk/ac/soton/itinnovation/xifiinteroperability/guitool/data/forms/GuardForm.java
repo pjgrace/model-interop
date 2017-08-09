@@ -244,14 +244,11 @@ public class GuardForm extends JPanel {
         ident = new JTextField();
         comboBox.addItemListener((ItemEvent ie) -> {
             if (ie.getStateChange() == ItemEvent.SELECTED) {
-                if (ie.getItem().toString().equalsIgnoreCase("counter")) {
-                    ident.setText("Index");
-                    ident.setEditable(false);
-                    ident.setToolTipText("Counter guards have a fixed value for guard description, which is Index.");
-                }
-                else {
-                    ident.setEditable(true);
-                    ident.setToolTipText("Click right button for selection dialog.");
+                adjustGuardDescription();
+            }
+            else if (ie.getStateChange() == ItemEvent.DESELECTED){
+                if (ie.getItem() == Function.FunctionType.Counter){
+                    ident.setText("");
                 }
             }
         });
@@ -394,6 +391,12 @@ public class GuardForm extends JPanel {
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
+                if (ident.getText().equals("") || address.getText().equals("")){
+                    JOptionPane.showMessageDialog(editor, "Please fill values for both the guard description and the guard value!",
+                            "Invalid guard", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
                 if (mirrorNode.hasTimeout()){
                     JOptionPane.showMessageDialog(editor, "You cannot have a timeout transition with guards other than the timeout guard.",
                             "Timeout transition error", JOptionPane.ERROR_MESSAGE);
@@ -483,7 +486,10 @@ public class GuardForm extends JPanel {
                 mirrorNode.addGuard((Function.FunctionType) comboBox.getSelectedItem(), ident.getText(), address.getText());
                 guardView.clearData();
                 guardView.setData(mirrorNode);
-                ident.setText("");
+                adjustGuardDescription();
+                if (comboBox.getSelectedItem() != Function.FunctionType.Counter){
+                    ident.setText("");
+                }
                 address.setText("");
             }
           });
@@ -537,15 +543,7 @@ public class GuardForm extends JPanel {
         mirrorNode = guardData;
         guardView.setMirrorNode(mirrorNode);
         guardView.setData(guardData);
-        if (comboBox.getSelectedItem() == Function.FunctionType.Counter){
-            ident.setText("Index");
-            ident.setEditable(false);
-            ident.setToolTipText("Counter guards have a fixed value for guard description, which is Index.");
-        }
-        else {
-            ident.setEditable(true);
-            ident.setToolTipText("Click right button for selection dialog.");
-        }
+        adjustGuardDescription();
     }
 
     /**
@@ -558,6 +556,10 @@ public class GuardForm extends JPanel {
         address.setText("");
         urlID.setText("");
         url.setText("");
+        adjustGuardDescription();
+    }
+    
+    private final void adjustGuardDescription(){
         if (comboBox.getSelectedItem() == Function.FunctionType.Counter) {
             ident.setText("Index");
             ident.setEditable(false);
@@ -568,7 +570,6 @@ public class GuardForm extends JPanel {
             ident.setToolTipText("Click right button for selection dialog.");
         }
     }
-
 
 }
 

@@ -147,6 +147,12 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
         switch (colVal) {
             case 0: 
                 String strValue = (String) value;
+                if (strValue == null || strValue.equals("")){
+                    JOptionPane.showMessageDialog(comboBox, "Please fill a value for the guard description!", 
+                            "Invalid guard", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
                 if (strValue != null && strValue.equalsIgnoreCase("timeout")){
                     if (mirrorNode.getData().size() > 1){
                         JOptionPane.showMessageDialog(comboBox, "Timeout transitions can only have one guard for the timeout value. "
@@ -251,6 +257,12 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                 row.setFunctionType((FunctionType) value);
                 break;
             case 2:
+                if (value == null || ((String) value).equals("")){
+                    JOptionPane.showMessageDialog(comboBox, "Please fill a guard value!", 
+                            "Invalid guard", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
                 if (row.getGuardData().equalsIgnoreCase("timeout")) {
                     try {
                         Long timeout = Long.parseLong((String) value);
