@@ -112,6 +112,20 @@ public class ComponentForm extends JPanel {
      */
     private transient ArchitectureNode mirrorNode;
 
+    private String getProtocol(BasicGraphEditor editor) {
+        mxGraphModel model = (mxGraphModel) editor.getSystemGraph().getGraph().getModel();
+        mxCell cellChanged = (mxCell) model.getCell(mirrorNode.getNodeLabelID());
+        String componentType = cellChanged.getStyle();
+
+        if(componentType.contains("coap")) {
+            return "coap";
+        }
+        if(componentType.contains("mqtt")) {
+            return "mqtt";
+        }
+        return "http";
+    }
+
     /**
      * Create a form with the specified labels, tooltips, and sizes.
      * @param editor
@@ -131,22 +145,24 @@ public class ComponentForm extends JPanel {
         listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         listPane.setLayout(gridLayout);
 
-        final JLabel title = new JLabel("Component Information", JLabel.CENTER);
+        final JLabel title = new JLabel(" Component Information", JLabel.LEFT);
         final Font font = title.getFont();
         final Map attributes = font.getAttributes();
-        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
         title.setFont(font.deriveFont(attributes));
 
         listPane.add(title);
         listPane.add(new JLabel("", SwingConstants.LEFT));
 
-        listPane.add(new JLabel("Component Identifier:",  JLabel.RIGHT));
+        listPane.add(new JLabel("Name:",  JLabel.LEFT));
+        listPane.add(new JLabel("Host Address:", JLabel.LEFT));
         ident = new JTextField();
+        ident.setToolTipText("ID of the component");
         listPane.add(ident);
 
-        listPane.add(new JLabel("Component Address:", JLabel.RIGHT));
+
         address = new JTextField();
+        address.setToolTipText("Enter the IP address or domain name of the component");
         listPane.add(address);
         listPane.add(new JLabel(""));
 
@@ -171,7 +187,7 @@ public class ComponentForm extends JPanel {
                 }
             }
           });
-        
+
         final FocusListener focusListener = new FocusListener(){
             @Override
             public void focusGained(FocusEvent fe) {
@@ -183,11 +199,11 @@ public class ComponentForm extends JPanel {
                 fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
                 update.doClick();
             }
-            
+
         };
         ident.addFocusListener(focusListener);
         address.addFocusListener(focusListener);
-        
+
         JPanel panel = this;
         KeyListener keyListener = new KeyAdapter(){
             @Override
@@ -210,34 +226,35 @@ public class ComponentForm extends JPanel {
         newIntfPane.setLayout(gridLayout);
         newIntfPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-        final JLabel stitle = new JLabel(" Add new Interface to component");
+        final JLabel stitle = new JLabel(" Add Interface");
         stitle.setFont(font.deriveFont(attributes));
         newIntfPane.add(stitle);
         newIntfPane.add(new JLabel("", JLabel.LEFT));
 
-        newIntfPane.add(new JLabel(" Interface ID", JLabel.LEFT));
-        newIntfPane.add(new JLabel("Interface URL", JLabel.LEFT));
+        newIntfPane.add(new JLabel("Name:", JLabel.LEFT));
+        newIntfPane.add(new JLabel("URL:", JLabel.LEFT));
 
 
         newIntfPane.add(urlID);
         urlID.addFocusListener(MessageForm.COLOUR_CHANGER);
         newIntfPane.add(url);
         url.addFocusListener(MessageForm.COLOUR_CHANGER);
-        
-        final JButton addIntf = new JButton("Add Interface Info");
+
+        final JButton addIntf = new JButton("Add");
         ButtonCustomizer.customizeButton(addIntf);
         addIntf.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 for(InterfaceData data: mirrorNode.getData()){
                     if (data.getRestID().equalsIgnoreCase(urlID.getText())){
-                        JOptionPane.showMessageDialog(newIntfPane, 
+                        JOptionPane.showMessageDialog(newIntfPane,
                                 "An interface with this id already exists.",
                                 "Interface error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
-                mirrorNode.addInterfaceData(urlID.getText(), url.getText(), "http");
+
+                mirrorNode.addInterfaceData(urlID.getText(), url.getText(), getProtocol(editor));
                 componentView.clearData();
                 componentView.setData(mirrorNode);
                 url.setText("");
@@ -250,7 +267,7 @@ public class ComponentForm extends JPanel {
         topPanel.add(newIntfPane);
 
         topPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        final JLabel tableTitle = new JLabel("Table of URL Interfaces", JLabel.RIGHT);
+        final JLabel tableTitle = new JLabel("Component Interfaces", JLabel.LEFT);
         tableTitle.setFont(font.deriveFont(attributes));
         topPanel.add(tableTitle);
         topPanel.add(Box.createRigidArea(new Dimension(0, 5)));

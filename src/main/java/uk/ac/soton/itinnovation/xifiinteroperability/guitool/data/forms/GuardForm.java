@@ -31,8 +31,6 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Function;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.AttributePanel;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -44,8 +42,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -59,7 +55,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
@@ -90,7 +85,7 @@ public class GuardForm extends JPanel {
             + "2) Content extraction:<br>"
             + "<ul><li>Use the following format - <b>content[XPath/JSONPath]</b></li></ul>"
             + "</body></html>";
-    
+
     /**
      * the html helper text for guard value
      */
@@ -125,13 +120,13 @@ public class GuardForm extends JPanel {
             + "<li>You can also click the right button of the mouse and select "
             + "the <b><i>'Insert previous states data'</i></b> option</li></ul>"
             + "</body></html>";
-    
+
     /**
      * the posible header fields for guard description
      */
     private final String[] headerFields = {"From", "Code", "Msg", "Date", "To", "Expires", "Content-Type",
         "Server", "Transfer-Encoding", "Accept-Ranges"};
-    
+
     /**
      * The user interface model i.e. this data is what this form is
      * viewing upon - list of guards on a particular transition.
@@ -205,30 +200,35 @@ public class GuardForm extends JPanel {
 
         // Info Panel
         final JPanel listPane = new JPanel();
-        final GridLayout gridLayout = new GridLayout(8 , 2);
+        final GridLayout gridLayout = new GridLayout(7 , 3);
         gridLayout.setHgap(5);
         gridLayout.setVgap(5);
-        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         listPane.setLayout(gridLayout);
 
-        final JLabel title = new JLabel("Add new Guard", JLabel.CENTER);
+        final JLabel title = new JLabel(" Transition Tests", JLabel.LEFT);
         final Font font = title.getFont();
         final Map attributes = font.getAttributes();
-        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
         title.setFont(font.deriveFont(attributes));
 
+        // Row 1
         listPane.add(title);
-        listPane.add(new JLabel("", SwingConstants.LEFT));
+        listPane.add(new JLabel("", JLabel.LEFT));
+        listPane.add(new JLabel("", JLabel.LEFT));
 
-        listPane.add(new JLabel("Guard Function:",  JLabel.RIGHT));
+        // Row 2
+        listPane.add(new JLabel("Function:",  JLabel.RIGHT));
         final JComboBox comboBox = new JComboBox();
         comboBox.setModel(new DefaultComboBoxModel(Function.FunctionType.values()));
-        final JPanel comboPanel = new JPanel();
-        comboPanel.add(comboBox, BorderLayout.CENTER);
-        listPane.add(comboPanel);
+        comboBox.setSelectedItem(Function.FunctionType.Equals);
+//        final JPanel comboPanel = new JPanel();
+//        comboPanel.add(comboBox, BorderLayout.CENTER);
+//        comboPanel.getRenderer().setHorizontalAlignment(JLabel.RIGHT);
+        listPane.add(comboBox, JLabel.RIGHT);
+        listPane.add(new JLabel("", JLabel.LEFT));
 
-        listPane.add(new JLabel("Guard description:",  JLabel.RIGHT));
+        // Row 3
+        listPane.add(new JLabel("Parameter to test:",  JLabel.RIGHT));
         ident = new JTextField();
         ident.setToolTipText("Click right button for selection dialog.");
         ident.addFocusListener(MessageForm.COLOUR_CHANGER);
@@ -240,7 +240,7 @@ public class GuardForm extends JPanel {
                     String type = (String) JOptionPane.showInputDialog(topPanel,
                             "Please choose the type of data to generate:", "Selection dialog",
                             JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
-                    
+
                     if (type != null && type.equals("Header")){
                         String[] protocols = {"HTTP", "COAP"};
                         String protocol = (String) JOptionPane.showInputDialog(topPanel,
@@ -267,7 +267,7 @@ public class GuardForm extends JPanel {
                         String path = (String) JOptionPane.showInputDialog(topPanel,
                                 "Please choose the content data type you want to use:", "Selection dialog",
                                 JOptionPane.PLAIN_MESSAGE, null, paths, paths[0]);
-                        
+
                         if (path != null && path.equals("XML")) {
                             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
                             FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
@@ -301,7 +301,7 @@ public class GuardForm extends JPanel {
                             fChooser.setAcceptAllFileFilterUsed(false);
 
                             final int check = fChooser.showDialog(editor, "Choose json file");
-                            
+
                             if (check == JFileChooser.APPROVE_OPTION) {
                                 BufferedReader br;
                                 try {
@@ -313,9 +313,9 @@ public class GuardForm extends JPanel {
                                         line = br.readLine();
                                     }
                                     br.close();
-                                    
+
                                     new JSONPathGeneratorEditor().initGUI(sb.toString(), true, ident);
-                                } 
+                                }
                                 catch (IOException ex) {
                                     JOptionPane.showMessageDialog(editor, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
                                 }
@@ -327,78 +327,95 @@ public class GuardForm extends JPanel {
         });
         listPane.add(ident);
 
-        listPane.add(new JLabel("Required guard value:", JLabel.RIGHT));
+        JButton descriptionButton = new JButton("Help");
+        ButtonCustomizer.customizeButton(descriptionButton);
+        descriptionButton.addActionListener((ActionEvent ae) -> {
+            JOptionPane.showMessageDialog(listPane, DESCRIPTION_HELPER,
+                    "Helper wizard", JOptionPane.INFORMATION_MESSAGE);
+        });
+        listPane.add(descriptionButton);
+
+        // Row 4
+        listPane.add(new JLabel("Required value:", JLabel.RIGHT));
         address = new JTextField();
         address.setComponentPopupMenu(new FormPopUpMenu(editor, address));
         address.addFocusListener(MessageForm.COLOUR_CHANGER);
         listPane.add(address);
+        JButton valueButton = new JButton("Help");
+        ButtonCustomizer.customizeButton(valueButton);
+        valueButton.addActionListener((ActionEvent ae) -> {
+            JOptionPane.showMessageDialog(listPane, VALUE_HELPER,
+                    "Helper wizard", JOptionPane.INFORMATION_MESSAGE);
+        });
+        listPane.add(valueButton);
+
+        // Row 5
         listPane.add(new JLabel(""));
-        
-        final JButton update = new JButton("Add guard");
+
+        final JButton update = new JButton("Add Test");
         ButtonCustomizer.customizeButton(update);
         update.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 if (mirrorNode.hasTimeout()){
-                    JOptionPane.showMessageDialog(editor, "You cannot have a timeout transition with guards other than the timeout guard.",
+                    JOptionPane.showMessageDialog(editor, "You cannot have a timeout transition with test other than the timeout test.",
                             "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                              
+
                 if (ident.getText().equalsIgnoreCase("timeout")){
                     if (mirrorNode.getData().size() > 0){
-                        JOptionPane.showMessageDialog(editor, "Timeout transitions can only have one guard for the timeout value. "
-                                + "Delete your other guards first.", "Timeout transition erorr",
+                        JOptionPane.showMessageDialog(editor, "Timeout transitions can only have one test for the timeout value. "
+                                + "Delete your other guards first.", "Timeout transition error",
                                 JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    
+
                     if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Equals){
-                        JOptionPane.showMessageDialog(editor, "The only function that can be used for a timeout guard is the 'equals' function.",
+                        JOptionPane.showMessageDialog(editor, "The only function that can be used for a timeout test is the 'equals' function.",
                                 "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    
+
                     try {
                         Long.parseLong(address.getText());
                     }
                     catch (NumberFormatException ex){
-                        JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be an integer representing the time in milliseconds",
+                        JOptionPane.showMessageDialog(editor, "The value for a timeout test must be an integer representing the time in milliseconds",
                                 "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
-                
+
                 if (mirrorNode.hasCounter()) {
-                    JOptionPane.showMessageDialog(editor, "You cannot have a counter transition with guards other than the index guard.",
+                    JOptionPane.showMessageDialog(editor, "You cannot have a counter transition with test other than the index test.",
                             "Counter transition error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 if (ident.getText().equalsIgnoreCase("index")){
                     if (mirrorNode.getData().size() > 0){
-                        JOptionPane.showMessageDialog(editor, "Counter transitions can only have one guard for the index value. "
+                        JOptionPane.showMessageDialog(editor, "Counter transitions can only have one test for the index value. "
                                 + "Delete your other guards first.", "Counter transition erorr",
                                 JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    
+
                     if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Counter){
-                        JOptionPane.showMessageDialog(editor, "The only function that can be used for an index guard is the 'counter' function.",
+                        JOptionPane.showMessageDialog(editor, "The only function that can be used for an index test is the 'counter' function.",
                                 "Counter transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    
+
                     try {
                         Integer.parseInt(address.getText());
                     }
                     catch (NumberFormatException ex){
-                        JOptionPane.showMessageDialog(editor, "The value for an index guard must be an integer representing the number of iterations.",
+                        JOptionPane.showMessageDialog(editor, "The value for an index test must be an integer representing the number of iterations.",
                                 "Counter transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
-                
                 mirrorNode.addGuard((Function.FunctionType) comboBox.getSelectedItem(), ident.getText(), address.getText());
                 guardView.clearData();
                 guardView.setData(mirrorNode);
@@ -408,30 +425,25 @@ public class GuardForm extends JPanel {
           });
 
         listPane.add(update);
-        
-        JButton descriptionButton = new JButton("Helper for guard description");
-        ButtonCustomizer.customizeButton(descriptionButton);
-        descriptionButton.addActionListener((ActionEvent ae) -> {
-            JOptionPane.showMessageDialog(listPane, DESCRIPTION_HELPER,
-                    "Helper wizard", JOptionPane.INFORMATION_MESSAGE);
-        });
-        listPane.add(descriptionButton);
-        
-        JButton valueButton = new JButton("Helper for guard value");
-        ButtonCustomizer.customizeButton(valueButton);
-        valueButton.addActionListener((ActionEvent ae) -> {
-            JOptionPane.showMessageDialog(listPane, VALUE_HELPER,
-                    "Helper wizard", JOptionPane.INFORMATION_MESSAGE);
-        });
-        listPane.add(valueButton);
-        
-        topPanel.add(listPane);
-        
-        topPanel.add(Box.createRigidArea(new Dimension(0, 25)));
-        final JLabel tableTitle = new JLabel("Table of Guards", JLabel.RIGHT);
+        listPane.add(new JLabel(""));
+
+
+        // Row 6
+        listPane.add(new JLabel(""));
+        listPane.add(new JLabel(""));
+        listPane.add(new JLabel(""));
+
+        // Row 7
+        final JLabel tableTitle = new JLabel("Current Tests", JLabel.LEFT);
         tableTitle.setFont(font.deriveFont(attributes));
-        topPanel.add(tableTitle);
-        topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        listPane.add(tableTitle);
+        listPane.add(new JLabel(""));
+        listPane.add(new JLabel(""));
+        topPanel.add(listPane);
+
+//        topPanel.add(Box.createRigidArea(new Dimension(0, 25)));
+//
+//        topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
 
         AttributePanel.setTableConsistentLookAndFeel(guardTable);
@@ -439,11 +451,11 @@ public class GuardForm extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
         add(guardScrollPane, BorderLayout.CENTER);
-        
+
         this.addMouseListener(MessageForm.FOCUS_CHANGER);
         topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
         listPane.addMouseListener(MessageForm.FOCUS_CHANGER);
-        comboPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
+        comboBox.addMouseListener(MessageForm.FOCUS_CHANGER);
         guardTable.addMouseListener(MessageForm.FOCUS_CHANGER);
         guardScrollPane.addMouseListener(MessageForm.FOCUS_CHANGER);
     }

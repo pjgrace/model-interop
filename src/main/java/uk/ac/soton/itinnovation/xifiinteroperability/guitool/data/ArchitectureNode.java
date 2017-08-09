@@ -41,7 +41,7 @@ import java.util.List;
  * @author pjg
  */
 public class ArchitectureNode extends AbstractGraphElement implements Serializable {
-    
+
     /**
      * The address of the interface or client - typically the IP address in string.
      */
@@ -59,7 +59,7 @@ public class ArchitectureNode extends AbstractGraphElement implements Serializab
      * The id of the graph label of this component node
      */
     private final String nodeLabelID;
-    
+
     /**
      * Getter for the id of the node graph label
      * @return the nodeLabelID of the node
@@ -91,7 +91,7 @@ public class ArchitectureNode extends AbstractGraphElement implements Serializab
      */
     public ArchitectureNode(final String idnty, final String label, final String type, final String nodeLabelID) {
         super(idnty, label, type);
-        this.address = "null";
+        this.address = "127.0.0.1";
         this.nodeLabelID = nodeLabelID;
     }
 
