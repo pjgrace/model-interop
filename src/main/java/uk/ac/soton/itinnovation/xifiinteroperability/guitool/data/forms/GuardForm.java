@@ -36,9 +36,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -388,111 +386,108 @@ public class GuardForm extends JPanel {
         
         final JButton update = new JButton("Add guard");
         ButtonCustomizer.customizeButton(update);
-        update.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                if (ident.getText().equals("") || address.getText().equals("")){
-                    JOptionPane.showMessageDialog(editor, "Please fill values for both the guard description and the guard value!",
-                            "Invalid guard", JOptionPane.WARNING_MESSAGE);
+        update.addActionListener((final ActionEvent event) -> {
+            if (ident.getText().equals("") || address.getText().equals("")){
+                JOptionPane.showMessageDialog(editor, "Please fill values for both the guard description and the guard value!",
+                        "Invalid guard", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            if (mirrorNode.hasTimeout()){
+                JOptionPane.showMessageDialog(editor, "You cannot have a timeout transition with guards other than the timeout guard.",
+                        "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if (ident.getText().equalsIgnoreCase("timeout")){
+                if (mirrorNode.getData().size() > 0){
+                    JOptionPane.showMessageDialog(editor, "Timeout transitions can only have one guard for the timeout value. "
+                            + "Delete your other guards first.", "Timeout transition erorr",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
-                if (mirrorNode.hasTimeout()){
-                    JOptionPane.showMessageDialog(editor, "You cannot have a timeout transition with guards other than the timeout guard.",
+                if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Equals){
+                    JOptionPane.showMessageDialog(editor, "The only function that can be used for a timeout guard is the 'equals' function.",
                             "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                              
-                if (ident.getText().equalsIgnoreCase("timeout")){
-                    if (mirrorNode.getData().size() > 0){
-                        JOptionPane.showMessageDialog(editor, "Timeout transitions can only have one guard for the timeout value. "
-                                + "Delete your other guards first.", "Timeout transition erorr",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    
-                    if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Equals){
-                        JOptionPane.showMessageDialog(editor, "The only function that can be used for a timeout guard is the 'equals' function.",
-                                "Timeout transition error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    
-                    try {
-                        Long timeout = Long.parseLong(address.getText());
-                        if (timeout <= 0){
-                            JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be a positive integer.",
-                                    "Timeout transition error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                    }
-                    catch (NumberFormatException ex){
-                        JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be an integer representing the time in milliseconds",
+                
+                try {
+                    Long timeout = Long.parseLong(address.getText());
+                    if (timeout <= 0){
+                        JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be a positive integer.",
                                 "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
+                catch (NumberFormatException ex){
+                    JOptionPane.showMessageDialog(editor, "The value for a timeout guard must be an integer representing the time in milliseconds",
+                            "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            
+            if (mirrorNode.hasCounter()) {
+                JOptionPane.showMessageDialog(editor, "You cannot have a counter transition with guards other than the index guard.",
+                        "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if (ident.getText().equalsIgnoreCase("index")){
+                if (mirrorNode.getData().size() > 0){
+                    JOptionPane.showMessageDialog(editor, "Counter transitions can only have one guard for the index value. "
+                            + "Delete your other guards first.", "Counter transition erorr",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 
-                if (mirrorNode.hasCounter()) {
-                    JOptionPane.showMessageDialog(editor, "You cannot have a counter transition with guards other than the index guard.",
+                if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Counter){
+                    JOptionPane.showMessageDialog(editor, "The only function that can be used for an index guard is the 'counter' function.",
                             "Counter transition error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
-                if (ident.getText().equalsIgnoreCase("index")){
-                    if (mirrorNode.getData().size() > 0){
-                        JOptionPane.showMessageDialog(editor, "Counter transitions can only have one guard for the index value. "
-                                + "Delete your other guards first.", "Counter transition erorr",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    
-                    if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Counter){
-                        JOptionPane.showMessageDialog(editor, "The only function that can be used for an index guard is the 'counter' function.",
-                                "Counter transition error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    
-                    try {
-                        Integer counter = Integer.parseInt(address.getText());
-                        if (counter <= 0){
-                            JOptionPane.showMessageDialog(editor, "The value for an index guard must be a positive integer.",
-                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                    }
-                    catch (NumberFormatException ex){
-                        JOptionPane.showMessageDialog(editor, "The value for an index guard must be an integer representing the number of iterations.",
+                try {
+                    Integer counter = Integer.parseInt(address.getText());
+                    if (counter <= 0){
+                        JOptionPane.showMessageDialog(editor, "The value for an index guard must be a positive integer.",
                                 "Counter transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
-                
-                if (ident.getText().equalsIgnoreCase("response-time")){
-                    try {
-                        Long responseTime = Long.parseLong(address.getText());
-                        if (responseTime <= 0){
-                            JOptionPane.showMessageDialog(editor, "The value for a response-time guard must be a positive integer.",
-                                    "Transition error", JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                    }
-                    catch (NumberFormatException ex){
-                        JOptionPane.showMessageDialog(editor, "The value for a response-time guard must be an integer representing the time in milliseconds.",
+                catch (NumberFormatException ex){
+                    JOptionPane.showMessageDialog(editor, "The value for an index guard must be an integer representing the number of iterations.",
+                            "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            
+            if (ident.getText().equalsIgnoreCase("response-time")){
+                try {
+                    Long responseTime = Long.parseLong(address.getText());
+                    if (responseTime <= 0){
+                        JOptionPane.showMessageDialog(editor, "The value for a response-time guard must be a positive integer.",
                                 "Transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
-                
-                mirrorNode.addGuard((Function.FunctionType) comboBox.getSelectedItem(), ident.getText(), address.getText());
-                guardView.clearData();
-                guardView.setData(mirrorNode);
-                adjustGuardDescription();
-                if (comboBox.getSelectedItem() != Function.FunctionType.Counter){
-                    ident.setText("");
+                catch (NumberFormatException ex){
+                    JOptionPane.showMessageDialog(editor, "The value for a response-time guard must be an integer representing the time in milliseconds.",
+                            "Transition error", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
-                address.setText("");
             }
-          });
+            
+            mirrorNode.addGuard((Function.FunctionType) comboBox.getSelectedItem(), ident.getText(), address.getText());
+            guardView.clearData();
+            guardView.setData(mirrorNode);
+            adjustGuardDescription();
+            if (comboBox.getSelectedItem() != Function.FunctionType.Counter){
+                ident.setText("");
+            }
+            address.setText("");
+        });
 
         listPane.add(update);
         
@@ -559,7 +554,7 @@ public class GuardForm extends JPanel {
         adjustGuardDescription();
     }
     
-    private final void adjustGuardDescription(){
+    private void adjustGuardDescription(){
         if (comboBox.getSelectedItem() == Function.FunctionType.Counter) {
             ident.setText("Index");
             ident.setEditable(false);
