@@ -205,7 +205,22 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                             }
                         }
                     }
-                }                
+                }
+                else if (strValue != null && strValue.equalsIgnoreCase("response-time")){
+                    try {
+                        Long responseTime = Long.parseLong((row.getGuardValue()));
+                        if (responseTime <= 0){
+                            JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be a positive integer.",
+                                    "Transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be an integer representing the time in milliseconds.",
+                                "Transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 
                 row.setGuardData(strValue);
                 break;
@@ -255,6 +270,21 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be an integer representing the number of iterations.",
                                 "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (row.getGuardData().equalsIgnoreCase("response-time")){
+                    try {
+                        Long responseTime = Long.parseLong((String) value);
+                        if (responseTime <= 0){
+                            JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be a positive integer.",
+                                    "Transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be an integer representing the time in milliseconds.",
+                                "Transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
