@@ -261,6 +261,13 @@ public final class XMLStateMachine {
                             Guard.ComparisonType.LESSTHAN,
                             guardValue, archDesc));
                 }
+                else if (eltIndex.getName().equalsIgnoreCase(MsgEvent.REGEX)) {
+                    arrayOfGuards.add(new Guard(
+                            eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),
+                            String.class,
+                            Guard.ComparisonType.REGEX,
+                            guardValue, archDesc));
+                }
                 else if (eltIndex.getName().equalsIgnoreCase("counter")) {
                     arrayOfGuards.add(new Guard(
                         eltIndex.getChildTextTrim(MsgEvent.PARAM_LABEL),

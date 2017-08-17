@@ -57,6 +57,9 @@ public abstract class MsgEvent implements Serializable {
 
     /** XML <guards><lessthan> tag constant. */
     public static final String LESSTHAN_LABEL = "lessthan";
+    
+    /** XML <guards><regex> tag constant */
+    public static final String REGEX = "regex";
 
     /** XML <param>tag constant. */
     public static final String PARAM_LABEL = "param";
