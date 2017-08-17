@@ -98,7 +98,7 @@ public class JSONReader {
             doc.insert(pos, data);
         }
         catch (InvalidJSONException ex){
-            JOptionPane.showMessageDialog(null, "Something went wrong while processing your json text.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Something went wrong while processing your json data.", "Error", JOptionPane.ERROR_MESSAGE);
         }
         
     }

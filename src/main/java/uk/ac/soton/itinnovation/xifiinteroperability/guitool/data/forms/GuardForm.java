@@ -293,6 +293,15 @@ public class GuardForm extends JPanel {
                                 JOptionPane.PLAIN_MESSAGE, null, paths, paths[0]);
                         
                         if (path != null && path.equals("XML")) {
+                            int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing XML file?",
+                                    "Load XML file", JOptionPane.YES_NO_CANCEL_OPTION);
+                            if (choice == JOptionPane.CANCEL_OPTION) {
+                                return;
+                            } else if (choice == JOptionPane.NO_OPTION) {
+                                new XPathGeneratorEditor().initGUI(false, null);
+                                return;
+                            }
+
                             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
                             FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
                             fChooser.setFileFilter(filter);
@@ -319,6 +328,16 @@ public class GuardForm extends JPanel {
                             }
                         }
                         else if (path != null && path.equals("JSON")){
+                            int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing JSON file?",
+                                    "Load JSON file", JOptionPane.YES_NO_CANCEL_OPTION);
+                            if (choice == JOptionPane.CANCEL_OPTION) {
+                                return;
+                            } 
+                            else if (choice == JOptionPane.NO_OPTION) {
+                                new JSONPathGeneratorEditor().initGUI(false, null);
+                                return;
+                            }
+                            
                             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
                             FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
                             fChooser.setFileFilter(filter);

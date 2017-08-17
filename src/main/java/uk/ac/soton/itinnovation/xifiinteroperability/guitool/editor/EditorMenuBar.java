@@ -99,6 +99,16 @@ public class EditorMenuBar extends JMenuBar {
         
         JMenuItem xPathGeneratorItem = new JMenuItem("XPath Expression Generator");
         xPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+            int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing XML file?",
+                    "Load XML file", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (choice == JOptionPane.CANCEL_OPTION){
+                return;
+            }
+            else if (choice == JOptionPane.NO_OPTION){
+                new XPathGeneratorEditor().initGUI(false, null);
+                return;
+            }
+            
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
             fChooser.setFileFilter(filter);
@@ -128,6 +138,16 @@ public class EditorMenuBar extends JMenuBar {
         
         JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Expression Generator");
         jsonPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+            int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing JSON file?",
+                    "Load JSON file", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (choice == JOptionPane.CANCEL_OPTION) {
+                return;
+            } 
+            else if (choice == JOptionPane.NO_OPTION) {
+                new JSONPathGeneratorEditor().initGUI(false, null);
+                return;
+            }
+            
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
             fChooser.setFileFilter(filter);
