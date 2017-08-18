@@ -38,6 +38,8 @@ import java.io.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ConstantData;
@@ -1101,6 +1103,8 @@ public class XMLEditorKit extends StyledEditorKit {
             case "value":
                 View paramView = parentTagView.getParent().getView(1).getView(1);
                 String param = paramView.getDocument().getText(paramView.getStartOffset(), paramView.getEndOffset()- paramView.getStartOffset());
+                View functionTypeView = parentTagView.getParent().getView(0);
+                String functionType = functionTypeView.getDocument().getText(functionTypeView.getStartOffset(), functionTypeView.getEndOffset() - functionTypeView.getStartOffset());
                 if (param.equalsIgnoreCase("timeout")){
                     try {
                         Long timeout = Long.parseLong(value);
@@ -1145,6 +1149,16 @@ public class XMLEditorKit extends StyledEditorKit {
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(xmlPanel, "The value for a response-time guard must be an integer representing the time in milliseconds.",
                                 "Transition error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+                else if (functionType.equalsIgnoreCase("<regex>")){
+                    try {
+                        Pattern.compile(value);
+                    }
+                    catch (PatternSyntaxException ex){
+                        JOptionPane.showMessageDialog(xmlPanel, "The guard value is not a valid regular expression.",
+                                "Regex error", JOptionPane.ERROR_MESSAGE);
                         return false;
                     }
                 }
