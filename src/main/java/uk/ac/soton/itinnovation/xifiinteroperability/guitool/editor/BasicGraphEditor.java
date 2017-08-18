@@ -95,6 +95,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -963,7 +965,18 @@ public class BasicGraphEditor extends JPanel {
     public final JFrame createFrame(final JMenuBar menuBar) {
         final JFrame frame = new JFrame();
         frame.getContentPane().add(this);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int check = JOptionPane.showConfirmDialog(frame, 
+                        "All unsaved data including patterns and previous test reports would be lost. Do you want to continue ?",
+                        "Confirm exit", JOptionPane.YES_NO_OPTION);
+                if (check == JOptionPane.YES_OPTION){
+                    System.exit(0);
+                }
+            }
+        });
         frame.setJMenuBar(menuBar);
         frame.setSize(870, 640);
 
