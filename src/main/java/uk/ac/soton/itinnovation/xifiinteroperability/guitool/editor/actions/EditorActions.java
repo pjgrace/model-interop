@@ -40,7 +40,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
@@ -52,7 +51,6 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.MainDisplayP
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.PatternCheckThread;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.PatternValidation;
-import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.StateMachine;
 
 /**
  * The set of GUI actions e.g. save, open, etc. that correspond to operations
@@ -157,7 +155,7 @@ public final class EditorActions {
                         editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor, debugMode);
                 EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
                 
-                Component stopButton = toolBar.getComponentAtIndex(18);
+                Component stopButton = toolBar.getComponentAtIndex(toolBar.getStopButtonIndex());
                 MouseListener[] listeners = stopButton.getMouseListeners();
                 if (listeners != null && listeners.length >= 2){
                     stopButton.removeMouseListener(listeners[listeners.length-1]);
@@ -178,7 +176,7 @@ public final class EditorActions {
                 });
                 
                 if (debugMode){
-                    Component nextButton = toolBar.getComponentAtIndex(20);
+                    Component nextButton = toolBar.getComponentAtIndex(toolBar.getNextButtonIndex());
                     MouseListener[] mouseListeners = nextButton.getMouseListeners();
                     if (mouseListeners != null && mouseListeners.length >= 2) {
                         nextButton.removeMouseListener(mouseListeners[mouseListeners.length-1]);

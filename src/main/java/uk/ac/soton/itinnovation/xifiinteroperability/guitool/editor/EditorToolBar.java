@@ -51,74 +51,100 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopU
  */
 public class EditorToolBar extends JToolBar {
         
+   /**
+    * the index of the stop button icon in the toolbar
+    */
+   private final int stopButtonIndex;
+  
     /**
-	 * Construct a new instance of the editor toolbar.
-         * @param editor The basic graph editor that the toolbar is added to.
-         * @param orientation The orientation of the toolbar (horizontal)
-	 */
-	public EditorToolBar(final BasicGraphEditor editor, final int orientation) {
-		super(orientation);
-		setBorder(BorderFactory.createCompoundBorder(BorderFactory
-				.createEmptyBorder(3, 3, 3, 3), getBorder()));
-		setFloatable(false);
+     * a getter method for the stop button index
+     *
+     * @return the index of the stop button
+     */
+    public int getStopButtonIndex() {
+        return stopButtonIndex;
+    }
 
-		add(editor.bind("New", new NewAction(editor),
-				"/images/new.gif"));
-		add(editor.bind("Open", new OpenAction(editor),
-				"/images/open.gif"));
-		add(editor.bind("Save", new SaveAction(editor, false),
-				"/images/save.gif"));
+    /**
+     * the index of the next button icon in the tool bar
+     */
+    private final int nextButtonIndex;
 
-                		addSeparator();
+    /**
+     * a getter method for the next button index
+     *
+     * @return the index of the next button
+     */
+    public int getNextButtonIndex() {
+        return nextButtonIndex;
+    }
+    
+    /**
+     * Construct a new instance of the editor toolbar.
+     *
+     * @param editor The basic graph editor that the toolbar is added to.
+     * @param orientation The orientation of the toolbar (horizontal)
+     */
+    public EditorToolBar(final BasicGraphEditor editor, final int orientation) {
+        super(orientation);
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory
+                .createEmptyBorder(3, 3, 3, 3), getBorder()));
+        setFloatable(false);
 
-                add(editor.bind("Import", new FileActions.ImportAction(editor),
-				"/images/import-icon.png"));
+        add(editor.bind("New", new NewAction(editor),
+                "/images/new.gif"));
+        add(editor.bind("Open", new OpenAction(editor),
+                "/images/open.gif"));
+        add(editor.bind("Save", new SaveAction(editor, false),
+                "/images/save.gif"));
 
-                addSeparator();
-		add(editor.bind("Delete", new EditorActions.Delete(editor),
-				"/images/cut.gif"));
+        addSeparator();
 
-		addSeparator();
+        add(editor.bind("Import", new FileActions.ImportAction(editor),
+                "/images/import-icon.png"));
 
-		add(editor.bind("Undo", new HistoryAction(true, editor),
-				"/images/undo.gif"));
-		add(editor.bind("Redo", new HistoryAction(false, editor),
-				"/images/redo.gif"));
+        addSeparator();
+        add(editor.bind("Delete", new EditorActions.Delete(editor),
+                "/images/cut.gif"));
 
-		addSeparator();
+        addSeparator();
 
-                add(editor.bind("XML", new XMLAction(editor),
-				"/images/xml.png"));
+        add(editor.bind("Undo", new HistoryAction(true, editor),
+                "/images/undo.gif"));
+        add(editor.bind("Redo", new HistoryAction(false, editor),
+                "/images/redo.gif"));
 
-                add(editor.bind("Graph", new GraphAction(editor),
-				"/images/graph.png"));
+        addSeparator();
 
+        add(editor.bind("XML", new XMLAction(editor),
+                "/images/xml.png"));
 
-                addSeparator();
+        add(editor.bind("Graph", new GraphAction(editor),
+                "/images/graph.png"));
 
-                add(editor.bind("Verify", new VerifyAction(),
-				"/images/validate.png"));
+        addSeparator();
 
-                addSeparator();
+        add(editor.bind("Verify", new VerifyAction(),
+                "/images/validate.png"));
 
+        addSeparator();
 
-		add(editor.bind("Run", new ExecuteAction(),
-				"/images/test.png"));
-                
-                addSeparator();
-                
-                add(editor.bind("Stop", new EmptyAction(), 
-                                "/images/delete.gif"));
-                
-                addSeparator();
-                
-                add(editor.bind("Next", new EmptyAction(),
-                                "/images/open_end.gif"));
-                
-                addSeparator();
-                
-                add(editor.bind("Reports", new ReportsAction(), 
-                        "/images/outline.gif"));
-	}
+        add(editor.bind("Run", new ExecuteAction(),
+                "/images/test.png"));
+
+        addSeparator();
+
+        stopButtonIndex = getComponentIndex(add(editor.bind("Stop", new EmptyAction(),
+                "/images/delete.gif")));
+
+        addSeparator();
+
+        nextButtonIndex = getComponentIndex(add(editor.bind("Next", new EmptyAction(),
+                "/images/open_end.gif")));
+
+        addSeparator();
+
+        add(editor.bind("Reports", new ReportsAction(),
+                "/images/outline.gif"));
+    }
 }
-
