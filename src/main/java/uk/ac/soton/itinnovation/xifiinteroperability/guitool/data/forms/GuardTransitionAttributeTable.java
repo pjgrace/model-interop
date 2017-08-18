@@ -33,6 +33,8 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GuardData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -91,7 +93,6 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
     
     /**
      * Create a new table of guards.
-     * @param mirrorNode the node to mirror
      */
     public GuardTransitionAttributeTable() {
         super();
@@ -153,7 +154,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                     return;
                 }
                 
-                if (strValue != null && strValue.equalsIgnoreCase("timeout")){
+                if (strValue.equalsIgnoreCase("timeout")){
                     if (mirrorNode.getData().size() > 1){
                         JOptionPane.showMessageDialog(comboBox, "Timeout transitions can only have one guard for the timeout value. "
                                 + "Delete your other guards first.", "Timeout transition erorr",
@@ -183,7 +184,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         }
                     }
                 }
-                else if (strValue != null && strValue.equalsIgnoreCase("index")){
+                else if (strValue.equalsIgnoreCase("index")){
                     if (mirrorNode.getData().size() > 1){
                         JOptionPane.showMessageDialog(comboBox, "Counter transitions can only have one guard for the index value. "
                                 + "Delete your other guards first.", "Counter transition erorr",
@@ -213,7 +214,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         }
                     }
                 }
-                else if (strValue != null && strValue.equalsIgnoreCase("response-time")){
+                else if (strValue.equalsIgnoreCase("response-time")){
                     try {
                         Long responseTime = Long.parseLong((row.getGuardValue()));
                         if (responseTime <= 0){
@@ -228,7 +229,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         return;
                     }
                 }
-                else if (strValue != null && !strValue.equalsIgnoreCase("index")){
+                else if (!strValue.equalsIgnoreCase("index")){
                     if (row.getFuntionType() == Function.FunctionType.Counter){
                         JOptionPane.showMessageDialog(comboBox, "You cannot use a counter function with a guard description different than 'Index'",
                                 "Counter guard error", JOptionPane.ERROR_MESSAGE);
@@ -249,6 +250,37 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                 else if (row.getGuardData().equalsIgnoreCase("index")) {
                     if (((FunctionType) value) != FunctionType.Counter){
                         JOptionPane.showMessageDialog(comboBox, "The only function that can be used for an index guard is the 'counter' function.",
+                                "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (((FunctionType) value) == FunctionType.Regex) {
+                    try {
+                        Pattern.compile(row.getGuardValue());
+                    }
+                    catch (PatternSyntaxException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The guard value is not a valid regular expression.",
+                                "Regex error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (((FunctionType) value) == FunctionType.Counter) {
+                    if (row.getGuardData().equalsIgnoreCase("index")){
+                        try {
+                            Integer counter = Integer.parseInt((String) value);
+                            if (counter <= 0) {
+                                JOptionPane.showMessageDialog(comboBox, "The value for a counter guard must be a positive integer.",
+                                        "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(comboBox, "The value for a counter guard must be an integer representing the number of iterations.",
+                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(comboBox, "The guard description for a counter guard must be 'index'.",
                                 "Counter transition error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -305,6 +337,16 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be an integer representing the time in milliseconds.",
                                 "Transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (row.getFuntionType() == FunctionType.Regex){
+                    try {
+                        Pattern.compile((String) value);
+                    }
+                    catch (PatternSyntaxException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The guard value is not a valid regular expression.",
+                                "Regex error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }

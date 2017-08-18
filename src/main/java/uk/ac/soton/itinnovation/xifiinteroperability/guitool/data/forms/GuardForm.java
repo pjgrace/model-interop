@@ -44,6 +44,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -494,6 +496,17 @@ public class GuardForm extends JPanel {
                 catch (NumberFormatException ex){
                     JOptionPane.showMessageDialog(editor, "The value for a response-time guard must be an integer representing the time in milliseconds.",
                             "Transition error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            
+            if (comboBox.getSelectedItem() == Function.FunctionType.Regex){
+                try {
+                    Pattern.compile(address.getText());
+                }
+                catch (PatternSyntaxException ex){
+                    JOptionPane.showMessageDialog(editor, "The guard value is not a valid regular expression.", 
+                            "Regex error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
