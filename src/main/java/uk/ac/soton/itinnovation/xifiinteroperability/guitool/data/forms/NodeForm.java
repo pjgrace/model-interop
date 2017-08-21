@@ -157,8 +157,8 @@ public class NodeForm extends JPanel {
                 for (ConstantData data: mirrorNode.getConstantData()){
                     if (data.getFieldName().equalsIgnoreCase(ident.getText())){
                         JOptionPane.showMessageDialog(topPanel,
-                                "Constan with this name already exists.",
-                                "Constant data error", JOptionPane.ERROR_MESSAGE);
+                                "Variable with this name already exists.",
+                                "Variable data error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }
