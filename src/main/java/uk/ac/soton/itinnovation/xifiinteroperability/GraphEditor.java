@@ -90,6 +90,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidTransitionException;
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 
 /**
  * Executable GUI framework that extends the BasicGraphEditor class. This
@@ -322,6 +323,11 @@ public class GraphEditor extends BasicGraphEditor {
                     getDataModel().addConnection(connData.getId(), connData.getSource().getId(),
                             connData.getTarget().getId());
                     editor.getXmlUndoManager().add(getDataModel().getState());
+                    updateTableView(connData.getId());
+                    String type = (getDataModel().getTransition(connData.getId()) instanceof Guard) ? "guard" : "message";
+                    final CardLayout cardLayout = (CardLayout) getAttributePanel().getLayout();
+                    cardLayout.show(getAttributePanel(), type);
+
                 };
             }
         );
