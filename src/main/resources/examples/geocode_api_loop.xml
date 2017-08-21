@@ -13,12 +13,12 @@
 				<interface>
 					<id>rest1</id>
 					<url>https://maps.googleapis.com:443/maps/api/geocode/xml</url>
-					<protocol>null</protocol>
+					<protocol>http</protocol>
 				</interface>
 				<interface>
 					<id>rest2</id>
 					<url>https://maps.googleapis.com:443/maps/api/geocode/json</url>
-					<protocol>null</protocol>
+					<protocol>http</protocol>
 				</interface>
 		</component>
 	</architecture>
