@@ -81,7 +81,7 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-        menuItem = new JMenuItem(mxResources.get("openFile"), new ImageIcon(BasicGraphEditor.class.getResource("/images/save16.png")));
+        menuItem = new JMenuItem(mxResources.get("save"), new ImageIcon(BasicGraphEditor.class.getResource("/images/save16.png")));
         menuItem.addActionListener(new SaveAction(editor, false));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
         menu.add(menuItem);

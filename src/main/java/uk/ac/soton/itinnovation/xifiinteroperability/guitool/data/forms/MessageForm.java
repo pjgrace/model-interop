@@ -30,6 +30,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -48,7 +49,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -196,21 +197,20 @@ public class MessageForm extends JPanel {
         ToolTipManager.sharedInstance().setInitialDelay(75);
         ToolTipManager.sharedInstance().setDismissDelay(ToolTipManager.sharedInstance().getDismissDelay()*2);
 
-//        final JPanel topPanel = new JPanel();
-//        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        final JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
         // Info Panel
         final JPanel listPane = new JPanel();
-        GridLayout gridLayout = new GridLayout(9 , 2);
-//        gridLayout.setHgap(5);
-//        gridLayout.setVgap(5);
-        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        GridLayout gridLayout = new GridLayout(8 , 2);
+        gridLayout.setHgap(5);
+        gridLayout.setVgap(5);
+//        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         listPane.setLayout(gridLayout);
 
         final JLabel title = new JLabel(" Test Message Content", JLabel.LEFT);
         final Font font = title.getFont();
         final Map attributes = font.getAttributes();
-//        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
         title.setFont(font.deriveFont(attributes));
 
@@ -275,12 +275,13 @@ public class MessageForm extends JPanel {
         listPane.add(contentType);
 
 
-        body = new JTextArea("", 40, 40);
+        body = new JTextArea("");
 
         body.setLineWrap(true);
         body.setComponentPopupMenu(new FormPopUpMenu(editor, body));
         listPane.add(new JLabel("Message body:", JLabel.RIGHT));
         listPane.add(new JScrollPane(body));
+
 
         final JButton update = new JButton("Update Message");
         ButtonCustomizer.customizeButton(update);
@@ -301,14 +302,13 @@ public class MessageForm extends JPanel {
           });
         listPane.add(new JLabel(""));
         listPane.add(update);
-//        topPanel.add(listPane);
-        add(listPane, BorderLayout.NORTH);
+        topPanel.add(listPane);
 
         // Headers add Panel
         final JPanel newIntfPane = new JPanel();
-        gridLayout = new GridLayout(4 , 2);
+        gridLayout = new GridLayout(6 , 2);
         newIntfPane.setLayout(gridLayout);
-        newIntfPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+//        newIntfPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
         final JLabel stitle = new JLabel(" Add Message Header");
         stitle.setFont(font.deriveFont(attributes));
@@ -354,17 +354,24 @@ public class MessageForm extends JPanel {
           });
         newIntfPane.add(addIntf);
 
-//        topPanel.add(newIntfPane);
-        add(newIntfPane, BorderLayout.CENTER);
+
+//        add(newIntfPane, BorderLayout.CENTER);
 
 
-//        topPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+//        newIntfPane.add(Box.createRigidArea(new Dimension(0, 10)));
 
-//        topPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-//        final JLabel tableTitle = new JLabel("Message Headers", JLabel.LEFT);
-//        tableTitle.setFont(font.deriveFont(attributes));
-//        topPanel.add(tableTitle);
-//        topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        final JLabel tableTitle = new JLabel(" Message Headers", JLabel.LEFT);
+       final Font font2 = tableTitle.getFont();
+        final Map attributes2 = font.getAttributes();
+        attributes2.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+        tableTitle.setFont(font2.deriveFont(attributes2));
+
+
+        newIntfPane.add(Box.createRigidArea(new Dimension(0, 5)));
+        newIntfPane.add(Box.createRigidArea(new Dimension(0, 5)));
+        newIntfPane.add(tableTitle);
+        newIntfPane.add(new JLabel("", JLabel.LEFT) );
+                topPanel.add(newIntfPane);
 
         final JTable nodetable = new JTable(messageView);
         nodetable.addMouseListener(new MouseAdapter() {
@@ -389,12 +396,12 @@ public class MessageForm extends JPanel {
         });
         final JScrollPane messageScrollPane = JTable.createScrollPaneForTable(nodetable);
 
-//        add(messageScrollPane, BorderLayout.CENTER);
+        add(messageScrollPane, BorderLayout.CENTER);
 
 //        topPanel.add(messageScrollPane);
 
-//        add(topPanel, BorderLayout.NORTH);
-        add(messageScrollPane, BorderLayout.SOUTH);
+        add(topPanel, BorderLayout.NORTH);
+//        add(messageScrollPane, BorderLayout.SOUTH);
 
         final FocusListener focusListener = new FocusListener() {
             @Override
@@ -439,7 +446,7 @@ public class MessageForm extends JPanel {
         path.addKeyListener(keyListener);
 
         this.addMouseListener(FOCUS_CHANGER);
-//        topPanel.addMouseListener(FOCUS_CHANGER);
+        topPanel.addMouseListener(FOCUS_CHANGER);
         nodetable.addMouseListener(FOCUS_CHANGER);
         messageScrollPane.addMouseListener(FOCUS_CHANGER);
 
