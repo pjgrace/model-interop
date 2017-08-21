@@ -53,6 +53,34 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.File
 public class EditorToolBar extends JToolBar {
 
     /**
+     * the index of the stop button icon in the toolbar
+     */
+    private final int stopButtonIndex;
+
+    /**
+     * a getter method for the stop button index
+     *
+     * @return the index of the stop button
+     */
+    public int getStopButtonIndex() {
+        return stopButtonIndex;
+    }
+
+    /**
+     * the index of the next button icon in the tool bar
+     */
+    private final int nextButtonIndex;
+
+    /**
+     * a getter method for the next button index
+     *
+     * @return the index of the next button
+     */
+    public int getNextButtonIndex() {
+        return nextButtonIndex;
+    }
+
+    /**
      * Code to create a selectable button that is added to the toolbar
      * @return
      */
@@ -100,13 +128,12 @@ public class EditorToolBar extends JToolBar {
 
                 add(createToolbarButton("Run", "Run Test", new ExecuteAction(), editor, "/images/run.png", "/images/runselect.png"));
 
-                add(createToolbarButton("Stop", "Stop Test", new EmptyAction(), editor, "/images/stop.png", "/images/stopselect.png"));
+                stopButtonIndex = getComponentIndex(add(createToolbarButton("Stop", "Stop Test", new EmptyAction(), editor, "/images/stop.png", "/images/stopselect.png")));
 
-                add(createToolbarButton("Step", "Next step", new EmptyAction(), editor, "/images/step.png", "/images/stepselect.png"));
+                nextButtonIndex = getComponentIndex(add(createToolbarButton("Step", "Next step", new EmptyAction(), editor, "/images/step.png", "/images/stepselect.png")));
 
                 addSeparator(new Dimension(15,3));
 
                 add(createToolbarButton("Reports", "View Previous Test Reports", new ReportsAction(editor), editor, "/images/tests.png", "/images/testsselect.png"));
 	}
 }
-

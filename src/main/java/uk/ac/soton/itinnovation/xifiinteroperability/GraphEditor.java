@@ -356,6 +356,11 @@ public class GraphEditor extends BasicGraphEditor {
             public void invoke(final Object sender, final mxEventObject evt) {
                 graphComponent.validateGraph();
                 if (sender instanceof mxGraphSelectionModel) {
+                    if (((mxGraphSelectionModel) sender).getCells().length == 0){
+                        updateTableView(null);
+                        return;
+                    }
+     
                     for (Object cell : ((mxGraphSelectionModel) sender).getCells()) {
                         // Get the user interface ID of the selection
                         final String ident = GUIdentifier.getGUIdentifier(((mxCell) cell).getId(), graphComponent);

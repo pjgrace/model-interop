@@ -86,9 +86,9 @@ public class XMLReader {
             doc.insert(pos, data);
             
         } catch(SAXException pce) {
-            JOptionPane.showMessageDialog(null, "Something went wrong while processing your xml pattern.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Something went wrong while processing your xml data.", "Error", JOptionPane.ERROR_MESSAGE);
         } catch(ParserConfigurationException | IOException pce) {
-            JOptionPane.showMessageDialog(null, "Something went wrong while processing your xml pattern.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Something went wrong while processing your xml data.", "Error", JOptionPane.ERROR_MESSAGE);
             throw new IOException(pce.getMessage());
         }
     }

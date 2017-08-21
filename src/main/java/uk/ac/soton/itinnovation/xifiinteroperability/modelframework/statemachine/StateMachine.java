@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import javax.swing.JDialog;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.EventCapture;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
@@ -283,11 +284,14 @@ public class StateMachine implements EventCapture {
                         currentState = getState(currentState.evaluateTransition(event, outputReport));
                     }
                     else {
+                        TimerDialog timerDialog = new TimerDialog();
+                        timerDialog.initGUI(timeout);
                         event = this.eventQueue.poll(timeout, TimeUnit.MILLISECONDS);
                         if (event == null){
                             currentState = getState(timeoutTransition.readLabel());
                         }
                         else {
+                            timerDialog.dispose();
                             currentState = getState(currentState.evaluateTransition(event, outputReport));
                         }
                     }

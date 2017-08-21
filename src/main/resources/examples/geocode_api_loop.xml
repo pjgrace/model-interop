@@ -58,10 +58,6 @@
 						<value>REPLY</value>
 					</equal>
 					<equal>
-						<param>HTTP.code</param>
-						<value>200</value>
-					</equal>
-					<equal>
 						<param>content[//result/place_id]</param>
 						<value>ChIJdd4hrwug2EcRmSrV3Vo6llI</value>
 					</equal>
@@ -87,8 +83,16 @@
 					</contains>
 					<lessthan>
 						<param>response-time</param>
-						<value>100</value>
+						<value>200</value>
 					</lessthan>
+					<regex>
+						<param>HTTP.code</param>
+						<value>[0-9]+</value>
+					</regex>
+					<regex>
+						<param>content[//result/place_id]</param>
+						<value>[a-z0-9]+</value>
+					</regex>
 				</guards>
 			</transition>
 		</state>		
@@ -181,8 +185,12 @@
 					</notequal>
 					<lessthan>
 						<param>response-time</param>
-						<value>100</value>
+						<value>1000</value>
 					</lessthan>
+					<regex>
+						<param>content[$.results[0].place_id]</param>
+						<value>[a-z0-9]*</value>
+					</regex>
 				</guards>
 			</transition>
 		</state>		
