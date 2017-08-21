@@ -81,11 +81,9 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-<<<<<<< HEAD
+
         menuItem = new JMenuItem(mxResources.get("save"), new ImageIcon(BasicGraphEditor.class.getResource("/images/save16.png")));
-=======
-        menuItem = new JMenuItem(mxResources.get("openFile"), new ImageIcon(BasicGraphEditor.class.getResource("/images/save16.png")));
->>>>>>> remotes/origin/ui-update
+
         menuItem.addActionListener(new SaveAction(editor, false));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
@@ -149,8 +147,7 @@ public class EditorMenuBar extends JMenuBar {
 
         JMenuItem xPathGeneratorItem = new JMenuItem("XPath Expression Generator");
         xPathGeneratorItem.addActionListener((ActionEvent ae) -> {
-<<<<<<< HEAD
-=======
+
             int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing XML file?",
                     "Load XML file", JOptionPane.YES_NO_CANCEL_OPTION);
             if (choice == JOptionPane.CANCEL_OPTION){
@@ -160,21 +157,14 @@ public class EditorMenuBar extends JMenuBar {
                 new XPathGeneratorEditor().initGUI(false, null);
                 return;
             }
-            
->>>>>>> remotes/origin/ui-update
+
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-<<<<<<< HEAD
 
             final int check = fChooser.showDialog(editor, "Choose xml file");
 
-=======
-            
-            final int check = fChooser.showDialog(editor, "Choose xml file");
-            
->>>>>>> remotes/origin/ui-update
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -186,11 +176,7 @@ public class EditorMenuBar extends JMenuBar {
                         line = br.readLine();
                     }
                     br.close();
-<<<<<<< HEAD
 
-=======
-                    
->>>>>>> remotes/origin/ui-update
                     new XPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){
@@ -201,32 +187,26 @@ public class EditorMenuBar extends JMenuBar {
 
         JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Expression Generator");
         jsonPathGeneratorItem.addActionListener((ActionEvent ae) -> {
-<<<<<<< HEAD
-=======
+
             int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing JSON file?",
                     "Load JSON file", JOptionPane.YES_NO_CANCEL_OPTION);
             if (choice == JOptionPane.CANCEL_OPTION) {
                 return;
-            } 
+            }
             else if (choice == JOptionPane.NO_OPTION) {
                 new JSONPathGeneratorEditor().initGUI(false, null);
                 return;
             }
-            
->>>>>>> remotes/origin/ui-update
+
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-<<<<<<< HEAD
+
 
             final int check = fChooser.showDialog(editor, "Choose json file");
 
-=======
-            
-            final int check = fChooser.showDialog(editor, "Choose json file");
-            
->>>>>>> remotes/origin/ui-update
+
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -238,11 +218,7 @@ public class EditorMenuBar extends JMenuBar {
                         line = br.readLine();
                     }
                     br.close();
-<<<<<<< HEAD
 
-=======
-                    
->>>>>>> remotes/origin/ui-update
                     new JSONPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){
@@ -288,9 +264,4 @@ public class EditorMenuBar extends JMenuBar {
             }
         });
     }
-<<<<<<< HEAD
 };
-
-=======
-};
->>>>>>> remotes/origin/ui-update
