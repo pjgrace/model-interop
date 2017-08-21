@@ -182,7 +182,7 @@ public class JSONPathGeneratorEditor extends JDialog {
         }
     }
     
-    private void resetEditor(String json){
+    void resetEditor(String json){
         int caret = editorPane.getCaretPosition();
         editorPane.setDocument(editorPane.getEditorKit().createDefaultDocument());
         editorPane.setText(json);
