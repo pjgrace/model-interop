@@ -60,17 +60,39 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCu
 
 /**
  * An editor, which loads an xml file and generates XPath on click on elements
+ * It also accepts user input for the xml data
  * 
  * @author ns17
  */
 public class XPathGeneratorEditor extends JDialog{ 
     
+    /**
+     * the editor pane for the xml data
+     */
     private JEditorPane editorPane;
     
     public XPathGeneratorEditor(){
-        super();
+        super(); // called for clarity reasons
     }
     
+    /**
+     * the initGUI method but without requiring an xml data argument
+     * 
+     * @param insertPath a boolean which represents whether the generated 
+     * path expression should be inserted in the text field (helper mode)
+     * @param textField the text field where the generated path should be inserted if appropriate 
+     */
+    public void initGUI(boolean insertPath, JTextField textField){
+        this.initGUI("", insertPath, textField);
+    }
+    
+    /**
+     * the initGUI method which initialises the GUI components
+     * @param xml a string which contains the initial xml data to load
+     * @param insertPath a boolean which represents whether the generated 
+     * path expression should be inserted in the text field (helper mode)
+     * @param textField the text field where the generated path should be inserted if appropriate 
+     */
     public void initGUI(String xml, boolean insertPath, JTextField textField) {
         this.setTitle("XPath Generator");
         this.setLayout(new BorderLayout());
@@ -96,6 +118,18 @@ public class XPathGeneratorEditor extends JDialog{
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
         buttonsPanel.add(Box.createHorizontalGlue());
+        
+        // this block of code reffers to manually inserting XML data
+        JButton pasteXML = new JButton("Type or paste xml input");
+        pasteXML.addActionListener((ActionEvent ae) -> {
+            new XMLInputDialog().initGUI(this);
+        });
+        ButtonCustomizer.customizeButton(pasteXML);
+        buttonsPanel.add(pasteXML);
+        
+        buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        
+        // this block of code reffers to inserting XML data from file
         JButton open = new JButton("Open a different xml file");
         open.addActionListener((ActionEvent e) -> {
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
@@ -120,7 +154,7 @@ public class XPathGeneratorEditor extends JDialog{
                     resetEditor(sb.toString());
                 }
                 catch (IOException ex){
-                    JOptionPane.showMessageDialog(buttonsPanel, "Something went wrong, while reading your json file.", "File error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(buttonsPanel, "Something went wrong, while reading your xml file.", "File error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -129,6 +163,7 @@ public class XPathGeneratorEditor extends JDialog{
         
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         
+        // this block of code reffers to toggling between highlight modes
         JButton highlight = new JButton("Highlight tags");
         ButtonCustomizer.customizeButton(highlight);
         buttonsPanel.add(highlight);
@@ -171,6 +206,9 @@ public class XPathGeneratorEditor extends JDialog{
         this.setVisible(true);
     }
     
+    /**
+     * a method which resets the editor, this is used when toggling between highlight modes
+     */
     private void resetEditor(){
         try {
             int caret = editorPane.getCaretPosition();
@@ -185,7 +223,11 @@ public class XPathGeneratorEditor extends JDialog{
         }
     }
     
-    private void resetEditor(String xml) {
+    /**
+     * a method which resets the editor with new xml data
+     * @param xml the new xml data to insert into the editor pane
+     */
+    void resetEditor(String xml) {
         xml = xml.replaceAll("&(?!amp;)", "&amp;");
         int caret = editorPane.getCaretPosition();
         editorPane.setDocument(editorPane.getEditorKit().createDefaultDocument());

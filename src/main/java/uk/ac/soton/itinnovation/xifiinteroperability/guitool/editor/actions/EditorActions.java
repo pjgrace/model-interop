@@ -154,8 +154,8 @@ public final class EditorActions {
                 final PatternCheckThread checkThread = new PatternCheckThread(editor.getDataModel().getGraphXML(),
                         editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor, debugMode);
                 EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+                Component stopButton = toolBar.getComponentAtIndex(toolBar.getStopButtonIndex());
 
-                Component stopButton = toolBar.getComponentAtIndex(18);
                 MouseListener[] listeners = stopButton.getMouseListeners();
                 if (listeners != null && listeners.length >= 2){
                     stopButton.removeMouseListener(listeners[listeners.length-1]);
@@ -176,7 +176,7 @@ public final class EditorActions {
                 });
 
                 if (debugMode){
-                    Component nextButton = toolBar.getComponentAtIndex(20);
+                    Component nextButton = toolBar.getComponentAtIndex(toolBar.getNextButtonIndex());
                     MouseListener[] mouseListeners = nextButton.getMouseListeners();
                     if (mouseListeners != null && mouseListeners.length >= 2) {
                         nextButton.removeMouseListener(mouseListeners[mouseListeners.length-1]);

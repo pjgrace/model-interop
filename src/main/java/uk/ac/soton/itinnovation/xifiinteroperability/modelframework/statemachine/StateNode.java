@@ -47,6 +47,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.InvalidPa
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.ProtocolMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.RESTEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidJSONPathException;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidRegexException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidXPathException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult.DataFormat;
@@ -440,6 +441,9 @@ public class StateNode implements State {
             case LESSTHAN:
                 report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue() + "', while it was supposed to be less than the guard value: '" + chGuard.getGuardCompare() + "'");
                 break;
+            case REGEX:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue() + "' while it was supposed to match the regular expression: '" + chGuard.getGuardCompare() + "'");
+                break;
             default:
                 report.printtabline("Guard test failed!");
         }
@@ -468,6 +472,9 @@ public class StateNode implements State {
                 break;
             case LESSTHAN:
                 report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to be less than the guard value: '" + chGuard.getGuardCompare() + "'");
+                break;
+            case REGEX:
+                report.printtabline("Guard test failed: '" + chGuard.getGuardLabel() + "' is '" + value.getValue().toString() + "', while it was supposed to match the regular expression: '" + chGuard.getGuardCompare() + "'");
                 break;
             case CONTAINS:
                 if (value.getType() == DataFormat.XML){
@@ -573,6 +580,9 @@ public class StateNode implements State {
                 }
             } catch (InvalidInputException ex) {
                 return false;
+            } catch (InvalidRegexException ex) {
+                reportGuardFailure(report, ex);
+                return false;
             }
         }
         return true;
@@ -617,7 +627,7 @@ public class StateNode implements State {
      */
     private boolean contentEvaluation(final Guard chGuard, final Map<String, Parameter> conditions,
             final InteroperabilityReport report) {
-        final String xpathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
+        final String pathExp = chGuard.getGuardLabel().substring(8, chGuard.getGuardLabel().length() - 1);
         final Parameter value = conditions.get(CONTENTLABEL);
         final Parameter dataType = conditions.get("http.content-type");
         PathEvaluationResult pathResult;
@@ -626,26 +636,32 @@ public class StateNode implements State {
                 Object exprValue = null;
                 if(null != chGuard.getType()) switch (chGuard.getType()) {
                     case NOTEQUALS:
-                        pathResult = XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        pathResult = XML.xmlAssert(value.getValue(), pathExp, chGuard.getGuardCompare());
                         if (pathResult.getResult()) {
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
                     case EQUALS:
-                        pathResult = XML.xmlAssert(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        pathResult = XML.xmlAssert(value.getValue(), pathExp, chGuard.getGuardCompare());
                         if (!pathResult.getResult()) {
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
                     case GREATERTHAN:
-                        pathResult = XML.xmlCompare(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.GREATERTHAN);
+                        pathResult = XML.xmlCompare(value.getValue(), pathExp, chGuard.getGuardCompare(), Guard.ComparisonType.GREATERTHAN);
                         if(!pathResult.getResult()){
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
                     case LESSTHAN:
-                        pathResult = XML.xmlCompare(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.LESSTHAN);
+                        pathResult = XML.xmlCompare(value.getValue(), pathExp, chGuard.getGuardCompare(), Guard.ComparisonType.LESSTHAN);
                         if(!pathResult.getResult()){
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case REGEX:
+                        pathResult = XML.xmlRegex(value.getValue(), pathExp, chGuard.getGuardCompare());
+                        if (!pathResult.getResult()){
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
@@ -654,7 +670,7 @@ public class StateNode implements State {
                         return false;
                 }
             }
-            catch (InvalidXPathException ex) {
+            catch (InvalidXPathException | InvalidRegexException ex) {
                 reportGuardFailure(report, ex);
                 return false;
             }
@@ -663,26 +679,32 @@ public class StateNode implements State {
             try {
                 if(null != chGuard.getType()) switch (chGuard.getType()) {
                     case NOTEQUALS:
-                        pathResult = JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        pathResult = JSON.assertJSON(value.getValue(), pathExp, chGuard.getGuardCompare());
                         if (pathResult.getResult()) {
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
                     case EQUALS:
-                        pathResult = JSON.assertJSON(value.getValue(), xpathExp, chGuard.getGuardCompare());
+                        pathResult = JSON.assertJSON(value.getValue(), pathExp, chGuard.getGuardCompare());
                         if (!pathResult.getResult()) {
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
                     case GREATERTHAN:
-                        pathResult = JSON.compareJSON(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.GREATERTHAN);
+                        pathResult = JSON.compareJSON(value.getValue(), pathExp, chGuard.getGuardCompare(), Guard.ComparisonType.GREATERTHAN);
                         if(!pathResult.getResult()){
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
                     case LESSTHAN:
-                        pathResult = JSON.compareJSON(value.getValue(), xpathExp, chGuard.getGuardCompare(), Guard.ComparisonType.LESSTHAN);
+                        pathResult = JSON.compareJSON(value.getValue(), pathExp, chGuard.getGuardCompare(), Guard.ComparisonType.LESSTHAN);
                         if(!pathResult.getResult()){
+                            reportGuardFailure(chGuard, pathResult, report);
+                            return false;
+                        }   break;
+                    case REGEX:
+                        pathResult = JSON.regexJSON(value.getValue(), pathExp, chGuard.getGuardCompare());
+                        if (!pathResult.getResult()){
                             reportGuardFailure(chGuard, pathResult, report);
                             return false;
                         }   break;
@@ -691,7 +713,7 @@ public class StateNode implements State {
                         return false;
                 }
             }
-            catch (InvalidJSONPathException ex) {
+            catch (InvalidJSONPathException | InvalidRegexException ex) {
                 reportGuardFailure(report, ex);
                 return false;
             }
@@ -774,8 +796,14 @@ public class StateNode implements State {
                         return false;
                     }
                     final Object compareVal = value.getValue();
-                    if (!chGuard.evaluate(compareVal)) {
-                        reportGuardFailure(chGuard, value, report);
+                    try {
+                        if (!chGuard.evaluate(compareVal)) {
+                            reportGuardFailure(chGuard, value, report);
+                            return false;
+                        }
+                    }
+                    catch (InvalidRegexException ex) {
+                        reportGuardFailure(report, ex);
                         return false;
                     }
                 }
@@ -799,6 +827,9 @@ public class StateNode implements State {
                         break;
                     case CONTAINS:
                         report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' contains child field '" + chGuard.getGuardCompare() + "'");
+                        break;
+                    case REGEX:
+                        report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' matches the regular expression '" + chGuard.getGuardCompare() + "'");
                         break;
                     default:
                         report.printtabline("Guard test succeeded: '" + chGuard.getGuardLabel() + "' is '" + chGuard.getGuardCompare() + "'");

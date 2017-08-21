@@ -1,0 +1,28 @@
+
+Test started - run the application
+
+----------------------------------
+
+Starting trace at Node:triggerstart
+
+Invoked action - moving to state: normal
+	Evaluating 13 guards
+	Guard test succeeded: 'content[/]' contains child field 'm2m:ae'
+	Guard test succeeded: 'content[/*[local-name()='ae']]' contains child field 'ri'
+	Guard test succeeded: 'content[/*[local-name()='ae']/ri]' is equal to '/in-cse/cae107523917'
+	Guard test succeeded: 'content[/*[local-name()='ae']/pi]' is equal to '/in-cse'
+	Guard test succeeded: 'content[/*[local-name()='ae']/api]' is equal to 'app-sensor'
+	Guard test succeeded: 'http.code' is equal to '200'
+	Guard test succeeded: 'http.to' is equal to '192.9.206.122'
+	Guard test succeeded: 'http.from' is equal to '127.0.0.1'
+	Guard test succeeded: 'http.msg' is equal to 'reply'
+	Guard test succeeded: 'http.x-m2m-ri' is equal to 'cae107523917'
+	Guard test succeeded: 'http.x-m2m-rsc' is equal to '2000'
+	Guard test succeeded: 'http.content-type' is equal to 'application/xml;charset=iso-8859-1'
+	Guard test succeeded: 'content[/*[local-name()='ae']/ty]' is equal to '2'
+
+Transition to state end successful
+
+Transition Success - move to state:end
+
+End node reached --> Interoperability Testing Complete

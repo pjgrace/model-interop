@@ -229,7 +229,6 @@ public class Architecture {
       *
       * Once the pattern has been tested a report is generated and then returned
       * as a result of this method.
-     * @param sock The web socket to report the outputs.
      * @return The interoperability report describing the reporting of
       */
      public final InteroperabilityReport executePattern() {

@@ -29,9 +29,12 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.InvalidPatternReferenceException;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.InvalidRegexException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidInputException;
 
@@ -49,9 +52,9 @@ public class Guard {
      */
     public enum ComparisonType {
         /**
-         * 3 types: =, !=, and set contains.
+         * 7 types: =, !=, set contains, <, >, counter and regex.
          */
-	EQUALS(0), NOTEQUALS(1), CONTAINS(2), LESSTHAN(3), GREATERTHAN(4), COUNTER (5);
+	EQUALS(0), NOTEQUALS(1), CONTAINS(2), LESSTHAN(3), GREATERTHAN(4), COUNTER (5), REGEX(6);
 
         /**
          * The integer id of the type (specified above).
@@ -169,8 +172,9 @@ public class Guard {
      * @param input The input to test the guard against.
      * @return The result of the evaluated guard against the input.
      * @throws InvalidInputException Error in input and exception thrown during compare.
+     * @throws InvalidRegexException Thrown in case of an invalid regex syntax
      */
-    public final boolean evaluate(final Object input) throws InvalidInputException {
+    public final boolean evaluate(final Object input) throws InvalidInputException, InvalidRegexException {
         Object toCompare = input;
         if (dataType == String.class) {
             toCompare = ((String) input).toLowerCase();
@@ -207,6 +211,13 @@ public class Guard {
             case CONTAINS:
                  final HashMap<String, Parameter> heads = (HashMap<String, Parameter>) input;
                  return heads.containsKey(this.compareTo.toLowerCase());
+            case REGEX:
+                try {
+                    return Pattern.matches(this.compareTo, toCompare.toString());
+                }
+                catch (PatternSyntaxException ex){
+                    throw new InvalidRegexException("There is a regex guard with an invalid regular expression.");
+                }
              default:
                  throw new InvalidInputException("Unknown condition type");
         }

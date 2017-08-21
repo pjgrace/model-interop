@@ -33,10 +33,13 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GuardData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Function;
 
 /**
  * The Guard transition attribute table is the list of rules that
@@ -90,7 +93,6 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
     
     /**
      * Create a new table of guards.
-     * @param mirrorNode the node to mirror
      */
     public GuardTransitionAttributeTable() {
         super();
@@ -146,7 +148,13 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
         switch (colVal) {
             case 0: 
                 String strValue = (String) value;
-                if (strValue != null && strValue.equalsIgnoreCase("timeout")){
+                if (strValue == null || strValue.equals("")){
+                    JOptionPane.showMessageDialog(comboBox, "Please fill a value for the guard description!", 
+                            "Invalid guard", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
+                if (strValue.equalsIgnoreCase("timeout")){
                     if (mirrorNode.getData().size() > 1){
                         JOptionPane.showMessageDialog(comboBox, "Timeout transitions can only have one guard for the timeout value. "
                                 + "Delete your other guards first.", "Timeout transition erorr",
@@ -161,7 +169,12 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         }
                         else {
                             try {
-                                Integer.parseInt(row.getGuardValue());
+                                Long timeout = Long.parseLong(row.getGuardValue());
+                                if (timeout <= 0) {
+                                    JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be a positive integer.",
+                                            "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                                    return;
+                                }
                             }
                             catch (NumberFormatException ex){
                                 JOptionPane.showMessageDialog(comboBox, "A timeout guard can only have integers as its guard value.", 
@@ -171,7 +184,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         }
                     }
                 }
-                else if (strValue != null && strValue.equalsIgnoreCase("index")){
+                else if (strValue.equalsIgnoreCase("index")){
                     if (mirrorNode.getData().size() > 1){
                         JOptionPane.showMessageDialog(comboBox, "Counter transitions can only have one guard for the index value. "
                                 + "Delete your other guards first.", "Counter transition erorr",
@@ -186,8 +199,13 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         }
                         else {
                             try {
-                                Integer.parseInt(row.getGuardValue());
-                            }
+                                Integer counter = Integer.parseInt(row.getGuardValue());
+                                if (counter <= 0) {
+                                    JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be a positive integer.",
+                                            "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                                    return;
+                                }
+                            } 
                             catch (NumberFormatException ex){
                                 JOptionPane.showMessageDialog(comboBox, "A counter guard can only have integers as its guard value.", 
                                         "Counter transition error", JOptionPane.ERROR_MESSAGE);
@@ -195,7 +213,29 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                             }
                         }
                     }
-                }                
+                }
+                else if (strValue.equalsIgnoreCase("response-time")){
+                    try {
+                        Long responseTime = Long.parseLong((row.getGuardValue()));
+                        if (responseTime <= 0){
+                            JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be a positive integer.",
+                                    "Transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be an integer representing the time in milliseconds.",
+                                "Transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (!strValue.equalsIgnoreCase("index")){
+                    if (row.getFuntionType() == Function.FunctionType.Counter){
+                        JOptionPane.showMessageDialog(comboBox, "You cannot use a counter function with a guard description different than 'Index'",
+                                "Counter guard error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 
                 row.setGuardData(strValue);
                 break;
@@ -214,13 +254,55 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         return;
                     }
                 }
+                else if (((FunctionType) value) == FunctionType.Regex) {
+                    try {
+                        Pattern.compile(row.getGuardValue());
+                    }
+                    catch (PatternSyntaxException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The guard value is not a valid regular expression.",
+                                "Regex error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (((FunctionType) value) == FunctionType.Counter) {
+                    if (row.getGuardData().equalsIgnoreCase("index")){
+                        try {
+                            Integer counter = Integer.parseInt((String) value);
+                            if (counter <= 0) {
+                                JOptionPane.showMessageDialog(comboBox, "The value for a counter guard must be a positive integer.",
+                                        "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(comboBox, "The value for a counter guard must be an integer representing the number of iterations.",
+                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(comboBox, "The guard description for a counter guard must be 'index'.",
+                                "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
                 
                 row.setFunctionType((FunctionType) value);
                 break;
             case 2:
+                if (value == null || ((String) value).equals("")){
+                    JOptionPane.showMessageDialog(comboBox, "Please fill a guard value!", 
+                            "Invalid guard", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
                 if (row.getGuardData().equalsIgnoreCase("timeout")) {
                     try {
-                        Long.parseLong((String) value);
+                        Long timeout = Long.parseLong((String) value);
+                        if (timeout <= 0) {
+                            JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be a positive integer.",
+                                    "Timeout transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(comboBox, "The value for a timeout guard must be an integer representing the time in milliseconds.",
@@ -230,11 +312,41 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                 }
                 else if (row.getGuardData().equalsIgnoreCase("index")) {
                     try {
-                        Integer.parseInt((String) value);
+                        Integer counter = Integer.parseInt((String) value);
+                        if (counter <= 0) {
+                            JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be a positive integer.",
+                                    "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
                     }
                     catch (NumberFormatException ex){
                         JOptionPane.showMessageDialog(comboBox, "The value for an index guard must be an integer representing the number of iterations.",
                                 "Counter transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (row.getGuardData().equalsIgnoreCase("response-time")){
+                    try {
+                        Long responseTime = Long.parseLong((String) value);
+                        if (responseTime <= 0){
+                            JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be a positive integer.",
+                                    "Transition error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                    catch (NumberFormatException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The value for a response-time guard must be an integer representing the time in milliseconds.",
+                                "Transition error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+                else if (row.getFuntionType() == FunctionType.Regex){
+                    try {
+                        Pattern.compile((String) value);
+                    }
+                    catch (PatternSyntaxException ex){
+                        JOptionPane.showMessageDialog(comboBox, "The guard value is not a valid regular expression.",
+                                "Regex error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 }

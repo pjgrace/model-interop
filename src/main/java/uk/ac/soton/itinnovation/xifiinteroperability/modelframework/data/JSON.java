@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.data.PathEvaluationResult.DataFormat;
@@ -78,7 +80,7 @@ public final class JSON {
             return new PathEvaluationResult(jsonVal.equalsIgnoreCase(xprVal), xprVal, DataFormat.JSON);
 //            JsonAssert.with(jsondoc.toLowerCase(Locale.ENGLISH)).assertThat(reference, Matchers.equalTo(jsonVal));
         }
-        catch (PathNotFoundException ex2) {
+        catch (PathNotFoundException ex) {
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
             if(jsonVal.equalsIgnoreCase("null")){
                 return new PathEvaluationResult(true, "null", DataFormat.JSON);
@@ -127,8 +129,38 @@ public final class JSON {
             }
             return new PathEvaluationResult(false, null, DataFormat.JSON);
         }
-        catch (PathNotFoundException ex2) {
+        catch (PathNotFoundException ex) {
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
+        }
+        catch (Exception ex) {
+            throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
+        }
+    }
+    
+    /**
+     * Check if a JSON document reference (jsonpath expr) matches a particular regex.
+     * REGEX comparison
+     * 
+     * @param jsondoc the json document to check
+     * @param reference the JSON path expression
+     * @param value the regular expression to check against
+     * @return PathEvaluationResult with the boolean result and the value of the JSONPath expression
+     * @throws InvalidJSONPathException Thrown in case of an invalid JSONPath in a guard.
+     * @throws InvalidRegexException Thrown in case of an invalid regex
+     */
+    public static PathEvaluationResult regexJSON(final String jsondoc,
+            final String reference, final Object value) throws InvalidJSONPathException, InvalidRegexException {
+        try {
+            final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
+            final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
+            boolean boolResult = Pattern.matches(jsonVal, xprVal);
+            return new PathEvaluationResult(boolResult, xprVal, DataFormat.JSON);
+        }
+        catch (PathNotFoundException ex) {
+            throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
+        }
+        catch (PatternSyntaxException ex) {
+            throw new InvalidRegexException("There is a regex guard with an invalid regular expression.");
         }
         catch (Exception ex) {
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");

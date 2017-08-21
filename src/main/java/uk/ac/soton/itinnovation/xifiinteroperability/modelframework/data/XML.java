@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -176,6 +178,52 @@ public final class XML {
         } catch (XPathExpressionException ex) {
             ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
             throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
+        }
+        return new PathEvaluationResult(false, null, DataFormat.XML);
+    }
+    
+    /**
+     * XPATH based method to check if the value of an expression in an XML data structure
+     * matches a given regular expression
+     * REGEX comparison
+     * 
+     * @param xmlDoc The xml content to apply an XPATH expression to
+     * @param reference the XPATH reference expression to evaluate
+     * @param value the regex to match against
+     * @return the evaluation result and the value of the XPath expression
+     * @throws InvalidXPathException Thrown in case of an invalid XPath in guard
+     * @throws InvalidRegexException Thrown in case of an invalid regex in guard
+     */
+    public static PathEvaluationResult xmlRegex(final String xmlDoc, final String reference, final Object value) 
+            throws InvalidXPathException, InvalidRegexException {
+        try {
+            final DocumentBuilderFactory domFactory = DocumentBuilderFactory
+                .newInstance();
+            domFactory.setNamespaceAware(true);
+            final DocumentBuilder builder = domFactory.newDocumentBuilder();
+            final InputSource source = new InputSource(new StringReader(xmlDoc.toLowerCase(Locale.ENGLISH)));
+            final Document doc = builder.parse(source);
+            final XPath xpath = XPathFactory.newInstance().newXPath();
+            final XPathExpression expr = xpath.compile(reference.toLowerCase(Locale.ENGLISH));
+            final boolean xPathExist = (boolean) expr.evaluate(doc, XPathConstants.BOOLEAN);
+            if (!xPathExist){
+                throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
+            }
+            final Object result = expr.evaluate(doc);
+            boolean boolResult = Pattern.matches(value.toString(), result.toString());
+            return new PathEvaluationResult(boolResult, result, DataFormat.XML);
+        } catch (SAXException ex) {
+            ServiceLogger.LOG.error("Error parsing the xml document", ex);
+        } catch (IOException ex) {
+            ServiceLogger.LOG.error("Error buffering the xml string data", ex);
+        } catch (ParserConfigurationException ex) {
+            ServiceLogger.LOG.error("Error configuring the xml parser", ex);
+        } catch (XPathExpressionException ex) {
+            ServiceLogger.LOG.error("Error with invalid xml xpath expression", ex);
+            throw new InvalidXPathException("XPath '" + reference + "' is invalid or does not exist.");
+        } catch (PatternSyntaxException ex) {
+            ServiceLogger.LOG.error("Error with invalid regular expression", ex);
+            throw new InvalidRegexException("There is a regex guard with an invalid regular expression.");
         }
         return new PathEvaluationResult(false, null, DataFormat.XML);
     }

@@ -99,7 +99,7 @@ public class PatternCheckThread extends Thread {
             arch = new Architecture(patternToTest, report, debugMode);
             if (arch.getStateMachine().getStartState() == null) {
                 JOptionPane.showMessageDialog(editor,
-                                "Pattern is not valid:",
+                                "Pattern is not valid: no start state found.",
                                 "Pattern verification",
                                 JOptionPane.ERROR_MESSAGE);
             } else  {

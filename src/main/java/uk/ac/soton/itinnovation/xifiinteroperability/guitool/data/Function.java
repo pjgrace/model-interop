@@ -44,11 +44,10 @@ public final class Function implements Serializable {
     }
 
      /**
-     * Can be equals, notequals, contains.
+     * Can be equals, notequals, contains, lessthan, greaterthan, regex.
      */
     public enum FunctionType {
 
-        Counter ("counter"),
         /**
          * The equals function a==b.
          */
@@ -73,7 +72,17 @@ public final class Function implements Serializable {
         /**
          * < function, a > b
          */
-        GreaterThan ("greaterthan");
+        GreaterThan ("greaterthan"),
+        
+        /**
+         * The counter function - Index = NumIterations
+         */
+        Counter ("counter"),
+        
+        /**
+         * The regex function - matching values with regular expressions
+         */
+        Regex("regex");
 
         /**
          * The string version of the type e.g. "equals"
@@ -128,6 +137,9 @@ public final class Function implements Serializable {
         }
         if (typeName.equalsIgnoreCase("greaterthan")) {
             return FunctionType.GreaterThan;
+        }
+        if (typeName.equalsIgnoreCase("regex")){
+            return FunctionType.Regex;
         }
         return null;
     }
