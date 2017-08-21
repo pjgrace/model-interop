@@ -46,7 +46,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExecuteAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExitAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.GraphAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.OpenAction;
@@ -83,7 +82,9 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-        menuItem = new JMenuItem(mxResources.get("openFile"), new ImageIcon(BasicGraphEditor.class.getResource("/images/save16.png")));
+
+        menuItem = new JMenuItem(mxResources.get("save"), new ImageIcon(BasicGraphEditor.class.getResource("/images/save16.png")));
+
         menuItem.addActionListener(new SaveAction(editor, false));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
@@ -144,7 +145,7 @@ public class EditorMenuBar extends JMenuBar {
         // creates the run menu
         menu = add(new JMenu("Run"));
         
-        menu.add(editor.bind("Run test", new ExecuteAction(editor), "/images/run16.png"));
+        menu.add(editor.bind("Run test", new EditorActions.ExecuteAction(editor), "/images/run16.png"));
         
         JMenuItem stopButton = new JMenuItem("Stop test");
         stopButton.addActionListener((ActionEvent ae) -> {
@@ -169,6 +170,7 @@ public class EditorMenuBar extends JMenuBar {
 
         JMenuItem xPathGeneratorItem = new JMenuItem("XPath Expression Generator");
         xPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+
             int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing XML file?",
                     "Load XML file", JOptionPane.YES_NO_CANCEL_OPTION);
             if (choice == JOptionPane.CANCEL_OPTION){
@@ -178,14 +180,14 @@ public class EditorMenuBar extends JMenuBar {
                 new XPathGeneratorEditor().initGUI(false, null);
                 return;
             }
-            
+
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-            
+
             final int check = fChooser.showDialog(editor, "Choose xml file");
-            
+
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -197,7 +199,7 @@ public class EditorMenuBar extends JMenuBar {
                         line = br.readLine();
                     }
                     br.close();
-                    
+
                     new XPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){
@@ -208,23 +210,26 @@ public class EditorMenuBar extends JMenuBar {
 
         JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Expression Generator");
         jsonPathGeneratorItem.addActionListener((ActionEvent ae) -> {
+
             int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing JSON file?",
                     "Load JSON file", JOptionPane.YES_NO_CANCEL_OPTION);
             if (choice == JOptionPane.CANCEL_OPTION) {
                 return;
-            } 
+            }
             else if (choice == JOptionPane.NO_OPTION) {
                 new JSONPathGeneratorEditor().initGUI(false, null);
                 return;
             }
-            
+
             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-            
+
+
             final int check = fChooser.showDialog(editor, "Choose json file");
-            
+
+
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -236,7 +241,7 @@ public class EditorMenuBar extends JMenuBar {
                         line = br.readLine();
                     }
                     br.close();
-                    
+
                     new JSONPathGeneratorEditor().initGUI(sb.toString(), false, null);
                 }
                 catch (IOException ex){

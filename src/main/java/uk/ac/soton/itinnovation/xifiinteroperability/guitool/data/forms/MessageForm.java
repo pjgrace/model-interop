@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -72,13 +71,9 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.Interfa
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 
 /**
- * Table related to the data attached to graph nodes. Essentially, there
- * is little need for data attached to nodes at present (although in future
- * this may be extended e.g. time outs in timed automata.
+ * The message form for inputing data to a trigger out transition. This allows
+ * the: Header, message body and URL to be created.
  *
- * Attach name value pairs for constant values used in the graph.
- *
- * todo: add rules for one ID, one address only
  *
  * @author pjg
  */
@@ -98,7 +93,7 @@ public class MessageForm extends JPanel {
             fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
         }
     };
-    
+
     /**
      * a static mouse listener used to request the focus on click
      */
@@ -110,7 +105,7 @@ public class MessageForm extends JPanel {
             }
         }
     };
-    
+
     /**
      * a static variable for html content with common http headers
      */
@@ -123,7 +118,7 @@ public class MessageForm extends JPanel {
             + "<li><i>Proxy-Authorization</i></li><li><i>Range</i></li><li><i>Referer</i></li><li><i>User-Agent</i></li>"
             + "<li><i>Upgrade</i></li><li><i>Via</i></li><li><i>Warning</i></li>"
             + "</ul>...</body></html>";
-    
+
     /**
      * The form first contains text fields to input the main content about
      * the message.
@@ -133,7 +128,7 @@ public class MessageForm extends JPanel {
      * Text field to enter the urlEndpoint destination of the message.
      */
     private final transient JComboBox url;
-    
+
     /**
      * Label which shows the actual url of the pointer
      */
@@ -175,9 +170,9 @@ public class MessageForm extends JPanel {
      * The text field to enter the new header field value.
      */
     private final transient JTextField headerValue = new JTextField();
-    
+
     /**
-     * reference to the editor
+     * reference to the editor.
      */
     private BasicGraphEditor editor;
 
@@ -198,32 +193,31 @@ public class MessageForm extends JPanel {
         super(new BorderLayout());
         messageView = new MessageTableModel();
         this.editor = editor;
-        
+
         ToolTipManager.sharedInstance().setInitialDelay(75);
         ToolTipManager.sharedInstance().setDismissDelay(ToolTipManager.sharedInstance().getDismissDelay()*2);
-        
+
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
 
         // Info Panel
         final JPanel listPane = new JPanel();
-        GridLayout gridLayout = new GridLayout(6 , 2);
+        GridLayout gridLayout = new GridLayout(8 , 2);
         gridLayout.setHgap(5);
         gridLayout.setVgap(5);
-        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+//        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         listPane.setLayout(gridLayout);
 
-        final JLabel title = new JLabel("Message Data", JLabel.CENTER);
+        final JLabel title = new JLabel(" Test Message Content", JLabel.LEFT);
         final Font font = title.getFont();
         final Map attributes = font.getAttributes();
-        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
         title.setFont(font.deriveFont(attributes));
 
         listPane.add(title);
         listPane.add(new JLabel("", SwingConstants.LEFT));
 
-        listPane.add(new JLabel("URL pointer:",  JLabel.RIGHT));
+        listPane.add(new JLabel("Interface target:",  JLabel.RIGHT));
         List<String> restUrls = editor.getDataModel().getRestUrls();
         if (restUrls.size() > 0){
             url = new JComboBox<>(editor.getDataModel().getRestUrls().toArray().clone());
@@ -232,9 +226,10 @@ public class MessageForm extends JPanel {
             url = new JComboBox<>();
             url.addItem("No url pointers available..");
         }
+        url.setToolTipText("Select a component interface where this message will be sent to");
         listPane.add(url);
-        
-        JLabel pointerLabel = new JLabel("Pointing to link: ", JLabel.RIGHT);
+
+        JLabel pointerLabel = new JLabel("Full URL: ", JLabel.RIGHT);
         pointerLabel.setFont(new Font("serif", Font.ITALIC + Font.BOLD, pointerLabel.getFont().getSize() + 1));
         listPane.add(pointerLabel);
         pointerLinkLabel = new JLabel("N/A");
@@ -245,21 +240,21 @@ public class MessageForm extends JPanel {
         pointerLinkLabel.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
-                JOptionPane.showMessageDialog(listPane, 
+                JOptionPane.showMessageDialog(listPane,
                         "The url pointer is pointing to the following link: " + pointerLinkLabel.getText(),
                         "URL Pointer information", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         listPane.add(pointerLinkLabel);
-        
+
         url.addItemListener((ItemEvent ie) -> {
             if (ie.getStateChange() == ItemEvent.SELECTED){
                 String selected = url.getSelectedItem().toString();
-                
+
                 if (!selected.contains("component")){
                     return;
                 }
-   
+
                 pointerLinkLabel.setText(getUrlPointerLink());
                 pointerLinkLabel.setToolTipText(pointerLinkLabel.getText());
             }
@@ -267,6 +262,7 @@ public class MessageForm extends JPanel {
 
         listPane.add(new JLabel("Resource path:", JLabel.RIGHT));
         path = new JTextField();
+        path.setToolTipText("Enter the path of the method i.e. complete the full URL for the request");
         path.setComponentPopupMenu(new FormPopUpMenu(editor, path));
         listPane.add(path);
 
@@ -279,69 +275,55 @@ public class MessageForm extends JPanel {
         listPane.add(contentType);
 
 
-        body = new JTextArea("", 20, 10);
+        body = new JTextArea("");
 
         body.setLineWrap(true);
         body.setComponentPopupMenu(new FormPopUpMenu(editor, body));
-        topPanel.add(listPane);
-        topPanel.add(new JLabel("Message Content:"));
-        topPanel.add(new JScrollPane(body));
-
-//        topPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        listPane.add(new JLabel("Message body:", JLabel.RIGHT));
+        listPane.add(new JScrollPane(body));
 
 
-        topPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        final JLabel tableTitle = new JLabel("Table of Headers", JLabel.RIGHT);
-        tableTitle.setFont(font.deriveFont(attributes));
-        topPanel.add(tableTitle);
-        topPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-
-        final JTable nodetable = new JTable(messageView);
-        nodetable.addMouseListener(new MouseAdapter() {
+        final JButton update = new JButton("Update Message");
+        ButtonCustomizer.customizeButton(update);
+        update.addActionListener(new ActionListener() {
             @Override
-            public void mouseReleased(MouseEvent e) {
-                int r = nodetable.rowAtPoint(e.getPoint());
-                if (r >= 0 && r < nodetable.getRowCount()) {
-                    nodetable.setRowSelectionInterval(r, r);
-                } else {
-                    nodetable.clearSelection();
+            public void actionPerformed(final ActionEvent event) {
+                if (url.getSelectedItem().toString().contains("component")){
+                    mirrorNode.updateMessage(url.getSelectedItem().toString(),
+                        path.getText(), method.getSelectedItem().toString(),
+                            contentType.getSelectedItem().toString(), body.getText());
                 }
-                
-                int rowindex = nodetable.getSelectedRow();
-                if (rowindex < 0)
-                    return;
-                
-                if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
-                    JPopupMenu popup = new ChangeTable(editor, messageView, r, mirrorNode);
-                    popup.show(e.getComponent(), e.getX(), e.getY());
+                else {
+                    JOptionPane.showMessageDialog(listPane,
+                            "Invalid component url pointer.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
-        });
-        final JScrollPane messageScrollPane = JTable.createScrollPaneForTable(nodetable);
+          });
+        listPane.add(new JLabel(""));
+        listPane.add(update);
+        topPanel.add(listPane);
 
-//        add(messageScrollPane, BorderLayout.CENTER);
-        topPanel.add(messageScrollPane);
-
-        // Interface add Panel
+        // Headers add Panel
         final JPanel newIntfPane = new JPanel();
-        gridLayout = new GridLayout(4 , 2);
+        gridLayout = new GridLayout(6 , 2);
         newIntfPane.setLayout(gridLayout);
-        newIntfPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+//        newIntfPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
-        final JLabel stitle = new JLabel(" Add new Header Field");
+        final JLabel stitle = new JLabel(" Add Message Header");
         stitle.setFont(font.deriveFont(attributes));
         newIntfPane.add(stitle);
         newIntfPane.add(new JLabel("", JLabel.LEFT));
 
         newIntfPane.add(new JLabel(" Header ", JLabel.LEFT));
-        newIntfPane.add(new JLabel("Value", JLabel.LEFT));
+        newIntfPane.add(new JLabel(" Value", JLabel.LEFT));
 
         header.setToolTipText(null);
         newIntfPane.add(header);
-        
+
         headerValue.setComponentPopupMenu(new FormPopUpMenu(editor, headerValue));
         newIntfPane.add(headerValue);
-        
+
         final JPanel checkBoxPanel = new JPanel();
         checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.LINE_AXIS));
         checkBoxPanel.add(new JLabel("  Show suggestions on hover:  "));
@@ -357,7 +339,7 @@ public class MessageForm extends JPanel {
         });
         checkBoxPanel.add(checkBox);
         newIntfPane.add(checkBoxPanel);
-        
+
         final JButton addIntf = new JButton("Add Header");
         ButtonCustomizer.customizeButton(addIntf);
         addIntf.addActionListener(new ActionListener() {
@@ -371,30 +353,56 @@ public class MessageForm extends JPanel {
             }
           });
         newIntfPane.add(addIntf);
-        
-        topPanel.add(newIntfPane);
-        
-        add(topPanel, BorderLayout.CENTER);
-        final JButton update = new JButton("Update Message");
-        ButtonCustomizer.customizeButton(update);
-        update.addActionListener(new ActionListener() {
+
+
+//        add(newIntfPane, BorderLayout.CENTER);
+
+
+//        newIntfPane.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        final JLabel tableTitle = new JLabel(" Message Headers", JLabel.LEFT);
+       final Font font2 = tableTitle.getFont();
+        final Map attributes2 = font.getAttributes();
+        attributes2.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+        tableTitle.setFont(font2.deriveFont(attributes2));
+
+
+        newIntfPane.add(Box.createRigidArea(new Dimension(0, 5)));
+        newIntfPane.add(Box.createRigidArea(new Dimension(0, 5)));
+        newIntfPane.add(tableTitle);
+        newIntfPane.add(new JLabel("", JLabel.LEFT) );
+                topPanel.add(newIntfPane);
+
+        final JTable nodetable = new JTable(messageView);
+        nodetable.addMouseListener(new MouseAdapter() {
             @Override
-            public void actionPerformed(final ActionEvent event) {
-                if (url.getSelectedItem().toString().contains("component")){
-                    mirrorNode.updateMessage(url.getSelectedItem().toString(),
-                        path.getText(), method.getSelectedItem().toString(),
-                            contentType.getSelectedItem().toString(), body.getText());
+            public void mouseReleased(MouseEvent e) {
+                int r = nodetable.rowAtPoint(e.getPoint());
+                if (r >= 0 && r < nodetable.getRowCount()) {
+                    nodetable.setRowSelectionInterval(r, r);
+                } else {
+                    nodetable.clearSelection();
                 }
-                else {
-                    JOptionPane.showMessageDialog(listPane,
-                            "Invalid component url pointer.", "Error", 
-                            JOptionPane.ERROR_MESSAGE);
+
+                int rowindex = nodetable.getSelectedRow();
+                if (rowindex < 0)
+                    return;
+
+                if (e.isPopupTrigger() && e.getComponent() instanceof JTable ) {
+                    JPopupMenu popup = new ChangeTable(editor, messageView, r, mirrorNode);
+                    popup.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
-          });
+        });
+        final JScrollPane messageScrollPane = JTable.createScrollPaneForTable(nodetable);
 
-        add(update, BorderLayout.SOUTH);
-        
+        add(messageScrollPane, BorderLayout.CENTER);
+
+//        topPanel.add(messageScrollPane);
+
+        add(topPanel, BorderLayout.NORTH);
+//        add(messageScrollPane, BorderLayout.SOUTH);
+
         final FocusListener focusListener = new FocusListener() {
             @Override
             public void focusGained(FocusEvent fe) {
@@ -408,7 +416,7 @@ public class MessageForm extends JPanel {
                 if (fe.getComponent() instanceof JTextField || fe.getComponent() instanceof JTextArea){
                     fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
                 }
-                
+
                 if (url.getSelectedItem().toString().contains("component")){
                     mirrorNode.updateMessage(url.getSelectedItem().toString(),
                             path.getText(), method.getSelectedItem().toString(),
@@ -424,7 +432,7 @@ public class MessageForm extends JPanel {
         contentType.addFocusListener(focusListener);
         body.addFocusListener(focusListener);
 
-        
+
         JPanel panel = this; // reference to the panel
         KeyListener keyListener = new KeyAdapter(){
             @Override
@@ -436,12 +444,12 @@ public class MessageForm extends JPanel {
         };
         url.addKeyListener(keyListener);
         path.addKeyListener(keyListener);
-        
+
         this.addMouseListener(FOCUS_CHANGER);
         topPanel.addMouseListener(FOCUS_CHANGER);
         nodetable.addMouseListener(FOCUS_CHANGER);
         messageScrollPane.addMouseListener(FOCUS_CHANGER);
-        
+
         header.addFocusListener(COLOUR_CHANGER);
         headerValue.addFocusListener(COLOUR_CHANGER);
     }
@@ -457,7 +465,7 @@ public class MessageForm extends JPanel {
             url.setSelectedIndex(0);
         }
         else {
-            url.setSelectedItem(msg.getEndpoint().toLowerCase(Locale.ENGLISH)); 
+            url.setSelectedItem(msg.getEndpoint().toLowerCase(Locale.ENGLISH));
         }
         path.setText(msg.getPath());
 
@@ -495,11 +503,11 @@ public class MessageForm extends JPanel {
         pointerLinkLabel.setText(getUrlPointerLink());
         pointerLinkLabel.setToolTipText(pointerLinkLabel.getText());
         path.setText("");
-        method.setSelectedIndex(0); 
+        method.setSelectedIndex(0);
         contentType.setSelectedIndex(0);
         body.setText("");
     }
-    
+
     private String getUrlPointerLink(){
         String link = "N/A";
         if (url.getSelectedItem().toString().contains("component")){
@@ -512,7 +520,7 @@ public class MessageForm extends JPanel {
                 }
             }
         }
-        
+
         return link;
     }
 }

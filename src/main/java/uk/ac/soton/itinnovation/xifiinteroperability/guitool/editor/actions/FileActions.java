@@ -98,12 +98,12 @@ public class FileActions {
          * Remember the directory location for saving files to.
          */
         private transient String lastDir = null;
-        
+
         /**
          * a boolean, which represents if the saveAs button was clicked
          */
         private final transient boolean saveAsClicked;
-        
+
         /**
          * Editor context - the editor where we are saving files.
          */
@@ -226,7 +226,7 @@ public class FileActions {
                             ServiceLogger.LOG.error("Error closing file stream", ex);
                         }
                     }
-                } 
+                }
                 else {
                     filename.append(editor.getCurrentFile().getAbsolutePath());
                     final String xml = editor.getDataModel().getGraphXML();
@@ -256,7 +256,7 @@ public class FileActions {
             }
         }
     }
-    
+
     /**
      * Create a new graph. Essentially clear all the data models and views
      * from the UI.
@@ -299,7 +299,7 @@ public class FileActions {
                 editor.resetUndoManagers();
                 editor.updateTableView(null);
                 editor.getXmlUndoManager().add(editor.getDataModel().getState());
-          
+
                 /**
                  * Clear the graph views.
                  */
@@ -366,7 +366,7 @@ public class FileActions {
         protected final void resetEditor() {
             // Check modified flag and display save dialog
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
-            
+
             final mxGraph graph = editor.getBehaviourGraph().getGraph();
             final mxCell root = new mxCell();
             root.insert(new mxCell());
@@ -376,7 +376,7 @@ public class FileActions {
             final mxCell root2 = new mxCell();
             root2.insert(new mxCell());
             agraph.getModel().setRoot(root2);
-            
+
             editor.setModified(false);
             editor.getDataModel().clearData();
             editor.resetUndoManagers();
@@ -439,7 +439,7 @@ public class FileActions {
                 final String wDir = (lastDir != null) ? lastDir : System
                                 .getProperty("user.dir");
 
-                final JFileChooser fChoose = new JFileChooser(wDir);
+                final JFileChooser fChoose = new JFileChooser(wDir+"//src//main//resources//examples");
 
                 // Adds file filter for supported file format
                 final DefaultFileFilter defaultFilter = new DefaultFileFilter(
