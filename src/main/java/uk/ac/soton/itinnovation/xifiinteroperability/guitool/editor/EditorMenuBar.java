@@ -28,13 +28,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
 import com.mxgraph.util.mxResources;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -45,6 +46,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExecuteAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.ExitAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.GraphAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.OpenAction;
@@ -139,7 +141,29 @@ public class EditorMenuBar extends JMenuBar {
         menu.addSeparator();
         menu.add(editor.bind("Test Reports", new EditorActions.ReportsAction(editor), "/images/report16.png"));
 
-
+        // creates the run menu
+        menu = add(new JMenu("Run"));
+        
+        menu.add(editor.bind("Run test", new ExecuteAction(editor), "/images/run16.png"));
+        
+        JMenuItem stopButton = new JMenuItem("Stop test");
+        stopButton.addActionListener((ActionEvent ae) -> {
+            EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+            JButton stop = (JButton) toolBar.getComponentAtIndex(toolBar.getStopButtonIndex());
+            stop.doClick();
+        });
+        stopButton.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/stop16.png")));
+        menu.add(stopButton);
+        
+        JMenuItem nextButton = new JMenuItem("Next step");
+        nextButton.addActionListener((ActionEvent e) -> {
+            EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
+            JButton next = (JButton) toolBar.getComponentAtIndex(toolBar.getNextButtonIndex());
+            next.doClick();
+        });
+        nextButton.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/step16.png")));
+        menu.add(nextButton);
+        
         // creates the tools menu
         menu = add(new JMenu("Tools"));
 
@@ -251,11 +275,8 @@ public class EditorMenuBar extends JMenuBar {
         menu = add(new JMenu(mxResources.get("help")));
 
         final JMenuItem item = menu.add(new JMenuItem(mxResources.get("aboutGraphEditor")));
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                    editor.about();
-            }
+        item.addActionListener((final ActionEvent event) -> {
+            editor.about();
         });
     }
 };

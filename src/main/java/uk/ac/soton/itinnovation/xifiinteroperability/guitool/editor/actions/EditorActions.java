@@ -36,10 +36,9 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionListener;
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
@@ -130,6 +129,27 @@ public final class EditorActions {
      * corresponding testing framework.
      */
     public static class ExecuteAction extends AbstractAction {
+        
+        /**
+         * a reference to the editor
+         */
+        private final transient BasicGraphEditor editorReference;
+        
+        /**
+         * A constructor to set the editor reference
+         * @param editor the reference to the editor
+         */
+        public ExecuteAction(BasicGraphEditor editor){
+            this.editorReference = editor;
+        }
+        
+        /**
+         * an empty constructor in case a reference to the editor is not needed
+         */
+        public ExecuteAction(){
+            this.editorReference = null;
+        }
+        
         /**
          * The method to start the execution of the pattern.
          * @param actionEvent The received UI event.
@@ -145,7 +165,14 @@ public final class EditorActions {
             }
             boolean debugMode = mode.equals("Step-by-step mode");
 
-            final BasicGraphEditor editor = getEditor(actionEvent);
+            final BasicGraphEditor editor;
+            BasicGraphEditor test = getEditor(actionEvent);
+            if (test == null){
+                editor = this.editorReference;
+            }
+            else {
+                editor = test;
+            }
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.REPORTPANEL);
@@ -154,45 +181,37 @@ public final class EditorActions {
                 final PatternCheckThread checkThread = new PatternCheckThread(editor.getDataModel().getGraphXML(),
                         editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor, debugMode);
                 EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
-                Component stopButton = toolBar.getComponentAtIndex(toolBar.getStopButtonIndex());
-
-                MouseListener[] listeners = stopButton.getMouseListeners();
-                if (listeners != null && listeners.length >= 2){
-                    stopButton.removeMouseListener(listeners[listeners.length-1]);
+                JButton stopButton = (JButton) toolBar.getComponentAtIndex(toolBar.getStopButtonIndex());
+                ActionListener[] listeners = stopButton.getActionListeners();
+                if (listeners != null && listeners.length >= 1){
+                    stopButton.removeActionListener(listeners[listeners.length-1]);
                 }
-                stopButton.addMouseListener(new MouseAdapter(){
-                    @Override
-                    public void mouseClicked(MouseEvent e){
+                stopButton.addActionListener((ActionEvent e) -> {
+                    try {
+                        if (checkThread.getArch().getStateMachine().isFinished()) {
+                            JOptionPane.showMessageDialog(editor, "The test has either finished or has been stopped.",
+                                    "Warning", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+                        checkThread.getArch().getStateMachine().stop();
+                    } catch (NullPointerException ex) {}
+                });
+
+                if (debugMode){
+                    JButton nextButton = (JButton) toolBar.getComponentAtIndex(toolBar.getNextButtonIndex());
+                    ActionListener[] actionListeners = nextButton.getActionListeners();
+                    if (actionListeners != null && actionListeners.length >= 1) {
+                        nextButton.removeActionListener(actionListeners[actionListeners.length-1]);
+                    }
+                    nextButton.addActionListener((ActionEvent e) -> {
                         try {
-                            if (checkThread.getArch().getStateMachine().isFinished()){
+                            if (checkThread.getArch().getStateMachine().isFinished()) {
                                 JOptionPane.showMessageDialog(editor, "The test has either finished or has been stopped.",
                                         "Warning", JOptionPane.WARNING_MESSAGE);
                                 return;
                             }
-                            checkThread.getArch().getStateMachine().stop();
-                        }
-                        catch (NullPointerException ex){}
-                    }
-                });
-
-                if (debugMode){
-                    Component nextButton = toolBar.getComponentAtIndex(toolBar.getNextButtonIndex());
-                    MouseListener[] mouseListeners = nextButton.getMouseListeners();
-                    if (mouseListeners != null && mouseListeners.length >= 2) {
-                        nextButton.removeMouseListener(mouseListeners[mouseListeners.length-1]);
-                    }
-                    nextButton.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            try {
-                                if (checkThread.getArch().getStateMachine().isFinished()) {
-                                    JOptionPane.showMessageDialog(editor, "The test has either finished or has been stopped.",
-                                            "Warning", JOptionPane.WARNING_MESSAGE);
-                                    return;
-                                }
-                                checkThread.getArch().getStateMachine().next();
-                            } catch (NullPointerException ex) {}
-                        }
+                            checkThread.getArch().getStateMachine().next();
+                        } catch (NullPointerException ex) {}
                     });
                 }
 
@@ -229,7 +248,7 @@ public final class EditorActions {
         /**
          * The editor context for action to be associated with.
          */
-        private transient BasicGraphEditor editor;
+        private final transient BasicGraphEditor editor;
 
         /**
          * Create instance of the XML action with the editor context.
@@ -348,6 +367,7 @@ public final class EditorActions {
              * The show graph action has been selected.
              * @param actionEvent The UI event of the selection.
              */
+            @Override
             public final void actionPerformed(final ActionEvent actionEvent) {
                 if (editor == null) {
                     editor = getEditor(actionEvent);
