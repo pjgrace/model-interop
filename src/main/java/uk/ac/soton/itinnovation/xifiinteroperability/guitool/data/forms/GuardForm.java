@@ -231,7 +231,6 @@ public class GuardForm extends JPanel {
 
         // Row 2
         listPane.add(new JLabel("Function:",  JLabel.RIGHT));
-        final JComboBox comboBox = new JComboBox();
         comboBox.setModel(new DefaultComboBoxModel(Function.FunctionType.values()));
         comboBox.setSelectedItem(Function.FunctionType.Equals);
 //        final JPanel comboPanel = new JPanel();
