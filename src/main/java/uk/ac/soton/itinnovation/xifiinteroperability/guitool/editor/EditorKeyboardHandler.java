@@ -69,6 +69,7 @@ public class EditorKeyboardHandler extends mxKeyboardHandler {
                 map.put(KeyStroke.getKeyStroke("control Z"), "undo");
                 map.put(KeyStroke.getKeyStroke("control Y"), "redo");
                 map.put(KeyStroke.getKeyStroke("DELETE"), "delete");
+                map.put(KeyStroke.getKeyStroke("control X"), "cut");
             }
 
             return map;
@@ -89,6 +90,7 @@ public class EditorKeyboardHandler extends mxKeyboardHandler {
             map.put("undo", new HistoryAction(true, null));
             map.put("redo", new HistoryAction(false, null));
             map.put("delete", new EditorActions.Delete(null));
+            map.put("cut", new EditorActions.Delete(null));
 
             return map;
 	}

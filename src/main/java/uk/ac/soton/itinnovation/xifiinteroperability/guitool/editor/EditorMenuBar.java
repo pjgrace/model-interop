@@ -100,9 +100,8 @@ public class EditorMenuBar extends JMenuBar {
 
         // Creates the edit menu
         menu = add(new JMenu(mxResources.get("edit")));
-
-        menuItem = new JMenuItem(mxResources.get("cut"), new ImageIcon(BasicGraphEditor.class.getResource("/images/cut16.png")));
-        menuItem.addActionListener(new SaveAction(editor, false));
+        
+        menuItem = new JMenuItem(editor.bind("Cut", new EditorActions.Delete(editor), "/images/cut16.png"));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
 
