@@ -30,6 +30,9 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 
@@ -94,12 +97,55 @@ public class ComponentTableModel extends AbstractTableModel {
      * @param column The column number.
      */
     @Override
-    public final void setValueAt(final Object value, final int rowNum, final int column) {
+    public final void setValueAt(final Object value, int rowNum, final int column) {
+        if (rowNum >= data.size()) {
+            rowNum = data.size() - 1;
+        }
         final InterfaceData row = data.get(rowNum);
-
+        
         if (column == 0) {
+            for(InterfaceData interfaceData: data){
+                if (interfaceData.getRestID().equalsIgnoreCase((String) value)){
+                    JOptionPane.showMessageDialog(null,
+                            "An interface with this id already exists.",
+                            "Interface error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
             row.setRestID((String) value);
-        } else if (column == 1) {
+        } 
+        else if (column == 1) {
+            String newUrl = (String) value;
+            boolean hasPortNumber = Pattern.matches(ComponentForm.REGEX, newUrl);
+            if (!hasPortNumber){
+                JOptionPane.showMessageDialog(null,
+                        "The url of the interface is not valid. Keep in mind that a port number must be specified. For instance - 'http://127.0.0.1:8080/'",
+                        "Invalid URL", 
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            else {
+                Pattern p = Pattern.compile(ComponentForm.PORT_REGEX);
+                Matcher m = p.matcher(newUrl);
+                m.find();
+                String portStr = newUrl.substring(m.start()+1, m.end());
+                try {
+                    Integer port = Integer.parseInt(portStr);
+                    if (port > 65536){
+                        JOptionPane.showMessageDialog(null, 
+                                "The port number in the url must be between 0 and 65536.",
+                                "Port number exceeding limit", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                }
+                catch (NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null,
+                            "The specified port number in the url is invalid!",
+                            "Invalid port number", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
+            
             row.setRestURL((String) value);
         }
 

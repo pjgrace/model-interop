@@ -197,8 +197,8 @@
 		<state>
 			<label>A6</label>
 			<type>end</type>
-			<success>false</success>
-			<report>null</report>
+			<success>true</success>
+			<report>Success</report>
 		</state>
 	</behaviour>
 </pattern>

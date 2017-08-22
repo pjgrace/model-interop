@@ -36,7 +36,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -46,6 +45,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -76,6 +77,17 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
 
 public class ComponentForm extends JPanel {
 
+    /**
+     * the regular expression for validating the url of an interface,
+     * the url should contain a port number and specify the protocol (http(s) or coap)
+     */
+    final transient static String REGEX = "^(http|https|coap):\\/\\/[^:]+:[0-9]{1,5}(\\/.*)?$";
+    
+    /**
+     * the regular expression for catching the port number only from the interface url
+     */
+    final transient static String PORT_REGEX = ":[0-9]{1,5}";
+    
     /**
      * The panel displaying the entered URLs of this component.
      */
@@ -168,25 +180,21 @@ public class ComponentForm extends JPanel {
 
         final JButton update = new JButton("Update");
         ButtonCustomizer.customizeButton(update);
-        update.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-
-                if (mirrorNode.getLabel().equalsIgnoreCase(ident.getText()) || !editor.getDataModel().archIdentExist(ident.getText())){
-                    mxGraphModel model = (mxGraphModel) editor.getSystemGraph().getGraph().getModel();
-                    mxCell cellChanged = (mxCell) model.getCell(mirrorNode.getNodeLabelID());
-                    cellChanged.setValue(ident.getText());
-                    editor.getSystemGraph().refresh();
-                    mirrorNode.setData(ident.getText(), address.getText());
-                }
-                else {
-                    JOptionPane.showMessageDialog(editor,
-                            "Component id '" + ident.getText() + "' is already used. Please choose another label."
-                            , "Renaming error", JOptionPane.ERROR_MESSAGE);
-                    ident.setText(mirrorNode.getLabel());
-                }
+        update.addActionListener((final ActionEvent event) -> {
+            if (mirrorNode.getLabel().equalsIgnoreCase(ident.getText()) || !editor.getDataModel().archIdentExist(ident.getText())){
+                mxGraphModel model = (mxGraphModel) editor.getSystemGraph().getGraph().getModel();
+                mxCell cellChanged = (mxCell) model.getCell(mirrorNode.getNodeLabelID());
+                cellChanged.setValue(ident.getText());
+                editor.getSystemGraph().refresh();
+                mirrorNode.setData(ident.getText(), address.getText());
             }
-          });
+            else {
+                JOptionPane.showMessageDialog(editor,
+                        "Component id '" + ident.getText() + "' is already used. Please choose another label."
+                        , "Renaming error", JOptionPane.ERROR_MESSAGE);
+                ident.setText(mirrorNode.getLabel());
+            }
+        });
 
         final FocusListener focusListener = new FocusListener(){
             @Override
@@ -242,25 +250,51 @@ public class ComponentForm extends JPanel {
 
         final JButton addIntf = new JButton("Add");
         ButtonCustomizer.customizeButton(addIntf);
-        addIntf.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                for(InterfaceData data: mirrorNode.getData()){
-                    if (data.getRestID().equalsIgnoreCase(urlID.getText())){
-                        JOptionPane.showMessageDialog(newIntfPane,
-                                "An interface with this id already exists.",
-                                "Interface error", JOptionPane.ERROR_MESSAGE);
+        addIntf.addActionListener((final ActionEvent event) -> {
+            boolean hasPortNumber = Pattern.matches(ComponentForm.REGEX, url.getText());
+            if (!hasPortNumber){
+                JOptionPane.showMessageDialog(newIntfPane,
+                        "The url of the interface is not valid. Keep in mind that a port number must be specified. For instance - 'http://127.0.0.1:8080/'",
+                        "Invalid URL", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            else {
+                Pattern p = Pattern.compile(ComponentForm.PORT_REGEX);
+                Matcher m = p.matcher(url.getText());
+                m.find();
+                String portStr = url.getText().substring(m.start()+1, m.end());
+                try {
+                    Integer port = Integer.parseInt(portStr);
+                    if (port > 65536){
+                        JOptionPane.showMessageDialog(newIntfPane, 
+                                "The port number in the url must be between 0 and 65536.",
+                                "Port number exceeding limit", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
                 }
-
-                mirrorNode.addInterfaceData(urlID.getText(), url.getText(), getProtocol(editor));
-                componentView.clearData();
-                componentView.setData(mirrorNode);
-                url.setText("");
-                urlID.setText("");
+                catch (NumberFormatException ex){
+                    JOptionPane.showMessageDialog(newIntfPane,
+                            "The specified port number in the url is invalid!",
+                            "Invalid port number", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
             }
-          });
+            
+            for(InterfaceData data: mirrorNode.getData()){
+                if (data.getRestID().equalsIgnoreCase(urlID.getText())){
+                    JOptionPane.showMessageDialog(newIntfPane,
+                            "An interface with this id already exists.",
+                            "Interface error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            
+            mirrorNode.addInterfaceData(urlID.getText(), url.getText(), getProtocol(editor));
+            componentView.clearData();
+            componentView.setData(mirrorNode);
+            url.setText("");
+            urlID.setText("");
+        });
         newIntfPane.add(new JLabel(""));
         newIntfPane.add(addIntf);
 
