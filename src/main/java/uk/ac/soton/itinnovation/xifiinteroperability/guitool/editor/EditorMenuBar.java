@@ -129,7 +129,7 @@ public class EditorMenuBar extends JMenuBar {
         menu.addSeparator();
 
         menuItem = new JMenuItem(mxResources.get("delete"), new ImageIcon(BasicGraphEditor.class.getResource("/images/bin16.png")));
-        menuItem.addActionListener(new HistoryAction(false, editor));
+        menuItem.addActionListener(new EditorActions.Delete(editor));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         menu.add(menuItem);
 
