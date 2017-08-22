@@ -81,12 +81,12 @@ public class ComponentForm extends JPanel {
      * the regular expression for validating the url of an interface,
      * the url should contain a port number and specify the protocol (http(s) or coap)
      */
-    final transient static String REGEX = "^(http|https|coap):\\/\\/[^:]+:[0-9]{1,5}(\\/.*)?$";
+    public final transient static String REGEX = "^(http|https|coap):\\/\\/[^:]+:[0-9]{1,5}(\\/.*)?$";
     
     /**
      * the regular expression for catching the port number only from the interface url
      */
-    final transient static String PORT_REGEX = ":[0-9]{1,5}";
+    public final transient static String PORT_REGEX = ":[0-9]{1,5}";
     
     /**
      * The panel displaying the entered URLs of this component.
