@@ -43,6 +43,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.DefaultEditorKit;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenerator.JSONPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator.XPathGeneratorEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions;
@@ -101,20 +102,18 @@ public class EditorMenuBar extends JMenuBar {
         // Creates the edit menu
         menu = add(new JMenu(mxResources.get("edit")));
         
-        menuItem = new JMenuItem(editor.bind("Cut", new EditorActions.Delete(editor), "/images/cut16.png"));
+        menuItem = new JMenuItem(editor.bind("Cut", new DefaultEditorKit.CutAction(), "/images/cut16.png"));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
 
-        menuItem = new JMenuItem(mxResources.get("copy"), new ImageIcon(BasicGraphEditor.class.getResource("/images/copy16.png")));
-        menuItem.addActionListener(new SaveAction(editor, false));
+        menuItem = new JMenuItem(editor.bind("Copy", new DefaultEditorKit.CopyAction(), "/images/copy16.png"));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
 
-        menuItem = new JMenuItem(mxResources.get("paste"), new ImageIcon(BasicGraphEditor.class.getResource("/images/paste16.png")));
-        menuItem.addActionListener(new SaveAction(editor, false));
+        menuItem = new JMenuItem(editor.bind("Paste", new DefaultEditorKit.PasteAction(), "/images/paste16.png"));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
-
+                
         menu.addSeparator();
         menuItem = new JMenuItem(mxResources.get("undo"), new ImageIcon(BasicGraphEditor.class.getResource("/images/undo16.png")));
         menuItem.addActionListener(new HistoryAction(true, editor));
