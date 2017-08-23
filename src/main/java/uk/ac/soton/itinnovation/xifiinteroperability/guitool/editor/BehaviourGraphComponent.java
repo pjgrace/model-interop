@@ -159,11 +159,18 @@ public class BehaviourGraphComponent extends mxGraphComponent {
         String type = label;
         
         if (dataModel.graphIdentExist(label)){
+            // generating a unique ID
+            int i = 1;
+            String testLabel = "state" + i;
+            while (dataModel.graphIdentExist(testLabel)){
+                i += 1;
+                testLabel = "state" + i;
+            }
             label = (String) JOptionPane.showInputDialog(this.getParent(), 
                         "Please choose a label for this state", 
                         "State Label", 
                         JOptionPane.PLAIN_MESSAGE, 
-                        null, null, "state");
+                        null, null, testLabel);
             if (label != null){
                 label = label.replaceAll("\\s+", "_");
             }
@@ -173,7 +180,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
                         "Please chooose a different label for this state", 
                         "State Label", 
                         JOptionPane.ERROR_MESSAGE, 
-                        null, null, "state");
+                        null, null, testLabel);
                 if (label != null){
                     label = label.replaceAll("\\s+", "_");
                 }

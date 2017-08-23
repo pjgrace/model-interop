@@ -145,11 +145,18 @@ public  class SystemGraphComponent extends mxGraphComponent {
         }
         
         if (dataModel.archIdentExist(label)){
+            // generating a unique ID
+            int i = 1;
+            String testLabel = "component" + i;
+            while (dataModel.archIdentExist(testLabel)){
+                i += 1;
+                testLabel = "component" + i;
+            }
             label = (String) JOptionPane.showInputDialog(this.getParent(), 
                         "Please choose a label identifier for this component", 
                         "Component Identifier", 
                         JOptionPane.PLAIN_MESSAGE, 
-                        null, null, "component");
+                        null, null, testLabel);
             if (label != null){
                 label = label.replaceAll("\\s+", "_");
             }
@@ -159,7 +166,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
                         "Please chooose a different label identifier for this component", 
                         "Component Identifier", 
                         JOptionPane.ERROR_MESSAGE, 
-                        null, null, "component");
+                        null, null, testLabel);
                 if (label != null){
                     label = label.replaceAll("\\s+", "_");
                 }
