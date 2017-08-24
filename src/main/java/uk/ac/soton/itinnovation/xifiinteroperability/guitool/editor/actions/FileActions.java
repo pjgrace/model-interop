@@ -561,7 +561,6 @@ public class FileActions {
          * Clear the editor information of data and history.
          */
         private void resetEditor() {
-            // TODO Check modified flag and display save dialog
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
 
             final mxGraph graph = editor.getBehaviourGraph().getGraph();
@@ -630,6 +629,11 @@ public class FileActions {
                 return;
             }
             
+            if (editor.isModified() && JOptionPane.showConfirmDialog(editor,
+                    mxResources.get("loseChanges")) != JOptionPane.YES_OPTION) {
+                return;
+            }
+            
             String[] options = {"HTTP API test template", "COAP API test template", "HTTP Interoperability test template", "COAP Interoperability test template"};
             String choice = (String) JOptionPane.showInputDialog(editor, 
                     "Please choose the type of template you want to generate.", 
@@ -691,7 +695,6 @@ public class FileActions {
          * Clear the editor information of data and history.
          */
         private void resetEditor() {
-            // TODO Check modified flag and display save dialog
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
 
             final mxGraph graph = editor.getBehaviourGraph().getGraph();
@@ -785,6 +788,11 @@ public class FileActions {
                 editor = EditorActions.getEditor(ae);
             }
             if (editor == null) {
+                return;
+            }
+            
+            if (editor.isModified() && JOptionPane.showConfirmDialog(editor,
+                    mxResources.get("loseChanges")) != JOptionPane.YES_OPTION) {
                 return;
             }
             
