@@ -242,7 +242,10 @@ public final class EditorActions {
                 AbstractGraphElement transition = editorReference.getDataModel().getTransition(ident);
                 if (transition instanceof Guard){
                     if (!editorReference.getCopyPasteManager().getData().get("transitionType").toString().equalsIgnoreCase("guard")){
-                        // TODO maybe add a dialog to notify an imposible pasting
+                        // a dialog to notify an imposible pasting of message data to guard transition
+                        JOptionPane.showMessageDialog(editor, 
+                                "You cannot paste the data of a message transition into a guard transition.",
+                                "Pasting transition data error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     Map<String, Object> data = editorReference.getCopyPasteManager().getData();
@@ -252,7 +255,10 @@ public final class EditorActions {
                 }
                 else if (transition instanceof Message){
                     if (!editorReference.getCopyPasteManager().getData().get("transitionType").toString().equalsIgnoreCase("message")){
-                        // TODO maybe add a dialog to notify an imposible pasting
+                        // a dialog to notify an imposible pasting of guard data to message transition
+                        JOptionPane.showMessageDialog(editor, 
+                                "You cannot paste the data of a guard transition into a message transition.",
+                                "Pasting transition data error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     Map<String, Object> data = editorReference.getCopyPasteManager().getData();
