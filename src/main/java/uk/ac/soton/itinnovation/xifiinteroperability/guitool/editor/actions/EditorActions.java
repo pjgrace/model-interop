@@ -233,7 +233,8 @@ public final class EditorActions {
             }
             
             // check for a copied transition
-            if (editorReference.getCopyPasteManager().getData().get("transitionType") != null){
+            if (editorReference.getCopyPasteManager().getData() != null && 
+                    editorReference.getCopyPasteManager().getData().containsKey("transitionType")){
                 Object[] cells = editorReference.getBehaviourGraph().getGraph().getSelectionCells();
                 if (cells.length != 1){
                     return;
@@ -272,8 +273,9 @@ public final class EditorActions {
                 return;
             }
             
-            // check for a copied component
+            // check for a copied ordinary state  - normal, loop, trigger
             if (editorReference.getCopyPasteManager().getLastGUIid() == null ){
+                TransferHandler.getPasteAction().actionPerformed(actionEvent);
                 return;
             }
             
