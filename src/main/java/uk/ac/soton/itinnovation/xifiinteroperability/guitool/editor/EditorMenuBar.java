@@ -82,7 +82,10 @@ public class EditorMenuBar extends JMenuBar {
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
         
-        menuItem = new JMenuItem(editor.bind("Open model from web", new FileActions.OpenFromWebAction(editor), "/images/open16.png"));
+        menuItem = new JMenuItem(editor.bind("Open Template Model", new FileActions.OpenTemplateAction(editor), "/images/open16.png"));
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem(editor.bind("Open Model From Web", new FileActions.OpenFromWebAction(editor), "/images/open16.png"));
         menu.add(menuItem);
         
         menu.addSeparator();

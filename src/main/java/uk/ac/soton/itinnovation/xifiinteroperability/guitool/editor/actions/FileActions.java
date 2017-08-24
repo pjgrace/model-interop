@@ -84,10 +84,13 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DefaultFileFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GraphGenerator;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 /**
  * Modification of mxGraph Action operations to open, close, new and save
@@ -478,23 +481,194 @@ public class FileActions {
                 if (rChck == JFileChooser.APPROVE_OPTION) {
                         lastDir = fChoose.getSelectedFile().getParent();
 
-                        try {
-                            if (fChoose.getSelectedFile().getAbsolutePath()
-                                            .toLowerCase().endsWith(".xml")) {
-                                    openXmlPng(fChoose.getSelectedFile());
-                            }
-                        } catch (IOException ex) {
-                                JOptionPane.showMessageDialog(
-                                                editor.getBehaviourGraph(),
-                                                ex.toString(),
-                                                mxResources.get("error"),
-                                                JOptionPane.ERROR_MESSAGE);
+                    try {
+                        if (fChoose.getSelectedFile().getAbsolutePath()
+                                .toLowerCase().endsWith(".xml")) {
+                            openXmlPng(fChoose.getSelectedFile());
                         }
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(
+                                editor.getBehaviourGraph(),
+                                ex.toString(),
+                                mxResources.get("error"),
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Action to open a template model - API test model or Interoperability test
+     * model
+     */
+    public static class OpenTemplateAction extends AbstractAction {
+
+        /**
+         * a reference to the editor
+         */
+        private BasicGraphEditor editor;
+
+        /**
+         * a constructor for the OpenTemlate action
+         *
+         * @param editor
+         */
+        public OpenTemplateAction(final BasicGraphEditor editor) {
+            this.editor = editor;
+        }
+        
+        /**
+         * generates the data model for a simple API test template
+         * @param protocol http or coap
+         * @return 
+         */
+        private DataModel generateAPItemplate(String protocol){
+            // Create the API template model
+            DataModel dataModel = new DataModel();
+            dataModel.addNode("1", XMLStateMachine.TRIGGERSTART_LABEL, XMLStateMachine.TRIGGERSTART_LABEL);
+            dataModel.addNode("2", XMLStateMachine.NORMAL_LABEL, XMLStateMachine.NORMAL_LABEL);
+            dataModel.addNode("3", XMLStateMachine.END_LABEL, XMLStateMachine.END_LABEL);
+            dataModel.addNode("4", XMLStateMachine.INTERFACE_LABEL, XMLStateMachine.INTERFACE_LABEL);
+            ArchitectureNode archNode = (ArchitectureNode) dataModel.getComponentByLabel(XMLStateMachine.INTERFACE_LABEL);
+            archNode.addInterfaceData("rest", protocol.toLowerCase() + "://127.0.0.1:8000/", protocol.toLowerCase());
+            dataModel.addConnection("5", "1", "2");
+            dataModel.addConnection("6", "2", "3");
+            
+            return dataModel;
+        }
+        
+        /**
+         * generates the data model for a simple interoperability test template
+         */
+        private DataModel generateInteropTemplate(String protocol){
+            // Create the interoperability template model
+            DataModel dataModel = new DataModel();
+            dataModel.addNode("1", XMLStateMachine.START_LABEL, XMLStateMachine.START_LABEL);
+            dataModel.addNode("2", XMLStateMachine.NORMAL_LABEL, XMLStateMachine.NORMAL_LABEL);
+            dataModel.addNode("3", XMLStateMachine.END_LABEL, XMLStateMachine.END_LABEL);
+            dataModel.addNode("4", XMLStateMachine.INTERFACE_LABEL, XMLStateMachine.INTERFACE_LABEL);
+            dataModel.addNode("7", DataModel.CLIENT, DataModel.CLIENT);
+            ArchitectureNode archNode = (ArchitectureNode) dataModel.getComponentByLabel(XMLStateMachine.INTERFACE_LABEL);
+            archNode.addInterfaceData("rest", protocol.toLowerCase() + "://127.0.0.1:8000/", protocol.toLowerCase());
+            dataModel.addConnection("5", "1", "2");
+            dataModel.addConnection("6", "2", "3");
+            
+            return dataModel;
+        }
+
+        /**
+         * Clear the editor information of data and history.
+         */
+        private void resetEditor() {
+            // TODO Check modified flag and display save dialog
+            editor.getCodePanel().getTestingPanel().clearTestingPanel();
+
+            final mxGraph graph = editor.getBehaviourGraph().getGraph();
+            final mxCell root = new mxCell();
+            root.insert(new mxCell());
+            graph.getModel().setRoot(root);
+
+            final mxGraph agraph = editor.getSystemGraph().getGraph();
+            final mxCell root2 = new mxCell();
+            root2.insert(new mxCell());
+            agraph.getModel().setRoot(root2);
+
+            editor.setModified(false);
+            editor.getDataModel().clearData();
+            editor.resetUndoManagers();
+            editor.updateTableView(null);
+            editor.getCodePanel().getReportsPanel().clearTabbedPane();
+        }
+
+        /**
+         * a method which loads the string model into the tool
+         *
+         * @param model
+         */
+        private void openModel(String model) {
+            try {
+                final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                final Document doc = dBuilder.parse(new InputSource(new StringReader(model)));
+                final GraphGenerator gGenerate = new GraphGenerator(editor);
+
+                editor.setCurrentFile(null);
+                resetEditor();
+                gGenerate.createGraph(doc);
+                editor.getXmlUndoManager().add(editor.getDataModel().getState());
+
+                final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
+                layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                editor.getCodePanel().getXMLPanel().displayXMLSpecification();
+                editor.setRules();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading file: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (ParserConfigurationException ex) {
+                JOptionPane.showMessageDialog(editor, "Error Parsing the xml document", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (SAXException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading xml content: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (InvalidPatternException ex) {
+                JOptionPane.showMessageDialog(editor, "Error in pattern data: Invalid Pattern specification", "Pattern error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        /**
+         * The action to be performed
+         *
+         * @param ae the actual action event
+         */
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (editor == null) {
+                editor = EditorActions.getEditor(ae);
+            }
+            if (editor == null) {
+                return;
+            }
+            
+            String[] options = {"HTTP API test template", "COAP API test template", "HTTP Interoperability test template", "COAP Interoperability test template"};
+            String choice = (String) JOptionPane.showInputDialog(editor, 
+                    "Please choose the type of template you want to generate.", 
+                    "Model from template", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if (choice == null){
+                return;
+            }
+            
+            if (choice.equalsIgnoreCase(options[0])){
+                // Create the API template model
+                DataModel dataModel = generateAPItemplate("http");
+                
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+            else if (choice.equalsIgnoreCase(options[1])){
+                // Create the API template model
+                DataModel dataModel = generateAPItemplate("coap");
+                
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+            else if (choice.equalsIgnoreCase(options[2])){
+                // Create the interoperability template model
+                DataModel dataModel = generateInteropTemplate("http");
+                        
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+            else if (choice.equalsIgnoreCase(options[3])){
+                // Create the interoperability template model
+                DataModel dataModel = generateInteropTemplate("coap");
+                
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+        }
+    }
+    
     /**
      * Action to open a model from web repositories
      */
@@ -517,7 +691,7 @@ public class FileActions {
          * Clear the editor information of data and history.
          */
         private void resetEditor() {
-            // Check modified flag and display save dialog
+            // TODO Check modified flag and display save dialog
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
 
             final mxGraph graph = editor.getBehaviourGraph().getGraph();
