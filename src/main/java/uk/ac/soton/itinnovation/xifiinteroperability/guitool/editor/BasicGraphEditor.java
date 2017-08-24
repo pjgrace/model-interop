@@ -257,6 +257,19 @@ public class BasicGraphEditor extends JPanel {
     private final transient mxUndoManager undoManager;
 
     /**
+     * handles the copy pasting of graph components
+     */
+    private final transient CopyPasteManager copyPasteManager;
+    
+    /**
+     * a getter method for the copy-paste manager
+     * @return the copyPasteManager reference
+     */
+    public CopyPasteManager getCopyPasteManager(){
+        return copyPasteManager;
+    }
+    
+    /**
      * Handle XML undo events
      */
     private final transient XMLUndoManager xmlUndoManager;
@@ -392,6 +405,7 @@ public class BasicGraphEditor extends JPanel {
         final mxGraph sysGraph = arcGraphComponent.getGraph();
         undoManager = createUndoManager();
         xmlUndoManager = new XMLUndoManager();
+        copyPasteManager = new CopyPasteManager();
         xmlUndoManager.add(dataModel.getState());
 
         // Do not change the scale and translation after files have been loaded

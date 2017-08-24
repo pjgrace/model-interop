@@ -44,7 +44,7 @@ public class Guard extends AbstractGraphElement implements Serializable {
     /**
      * The set of guards attached to the transition.
      */
-    private final List<GuardData> data = new ArrayList();
+    private List<GuardData> data = new ArrayList();
 
     /**
      * The target id of this guard.
@@ -57,6 +57,16 @@ public class Guard extends AbstractGraphElement implements Serializable {
      */
     public final List<GuardData> getData() {
         return data;
+    }
+    
+    /**
+     * a setter method for the list of guard data elements,
+     * used by the copy paste manager to totally override the existing  list of guard data elements 
+     * with the copied one
+     * @param data the new list with guards data
+     */
+    public final void setData(List<GuardData> data){
+        this.data = data;
     }
 
     /**

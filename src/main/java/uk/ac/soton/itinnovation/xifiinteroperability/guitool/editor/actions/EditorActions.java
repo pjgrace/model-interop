@@ -37,11 +37,24 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.TransferHandler;
 import org.xml.sax.SAXException;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphElement;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ConstantData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GuardData;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ObjectDeepCloner;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPopupMenu;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorToolBar;
@@ -50,6 +63,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.MainDisplayP
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.PatternCheckThread;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.PatternValidation;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 /**
  * The set of GUI actions e.g. save, open, etc. that correspond to operations
@@ -92,6 +106,198 @@ public final class EditorActions {
         }
 
         return null;
+    }
+    
+    /**
+     * A copy action for states and system components
+     */
+    public static class CopyComponentAction extends AbstractAction {
+        
+        /**
+         * Editor for the action.
+         */
+        private final transient BasicGraphEditor editor;
+        
+        /**
+         * The action method constructor.
+         * @param edtr The editor context.
+         */
+        public CopyComponentAction(final BasicGraphEditor edtr) {
+            super();
+            this.editor = edtr;
+        }
+        
+        /**
+         * overriding the actionPerformed method to copy the chosen component
+         * @param actionEvent the actual event
+         */
+        @Override
+        public final void actionPerformed(final ActionEvent actionEvent) {
+            BasicGraphEditor editorReference = editor;
+            if (editorReference == null){
+                editorReference = EditorActions.getEditor(actionEvent);
+            }
+            final Component component = (Component) actionEvent.getSource();
+            final mxGraphComponent msGraphComp = (mxGraphComponent) component;
+            final Object[] selectionCells = msGraphComp.getGraph().getSelectionCells();
+            final String nodeID = ((mxCell) selectionCells[0]).getId();
+            AbstractGraphElement node = editorReference.getDataModel().getNode(GUIdentifier.getGUIdentifier(nodeID, msGraphComp));
+            if (node instanceof GraphNode){
+                HashMap<String, Object> data;
+                GraphNode graphNode = (GraphNode) node;
+                if (graphNode.getType().equalsIgnoreCase("end")){
+                    // store the information of the end node
+                    data = new HashMap<>();
+                    data.put("success", graphNode.getEndStateSuccess());
+                    data.put("report", graphNode.getEndStateReport());
+                    editorReference.getCopyPasteManager().setData(data);
+                }
+                else if (graphNode.getType().equalsIgnoreCase("start") || (graphNode.getType().equalsIgnoreCase("triggerstart"))){
+                    // store the information of the start node
+                    data = new HashMap<>();
+                    data.put("constantData", ObjectDeepCloner.deepCopy(graphNode.getConstantData()));
+                    editorReference.getCopyPasteManager().setData(data);
+                }
+                editorReference.getCopyPasteManager().setLastType(graphNode.getType());
+            }
+            else if (node instanceof ArchitectureNode) {
+                ArchitectureNode archNode = (ArchitectureNode) node;
+                // store the information of the component node
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("address", archNode.getAddress());
+                data.put("interfaces", ObjectDeepCloner.deepCopy(archNode.getData()));
+                editorReference.getCopyPasteManager().setData(data);
+                if (archNode.getData().size() > 0){
+                    editorReference.getCopyPasteManager().setLastType(XMLStateMachine.INTERFACE_LABEL);
+                }
+                else {
+                    editorReference.getCopyPasteManager().setLastType(DataModel.CLIENT);
+                }
+            }
+            else {
+                // case of copying a transition
+                AbstractGraphElement transition = editorReference.getDataModel().getTransition(nodeID);
+                HashMap<String, Object> data = new HashMap<>();
+                if (transition instanceof Guard){
+                    // copy the information of the guard mesage
+                    data.put("transitionType", "guard");
+                    data.put("guards", ObjectDeepCloner.deepCopy(((Guard) transition).getData()));
+                    editorReference.getCopyPasteManager().setData(data);
+                }
+                else if (transition instanceof Message){
+                    // copy the information of the message transition
+                    data.put("transitionType", "message");
+                    data.put("url", ((Message) transition).getEndpoint());
+                    data.put("path", ((Message) transition).getPath());
+                    data.put("method", ((Message) transition).getHTTPMethod());
+                    data.put("dataType", ((Message) transition).getDataType());
+                    data.put("body", ((Message) transition).getHTTPBody());
+                    data.put("headers", ObjectDeepCloner.deepCopy(((Message) transition).getConstantData()));
+                    editorReference.getCopyPasteManager().setData(data);
+                }
+                return;
+            }
+            
+            TransferHandler.getCopyAction().actionPerformed(actionEvent);
+        }
+    }
+    
+    /**
+     * A paste action for states and system components
+     */
+    public static class PasteComponentAction extends AbstractAction {
+        
+        /**
+         * Editor for the action.
+         */
+        private final transient BasicGraphEditor editor;
+        
+        /**
+         * The action method constructor.
+         * @param edtr The editor context.
+         */
+        public PasteComponentAction(final BasicGraphEditor edtr) {
+            super();
+            this.editor = edtr;
+        }
+        
+        /**
+         * overriding the actionPerformed method to paste the chosen component
+         * @param actionEvent the actual event
+         */
+        @Override
+        public final void actionPerformed(final ActionEvent actionEvent) {
+            BasicGraphEditor editorReference = editor;
+            if (editorReference == null) {
+                editorReference = EditorActions.getEditor(actionEvent);
+            }
+            
+            // check for a copied transition
+            if (editorReference.getCopyPasteManager().getData().get("transitionType") != null){
+                Object[] cells = editorReference.getBehaviourGraph().getGraph().getSelectionCells();
+                if (cells.length != 1){
+                    return;
+                }
+                final String ident = ((mxCell) cells[0]).getId();
+                AbstractGraphElement transition = editorReference.getDataModel().getTransition(ident);
+                if (transition instanceof Guard){
+                    if (!editorReference.getCopyPasteManager().getData().get("transitionType").toString().equalsIgnoreCase("guard")){
+                        // TODO maybe add a dialog to notify an imposible pasting
+                        return;
+                    }
+                    Map<String, Object> data = editorReference.getCopyPasteManager().getData();
+                    List<GuardData> newData = (List<GuardData>) ObjectDeepCloner.deepCopy(data.get("guards"));
+                    ((Guard) transition).setData(newData);
+                    editorReference.updateTableView(ident);
+                }
+                else if (transition instanceof Message){
+                    if (!editorReference.getCopyPasteManager().getData().get("transitionType").toString().equalsIgnoreCase("message")){
+                        // TODO maybe add a dialog to notify an imposible pasting
+                        return;
+                    }
+                    Map<String, Object> data = editorReference.getCopyPasteManager().getData();
+                    ((Message) transition).updateMessage((String) data.get("url"), (String) data.get("path"), (String) data.get("method"), 
+                            (String) data.get("dataType"), (String) data.get("body"));
+                    List<ConstantData> headers = (List<ConstantData>) ObjectDeepCloner.deepCopy(data.get("headers"));
+                    ((Message) transition).setConstantData(headers);
+                    editorReference.updateTableView(ident);
+                }
+                
+                return;
+            }
+            
+            // check for a copied component
+            if (editorReference.getCopyPasteManager().getLastGUIid() == null ){
+                return;
+            }
+            
+            TransferHandler.getPasteAction().actionPerformed(actionEvent);
+            String guiId = editorReference.getCopyPasteManager().getLastGUIid();
+            AbstractGraphElement node = editorReference.getDataModel().getNode(guiId);
+            if (node instanceof GraphNode) {
+                GraphNode graphNode = (GraphNode) node;
+                if (graphNode.getType().equalsIgnoreCase("end")) {
+                    // paste the information associated with the copied end node
+                    Map<String, Object> data = editorReference.getCopyPasteManager().getData();
+                    graphNode.addEndStateData((Boolean) data.get("success"), (String) data.get("report"));
+                }
+                else if (graphNode.getType().equalsIgnoreCase("start") || (graphNode.getType().equalsIgnoreCase("triggerstart"))){
+                    // paste the information associated with the copied start node
+                    Map<String, Object> data = editorReference.getCopyPasteManager().getData();
+                    List<ConstantData> constantDataList = (List<ConstantData>) ObjectDeepCloner.deepCopy(data.get("constantData"));
+                    graphNode.setConstantData(constantDataList);
+                }
+            }     
+            else if (node instanceof ArchitectureNode){
+                // paste the information associated with the node component
+                ArchitectureNode archNode = (ArchitectureNode) node;
+                Map<String, Object> data = editorReference.getCopyPasteManager().getData();
+                archNode.setData(archNode.getLabel(), (String) data.get("address"));
+                List<InterfaceData> interfaces = (List<InterfaceData>) ObjectDeepCloner.deepCopy(data.get("interfaces"));
+                archNode.setInterfaceData(interfaces);
+            }
+            editorReference.updateTableView(guiId);
+        }
     }
 
     /**

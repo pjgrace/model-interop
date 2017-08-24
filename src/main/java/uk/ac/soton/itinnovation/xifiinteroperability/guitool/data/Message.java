@@ -116,7 +116,7 @@ public class Message extends AbstractGraphElement implements Serializable {
     /**
      * The list of http headers (name value pairs).
      */
-    private final List<ConstantData> headers = new ArrayList();
+    private List<ConstantData> headers = new ArrayList();
 
     /**
      * Get the constant data elements i.e. the http headers.
@@ -124,6 +124,15 @@ public class Message extends AbstractGraphElement implements Serializable {
      */
     public final List<ConstantData> getConstantData() {
         return headers;
+    }
+    
+    /**
+     * a setter method for the list of headers,
+     * used by the copy paste manager to override the existing list of headers with the copied one
+     * @param newData the new list of headers
+     */
+    public final void setConstantData(List<ConstantData> newData){
+        headers = newData;
     }
 
      /**

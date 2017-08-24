@@ -49,7 +49,7 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
      * IF the node is a Start node - parameter data can be attached. These
      * act as global constants only.
      */
-    private final List<ConstantData> data = new ArrayList();
+    private List<ConstantData> data = new ArrayList();
 
     /**
      * IF the node is an end node - report data can be attached.
@@ -74,7 +74,17 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
     public final List<ConstantData> getConstantData() {
         return data;
     }
-
+    
+    /**
+     * Set the list of constant data elements attached to the node,
+     * Used by the copy paste manager to totally override the existing list of constant data elements
+     * with the copied one
+     * @param data the new list of constant data elements
+     */
+    public final void setConstantData(List<ConstantData> data) {
+        this.data = data;
+    }
+    
     /**
      * Create a new graph node element.
      * @param idty The UI identity of the node

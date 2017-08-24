@@ -113,10 +113,10 @@ public class BehaviourGraphComponent extends mxGraphComponent {
     @Override
     public final Object[] importCells(final Object[] cells, final double dxPos,
             final double dyPos, final Object origTarget, final Point location) {
-
+        
         Object target = origTarget;
 
-        if (origTarget == null && cells.length == 1 && location != null) {
+        if (origTarget == null && cells.length == 1) {
             final String type = (String) ((mxCell) cells[0]).getValue();
             if (type.equalsIgnoreCase(DataModel.CLIENT) || type.equalsIgnoreCase(XMLStateMachine.INTERFACE_LABEL)) {
                 JOptionPane.showMessageDialog(this.getParent(),
@@ -136,18 +136,20 @@ public class BehaviourGraphComponent extends mxGraphComponent {
                 }
             }
             
-            target = getCellAt(location.x, location.y);
+            if (location != null) {
+                target = getCellAt(location.x, location.y);
 
-            if (target instanceof mxICell && cells[0] instanceof mxICell) {
-                final mxICell targetCell = (mxICell) target;
-                final mxICell dropCell = (mxICell) cells[0];
+                if (target instanceof mxICell && cells[0] instanceof mxICell) {
+                    final mxICell targetCell = (mxICell) target;
+                    final mxICell dropCell = (mxICell) cells[0];
 
-                if (targetCell.isVertex() == dropCell.isVertex()
-                                || targetCell.isEdge() == dropCell.isEdge()) {
-                    final mxIGraphModel model = graph.getModel();
-                    model.setStyle(target, model.getStyle(cells[0]));
-                    graph.setSelectionCell(target);
-                    return null;
+                    if (targetCell.isVertex() == dropCell.isVertex()
+                            || targetCell.isEdge() == dropCell.isEdge()) {
+                        final mxIGraphModel model = graph.getModel();
+                        model.setStyle(target, model.getStyle(cells[0]));
+                        graph.setSelectionCell(target);
+                        return null;
+                    }
                 }
             }
         }
@@ -157,6 +159,10 @@ public class BehaviourGraphComponent extends mxGraphComponent {
             label = (String) newNode.getValue();
         }
         String type = label;
+        if (location == null){
+            // in case of copy-pasting take the type from the CopyPasteManager
+            type = editor.getCopyPasteManager().getLastType();
+        }
         
         if (dataModel.graphIdentExist(label)){
             // generating a unique ID
@@ -192,6 +198,10 @@ public class BehaviourGraphComponent extends mxGraphComponent {
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
             if (newCells[0] != null) {
                 this.dataModel.addNode(((mxCell) newCells[0]).getId(), label, type);
+                if (location == null){
+                    // in case of copy-pasting set the GUI id of the pasted component in the CopyPasteManager
+                    editor.getCopyPasteManager().setLastGUIid(((mxCell) newCells[0]).getId());
+                }
                 editor.getXmlUndoManager().add(this.dataModel.getState());
             }
             return newCells;

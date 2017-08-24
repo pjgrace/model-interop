@@ -72,7 +72,7 @@ public class ArchitectureNode extends AbstractGraphElement implements Serializab
      * The list of data parameters attached to the node. These are the
      * descriptive params adding additional information e.g. urls, ...
      */
-    private final List<InterfaceData> data = new ArrayList();
+    private List<InterfaceData> data = new ArrayList();
 
     /**
      * Getter for the data parameters.
@@ -80,6 +80,16 @@ public class ArchitectureNode extends AbstractGraphElement implements Serializab
      */
     public final List<InterfaceData> getData() {
         return data;
+    }
+    
+    /**
+     * a setter for the interface data list,
+     * used by the copy paste manager to totally override the existing list of interface data
+     * with the copied one
+     * @param data the new list with interface data
+     */
+    public final void setInterfaceData(List<InterfaceData> data){
+        this.data = data;
     }
 
     /**
