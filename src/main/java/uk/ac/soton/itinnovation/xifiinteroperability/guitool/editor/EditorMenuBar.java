@@ -52,6 +52,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.Edit
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.OpenAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.SaveAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.EditorActions.XMLAction;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.ImportAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.NewAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopUpMenuActions.HistoryAction;
@@ -80,7 +81,10 @@ public class EditorMenuBar extends JMenuBar {
         menuItem.addActionListener(new OpenAction(editor));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
-
+        
+        menuItem = new JMenuItem(editor.bind("Open model from web", new FileActions.OpenFromWebAction(editor), "/images/open16.png"));
+        menu.add(menuItem);
+        
         menu.addSeparator();
 
 

@@ -54,15 +54,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
@@ -72,6 +81,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
@@ -485,6 +495,163 @@ public class FileActions {
         }
     }
 
+    /**
+     * Action to open a model from web repositories
+     */
+    public static class OpenFromWebAction extends AbstractAction {
+
+        /**
+         * a reference to the editor
+         */
+        private BasicGraphEditor editor;
+        
+        /**
+         * a constructor for the OpenFromWebAction
+         * @param editor 
+         */
+        public OpenFromWebAction(final BasicGraphEditor editor){
+            this.editor = editor;
+        }
+        
+        /**
+         * Clear the editor information of data and history.
+         */
+        private void resetEditor() {
+            // Check modified flag and display save dialog
+            editor.getCodePanel().getTestingPanel().clearTestingPanel();
+
+            final mxGraph graph = editor.getBehaviourGraph().getGraph();
+            final mxCell root = new mxCell();
+            root.insert(new mxCell());
+            graph.getModel().setRoot(root);
+
+            final mxGraph agraph = editor.getSystemGraph().getGraph();
+            final mxCell root2 = new mxCell();
+            root2.insert(new mxCell());
+            agraph.getModel().setRoot(root2);
+
+            editor.setModified(false);
+            editor.getDataModel().clearData();
+            editor.resetUndoManagers();
+            editor.updateTableView(null);
+            editor.getCodePanel().getReportsPanel().clearTabbedPane();
+        }
+
+        /**
+         * a method which loads the string model into the tool
+         * @param model 
+         */
+        private void openModel(String model){
+            try {
+                final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                final Document doc = dBuilder.parse(new InputSource(new StringReader(model)));
+                final GraphGenerator gGenerate = new GraphGenerator(editor);
+
+                editor.setCurrentFile(null);
+                resetEditor();
+                gGenerate.createGraph(doc);
+                editor.getXmlUndoManager().add(editor.getDataModel().getState());
+
+                final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
+                layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                editor.getCodePanel().getXMLPanel().displayXMLSpecification();
+                editor.setRules();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading file: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (ParserConfigurationException ex) {
+                JOptionPane.showMessageDialog(editor, "Error Parsing the xml document", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (SAXException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading xml content: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (InvalidPatternException ex) {
+                JOptionPane.showMessageDialog(editor, "Error in pattern data: Invalid Pattern specification", "Pattern error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        /**
+         * a method which replaces the **Value** strings in the xml model
+         */
+        private String replaceValues(String model){
+            int startIndex = model.indexOf("**");
+            int endIndex;
+            while (startIndex != -1) {
+                endIndex = model.indexOf("**", startIndex + 2);
+                String originalValue = model.substring(startIndex+2, endIndex);
+                int horizontalBarIndex = originalValue.indexOf("|");
+                String newVal;
+                if (horizontalBarIndex >= 1){
+                    newVal = (String) JOptionPane.showInputDialog(editor, originalValue, 
+                            originalValue.substring(0, horizontalBarIndex) + " - input for model", JOptionPane.PLAIN_MESSAGE,
+                            null, null, originalValue.substring(0, horizontalBarIndex));
+                }
+                else {
+                    newVal = (String) JOptionPane.showInputDialog(editor, originalValue,
+                            "Input value for model", JOptionPane.PLAIN_MESSAGE);
+                }
+                if (newVal == null){
+                    return null;
+                }
+                model = model.replace(model.substring(startIndex + 2, endIndex), newVal);
+                model = model.replaceFirst("\\*\\*", "").replaceFirst("\\*\\*", "");
+                startIndex = model.indexOf("**");
+            }
+            return model;
+        }
+        
+        /**
+         * The action to be performed
+         * @param ae the actual action event
+         */
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (editor == null) {
+                editor = EditorActions.getEditor(ae);
+            }
+            if (editor == null) {
+                return;
+            }
+            
+            String urlStr = JOptionPane.showInputDialog(editor, 
+                    "Please specify the url of the repository of the model.");
+            if (urlStr == null){
+                return;
+            }
+            
+            StringBuilder response = new StringBuilder();
+            String jsonResponse;
+            try {URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
+                }
+                br.close();
+                jsonResponse = response.toString();
+                Map<String, Object> jsonMap = new ObjectMapper().readValue(jsonResponse, HashMap.class);
+                String model = (String) jsonMap.get("model");
+                model = replaceValues(model);
+                if (model != null){
+                    openModel(model);
+                }
+            }
+            catch (MalformedURLException ex){
+                JOptionPane.showMessageDialog(editor, 
+                        "There is something wrong with the URL of the repository.",
+                        "Invalid URL", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (IOException ex){
+                JOptionPane.showMessageDialog(editor, 
+                        "There is something wrong with the repository of the model you supplied.",
+                        "Invalid model repository", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
      /**
      * Action to import a specification from a file.
      */
