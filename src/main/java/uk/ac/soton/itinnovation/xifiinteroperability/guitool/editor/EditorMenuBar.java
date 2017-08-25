@@ -144,6 +144,9 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.add(editor.bind("Model", new GraphAction(editor), "/images/graph16.png"));
         menu.add(editor.bind(mxResources.get("XML"), new XMLAction(editor), "/images/xml16.png"));
+        menuItem = new JMenuItem("Current Test");
+        menuItem.addActionListener(new EditorActions.TestViewAction(editor));
+        menu.add(menuItem);
         menu.addSeparator();
         menu.add(editor.bind("Test Reports", new EditorActions.ReportsAction(editor), "/images/report16.png"));
 

@@ -560,95 +560,142 @@ public final class EditorActions {
         }
     }
 
-        /**
-	 * Switch to the Graph view in the user interface.
-	 */
-	public static class GraphAction extends AbstractAction {
-            /**
-            * The editor context for action to be associated with.
-            */
-            private transient BasicGraphEditor editor;
-
-            /**
-             * Create an instance of the graph selected action.
-             * @param edtr The UI editor context for the action.
-             */
-            public GraphAction(final BasicGraphEditor edtr) {
-                super();
-                this.editor = edtr;
-            }
-            /**
-             * The show graph action has been selected.
-             * @param actionEvent The UI event of the selection.
-             */
-            @Override
-            public final void actionPerformed(final ActionEvent actionEvent) {
-                if (editor == null) {
-                    editor = getEditor(actionEvent);
-                }
-                editor.getCodePanel().getXMLPanel().displayXMLSpecification();
-                final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
-                cardLayout.show(editor.getMainArea(), MainDisplayPanel.GRAPHPANEL);
-            }
-	}
+    /**
+     * Switch to the Graph view in the user interface.
+     */
+    public static class GraphAction extends AbstractAction {
 
         /**
-	 * The delete action - to delete elements from the graph view and data
-         * model.
-	 */
-	@SuppressWarnings("serial")
-	public static class Delete extends AbstractAction {
-            /**
-            * The editor context for action to be associated with.
-            */
-            private BasicGraphEditor editor;
+         * The editor context for action to be associated with.
+         */
+        private transient BasicGraphEditor editor;
 
-            /**
-             * Create an instance of the delete action in this UI context.
-             * @param edtr The UI editor context.
-             */
-            public Delete(final BasicGraphEditor edtr) {
-                super();
-                this.editor = edtr;
+        /**
+         * Create an instance of the graph selected action.
+         *
+         * @param edtr The UI editor context for the action.
+         */
+        public GraphAction(final BasicGraphEditor edtr) {
+            super();
+            this.editor = edtr;
+        }
+
+        /**
+         * The show graph action has been selected.
+         *
+         * @param actionEvent The UI event of the selection.
+         */
+        @Override
+        public final void actionPerformed(final ActionEvent actionEvent) {
+            if (editor == null) {
+                editor = getEditor(actionEvent);
             }
+            editor.getCodePanel().getXMLPanel().displayXMLSpecification();
+            final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
+            cardLayout.show(editor.getMainArea(), MainDisplayPanel.GRAPHPANEL);
+        }
+    }
+    
+    /**
+     * Switch to the current Test view in the user interface.
+     */
+    public static class TestViewAction extends AbstractAction {
 
-            /**
-             * The delete action has been selected via mouse press or keyboard
-             * input.
-             * @param actionEvent The UI event.
-             */
-            @Override
-            public final void actionPerformed(final ActionEvent actionEvent) {
-                if (editor == null) {
-                    editor = getEditor(actionEvent);
-                }
-                final DataModel dModel = editor.getDataModel();
+        /**
+         * The editor context for action to be associated with.
+         */
+        private transient BasicGraphEditor editor;
 
-                final mxGraphComponent graphComponent = editor.getBehaviourGraph();
-                final mxGraphComponent arcgraphComponent = editor.getSystemGraph();
-                final mxGraph graph = graphComponent.getGraph();
-                final mxGraph graph2 = arcgraphComponent.getGraph();
+        /**
+         * constructor for the TestAction
+         *
+         * @param edtr The UI editor context for the action.
+         */
+        public TestViewAction(final BasicGraphEditor edtr) {
+            super();
+            this.editor = edtr;
+        }
 
-                Object[] selectionCells = graph.getSelectionCells();
-                for (int i = 0; i < graph.getSelectionCount(); i++) {
-                    dModel.deleteNode(((mxCell) selectionCells[i]).getId());
-                }
-                graph.removeCells(selectionCells);
-
-                selectionCells = graph2.getSelectionCells();
-                for (int i = 0; i < graph2.getSelectionCount(); i++) {
-                    final String identf = ((mxCell) selectionCells[i]).getId();
-                    dModel.deleteNode(GUIdentifier.setArchID(identf));
-                }
-                graph2.removeCells(selectionCells);
-
-                editor.getXmlUndoManager().add(dModel.getState());
-
-                mxGraphActions.getDeleteAction().actionPerformed(actionEvent);
-                graph.setSelectionCells(new Object[0]);
-                graph2.setSelectionCells(new Object[0]);
-                editor.updateTableView(null);
+        /**
+         * the action to be performed
+         * @param ae the actual action event
+         */
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            final BasicGraphEditor editorReference;
+            BasicGraphEditor test = getEditor(ae);
+            if (test == null){
+                editorReference = this.editor;
             }
-	}
+            else {
+                editorReference = test;
+            }
+            final CardLayout cardLayout = (CardLayout) editorReference.getMainArea().getLayout();
+            cardLayout.show(editorReference.getMainArea(), MainDisplayPanel.REPORTPANEL);
+        }
+        
+    }
+
+    /**
+     * The delete action - to delete elements from the graph view and data
+     * model.
+     */
+    @SuppressWarnings("serial")
+    public static class Delete extends AbstractAction {
+
+        /**
+         * The editor context for action to be associated with.
+         */
+        private BasicGraphEditor editor;
+
+        /**
+         * Create an instance of the delete action in this UI context.
+         *
+         * @param edtr The UI editor context.
+         */
+        public Delete(final BasicGraphEditor edtr) {
+            super();
+            this.editor = edtr;
+        }
+
+        /**
+         * The delete action has been selected via mouse press or keyboard
+         * input.
+         *
+         * @param actionEvent The UI event.
+         */
+        @Override
+        public final void actionPerformed(final ActionEvent actionEvent) {
+            if (editor == null) {
+                editor = getEditor(actionEvent);
+            }
+            final DataModel dModel = editor.getDataModel();
+
+            final mxGraphComponent graphComponent = editor.getBehaviourGraph();
+            final mxGraphComponent arcgraphComponent = editor.getSystemGraph();
+            final mxGraph graph = graphComponent.getGraph();
+            final mxGraph graph2 = arcgraphComponent.getGraph();
+
+            Object[] selectionCells = graph.getSelectionCells();
+            for (int i = 0; i < graph.getSelectionCount(); i++) {
+                dModel.deleteNode(((mxCell) selectionCells[i]).getId());
+            }
+            graph.removeCells(selectionCells);
+
+            selectionCells = graph2.getSelectionCells();
+            for (int i = 0; i < graph2.getSelectionCount(); i++) {
+                final String identf = ((mxCell) selectionCells[i]).getId();
+                dModel.deleteNode(GUIdentifier.setArchID(identf));
+            }
+            graph2.removeCells(selectionCells);
+
+            editor.getXmlUndoManager().add(dModel.getState());
+
+            mxGraphActions.getDeleteAction().actionPerformed(actionEvent);
+            graph.setSelectionCells(new Object[0]);
+            graph2.setSelectionCells(new Object[0]);
+            editor.updateTableView(null);
+        }
+    }
 
 }
