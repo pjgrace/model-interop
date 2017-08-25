@@ -172,7 +172,7 @@ public class StateNode implements State {
 
                 this.InteroperabilityReport = report;
         this.InteroperabilitySuccess = success;
-            
+
     }
 
     /**
@@ -383,7 +383,7 @@ public class StateNode implements State {
             if (rEv.getDataBody().getType().contains("xml")) {
                 return XML.readValue(content, exprSplit[2]);
             } else {
-                return JSON.readValue(content.toLowerCase(), "$." + exprSplit[2].toLowerCase());
+                return JSON.readValue(content, "$." + exprSplit[2]);
             }
         } else if (exprSplit[1].equalsIgnoreCase("headers")) {
             return rEv.getParameterMap().get(exprSplit[2]).getValue();
@@ -395,7 +395,7 @@ public class StateNode implements State {
      * get the pattern data based on the expression
      * @param expression the expression to parse
      * @return the pattern data
-     * @throws InvalidPatternReferenceException 
+     * @throws InvalidPatternReferenceException
      */
     private String getData(String expression)
             throws InvalidPatternReferenceException {
@@ -414,7 +414,7 @@ public class StateNode implements State {
         }
         throw new InvalidPatternReferenceException("Data field does not exist");
     }
-    
+
     /**
      * The guard failure is reported to the interoperability report.
      * @param chGuard The rule that has failed.
@@ -426,7 +426,7 @@ public class StateNode implements State {
         String originalValue = value.getValue();
         if (chGuard.getGuardLabel().equalsIgnoreCase(RESTEvent.RESPONSE_TIME)) {
             chGuard.setGuardCompare(originalGuardCompare + "ms");
-            value.setValue(originalValue + "ms");            
+            value.setValue(originalValue + "ms");
         }
         switch (chGuard.getType()) {
             case EQUALS:
@@ -778,7 +778,7 @@ public class StateNode implements State {
                         chGuard.setGuardCompare(getStateValue(chGuard.getGuardCompare()));
                     }
                 }
-                
+
                 if (chGuard.getType() == Guard.ComparisonType.CONTAINS) {
                     if (!guardContainsEvaluation(chGuard, conditions, report)) {
                         return false;
@@ -807,7 +807,7 @@ public class StateNode implements State {
                         return false;
                     }
                 }
-                
+
                 String originalGuardCompare = chGuard.getGuardCompare();
                 if (chGuard.getGuardLabel().equalsIgnoreCase(RESTEvent.RESPONSE_TIME)){
                     chGuard.setGuardCompare(originalGuardCompare + "ms");

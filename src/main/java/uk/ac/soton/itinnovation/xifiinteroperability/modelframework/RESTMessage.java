@@ -232,7 +232,7 @@ public class RESTMessage extends ProtocolMessage{
         try {
             String rPath = parseData(this.path);
             // Instantiate the client connector, and configure it.
-            Client client = new Client(new Context(), Protocol.HTTPS);
+            Client client = new Client(new Context(), Protocol.HTTP);
             client.getContext().getParameters().add("useForwardedForHeader","false");
 
             this.url = url + rPath;
@@ -266,10 +266,10 @@ public class RESTMessage extends ProtocolMessage{
                     } else if (this.dataBody.getType().equalsIgnoreCase(OTHER_LABEL)) {
                         String applicationType = null;
                         for (Parameter param : headers) {
-                            if (param.getName().equalsIgnoreCase("http.Content-type")) {
+                            if (param.getName().equalsIgnoreCase("Content-type")) {
                                 applicationType = param.getValue();
                             }
-                            if (param.getName().equalsIgnoreCase("http.Accept")) {
+                            if (param.getName().equalsIgnoreCase("Accept")) {
                                 String mType = param.getValue();
                                 mediaType = MediaType.valueOf(mType);
                             }
@@ -320,7 +320,7 @@ public class RESTMessage extends ProtocolMessage{
             * Create a REST event about the Service Response i.e. capture and
             * uniform the data to be understood by the state machine rule checker
             */
-            
+
             rResp.addParameter(new Parameter(RESTEvent.RESPONSE_TIME, Long.toString(time)));
             rResp.addParameter(new Parameter(RESTEvent.HTTP_FROM, response.getServerInfo().getAddress()));
             rResp.addParameter(new Parameter(RESTEvent.HTTP_TO, SystemProperties.getIP()));

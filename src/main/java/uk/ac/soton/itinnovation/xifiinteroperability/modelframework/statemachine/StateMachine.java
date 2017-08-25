@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-import javax.swing.JDialog;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.EventCapture;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
@@ -83,41 +82,41 @@ public class StateMachine implements EventCapture {
      * Each state machine when executed traces an output report.
      */
     private final transient InteroperabilityReport outputReport;
-    
+
     /**
      * a boolean to represent if the test was manually stopped by the user
      */
     private transient boolean stopped;
-    
+
     /**
      * a setter for the stopped attribute, stops the state machine
      */
     public void stop(){
         stopped = true;
     }
-    
+
     /**
      * a boolean to represent if we are in debug mode or not
      */
     private volatile boolean debugMode;
-    
+
     /**
      * a boolean to represent if next button is clicked
      */
     private volatile boolean nextClicked;
-            
+
     /**
-     * a method to force the state machine to continue execution 
+     * a method to force the state machine to continue execution
      */
     public void next(){
         nextClicked = true;
     }
-    
+
     /**
      * a boolean to represent if the test has ended
      */
     private transient boolean finished;
-    
+
     /**
      * a getter for the finished attribute
      * @return True if the test has finished or has been stopped
@@ -125,7 +124,7 @@ public class StateMachine implements EventCapture {
     public boolean isFinished(){
         return finished;
     }
-    
+
     /**
      * Construct a new state machine and create and interoperability report.
      * @param debugMode whether the state machine is in debug mode or not
@@ -331,7 +330,7 @@ public class StateMachine implements EventCapture {
             outputReport.setSuccess(currentState.getSuccess());
             outputReport.addReport(currentState.getReport());
             outputReport.println("End node reached --> Interoperability Testing Complete");
-        } 
+        }
         else {
             outputReport.setSuccess("false");
             outputReport.println("The test execution was stopped.");
