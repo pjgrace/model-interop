@@ -170,6 +170,29 @@ public class EditorMenuBar extends JMenuBar {
         nextButton.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/step16.png")));
         menu.add(nextButton);
         
+        // creates the certification menu
+        menu = add(new JMenu("Certification"));
+        JMenuItem openCertificationModelItem = new JMenuItem("Open certification model");
+        // TODO the OpenFromWebAction might have to be adjusted to ask for username or API KEY to handle authentication for certification
+        openCertificationModelItem.addActionListener(new FileActions.OpenFromWebAction(editor, true));
+        menu.add(openCertificationModelItem);
+        
+        JMenuItem certifyItem = new JMenuItem("Request a certificate");
+        certifyItem.addActionListener((ActionEvent e) -> {
+            if (editor.getCertificationManager().getLastURL() == null){
+                JOptionPane.showMessageDialog(editor, 
+                        "In order to request a certificate open a repository model from the certification menu.",
+                        "Certification error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            // TODO implementation for certification request to the server goes here
+            // TODO handle the response the server sends back
+            JOptionPane.showMessageDialog(editor,
+                    "Requesting certificate for model at " + editor.getCertificationManager().getLastURL(),
+                    "Requesting a certificate", JOptionPane.PLAIN_MESSAGE);
+        });
+        menu.add(certifyItem);
+        
         // creates the tools menu
         menu = add(new JMenu("Tools"));
 
