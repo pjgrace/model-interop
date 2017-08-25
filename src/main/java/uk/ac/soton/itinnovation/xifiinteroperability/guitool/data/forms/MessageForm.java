@@ -63,7 +63,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
@@ -202,7 +201,7 @@ public class MessageForm extends JPanel {
 
         // Info Panel
         final JPanel listPane = new JPanel();
-        GridLayout gridLayout = new GridLayout(8 , 2);
+        GridLayout gridLayout = new GridLayout(7 , 2);
         gridLayout.setHgap(5);
         gridLayout.setVgap(5);
 //        listPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -215,7 +214,7 @@ public class MessageForm extends JPanel {
         title.setFont(font.deriveFont(attributes));
 
         listPane.add(title);
-        listPane.add(new JLabel("", SwingConstants.LEFT));
+        listPane.add(new JLabel("", JLabel.LEFT));
 
         listPane.add(new JLabel("Interface target:",  JLabel.RIGHT));
         List<String> restUrls = editor.getDataModel().getRestUrls();
@@ -273,15 +272,23 @@ public class MessageForm extends JPanel {
         listPane.add(new JLabel("Type:", JLabel.RIGHT));
         contentType = new JComboBox(dataTypes.clone());
         listPane.add(contentType);
+        listPane.add(Box.createRigidArea(new Dimension(0, 1)));
+        listPane.add(Box.createRigidArea(new Dimension(0, 1)));
 
-
-        body = new JTextArea("");
+        body = new JTextArea(5, 20);
 
         body.setLineWrap(true);
         body.setComponentPopupMenu(new FormPopUpMenu(editor, body));
-        listPane.add(new JLabel("Message body:", JLabel.RIGHT));
-        listPane.add(new JScrollPane(body));
+        final JPanel msgIntfPane = new JPanel();
+        gridLayout = new GridLayout(1 , 2);
+        msgIntfPane.setLayout(gridLayout);
+        msgIntfPane.add(new JLabel("Message body:", JLabel.RIGHT));
+        msgIntfPane.add(new JScrollPane(body));
 
+        // Headers add Panel
+        final JPanel newIntfPane = new JPanel();
+        gridLayout = new GridLayout(7 , 2);
+        newIntfPane.setLayout(gridLayout);
 
         final JButton update = new JButton("Update Message");
         ButtonCustomizer.customizeButton(update);
@@ -300,15 +307,8 @@ public class MessageForm extends JPanel {
                 }
             }
           });
-        listPane.add(new JLabel(""));
-        listPane.add(update);
-        topPanel.add(listPane);
-
-        // Headers add Panel
-        final JPanel newIntfPane = new JPanel();
-        gridLayout = new GridLayout(6 , 2);
-        newIntfPane.setLayout(gridLayout);
-//        newIntfPane.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        newIntfPane.add(new JLabel(""));
+        newIntfPane.add(update);
 
         final JLabel stitle = new JLabel(" Add Message Header");
         stitle.setFont(font.deriveFont(attributes));
@@ -355,13 +355,8 @@ public class MessageForm extends JPanel {
         newIntfPane.add(addIntf);
 
 
-//        add(newIntfPane, BorderLayout.CENTER);
-
-
-//        newIntfPane.add(Box.createRigidArea(new Dimension(0, 10)));
-
         final JLabel tableTitle = new JLabel(" Message Headers", JLabel.LEFT);
-       final Font font2 = tableTitle.getFont();
+        final Font font2 = tableTitle.getFont();
         final Map attributes2 = font.getAttributes();
         attributes2.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
         tableTitle.setFont(font2.deriveFont(attributes2));
@@ -371,7 +366,7 @@ public class MessageForm extends JPanel {
         newIntfPane.add(Box.createRigidArea(new Dimension(0, 5)));
         newIntfPane.add(tableTitle);
         newIntfPane.add(new JLabel("", JLabel.LEFT) );
-                topPanel.add(newIntfPane);
+//                topPanel.add(newIntfPane);
 
         final JTable nodetable = new JTable(messageView);
         nodetable.addMouseListener(new MouseAdapter() {
@@ -399,7 +394,10 @@ public class MessageForm extends JPanel {
         add(messageScrollPane, BorderLayout.CENTER);
 
 //        topPanel.add(messageScrollPane);
-
+        JScrollPane pane = new JScrollPane(listPane);
+        topPanel.add(listPane);
+        topPanel.add(msgIntfPane);
+        topPanel.add(newIntfPane);
         add(topPanel, BorderLayout.NORTH);
 //        add(messageScrollPane, BorderLayout.SOUTH);
 
