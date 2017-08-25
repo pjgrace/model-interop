@@ -320,6 +320,7 @@ public class FileActions {
                  */
                 editor.getDataModel().clearData();
                 editor.resetUndoManagers();
+                editor.getCertificationManager().resetURL();
                 editor.updateTableView(null);
                 editor.getXmlUndoManager().add(editor.getDataModel().getState());
 
@@ -403,6 +404,7 @@ public class FileActions {
             editor.setModified(false);
             editor.getDataModel().clearData();
             editor.resetUndoManagers();
+            editor.getCertificationManager().resetURL();
             editor.updateTableView(null);
             editor.getCodePanel().getReportsPanel().clearTabbedPane();
         }
@@ -586,6 +588,7 @@ public class FileActions {
             editor.setModified(false);
             editor.getDataModel().clearData();
             editor.resetUndoManagers();
+            editor.getCertificationManager().resetURL();
             editor.updateTableView(null);
             editor.getCodePanel().getReportsPanel().clearTabbedPane();
         }
@@ -693,12 +696,24 @@ public class FileActions {
          */
         private BasicGraphEditor editor;
         
+        private boolean certification;
+        
         /**
-         * a constructor for the OpenFromWebAction
-         * @param editor 
+         * a constructor for the OpenFromWebAction, assumes no certification
+         * @param editor the editor reference
          */
         public OpenFromWebAction(final BasicGraphEditor editor){
+            this(editor, false);
+        }
+        
+        /**
+         * a constructor for the OpenFromWebAction, which also indicates whether this model is opened for certification
+         * @param editor the editor reference
+         * @param certification whether this model is opened for certification or not
+         */
+        public OpenFromWebAction(final BasicGraphEditor editor, boolean certification){
             this.editor = editor;
+            this.certification = certification;
         }
         
         /**
@@ -855,6 +870,11 @@ public class FileActions {
                             model = replaceValues(model);
                             if (model != null) {
                                 openModel(model);
+                                
+                                // if opened from the certification tab set the last url in the certification manager
+                                if (certification) {
+                                    editor.getCertificationManager().setLastURL(urlStr);
+                                }
                             }
                         } catch (MalformedURLException ex) {
                             JOptionPane.showMessageDialog(editor,

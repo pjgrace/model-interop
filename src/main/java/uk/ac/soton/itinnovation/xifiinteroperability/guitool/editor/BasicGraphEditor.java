@@ -270,6 +270,19 @@ public class BasicGraphEditor extends JPanel {
     }
     
     /**
+     * handles the certification services
+     */
+    private final transient CertificationManager certificationManager;
+    
+    /**
+     * a getter method for the certification manager
+     * @return the certificationManager reference
+     */
+    public CertificationManager getCertificationManager(){
+        return certificationManager;
+    }
+    
+    /**
      * Handle XML undo events
      */
     private final transient XMLUndoManager xmlUndoManager;
@@ -406,6 +419,7 @@ public class BasicGraphEditor extends JPanel {
         undoManager = createUndoManager();
         xmlUndoManager = new XMLUndoManager();
         copyPasteManager = new CopyPasteManager();
+        certificationManager = new CertificationManager();
         xmlUndoManager.add(dataModel.getState());
 
         // Do not change the scale and translation after files have been loaded
