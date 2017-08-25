@@ -54,30 +54,53 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.TableCellRenderer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.jsoup.Jsoup;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.DefaultFileFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GraphGenerator;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 
 /**
  * Modification of mxGraph Action operations to open, close, new and save
@@ -137,7 +160,7 @@ public class FileActions {
             }
 
             if (editor != null) {
-                FileFilter selectedFilter = null;
+                FileFilter selectedFilter;
                 final DefaultFileFilter xmlPngFilter = new DefaultFileFilter(XMLFILE,
                                 "XML " + mxResources.get("file") + " (" + XMLFILE + ")");
 
@@ -468,23 +491,496 @@ public class FileActions {
                 if (rChck == JFileChooser.APPROVE_OPTION) {
                         lastDir = fChoose.getSelectedFile().getParent();
 
-                        try {
-                            if (fChoose.getSelectedFile().getAbsolutePath()
-                                            .toLowerCase().endsWith(".xml")) {
-                                    openXmlPng(fChoose.getSelectedFile());
-                            }
-                        } catch (IOException ex) {
-                                JOptionPane.showMessageDialog(
-                                                editor.getBehaviourGraph(),
-                                                ex.toString(),
-                                                mxResources.get("error"),
-                                                JOptionPane.ERROR_MESSAGE);
+                    try {
+                        if (fChoose.getSelectedFile().getAbsolutePath()
+                                .toLowerCase().endsWith(".xml")) {
+                            openXmlPng(fChoose.getSelectedFile());
                         }
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(
+                                editor.getBehaviourGraph(),
+                                ex.toString(),
+                                mxResources.get("error"),
+                                JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Action to open a template model - API test model or Interoperability test
+     * model
+     */
+    public static class OpenTemplateAction extends AbstractAction {
+
+        /**
+         * a reference to the editor
+         */
+        private BasicGraphEditor editor;
+
+        /**
+         * a constructor for the OpenTemlate action
+         *
+         * @param editor
+         */
+        public OpenTemplateAction(final BasicGraphEditor editor) {
+            this.editor = editor;
+        }
+        
+        /**
+         * generates the data model for a simple API test template
+         * @param protocol http or coap
+         * @return 
+         */
+        private DataModel generateAPItemplate(String protocol){
+            // Create the API template model
+            DataModel dataModel = new DataModel();
+            dataModel.addNode("1", XMLStateMachine.TRIGGERSTART_LABEL, XMLStateMachine.TRIGGERSTART_LABEL);
+            dataModel.addNode("2", XMLStateMachine.NORMAL_LABEL, XMLStateMachine.NORMAL_LABEL);
+            dataModel.addNode("3", XMLStateMachine.END_LABEL, XMLStateMachine.END_LABEL);
+            dataModel.addNode("4", XMLStateMachine.INTERFACE_LABEL, XMLStateMachine.INTERFACE_LABEL);
+            ArchitectureNode archNode = (ArchitectureNode) dataModel.getComponentByLabel(XMLStateMachine.INTERFACE_LABEL);
+            archNode.addInterfaceData("rest", protocol.toLowerCase() + "://127.0.0.1:8000/", protocol.toLowerCase());
+            dataModel.addConnection("5", "1", "2");
+            dataModel.addConnection("6", "2", "3");
+            
+            return dataModel;
+        }
+        
+        /**
+         * generates the data model for a simple interoperability test template
+         */
+        private DataModel generateInteropTemplate(String protocol){
+            // Create the interoperability template model
+            DataModel dataModel = new DataModel();
+            dataModel.addNode("1", XMLStateMachine.START_LABEL, XMLStateMachine.START_LABEL);
+            dataModel.addNode("2", XMLStateMachine.NORMAL_LABEL, XMLStateMachine.NORMAL_LABEL);
+            dataModel.addNode("3", XMLStateMachine.END_LABEL, XMLStateMachine.END_LABEL);
+            dataModel.addNode("4", XMLStateMachine.INTERFACE_LABEL, XMLStateMachine.INTERFACE_LABEL);
+            dataModel.addNode("7", DataModel.CLIENT, DataModel.CLIENT);
+            ArchitectureNode archNode = (ArchitectureNode) dataModel.getComponentByLabel(XMLStateMachine.INTERFACE_LABEL);
+            archNode.addInterfaceData("rest", protocol.toLowerCase() + "://127.0.0.1:8000/", protocol.toLowerCase());
+            dataModel.addConnection("5", "1", "2");
+            dataModel.addConnection("6", "2", "3");
+            
+            return dataModel;
+        }
+
+        /**
+         * Clear the editor information of data and history.
+         */
+        private void resetEditor() {
+            editor.getCodePanel().getTestingPanel().clearTestingPanel();
+
+            final mxGraph graph = editor.getBehaviourGraph().getGraph();
+            final mxCell root = new mxCell();
+            root.insert(new mxCell());
+            graph.getModel().setRoot(root);
+
+            final mxGraph agraph = editor.getSystemGraph().getGraph();
+            final mxCell root2 = new mxCell();
+            root2.insert(new mxCell());
+            agraph.getModel().setRoot(root2);
+
+            editor.setModified(false);
+            editor.getDataModel().clearData();
+            editor.resetUndoManagers();
+            editor.updateTableView(null);
+            editor.getCodePanel().getReportsPanel().clearTabbedPane();
+        }
+
+        /**
+         * a method which loads the string model into the tool
+         *
+         * @param model
+         */
+        private void openModel(String model) {
+            try {
+                final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                final Document doc = dBuilder.parse(new InputSource(new StringReader(model)));
+                final GraphGenerator gGenerate = new GraphGenerator(editor);
+
+                editor.setCurrentFile(null);
+                resetEditor();
+                gGenerate.createGraph(doc);
+                editor.getXmlUndoManager().add(editor.getDataModel().getState());
+
+                final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
+                layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                editor.getCodePanel().getXMLPanel().displayXMLSpecification();
+                editor.setRules();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading file: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (ParserConfigurationException ex) {
+                JOptionPane.showMessageDialog(editor, "Error Parsing the xml document", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (SAXException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading xml content: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (InvalidPatternException ex) {
+                JOptionPane.showMessageDialog(editor, "Error in pattern data: Invalid Pattern specification", "Pattern error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        /**
+         * The action to be performed
+         *
+         * @param ae the actual action event
+         */
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (editor == null) {
+                editor = EditorActions.getEditor(ae);
+            }
+            if (editor == null) {
+                return;
+            }
+            
+            if (editor.isModified() && JOptionPane.showConfirmDialog(editor,
+                    mxResources.get("loseChanges")) != JOptionPane.YES_OPTION) {
+                return;
+            }
+            
+            String[] options = {"HTTP API test template", "COAP API test template", "HTTP Interoperability test template", "COAP Interoperability test template"};
+            String choice = (String) JOptionPane.showInputDialog(editor, 
+                    "Please choose the type of template you want to generate.", 
+                    "Model from template", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if (choice == null){
+                return;
+            }
+            
+            if (choice.equalsIgnoreCase(options[0])){
+                // Create the API template model
+                DataModel dataModel = generateAPItemplate("http");
+                
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+            else if (choice.equalsIgnoreCase(options[1])){
+                // Create the API template model
+                DataModel dataModel = generateAPItemplate("coap");
+                
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+            else if (choice.equalsIgnoreCase(options[2])){
+                // Create the interoperability template model
+                DataModel dataModel = generateInteropTemplate("http");
+                        
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+            else if (choice.equalsIgnoreCase(options[3])){
+                // Create the interoperability template model
+                DataModel dataModel = generateInteropTemplate("coap");
+                
+                // generate the model
+                openModel(dataModel.getGraphXML());
+            }
+        }
+    }
+    
+    /**
+     * Action to open a model from web repositories
+     */
+    public static class OpenFromWebAction extends AbstractAction {
+
+        /**
+         * a reference to the editor
+         */
+        private BasicGraphEditor editor;
+        
+        /**
+         * a constructor for the OpenFromWebAction
+         * @param editor 
+         */
+        public OpenFromWebAction(final BasicGraphEditor editor){
+            this.editor = editor;
+        }
+        
+        /**
+         * Clear the editor information of data and history.
+         */
+        private void resetEditor() {
+            editor.getCodePanel().getTestingPanel().clearTestingPanel();
+
+            final mxGraph graph = editor.getBehaviourGraph().getGraph();
+            final mxCell root = new mxCell();
+            root.insert(new mxCell());
+            graph.getModel().setRoot(root);
+
+            final mxGraph agraph = editor.getSystemGraph().getGraph();
+            final mxCell root2 = new mxCell();
+            root2.insert(new mxCell());
+            agraph.getModel().setRoot(root2);
+
+            editor.setModified(false);
+            editor.getDataModel().clearData();
+            editor.resetUndoManagers();
+            editor.updateTableView(null);
+            editor.getCodePanel().getReportsPanel().clearTabbedPane();
+        }
+
+        /**
+         * a method which loads the string model into the tool
+         * @param model 
+         */
+        private void openModel(String model){
+            try {
+                final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                final DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                final Document doc = dBuilder.parse(new InputSource(new StringReader(model)));
+                final GraphGenerator gGenerate = new GraphGenerator(editor);
+
+                editor.setCurrentFile(null);
+                resetEditor();
+                gGenerate.createGraph(doc);
+                editor.getXmlUndoManager().add(editor.getDataModel().getState());
+
+                final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
+                layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
+                editor.getCodePanel().getXMLPanel().displayXMLSpecification();
+                editor.setRules();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading file: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (ParserConfigurationException ex) {
+                JOptionPane.showMessageDialog(editor, "Error Parsing the xml document", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (SAXException ex) {
+                JOptionPane.showMessageDialog(editor, "Error reading xml content: Invalid Pattern specification", "Pattern error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (InvalidPatternException ex) {
+                JOptionPane.showMessageDialog(editor, "Error in pattern data: Invalid Pattern specification", "Pattern error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        /**
+         * a method which replaces the **Value** strings in the xml model
+         */
+        private String replaceValues(String model){
+            int startIndex = model.indexOf("**");
+            int endIndex;
+            while (startIndex != -1) {
+                endIndex = model.indexOf("**", startIndex + 2);
+                String originalValue = model.substring(startIndex+2, endIndex);
+                int horizontalBarIndex = originalValue.indexOf("|");
+                String newVal;
+                if (horizontalBarIndex >= 1){
+                    newVal = (String) JOptionPane.showInputDialog(editor, originalValue, 
+                            originalValue.substring(0, horizontalBarIndex) + " - input for model", JOptionPane.PLAIN_MESSAGE,
+                            null, null, originalValue.substring(0, horizontalBarIndex));
+                }
+                else {
+                    newVal = (String) JOptionPane.showInputDialog(editor, originalValue,
+                            "Input value for model", JOptionPane.PLAIN_MESSAGE);
+                }
+                if (newVal == null){
+                    return null;
+                }
+                model = model.replace(model.substring(startIndex + 2, endIndex), newVal);
+                model = model.replaceFirst("\\*\\*", "").replaceFirst("\\*\\*", "");
+                startIndex = model.indexOf("**");
+            }
+            return model;
+        }
+        
+        /**
+         * a method which initialises a JTable with the available models in the repository
+         */
+        private void initTable(String[] columns, Object[][] data, Map<String, String> modelsIDs){
+            JDialog tableDialog = new JDialog();
+            tableDialog.setTitle("Available models in the repository");
+            tableDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+ 
+            
+            // initialising the JTable and overriding the isCellEditable method to not allow editing
+            JTable table = new JTable(data, columns) {
+                @Override
+                public boolean isCellEditable(int row, int column){
+                    return false;
+                }
+            };
+            
+            // setting the rendered of the description column to a custom one which wraps long text
+            table.getColumnModel().getColumn(1).setCellRenderer(new CustomCellRenderer());
+            // setting the table to fill the viewport height
+            table.setFillsViewportHeight(true);
+            
+            // add a listener to the table to react on double clicks over a name of a model
+            table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        JTable target = (JTable) e.getSource();
+                        int row = target.getSelectedRow();
+                        int column = target.getSelectedColumn();
+                        // check for a non populated row
+                        if (row > table.getRowCount()) {
+                            return;
+                        }
+
+                        // only clicks on the name of the model are allowed
+                        if (column != 0) {
+                            return;
+                        }
+
+                        // extract the model and open it
+                        String urlStr = modelsIDs.get((String) table.getValueAt(row, column));
+                        StringBuilder response = new StringBuilder();
+                        String jsonResponse;
+                        try {
+                            URL url = new URL(urlStr);
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            conn.setRequestMethod("GET");
+                            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                response.append(line);
+                            }
+                            br.close();
+
+                            jsonResponse = response.toString();
+                            Map<String, Object> jsonMap = new ObjectMapper().readValue(jsonResponse, HashMap.class);
+                            String model = (String) jsonMap.get("model");
+                            if (model == null) {
+                                return;
+                            }
+                            
+                            // close the dialog and open the model
+                            tableDialog.dispose();
+                            model = replaceValues(model);
+                            if (model != null) {
+                                openModel(model);
+                            }
+                        } catch (MalformedURLException ex) {
+                            JOptionPane.showMessageDialog(editor,
+                                    "There is something wrong with the URL of the repository.",
+                                    "Invalid URL", JOptionPane.ERROR_MESSAGE);
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(editor,
+                                    "There is something wrong with the repository of the model you supplied.",
+                                    "Invalid model repository", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            });
+
+            JScrollPane scrollPane = new JScrollPane(table);
+            
+            tableDialog.add(scrollPane);
+            tableDialog.pack();
+            tableDialog.setLocationRelativeTo(null);
+            tableDialog.setVisible(true);
+        }
+        
+        /**
+         * The action to be performed
+         * @param ae the actual action event
+         */
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if (editor == null) {
+                editor = EditorActions.getEditor(ae);
+            }
+            if (editor == null) {
+                return;
+            }
+            
+            if (editor.isModified() && JOptionPane.showConfirmDialog(editor,
+                    mxResources.get("loseChanges")) != JOptionPane.YES_OPTION) {
+                return;
+            }
+            
+            String urlStr = JOptionPane.showInputDialog(editor, 
+                    "Please specify the url of the repository with the models.", 
+                    "Model from web", JOptionPane.PLAIN_MESSAGE);
+            if (urlStr == null){
+                return;
+            }
+            
+            /**
+             * extract the models from the repository and initialise a table with the name and description
+             * of the available models
+             */
+            StringBuilder response = new StringBuilder();
+            String jsonResponse;
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
+                }
+                br.close();
+                
+                jsonResponse = response.toString();
+                Object[] jsonArray = new ObjectMapper().readValue(jsonResponse, Object[].class);
+                String[] columns = {"Name", "Description"};
+                Object[][] data = new String[jsonArray.length][2];
+                Map<String, String> modelsIDs = new HashMap<>();
+                int index = 0;
+                for(Object model : jsonArray){
+                    Map<String, Object> modelMap = (HashMap<String, Object>) model;
+                    // using Jsoup to remove all html tags and get just the text description
+                    String name = Jsoup.parse((String) modelMap.get("name")).text();
+                    data[index][0] = name;
+                    data[index][1] = Jsoup.parse((String) modelMap.get("description")).text();
+                    if (urlStr.endsWith("/")){
+                        modelsIDs.put(name, urlStr + ((String) modelMap.get("id")));
+                    }
+                    else {
+                        modelsIDs.put(name, urlStr + "/" + ((String) modelMap.get("id")));
+                    }
+                    index += 1;
+                }
+                
+                initTable(columns, data, modelsIDs);
+            }
+            catch (MalformedURLException ex){
+                JOptionPane.showMessageDialog(editor, 
+                        "There is something wrong with the URL of the repository.",
+                        "Invalid URL", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (IOException ex){
+                JOptionPane.showMessageDialog(editor, 
+                        "There is something wrong with the repository of the model you supplied.",
+                        "Invalid model repository", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        /**
+         * a custom cell rendered for the JTable , which uses a JTextArea set to wrap long text
+         */
+        private class CustomCellRenderer extends JTextArea implements TableCellRenderer {
+                
+            /**
+             * the constructor for the CustomCellRendered
+             */
+            private CustomCellRenderer() {
+                // adjusts the wrapping settings of the cell
+                setLineWrap(true);
+                setWrapStyleWord(true);
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                setText(value.toString());
+                setSize(table.getColumnModel().getColumn(column).getWidth(), getPreferredSize().height);
+                // adjust the height of the table cell to fit the long text
+                if (table.getRowHeight(row) != getPreferredSize().height) {
+                    table.setRowHeight(row, getPreferredSize().height);
+                }
+                return this;
+            }
+        }
+    }
+    
      /**
      * Action to import a specification from a file.
      */

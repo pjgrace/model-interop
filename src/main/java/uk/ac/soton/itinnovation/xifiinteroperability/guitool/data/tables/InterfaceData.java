@@ -59,7 +59,7 @@ public class InterfaceData implements Serializable {
         restID = restidentify;
     }
 
-    private transient String protocol;
+    private String protocol;
 
     /**
      * Getter for the Protocol of the REST interface.

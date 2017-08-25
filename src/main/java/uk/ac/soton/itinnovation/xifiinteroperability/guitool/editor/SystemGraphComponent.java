@@ -114,8 +114,13 @@ public  class SystemGraphComponent extends mxGraphComponent {
                     final Object origTarget, final Point location) {
         Object target = origTarget;
         String type = null;
-        if (target == null && cells.length == 1 && location != null) {
+        if (target == null && cells.length == 1) {
             type = (String) ((mxCell) cells[0]).getValue();
+            if (location == null){
+                // in case of copy pasting take the type of the CopyPasteManager
+                type = editor.getCopyPasteManager().getLastType();
+            }
+            
             if (!(type.equalsIgnoreCase(DataModel.CLIENT) || type.equalsIgnoreCase(XMLStateMachine.INTERFACE_LABEL))) {
                 JOptionPane.showMessageDialog(this.getParent(),
                     "Behaviour elements not allowed in architecture graph",
@@ -123,18 +128,20 @@ public  class SystemGraphComponent extends mxGraphComponent {
                     JOptionPane.ERROR_MESSAGE);
                 return null;
             }
-            target = getCellAt(location.x, location.y);
+            if (location != null){
+                target = getCellAt(location.x, location.y);
 
-            if (target instanceof mxICell && cells[0] instanceof mxICell) {
-                final mxICell targetCell = (mxICell) target;
-                final mxICell dropCell = (mxICell) cells[0];
+                if (target instanceof mxICell && cells[0] instanceof mxICell) {
+                    final mxICell targetCell = (mxICell) target;
+                    final mxICell dropCell = (mxICell) cells[0];
 
-                if (targetCell.isVertex() == dropCell.isVertex()
-                                || targetCell.isEdge() == dropCell.isEdge()) {
-                    final mxIGraphModel model = graph.getModel();
-                    model.setStyle(target, model.getStyle(cells[0]));
-                    graph.setSelectionCell(target);
-                    return null;
+                    if (targetCell.isVertex() == dropCell.isVertex()
+                                    || targetCell.isEdge() == dropCell.isEdge()) {
+                        final mxIGraphModel model = graph.getModel();
+                        model.setStyle(target, model.getStyle(cells[0]));
+                        graph.setSelectionCell(target);
+                        return null;
+                    }
                 }
             }
         }
@@ -145,11 +152,18 @@ public  class SystemGraphComponent extends mxGraphComponent {
         }
         
         if (dataModel.archIdentExist(label)){
+            // generating a unique ID
+            int i = 1;
+            String testLabel = "component" + i;
+            while (dataModel.archIdentExist(testLabel)){
+                i += 1;
+                testLabel = "component" + i;
+            }
             label = (String) JOptionPane.showInputDialog(this.getParent(), 
                         "Please choose a label identifier for this component", 
                         "Component Identifier", 
                         JOptionPane.PLAIN_MESSAGE, 
-                        null, null, "component");
+                        null, null, testLabel);
             if (label != null){
                 label = label.replaceAll("\\s+", "_");
             }
@@ -159,7 +173,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
                         "Please chooose a different label identifier for this component", 
                         "Component Identifier", 
                         JOptionPane.ERROR_MESSAGE, 
-                        null, null, "component");
+                        null, null, testLabel);
                 if (label != null){
                     label = label.replaceAll("\\s+", "_");
                 }
@@ -171,6 +185,10 @@ public  class SystemGraphComponent extends mxGraphComponent {
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
             if (newCells[0] != null) {
                 dataModel.addNode(((mxCell) newCells[0]).getId(), label, type);
+                if (location == null){
+                    // in case of copy-pasting set the GUI id of the pasted component in the CopyPasteManager
+                    editor.getCopyPasteManager().setLastGUIid(GUIdentifier.ARCHVIEW + ((mxCell) newCells[0]).getId());
+                }
                 editor.getXmlUndoManager().add(this.dataModel.getState());
             }
             return newCells;

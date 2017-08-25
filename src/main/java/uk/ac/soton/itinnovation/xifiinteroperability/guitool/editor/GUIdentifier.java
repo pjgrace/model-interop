@@ -40,7 +40,7 @@ public final class GUIdentifier {
      * Value to add to ID generated in the architecture panel. mxGraph
      * uses integers in both panels, hence we need to distinguish.
      */
-    private static final String ARCHVIEW = "a_";
+    public static final String ARCHVIEW = "a_";
 
     /**
      * Private constructor for static class.
