@@ -100,6 +100,17 @@ public class Architecture {
     }
 
     /**
+     * Construct a new architecture from a given specification in XML. DebugMode is assumed to be false
+     * @param xml The architecture specification (pattern).
+     * @param report The report to output tests to.
+     * @throws InvalidStateMachineException when the XML is invalid
+     * @throws InvalidPatternException when there are more than one start nodes in the graph
+     */
+    public Architecture(final String xml, final InteroperabilityReport report) throws InvalidStateMachineException, InvalidPatternException{
+        this(xml, report, false);
+    }
+    
+    /**
      * Construct a new architecture from a given specification in XML.
      * @param xml The architecture specification (pattern).
      * @param report The report to output tests to.
