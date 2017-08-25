@@ -29,8 +29,8 @@
 				<to>state</to>
 				<guards>
 					<equal>
-						<param>timeout</param>
-						<value>1500</value>
+						<param>http.code</param>
+						<value>408</value>
 					</equal>
 				</guards>
 			</transition>

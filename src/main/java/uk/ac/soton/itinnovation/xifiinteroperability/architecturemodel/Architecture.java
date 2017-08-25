@@ -333,8 +333,11 @@ public class Architecture {
                     final String content = rEv.getDataBody().getData();
                     if (rEv.getDataBody().getType().contains("xml")) {
                         return XML.readValue(content, exprSplit[2]);
-                    } else {
-                        return JSON.readValue(content.toLowerCase(), "$." + exprSplit[2].toLowerCase());
+                    } else if (rEv.getDataBody().getType().contains("json")){
+                        return JSON.readValue(content, "$." + exprSplit[2]);
+                    }
+                    else {
+                        return content;
                     }
                 case "headers":
                     return rEv.getParameterMap().get(exprSplit[2]).getValue();
