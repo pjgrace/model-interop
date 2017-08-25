@@ -59,7 +59,10 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -74,15 +77,22 @@ import java.util.Locale;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.TableCellRenderer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.jsoup.Jsoup;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
@@ -150,7 +160,7 @@ public class FileActions {
             }
 
             if (editor != null) {
-                FileFilter selectedFilter = null;
+                FileFilter selectedFilter;
                 final DefaultFileFilter xmlPngFilter = new DefaultFileFilter(XMLFILE,
                                 "XML " + mxResources.get("file") + " (" + XMLFILE + ")");
 
@@ -779,6 +789,95 @@ public class FileActions {
         }
         
         /**
+         * a method which initialises a JTable with the available models in the repository
+         */
+        private void initTable(String[] columns, Object[][] data, Map<String, String> modelsIDs){
+            JDialog tableDialog = new JDialog();
+            tableDialog.setTitle("Available models in the repository");
+            tableDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+ 
+            
+            // initialising the JTable and overriding the isCellEditable method to not allow editing
+            JTable table = new JTable(data, columns) {
+                @Override
+                public boolean isCellEditable(int row, int column){
+                    return false;
+                }
+            };
+            
+            // setting the rendered of the description column to a custom one which wraps long text
+            table.getColumnModel().getColumn(1).setCellRenderer(new CustomCellRenderer());
+            // setting the table to fill the viewport height
+            table.setFillsViewportHeight(true);
+            
+            // add a listener to the table to react on double clicks over a name of a model
+            table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        JTable target = (JTable) e.getSource();
+                        int row = target.getSelectedRow();
+                        int column = target.getSelectedColumn();
+                        // check for a non populated row
+                        if (row > table.getRowCount()) {
+                            return;
+                        }
+
+                        // only clicks on the name of the model are allowed
+                        if (column != 0) {
+                            return;
+                        }
+
+                        // extract the model and open it
+                        String urlStr = modelsIDs.get((String) table.getValueAt(row, column));
+                        StringBuilder response = new StringBuilder();
+                        String jsonResponse;
+                        try {
+                            URL url = new URL(urlStr);
+                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                            conn.setRequestMethod("GET");
+                            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                response.append(line);
+                            }
+                            br.close();
+
+                            jsonResponse = response.toString();
+                            Map<String, Object> jsonMap = new ObjectMapper().readValue(jsonResponse, HashMap.class);
+                            String model = (String) jsonMap.get("model");
+                            if (model == null) {
+                                return;
+                            }
+                            
+                            // close the dialog and open the model
+                            tableDialog.dispose();
+                            model = replaceValues(model);
+                            if (model != null) {
+                                openModel(model);
+                            }
+                        } catch (MalformedURLException ex) {
+                            JOptionPane.showMessageDialog(editor,
+                                    "There is something wrong with the URL of the repository.",
+                                    "Invalid URL", JOptionPane.ERROR_MESSAGE);
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(editor,
+                                    "There is something wrong with the repository of the model you supplied.",
+                                    "Invalid model repository", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            });
+
+            JScrollPane scrollPane = new JScrollPane(table);
+            
+            tableDialog.add(scrollPane);
+            tableDialog.pack();
+            tableDialog.setLocationRelativeTo(null);
+            tableDialog.setVisible(true);
+        }
+        
+        /**
          * The action to be performed
          * @param ae the actual action event
          */
@@ -797,14 +896,20 @@ public class FileActions {
             }
             
             String urlStr = JOptionPane.showInputDialog(editor, 
-                    "Please specify the url of the repository of the model.");
+                    "Please specify the url of the repository with the models.", 
+                    "Model from web", JOptionPane.PLAIN_MESSAGE);
             if (urlStr == null){
                 return;
             }
             
+            /**
+             * extract the models from the repository and initialise a table with the name and description
+             * of the available models
+             */
             StringBuilder response = new StringBuilder();
             String jsonResponse;
-            try {URL url = new URL(urlStr);
+            try {
+                URL url = new URL(urlStr);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -813,13 +918,29 @@ public class FileActions {
                     response.append(line);
                 }
                 br.close();
+                
                 jsonResponse = response.toString();
-                Map<String, Object> jsonMap = new ObjectMapper().readValue(jsonResponse, HashMap.class);
-                String model = (String) jsonMap.get("model");
-                model = replaceValues(model);
-                if (model != null){
-                    openModel(model);
+                Object[] jsonArray = new ObjectMapper().readValue(jsonResponse, Object[].class);
+                String[] columns = {"Name", "Description"};
+                Object[][] data = new String[jsonArray.length][2];
+                Map<String, String> modelsIDs = new HashMap<>();
+                int index = 0;
+                for(Object model : jsonArray){
+                    Map<String, Object> modelMap = (HashMap<String, Object>) model;
+                    // using Jsoup to remove all html tags and get just the text description
+                    String name = Jsoup.parse((String) modelMap.get("name")).text();
+                    data[index][0] = name;
+                    data[index][1] = Jsoup.parse((String) modelMap.get("description")).text();
+                    if (urlStr.endsWith("/")){
+                        modelsIDs.put(name, urlStr + ((String) modelMap.get("id")));
+                    }
+                    else {
+                        modelsIDs.put(name, urlStr + "/" + ((String) modelMap.get("id")));
+                    }
+                    index += 1;
                 }
+                
+                initTable(columns, data, modelsIDs);
             }
             catch (MalformedURLException ex){
                 JOptionPane.showMessageDialog(editor, 
@@ -830,6 +951,32 @@ public class FileActions {
                 JOptionPane.showMessageDialog(editor, 
                         "There is something wrong with the repository of the model you supplied.",
                         "Invalid model repository", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+        /**
+         * a custom cell rendered for the JTable , which uses a JTextArea set to wrap long text
+         */
+        private class CustomCellRenderer extends JTextArea implements TableCellRenderer {
+                
+            /**
+             * the constructor for the CustomCellRendered
+             */
+            private CustomCellRenderer() {
+                // adjusts the wrapping settings of the cell
+                setLineWrap(true);
+                setWrapStyleWord(true);
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                setText(value.toString());
+                setSize(table.getColumnModel().getColumn(column).getWidth(), getPreferredSize().height);
+                // adjust the height of the table cell to fit the long text
+                if (table.getRowHeight(row) != getPreferredSize().height) {
+                    table.setRowHeight(row, getPreferredSize().height);
+                }
+                return this;
             }
         }
     }
