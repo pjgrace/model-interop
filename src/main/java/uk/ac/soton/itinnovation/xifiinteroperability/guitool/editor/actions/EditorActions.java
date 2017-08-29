@@ -370,15 +370,6 @@ public final class EditorActions {
          */
         @Override
         public final void actionPerformed(final ActionEvent actionEvent) {
-            String[] choices = {"Execution mode", "Step-by-step mode"};
-            String mode = (String) JOptionPane.showInputDialog(null,
-                    "Which mode do you want to use to run the interoperability test?",
-                    "Test running mode", JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
-            if (mode == null){
-                return;
-            }
-            boolean debugMode = mode.equals("Step-by-step mode");
-
             final BasicGraphEditor editor;
             BasicGraphEditor test = getEditor(actionEvent);
             if (test == null){
@@ -387,6 +378,22 @@ public final class EditorActions {
             else {
                 editor = test;
             }
+            
+            if (editor.isRunning()){
+                JOptionPane.showMessageDialog(editor, 
+                        "There is currently another test running. Either let the test finish or stop it before starting a new one.",
+                        "Multiple test executions", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            String[] choices = {"Execution mode", "Step-by-step mode"};
+            String mode = (String) JOptionPane.showInputDialog(null,
+                    "Which mode do you want to use to run the interoperability test?",
+                    "Test running mode", JOptionPane.PLAIN_MESSAGE, null, choices, choices[0]);
+            if (mode == null){
+                return;
+            }
+            boolean debugMode = mode.equals("Step-by-step mode");
             editor.getCodePanel().getTestingPanel().clearTestingPanel();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.REPORTPANEL);
@@ -430,6 +437,7 @@ public final class EditorActions {
                 }
 
                 checkThread.start();
+                editor.setRunning(true);
             } catch (HeadlessException ex) {
                 JOptionPane.showMessageDialog(editor,
                         "Pattern is not valid: " + ex.getMessage(),

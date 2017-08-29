@@ -318,11 +318,8 @@ public class FileActions {
                 /**
                  * Clear the data model.
                  */
-                editor.getDataModel().clearData();
-                editor.resetUndoManagers();
+                editor.resetEditor();
                 editor.getCertificationManager().resetURL();
-                editor.updateTableView(null);
-                editor.getXmlUndoManager().add(editor.getDataModel().getState());
 
                 /**
                  * Clear the graph views.
@@ -402,11 +399,8 @@ public class FileActions {
             agraph.getModel().setRoot(root2);
 
             editor.setModified(false);
-            editor.getDataModel().clearData();
-            editor.resetUndoManagers();
+            editor.resetEditor();
             editor.getCertificationManager().resetURL();
-            editor.updateTableView(null);
-            editor.getCodePanel().getReportsPanel().clearTabbedPane();
         }
 
         /**
@@ -586,11 +580,8 @@ public class FileActions {
             agraph.getModel().setRoot(root2);
 
             editor.setModified(false);
-            editor.getDataModel().clearData();
-            editor.resetUndoManagers();
+            editor.resetEditor();
             editor.getCertificationManager().resetURL();
-            editor.updateTableView(null);
-            editor.getCodePanel().getReportsPanel().clearTabbedPane();
         }
 
         /**
@@ -733,10 +724,7 @@ public class FileActions {
             agraph.getModel().setRoot(root2);
 
             editor.setModified(false);
-            editor.getDataModel().clearData();
-            editor.resetUndoManagers();
-            editor.updateTableView(null);
-            editor.getCodePanel().getReportsPanel().clearTabbedPane();
+            editor.resetEditor();
         }
 
         /**

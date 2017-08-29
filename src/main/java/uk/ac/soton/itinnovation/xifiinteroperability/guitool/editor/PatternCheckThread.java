@@ -79,6 +79,7 @@ public class PatternCheckThread extends Thread {
      * @param xmlInput The pattern specification to formulate the test.
      * @param rep THe reference to the output stream.
      * @param edit The editor context.
+     * @param debugMode whether the thread runs in step by step mode or not
      */
     public PatternCheckThread(final String xmlInput, final InteroperabilityReport rep,
             final BasicGraphEditor edit, boolean debugMode) {
@@ -87,6 +88,7 @@ public class PatternCheckThread extends Thread {
         report = rep;
         editor = edit;
         this.debugMode = debugMode;
+        // TODO override the way the thread is stopped to notify the editor that there is no test running
     }
 
     /**
@@ -120,7 +122,8 @@ public class PatternCheckThread extends Thread {
         } catch (NullPointerException ex){
             JOptionPane.showMessageDialog(editor, "Pattern is not valid: Please check all fields where you are using any of the following - pattern data,"
                     + " components' data, previous states' data.", "Pattern verification", JOptionPane.ERROR_MESSAGE);
-        } 
+        }
+        editor.setRunning(false);
     }
 
 }

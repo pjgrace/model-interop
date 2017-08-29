@@ -323,7 +323,39 @@ public class BasicGraphEditor extends JPanel {
      * Flag indicating whether the current graph has been modified.
      */
     private boolean modified = false;
+    
+    /**
+     * a boolean to signify is there is currently a test running or not
+     */
+    private boolean testRunning = false;
+    
+    /**
+     * a getter for the testRunning attribute
+     * @return true if there is currently a test running, false otherwise
+     */
+    public boolean isRunning(){
+        return testRunning;
+    }
+    
+    /**
+     * a setter for the testRunning attribute
+     * @param testRunning represents whether there is a test currently running
+     */
+    public void setRunning(boolean testRunning){
+        this.testRunning = testRunning;
+    }
 
+    /**
+     * a method which resets the whole editor, called when opening new models
+     */
+    public void resetEditor(){
+        this.getDataModel().clearData();
+        this.resetUndoManagers();
+        this.setRunning(false);
+        this.updateTableView(null);
+        this.getXmlUndoManager().add(this.getDataModel().getState());
+    }
+    
     /**
      * Add a listener to react to undo events.
      */
