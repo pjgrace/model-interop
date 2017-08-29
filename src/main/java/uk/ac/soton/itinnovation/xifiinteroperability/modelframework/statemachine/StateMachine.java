@@ -280,7 +280,7 @@ public class StateMachine implements EventCapture {
                     MsgEvent event = null;
                     if (timeout == null){
                         while(event == null){
-                            event = this.eventQueue.poll(5000, TimeUnit.MICROSECONDS);
+                            event = this.eventQueue.poll(2000, TimeUnit.MILLISECONDS);
                             if (stopped){
                                 break;
                             }
