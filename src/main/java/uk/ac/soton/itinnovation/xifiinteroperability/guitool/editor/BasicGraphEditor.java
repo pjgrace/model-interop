@@ -354,6 +354,7 @@ public class BasicGraphEditor extends JPanel {
         this.setRunning(false);
         this.updateTableView(null);
         this.getXmlUndoManager().add(this.getDataModel().getState());
+        this.getCertificationManager().resetURL();
     }
     
     /**
@@ -1183,7 +1184,7 @@ final JFrame frame = new JFrame();
             ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), "EmptyPanel");
             return;
         }
-
+        
         // Get the attribut information
         AbstractGraphElement transition = dataModel.getNode(uiID);
 

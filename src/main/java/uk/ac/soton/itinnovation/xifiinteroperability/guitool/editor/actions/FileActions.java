@@ -319,7 +319,6 @@ public class FileActions {
                  * Clear the data model.
                  */
                 editor.resetEditor();
-                editor.getCertificationManager().resetURL();
 
                 /**
                  * Clear the graph views.
@@ -400,7 +399,6 @@ public class FileActions {
 
             editor.setModified(false);
             editor.resetEditor();
-            editor.getCertificationManager().resetURL();
         }
 
         /**
@@ -581,7 +579,6 @@ public class FileActions {
 
             editor.setModified(false);
             editor.resetEditor();
-            editor.getCertificationManager().resetURL();
         }
 
         /**
