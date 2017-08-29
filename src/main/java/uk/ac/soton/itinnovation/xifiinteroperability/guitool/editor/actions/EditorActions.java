@@ -436,8 +436,10 @@ public final class EditorActions {
                     });
                 }
 
-                checkThread.start();
                 editor.setRunning(true);
+                editor.getBehaviourGraph().getGraph().setSelectionCells(new Object[0]);
+                editor.getSystemGraph().getGraph().setSelectionCells(new Object[0]);
+                checkThread.start();
             } catch (HeadlessException ex) {
                 JOptionPane.showMessageDialog(editor,
                         "Pattern is not valid: " + ex.getMessage(),
