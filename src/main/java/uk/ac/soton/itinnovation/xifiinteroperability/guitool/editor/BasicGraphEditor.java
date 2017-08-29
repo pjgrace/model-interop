@@ -1185,6 +1185,11 @@ final JFrame frame = new JFrame();
             return;
         }
         
+        if (uiID.equalsIgnoreCase(AttributePanel.EXECUTION)) { 
+            ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), AttributePanel.EXECUTION); 
+            return; 
+        }
+        
         // Get the attribut information
         AbstractGraphElement transition = dataModel.getNode(uiID);
 

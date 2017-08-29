@@ -36,6 +36,7 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.EndForm;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ExecutionPanel;
 
 /**
  * The Attribute panel where different panels are switched between to input
@@ -161,6 +162,11 @@ public class AttributePanel {
      * The attribute panel for trigger nodes.
      */
     private static final String TRIGGERPANEL = "trigger";
+    
+    /**
+     * The panel opened on test execution
+     */
+    public static final String EXECUTION = "execution";
 
 
     /**
@@ -202,6 +208,7 @@ public class AttributePanel {
         parent.add(new EmptyForm(), NORMALPANEL);
         parent.add(new EmptyForm(), LOOPPANEL);
         parent.add(new EmptyForm(), TRIGGERPANEL);
+        parent.add(new ExecutionPanel(editor), EXECUTION);
 
     }
 

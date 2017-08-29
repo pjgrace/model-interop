@@ -54,7 +54,9 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GuardData;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ObjectDeepCloner;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ExecutionPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.InterfaceData;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.AttributePanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorPopupMenu;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.EditorToolBar;
@@ -439,6 +441,7 @@ public final class EditorActions {
                 editor.setRunning(true);
                 editor.getBehaviourGraph().getGraph().setSelectionCells(new Object[0]);
                 editor.getSystemGraph().getGraph().setSelectionCells(new Object[0]);
+                editor.updateTableView(AttributePanel.EXECUTION);
                 checkThread.start();
             } catch (HeadlessException ex) {
                 JOptionPane.showMessageDialog(editor,
@@ -492,6 +495,13 @@ public final class EditorActions {
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.PREVIOUSREPORTS);
             editor.getCodePanel().getReportsPanel().resetTabbedPane();
+            
+            for(Component comp: editor.getAttributePanel().getComponents()){
+                if (comp.isVisible() && comp instanceof ExecutionPanel){
+                    editor.updateTableView(null);
+                    break;
+                }
+            }
         }
     }
 
@@ -567,6 +577,13 @@ public final class EditorActions {
             editor.getCodePanel().getXMLPanel().displayXMLSpecification();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.CODEPANEL);
+            
+            for(Component comp: editor.getAttributePanel().getComponents()){
+                if (comp.isVisible() && comp instanceof ExecutionPanel){
+                    editor.updateTableView(null);
+                    break;
+                }
+            }
         }
     }
 
@@ -600,9 +617,15 @@ public final class EditorActions {
             if (editor == null) {
                 editor = getEditor(actionEvent);
             }
-            editor.getCodePanel().getXMLPanel().displayXMLSpecification();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.GRAPHPANEL);
+            
+            for(Component comp: editor.getAttributePanel().getComponents()){
+                if (comp.isVisible() && comp instanceof ExecutionPanel){
+                    editor.updateTableView(null);
+                    break;
+                }
+            }
         }
     }
     
@@ -614,7 +637,7 @@ public final class EditorActions {
         /**
          * The editor context for action to be associated with.
          */
-        private transient BasicGraphEditor editor;
+        private final transient BasicGraphEditor editor;
 
         /**
          * constructor for the TestAction
@@ -642,6 +665,8 @@ public final class EditorActions {
             }
             final CardLayout cardLayout = (CardLayout) editorReference.getMainArea().getLayout();
             cardLayout.show(editorReference.getMainArea(), MainDisplayPanel.REPORTPANEL);
+            
+            editor.updateTableView(AttributePanel.EXECUTION);
         }
         
     }
