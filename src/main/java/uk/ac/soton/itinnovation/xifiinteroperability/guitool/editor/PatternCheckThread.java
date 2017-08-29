@@ -54,7 +54,7 @@ public class PatternCheckThread extends Thread {
     /**
      * whether the state machine should be run in debug mode
      */
-    private transient boolean debugMode;
+    private final transient boolean debugMode;
     
     /**
      * getter for the reference of the architecture
@@ -88,7 +88,6 @@ public class PatternCheckThread extends Thread {
         report = rep;
         editor = edit;
         this.debugMode = debugMode;
-        // TODO override the way the thread is stopped to notify the editor that there is no test running
     }
 
     /**

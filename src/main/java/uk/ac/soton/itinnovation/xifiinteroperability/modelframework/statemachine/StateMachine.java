@@ -277,9 +277,17 @@ public class StateMachine implements EventCapture {
                             }
                         }
                     }
-                    MsgEvent event;
+                    MsgEvent event = null;
                     if (timeout == null){
-                        event = this.eventQueue.take();
+                        while(event == null){
+                            event = this.eventQueue.poll(5000, TimeUnit.MICROSECONDS);
+                            if (stopped){
+                                break;
+                            }
+                        }
+                        if (stopped){
+                            continue;
+                        }
                         currentState = getState(currentState.evaluateTransition(event, outputReport));
                     }
                     else {
