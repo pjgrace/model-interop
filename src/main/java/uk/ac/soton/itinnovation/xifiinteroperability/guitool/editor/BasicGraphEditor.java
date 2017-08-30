@@ -123,6 +123,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.AbstractGraphE
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ExecutionPanel;
 
 /**
     Interoperability Tool: A software developer tool to test whether applications
@@ -155,6 +156,14 @@ public class BasicGraphEditor extends JPanel {
      * The Attribute panel for adding data to graph nodes and transitions.
      */
     private final transient AttributePanel ctablePanel;
+    
+    /**
+     * a getter method for the test animation panel
+     * @return the panel which displays the graph during test execution
+     */
+    public ExecutionPanel getExecPanel(){
+        return ctablePanel.getExecPanel();
+    }
 
     /**
      * The code panel for viewing the graph, xml, testing etc.
@@ -1186,7 +1195,7 @@ final JFrame frame = new JFrame();
         }
         
         if (uiID.equalsIgnoreCase(AttributePanel.EXECUTION)) { 
-            ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), AttributePanel.EXECUTION); 
+            ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), AttributePanel.EXECUTION);
             return; 
         }
         

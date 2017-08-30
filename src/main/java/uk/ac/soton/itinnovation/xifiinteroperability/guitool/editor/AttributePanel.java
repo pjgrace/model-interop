@@ -119,6 +119,19 @@ public class AttributePanel {
     public final EndForm getEndForm() {
         return eForm;
     }
+    
+    /**
+     * reference to the Execution panel UI component
+     */
+    private final transient ExecutionPanel execPanel;
+    
+    /**
+     * a getter method for the execution panel reference
+     * @return the reference to the execution panel
+     */
+    public final ExecutionPanel getExecPanel(){
+        return execPanel;
+    }
 
     /**
      * Constant panel refs.
@@ -197,6 +210,7 @@ public class AttributePanel {
         gForm = new GuardForm(editor);
         nForm = new NodeForm(editor);
         eForm = new EndForm();
+        execPanel = new ExecutionPanel(editor);
 
         //Create the panel that contains the "cards".
         parent.add(new EmptyForm(), "EmptyPanel");
@@ -208,8 +222,7 @@ public class AttributePanel {
         parent.add(new EmptyForm(), NORMALPANEL);
         parent.add(new EmptyForm(), LOOPPANEL);
         parent.add(new EmptyForm(), TRIGGERPANEL);
-        parent.add(new ExecutionPanel(editor), EXECUTION);
-
+        parent.add(execPanel, EXECUTION);
     }
 
 }

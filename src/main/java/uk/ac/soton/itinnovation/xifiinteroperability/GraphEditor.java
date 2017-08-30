@@ -361,7 +361,7 @@ public class GraphEditor extends BasicGraphEditor {
             @Override
             public void invoke(final Object sender, final mxEventObject evt) {
                 graphComponent.validateGraph();
-                if (sender instanceof mxGraphSelectionModel) {
+                if (sender instanceof mxGraphSelectionModel && ((mxGraphSelectionModel) sender).isSingleSelection()) {
                     if (((mxGraphSelectionModel) sender).getCells().length == 0){
                         updateTableView(null);
                         return;
@@ -379,10 +379,10 @@ public class GraphEditor extends BasicGraphEditor {
                         }
                         if (grpghM != null) {
                             if (grpghM instanceof ArchitectureNode){
-                                editor.getBehaviourGraph().getGraph().setSelectionCells(new Object[0]);
+                                editor.getBehaviourGraph().getGraph().clearSelection();
                             }
                             else {
-                                editor.getSystemGraph().getGraph().setSelectionCells(new Object[0]);
+                                editor.getSystemGraph().getGraph().clearSelection();
                             }
                             final CardLayout cardLayout = (CardLayout) getAttributePanel().getLayout();
                             String type = grpghM.getType();

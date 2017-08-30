@@ -27,7 +27,10 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 
+import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.view.mxGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -43,6 +46,11 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.SystemGraphC
  * @author ns17
  */
 public class ExecutionPanel extends JPanel {
+      
+    /**
+     * a reference to the editor
+     */
+    private final BasicGraphEditor editor;
     
     /**
      * constructor for the panel, initialises the GUI components
@@ -51,9 +59,11 @@ public class ExecutionPanel extends JPanel {
     public ExecutionPanel(BasicGraphEditor editor){
         super(new BorderLayout());
         
+        this.editor = editor;
+        
         JPanel graphs = new JPanel(new GridLayout(2, 1));
         graphs.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-                
+
         mxGraphComponent behaviourComponent = new BehaviourGraphComponent(editor.getBehaviourGraph().getGraph());
         behaviourComponent.setEnabled(false);
         behaviourComponent.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 0)));
@@ -63,8 +73,24 @@ public class ExecutionPanel extends JPanel {
         systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
         systemComponent.setEnabled(false);
         graphs.add(systemComponent);
-        
+             
         add(graphs, BorderLayout.CENTER);
     }
     
+    /**
+     * a method to set the current test state by changing the selection in the graph
+     * @param labelID the labelID of the current state
+     */
+    public void setTestState(String labelID){
+        mxGraph graph = editor.getBehaviourGraph().getGraph();
+        System.out.println("2) - " + labelID);
+        System.out.println(editor.getDataModel().getNodeByLabel(labelID));
+        String guiID = editor.getDataModel().getNodeByLabel(labelID).getUIIdentifier();
+        System.out.println("1) - " + guiID + ", 2) - " + labelID);
+        mxCell toSelect = (mxCell) ((mxGraphModel) graph.getModel()).getCell(guiID);
+        graph.getSelectionModel().setSingleSelection(false);
+        graph.clearSelection();
+        graph.getSelectionModel().setCell(toSelect);
+        graph.getSelectionModel().setSingleSelection(true);
+    }
 }

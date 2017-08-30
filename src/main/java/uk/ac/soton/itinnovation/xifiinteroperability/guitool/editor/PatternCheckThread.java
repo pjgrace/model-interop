@@ -97,7 +97,7 @@ public class PatternCheckThread extends Thread {
     @Override
     public final void run() {
         try {
-            arch = new Architecture(patternToTest, report, debugMode);
+            arch = new Architecture(patternToTest, report, debugMode, editor.getExecPanel());
             if (arch.getStateMachine().getStartState() == null) {
                 JOptionPane.showMessageDialog(editor,
                                 "Pattern is not valid: no start state found.",

@@ -51,6 +51,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidRESTMessage;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ExecutionPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InvalidPatternException;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.MsgEvent;
 import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
@@ -98,7 +99,7 @@ public class Architecture {
     public final Map<String, String> getDataConstants() {
         return dataConstants;
     }
-
+    
     /**
      * Construct a new architecture from a given specification in XML. DebugMode is assumed to be false
      * @param xml The architecture specification (pattern).
@@ -111,20 +112,36 @@ public class Architecture {
     }
     
     /**
-     * Construct a new architecture from a given specification in XML.
+     * Construct a new architecture from a given specification in XML. 
+     * Assumes execution panel as null
+     *
      * @param xml The architecture specification (pattern).
      * @param report The report to output tests to.
      * @param debugMode whether the state machine is run in debug mode
      * @throws InvalidStateMachineException when the XML is invalid
+     * @throws InvalidPatternException when there are more than one start nodes
+     * in the graph
+     */
+    public Architecture(final String xml, final InteroperabilityReport report, final boolean debugMode) throws InvalidStateMachineException, InvalidPatternException {
+        this(xml, report, debugMode, null);
+    }
+
+    /**
+     * Construct a new architecture from a given specification in XML.
+     * @param xml The architecture specification (pattern).
+     * @param report The report to output tests to.
+     * @param debugMode whether the state machine is run in debug mode
+     * @param execPanel the execution panel to use for testing animations
+     * @throws InvalidStateMachineException when the XML is invalid
      * @throws InvalidPatternException when there are more than one start nodes in the graph
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public Architecture(final String xml, final InteroperabilityReport report, final boolean debugMode) throws InvalidStateMachineException, InvalidPatternException {
+    public Architecture(final String xml, final InteroperabilityReport report, final boolean debugMode, final ExecutionPanel execPanel) throws InvalidStateMachineException, InvalidPatternException {
         try {
             if (report == null) {
-                this.behaviourSequence = new StateMachine(debugMode);
+                this.behaviourSequence = new StateMachine(debugMode, execPanel);
             } else {
-                this.behaviourSequence = new StateMachine(report, debugMode);
+                this.behaviourSequence = new StateMachine(report, debugMode, execPanel);
             }
             // Validate the pattern
             final URL schemaUrl = FileUtils.getURL(SystemProperties.PATTERNSCHEMA);

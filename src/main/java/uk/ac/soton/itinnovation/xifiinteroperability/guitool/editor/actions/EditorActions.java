@@ -499,6 +499,7 @@ public final class EditorActions {
             for(Component comp: editor.getAttributePanel().getComponents()){
                 if (comp.isVisible() && comp instanceof ExecutionPanel){
                     editor.updateTableView(null);
+                    editor.getBehaviourGraph().getGraph().clearSelection();
                     break;
                 }
             }
@@ -581,6 +582,7 @@ public final class EditorActions {
             for(Component comp: editor.getAttributePanel().getComponents()){
                 if (comp.isVisible() && comp instanceof ExecutionPanel){
                     editor.updateTableView(null);
+                    editor.getBehaviourGraph().getGraph().clearSelection();
                     break;
                 }
             }
@@ -623,6 +625,7 @@ public final class EditorActions {
             for(Component comp: editor.getAttributePanel().getComponents()){
                 if (comp.isVisible() && comp instanceof ExecutionPanel){
                     editor.updateTableView(null);
+                    editor.getBehaviourGraph().getGraph().clearSelection();
                     break;
                 }
             }
