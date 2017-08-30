@@ -340,7 +340,6 @@ public class StateMachine implements EventCapture {
                     outputReport.println("Transition Success - move to state:" + currentState.getLabel());
                 }
                 nextClicked = false;
-                System.out.println("WORK?");
                 execPanel.setTestState(currentState.getLabel());
             } catch (UnexpectedEventException ex) {
                logException(ex);

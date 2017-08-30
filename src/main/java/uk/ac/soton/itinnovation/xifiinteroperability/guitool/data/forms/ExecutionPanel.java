@@ -83,10 +83,7 @@ public class ExecutionPanel extends JPanel {
      */
     public void setTestState(String labelID){
         mxGraph graph = editor.getBehaviourGraph().getGraph();
-        System.out.println("2) - " + labelID);
-        System.out.println(editor.getDataModel().getNodeByLabel(labelID));
         String guiID = editor.getDataModel().getNodeByLabel(labelID).getUIIdentifier();
-        System.out.println("1) - " + guiID + ", 2) - " + labelID);
         mxCell toSelect = (mxCell) ((mxGraphModel) graph.getModel()).getCell(guiID);
         graph.getSelectionModel().setSingleSelection(false);
         graph.clearSelection();
