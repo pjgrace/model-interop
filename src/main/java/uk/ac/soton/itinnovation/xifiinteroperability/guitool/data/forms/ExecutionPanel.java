@@ -29,6 +29,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGraphModel;
+import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.awt.BorderLayout;
@@ -36,6 +37,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ObjectDeepCloner;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BehaviourGraphComponent;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.SystemGraphComponent;
@@ -50,7 +52,22 @@ public class ExecutionPanel extends JPanel {
     /**
      * a reference to the editor
      */
-    private final BasicGraphEditor editor;
+    private final transient BasicGraphEditor editor;
+     
+    /**
+     * a reference to the behaviour component
+     */
+    private transient mxGraphComponent behaviourComponent;
+    
+    /**
+     * a reference to the system component
+     */
+    private transient mxGraphComponent systemComponent;
+    
+    /**
+     * reference to the panel containing the two graphs
+     */
+    private transient final JPanel graphs;
     
     /**
      * constructor for the panel, initialises the GUI components
@@ -61,15 +78,15 @@ public class ExecutionPanel extends JPanel {
         
         this.editor = editor;
         
-        JPanel graphs = new JPanel(new GridLayout(2, 1));
+        graphs = new JPanel(new GridLayout(2, 1));
         graphs.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
-        mxGraphComponent behaviourComponent = new BehaviourGraphComponent(editor.getBehaviourGraph().getGraph());
+        
+        behaviourComponent = new BehaviourGraphComponent(editor.getBehaviourGraph().getGraph());
         behaviourComponent.setEnabled(false);
         behaviourComponent.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 0)));
         graphs.add(behaviourComponent);
         
-        mxGraphComponent systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
+        systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
         systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
         systemComponent.setEnabled(false);
         graphs.add(systemComponent);
@@ -77,17 +94,36 @@ public class ExecutionPanel extends JPanel {
         add(graphs, BorderLayout.CENTER);
     }
     
+    public void refreshGraph(){
+        mxGraph behaviourGraph = new mxGraph((mxIGraphModel) ObjectDeepCloner.deepCopy(editor.getBehaviourGraph().getGraph().getModel()),
+                editor.getBehaviourGraph().getGraph().getStylesheet());
+        mxGraph systemGraph = new mxGraph((mxIGraphModel) ObjectDeepCloner.deepCopy(editor.getSystemGraph().getGraph().getModel()),
+                editor.getSystemGraph().getGraph().getStylesheet());
+        behaviourComponent = new BehaviourGraphComponent(behaviourGraph);
+        systemComponent = new SystemGraphComponent(systemGraph);
+        
+        graphs.removeAll();
+        
+        behaviourComponent.setEnabled(false);
+        behaviourComponent.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 0)));
+        graphs.add(behaviourComponent);
+        
+        systemComponent.setEnabled(false);
+        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
+        graphs.add(systemComponent);
+             
+        graphs.revalidate();
+        graphs.repaint();
+    }
+    
     /**
      * a method to set the current test state by changing the selection in the graph
      * @param labelID the labelID of the current state
      */
     public void setTestState(String labelID){
-        mxGraph graph = editor.getBehaviourGraph().getGraph();
+        mxGraph graph = behaviourComponent.getGraph();
         String guiID = editor.getDataModel().getNodeByLabel(labelID).getUIIdentifier();
         mxCell toSelect = (mxCell) ((mxGraphModel) graph.getModel()).getCell(guiID);
-        graph.getSelectionModel().setSingleSelection(false);
-        graph.clearSelection();
         graph.getSelectionModel().setCell(toSelect);
-        graph.getSelectionModel().setSingleSelection(true);
     }
 }

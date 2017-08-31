@@ -441,6 +441,7 @@ public final class EditorActions {
                 editor.setRunning(true);
                 editor.getBehaviourGraph().getGraph().setSelectionCells(new Object[0]);
                 editor.getSystemGraph().getGraph().setSelectionCells(new Object[0]);
+                editor.getExecPanel().refreshGraph();
                 editor.updateTableView(AttributePanel.EXECUTION);
                 checkThread.start();
             } catch (HeadlessException ex) {
