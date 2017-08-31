@@ -361,7 +361,7 @@ public class GraphEditor extends BasicGraphEditor {
             @Override
             public void invoke(final Object sender, final mxEventObject evt) {
                 graphComponent.validateGraph();
-                if (sender instanceof mxGraphSelectionModel && ((mxGraphSelectionModel) sender).isSingleSelection()) {
+                if (sender instanceof mxGraphSelectionModel) {
                     if (((mxGraphSelectionModel) sender).getCells().length == 0){
                         updateTableView(null);
                         return;
