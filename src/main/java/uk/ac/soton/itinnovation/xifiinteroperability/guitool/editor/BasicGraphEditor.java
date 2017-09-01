@@ -364,6 +364,7 @@ public class BasicGraphEditor extends JPanel {
         this.updateTableView(null);
         this.getXmlUndoManager().add(this.getDataModel().getState());
         this.getCertificationManager().resetURL();
+        this.getExecPanel().resetGraph();
     }
     
     /**

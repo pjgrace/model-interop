@@ -116,6 +116,24 @@ public class ExecutionPanel extends JPanel {
         graphs.repaint();
     }
     
+    public void resetGraph(){
+        behaviourComponent = new BehaviourGraphComponent(editor.getBehaviourGraph().getGraph());
+        systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
+
+        graphs.removeAll();
+
+        behaviourComponent.setEnabled(false);
+        behaviourComponent.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 0)));
+        graphs.add(behaviourComponent);
+
+        systemComponent.setEnabled(false);
+        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
+        graphs.add(systemComponent);
+
+        graphs.revalidate();
+        graphs.repaint();
+    }
+    
     /**
      * a method to set the current test state by changing the selection in the graph
      * @param labelID the labelID of the current state
