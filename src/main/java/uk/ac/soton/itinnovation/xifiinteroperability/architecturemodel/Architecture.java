@@ -99,7 +99,7 @@ public class Architecture {
     public final Map<String, String> getDataConstants() {
         return dataConstants;
     }
-    
+
     /**
      * Construct a new architecture from a given specification in XML. DebugMode is assumed to be false
      * @param xml The architecture specification (pattern).
@@ -110,9 +110,9 @@ public class Architecture {
     public Architecture(final String xml, final InteroperabilityReport report) throws InvalidStateMachineException, InvalidPatternException{
         this(xml, report, false);
     }
-    
+
     /**
-     * Construct a new architecture from a given specification in XML. 
+     * Construct a new architecture from a given specification in XML.
      * Assumes execution panel as null
      *
      * @param xml The architecture specification (pattern).
@@ -359,9 +359,13 @@ public class Architecture {
             switch (exprSplit[1]) {
                 case "content":
                     final String content = rEv.getDataBody().getData();
-                    if (rEv.getDataBody().getType().contains("xml")) {
+                    if (rEv.getDataBody().getType().equalsIgnoreCase("xml")) {
                         return XML.readValue(content, exprSplit[2]);
-                    } else if (rEv.getDataBody().getType().contains("json")){
+                    } else if (rEv.getDataBody().getType().equalsIgnoreCase("json")){
+                        return JSON.readValue(content, "$." + exprSplit[2]);
+                    } else if (rEv.getDataBody().getType().equalsIgnoreCase("application/xml")) {
+                        return XML.readValue(content, exprSplit[2]);
+                    } else if (rEv.getDataBody().getType().equalsIgnoreCase("application/json")){
                         return JSON.readValue(content, "$." + exprSplit[2]);
                     }
                     else {
