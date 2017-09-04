@@ -62,6 +62,28 @@ public class CertificationManager {
      */
     public void resetURL(){
         this.lastURL = null;
+        this.executed = false;
+    }
+    
+    /**
+     * boolean to represent if the test has been executed after it was loaded
+     */
+    private boolean executed;
+    
+    /**
+     * a getter for the executed attribute of the certification manager
+     * @return true if the test was executed after it has been loaded and false otherwise
+     */
+    public boolean getExecuted(){
+        return executed;
+    }
+    
+    /**
+     * a setter method for the executed attribute of the certification manager
+     * @param executed True if the test was executed after it has been loaded and false otherwise
+     */
+    public void setExecuted(boolean executed){
+        this.executed = executed;
     }
     
     /**
