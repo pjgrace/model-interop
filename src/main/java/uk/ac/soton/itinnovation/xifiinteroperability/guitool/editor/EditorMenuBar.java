@@ -32,8 +32,16 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -56,6 +64,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.File
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.ImportAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.FileActions.NewAction;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopUpMenuActions.HistoryAction;
+import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.InteroperabilityReport;
 
 /**
  * Drop down Menu bar at the top of the GUI. Has a set of drop down menus which
@@ -188,11 +197,52 @@ public class EditorMenuBar extends JMenuBar {
                         "Certification error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // TODO implementation for certification request to the server goes here
-            // TODO handle the response the server sends back
-            JOptionPane.showMessageDialog(editor,
-                    "Requesting certificate for model at " + editor.getCertificationManager().getLastURL(),
-                    "Requesting a certificate", JOptionPane.PLAIN_MESSAGE);
+            
+            if (!editor.getCertificationManager().getExecuted()){
+                JOptionPane.showMessageDialog(editor,
+                        "In order to request a certificate you must execute the loaded test first. Click on the 'Run' icon in the menu toolbar.",
+                        "Certification error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            try {
+                InteroperabilityReport report = editor.getCodePanel().getTestingPanel().getInteroperabilityReport();
+                String testReport = "{\"success\":" + report.getSuccess() + "}";
+                byte[] testReportBytes = testReport.getBytes(StandardCharsets.UTF_8);
+                int testReportLength = testReport.length();
+                
+                String urlLink = editor.getCertificationManager().getLastURL();
+                int index = urlLink.length();
+                String id = "";
+                while (!urlLink.substring(index-1, index).equals("/")){
+                    id = urlLink.substring(index-1, index) + id;
+                    index -= 1;
+                }
+                // URL url = new URL(urlLink + "/certify"); // this implementation is to be used when the API is updated on the actual server
+                URL url = new URL("http://localhost:8081/interop/models/" + id + "/certify"); // localhost url is currently used for testing purposes
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("charset", "utf-8");
+                conn.setRequestProperty("Content-Length", Integer.toString(testReportLength));
+                
+                try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
+                    dos.write(testReportBytes);
+                }
+                
+                StringBuilder response = new StringBuilder();
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
+                }
+                br.close();
+
+                JOptionPane.showMessageDialog(editor,
+                        response.toString(),
+                        "Requesting a certificate", JOptionPane.PLAIN_MESSAGE);
+            } catch (IOException ex) { ex.printStackTrace(); }
         });
         menu.add(certifyItem);
         

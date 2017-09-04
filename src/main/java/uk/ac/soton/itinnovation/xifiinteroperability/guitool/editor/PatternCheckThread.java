@@ -105,6 +105,11 @@ public class PatternCheckThread extends Thread {
                                 JOptionPane.ERROR_MESSAGE);
             } else  {
                 arch.executePattern();
+                // if running a test model loaded for certificate set the boolean flag of the certification manager
+                if (editor.getCertificationManager().getLastURL() != null){
+                    editor.getCertificationManager().setExecuted(true);
+                }
+                
                 arch.cleanup();
                 editor.getCodePanel().getReportsPanel().addTabReport(report.outputTrace());
             }
