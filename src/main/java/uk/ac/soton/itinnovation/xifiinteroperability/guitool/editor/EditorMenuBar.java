@@ -27,6 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mxgraph.util.mxResources;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -40,6 +41,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -207,9 +210,12 @@ public class EditorMenuBar extends JMenuBar {
             
             try {
                 InteroperabilityReport report = editor.getCodePanel().getTestingPanel().getInteroperabilityReport();
-                String testReport = "{\"success\":" + report.getSuccess() + "}";
-                byte[] testReportBytes = testReport.getBytes(StandardCharsets.UTF_8);
-                int testReportLength = testReport.length();
+                Map<String, String> testReport = new HashMap<>();
+                testReport.put("success", report.getSuccess());
+                testReport.put("report", report.getReport());
+                String jsonTestReport = new ObjectMapper().writeValueAsString(testReport);
+                byte[] testReportBytes = jsonTestReport.getBytes(StandardCharsets.UTF_8);
+                int testReportLength = jsonTestReport.length();
                 
                 String urlLink = editor.getCertificationManager().getLastURL();
                 int index = urlLink.length();
