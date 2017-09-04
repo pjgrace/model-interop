@@ -130,7 +130,7 @@ public class StateMachine implements EventCapture {
      * a reference to the execution panel used for testing animation
      */
     private transient ExecutionPanel execPanel;
-    
+
     /**
      * Construct a new state machine and create and interoperability report.
      * @param debugMode whether the state machine is in debug mode or not
@@ -143,7 +143,7 @@ public class StateMachine implements EventCapture {
         nextClicked = true;
         finished = false;
     }
-    
+
     /**
      * the same constructor as the one above, however it also sets the execution panel reference
      * @param debugMode whether the state machine is in debug mode or not
@@ -153,7 +153,7 @@ public class StateMachine implements EventCapture {
         this(debugMode);
         this.execPanel = execPanel;
     }
-    
+
     /**
      * Create a new state machine with the interoperability report output
      * already provided.
@@ -168,7 +168,7 @@ public class StateMachine implements EventCapture {
         nextClicked = true;
         finished =false;
     }
-    
+
     /**
      * the same constructor as the one above however it also sets the execution panel reference
      * @param rep The interoperability report reference.
@@ -179,7 +179,7 @@ public class StateMachine implements EventCapture {
          this(rep, debugMode);
          this.execPanel = execPanel;
      }
-    
+
     /**
      * Construct a new state machine with a first state and the
      * remaining set of states.
@@ -266,8 +266,11 @@ public class StateMachine implements EventCapture {
             outputReport.addReport("{\"Begin Testing\":\"Error in test model\"");
             return outputReport;
         }
-        execPanel.setTestState(currentState.getLabel());
-        
+
+        if(execPanel != null) {
+            execPanel.setTestState(currentState.getLabel());
+        }
+
         outputReport.clear();
         outputReport.println("Test started - run the application");
         outputReport.println("----------------------------------");
@@ -340,7 +343,9 @@ public class StateMachine implements EventCapture {
                     outputReport.println("Transition Success - move to state:" + currentState.getLabel());
                 }
                 nextClicked = false;
-                execPanel.setTestState(currentState.getLabel());
+                if(execPanel != null) {
+                    execPanel.setTestState(currentState.getLabel());
+                }
             } catch (UnexpectedEventException ex) {
                logException(ex);
                outputReport.setSuccess("false");

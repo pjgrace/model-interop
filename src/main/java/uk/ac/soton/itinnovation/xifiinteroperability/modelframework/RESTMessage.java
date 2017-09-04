@@ -232,7 +232,7 @@ public class RESTMessage extends ProtocolMessage{
         try {
             String rPath = parseData(this.path);
             // Instantiate the client connector, and configure it.
-            Client client = new Client(new Context(), Protocol.HTTP);
+            Client client = new Client(new Context(), Protocol.HTTPS);
             client.getContext().getParameters().add("useForwardedForHeader","false");
 
             this.url = url + rPath;
