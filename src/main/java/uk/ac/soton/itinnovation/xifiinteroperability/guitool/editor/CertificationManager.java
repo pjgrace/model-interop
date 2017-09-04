@@ -81,9 +81,24 @@ public class CertificationManager {
     /**
      * a setter method for the executed attribute of the certification manager
      * @param executed True if the test was executed after it has been loaded and false otherwise
+     * @param executedXMLmodel the xml of the last executed test
      */
-    public void setExecuted(boolean executed){
+    public void setExecuted(boolean executed, String executedXMLmodel){
+        this.executedXMLmodel = executedXMLmodel;
         this.executed = executed;
+    }
+    
+    /**
+     * the xml model that was last executed
+     */
+    private String executedXMLmodel;
+    
+    /**
+     * a getter for the last executed model
+     * @return the xml of the last executed test
+     */
+    public String getExecutedModel(){
+        return executedXMLmodel;
     }
     
     /**

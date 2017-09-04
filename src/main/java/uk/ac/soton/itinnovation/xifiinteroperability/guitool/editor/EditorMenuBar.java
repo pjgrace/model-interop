@@ -213,6 +213,8 @@ public class EditorMenuBar extends JMenuBar {
                 Map<String, String> testReport = new HashMap<>();
                 testReport.put("success", report.getSuccess());
                 testReport.put("report", report.getReport());
+                testReport.put("model", editor.getCertificationManager().getExecutedModel());
+                testReport.put("modelUrl", editor.getCertificationManager().getLastURL());
                 String jsonTestReport = new ObjectMapper().writeValueAsString(testReport);
                 byte[] testReportBytes = jsonTestReport.getBytes(StandardCharsets.UTF_8);
                 int testReportLength = jsonTestReport.length();
