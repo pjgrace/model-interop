@@ -300,7 +300,7 @@ public class GuardForm extends JPanel {
                             if (choice == JOptionPane.CANCEL_OPTION) {
                                 return;
                             } else if (choice == JOptionPane.NO_OPTION) {
-                                new XPathGeneratorEditor().initGUI(false, null);
+                                new XPathGeneratorEditor().initGUI(true, ident);
                                 return;
                             }
 
@@ -336,7 +336,7 @@ public class GuardForm extends JPanel {
                                 return;
                             } 
                             else if (choice == JOptionPane.NO_OPTION) {
-                                new JSONPathGeneratorEditor().initGUI(false, null);
+                                new JSONPathGeneratorEditor().initGUI(true, ident);
                                 return;
                             }
                             
