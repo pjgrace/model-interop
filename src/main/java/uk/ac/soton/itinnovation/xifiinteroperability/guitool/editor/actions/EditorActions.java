@@ -403,6 +403,8 @@ public final class EditorActions {
             try {
                 final PatternCheckThread checkThread = new PatternCheckThread(editor.getDataModel().getGraphXML(),
                         editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor, debugMode);
+                
+                // adjusting the listeners of the tool bar buttons
                 EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
                 JButton stopButton = (JButton) toolBar.getComponentAtIndex(toolBar.getStopButtonIndex());
                 ActionListener[] listeners = stopButton.getActionListeners();
@@ -439,9 +441,8 @@ public final class EditorActions {
                 }
 
                 editor.setRunning(true);
-                editor.getBehaviourGraph().getGraph().setSelectionCells(new Object[0]);
-                editor.getSystemGraph().getGraph().setSelectionCells(new Object[0]);
-                editor.getExecPanel().refreshGraph();
+                editor.getBehaviourGraph().getGraph().clearSelection();
+                editor.getSystemGraph().getGraph().clearSelection();
                 editor.updateTableView(AttributePanel.EXECUTION);
                 checkThread.start();
             } catch (HeadlessException ex) {

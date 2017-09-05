@@ -34,9 +34,18 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.RESTComponent;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ObjectDeepCloner;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BehaviourGraphComponent;
@@ -70,6 +79,11 @@ public class ExecutionPanel extends JPanel {
     private transient final JPanel graphs;
     
     /**
+     * reference to the table with the interfaces and their respective ports
+     */
+    private transient final JTable portsTable;
+    
+    /**
      * constructor for the panel, initialises the GUI components
      * @param editor the editor reference
      */
@@ -92,9 +106,29 @@ public class ExecutionPanel extends JPanel {
         graphs.add(systemComponent);
              
         add(graphs, BorderLayout.CENTER);
+        
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        String[] columnNames = {"Interface:", "Running on port:"};
+        Object[][] data = {};
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        portsTable = new JTable(model) {
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }  
+        };
+        portsTable.setPreferredScrollableViewportSize(new Dimension(portsTable.getPreferredSize().width, portsTable.getRowHeight()*8));
+        portsTable.setFillsViewportHeight(true);
+        tablePanel.add(new JScrollPane(portsTable), BorderLayout.CENTER);
+        
+        add(tablePanel, BorderLayout.SOUTH);
     }
     
-    public void refreshGraph(){
+    /**
+     * called when starting a new test, refreshes the graph components and the table of interfaces
+     * @param restComponents a map linking component IDs to rest component objects
+     */
+    public void refreshGraph(Map<String, RESTComponent> restComponents){
         mxGraph behaviourGraph = new mxGraph((mxIGraphModel) ObjectDeepCloner.deepCopy(editor.getBehaviourGraph().getGraph().getModel()),
                 editor.getBehaviourGraph().getGraph().getStylesheet());
         mxGraph systemGraph = new mxGraph((mxIGraphModel) ObjectDeepCloner.deepCopy(editor.getSystemGraph().getGraph().getModel()),
@@ -114,8 +148,39 @@ public class ExecutionPanel extends JPanel {
              
         graphs.revalidate();
         graphs.repaint();
+        
+        List<List<String>> data = new ArrayList<>();
+        restComponents.values().forEach((component) -> {
+            component.getInterfaces().forEach((restInterface) -> {
+                data.add(new ArrayList<>(Arrays.asList(restInterface.getURL(), Integer.toString(restInterface.getPort()))));
+            });
+        });
+        
+        refreshTable(data);
     }
     
+    /**
+     * refresh the table of interfaces and port numbers
+     * @param data the new data to insert into the table
+     */
+    private void refreshTable(List<List<String>> data){
+        refreshTable();
+        data.forEach((row) -> {
+            ((DefaultTableModel) portsTable.getModel()).addRow(row.toArray());
+        });
+    }
+    
+    /**
+     * refresh the table without inserting new data into it
+     */
+    private void refreshTable(){
+        DefaultTableModel model = (DefaultTableModel) portsTable.getModel();
+        model.setRowCount(0);
+    }
+    
+    /**
+     * resets the Execution panel, by reseting the graph components
+     */
     public void resetGraph(){
         behaviourComponent = new BehaviourGraphComponent(editor.getBehaviourGraph().getGraph());
         systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
@@ -132,6 +197,9 @@ public class ExecutionPanel extends JPanel {
 
         graphs.revalidate();
         graphs.repaint();
+        
+        // reset the table
+        refreshTable();
     }
     
     /**

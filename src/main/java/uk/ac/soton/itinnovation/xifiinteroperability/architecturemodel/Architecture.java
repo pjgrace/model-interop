@@ -78,6 +78,14 @@ public class Architecture {
      * to create a proxy of for application testing).
      */
     private final transient Map<String, RESTComponent> services;
+    
+    /**
+     * a getter method for the services used in the architecture
+     * @return the rest components IDs linked to rest component objects in a map
+     */
+    public Map<String, RESTComponent> getServices(){
+        return services;
+    }
 
     /**
      * The state machine representing the behaviour flow of the architecture

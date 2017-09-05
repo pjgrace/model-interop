@@ -116,6 +116,14 @@ public class RESTInterface {
      * The port number of the interface. This is not accessed outside the class.
      */
     private final transient int port;
+    
+    /**
+     * a getter for the port number of the interface
+     * @return the port number attribute
+     */
+    public int getPort(){
+        return port;
+    }
 
     /**
      * Proxy representations of the interfaces Proxy for normal HTTP; SSLProxyBack
