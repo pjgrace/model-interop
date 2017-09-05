@@ -36,6 +36,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -108,7 +109,7 @@ public class ExecutionPanel extends JPanel {
         add(graphs, BorderLayout.CENTER);
         
         JPanel tablePanel = new JPanel(new BorderLayout());
-        String[] columnNames = {"Interface:", "Running on port:"};
+        String[] columnNames = {"Interface:", "Proxy running on port:"};
         Object[][] data = {};
         DefaultTableModel model = new DefaultTableModel(data, columnNames);
         portsTable = new JTable(model) {
@@ -116,6 +117,22 @@ public class ExecutionPanel extends JPanel {
             public boolean isCellEditable(int row, int column){
                 return false;
             }  
+            
+            @Override
+            public String getToolTipText(MouseEvent e){
+                String tooltip = null;
+                java.awt.Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+
+                try {
+                    tooltip = getValueAt(rowIndex, colIndex).toString();
+                } catch (Exception ex) {
+                    // no tool tip in case of exception
+                }
+
+                return tooltip;
+            }
         };
         portsTable.setPreferredScrollableViewportSize(new Dimension(portsTable.getPreferredSize().width, portsTable.getRowHeight()*8));
         portsTable.setFillsViewportHeight(true);
