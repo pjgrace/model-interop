@@ -36,15 +36,25 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.RESTComponent;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ObjectDeepCloner;
@@ -136,6 +146,35 @@ public class ExecutionPanel extends JPanel {
         };
         portsTable.setPreferredScrollableViewportSize(new Dimension(portsTable.getPreferredSize().width, portsTable.getRowHeight()*8));
         portsTable.setFillsViewportHeight(true);
+        
+        // add a KeyListener to the table, which will copy the original address but with the proxy port
+        portsTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK), "Copy");
+        portsTable.getActionMap().put("Copy", new AbstractAction(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                int rowIndex = portsTable.getSelectedRow();
+
+                try {
+                    // replace the port of the interface url with the port url
+                    String urlStr = portsTable.getValueAt(rowIndex, 0).toString();
+                    String proxyPort = (String) portsTable.getValueAt(rowIndex, 1);
+                    URL url = new URL(urlStr);
+                    url = new URL(url.getProtocol(), url.getHost(), Integer.parseInt(proxyPort), url.getFile());
+                    
+                    // copy the url
+                    StringSelection stringSel = new StringSelection(url.toString());
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(stringSel, null);
+                    
+                    // display a message for successcul copy of the url
+                    JOptionPane.showMessageDialog(graphs, "Successfully copied the url of the interface. "
+                            + "Keep in mind that the port number is the port of the proxy for this interface.\n" + url.toString(),
+                            "Successful copy", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    // no copy if an exception is thrown
+                }
+            }
+        });
         tablePanel.add(new JScrollPane(portsTable), BorderLayout.CENTER);
         
         add(tablePanel, BorderLayout.SOUTH);
