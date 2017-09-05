@@ -54,6 +54,14 @@ public class InteroperabilityReport {
      * with a title.
      */
     private transient String textTrace = "Output from Interoperability Test Framework\n";
+    
+    /**
+     * a getter for the text trace of the report
+     * @return the text trace of the report
+     */
+    public String getTextTrace(){
+        return this.textTrace;
+    }
 
     /**
      * Interoperability Summary in Json format.

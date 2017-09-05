@@ -28,23 +28,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.mxgraph.util.mxResources;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -247,10 +255,77 @@ public class EditorMenuBar extends JMenuBar {
                 }
                 br.close();
 
-                JOptionPane.showMessageDialog(editor,
-                        response.toString(),
-                        "Requesting a certificate", JOptionPane.PLAIN_MESSAGE);
-            } catch (IOException ex) { ex.printStackTrace(); }
+                if (response.toString().equalsIgnoreCase("Altered")) {
+                    JOptionPane.showMessageDialog(editor,
+                            "The originally loaded model for certification has been altered.\n"
+                            + "Either reload the certification model or remove your changes.",
+                            "Altered model", JOptionPane.ERROR_MESSAGE);
+                } 
+                else if (response.toString().equalsIgnoreCase("Error")) {
+                    JOptionPane.showMessageDialog(editor,
+                            "Couldn't generate a certificate, because an unexpected error occured.",
+                            "Error while generating certificate", JOptionPane.ERROR_MESSAGE);
+                } 
+                else if (response.toString().equalsIgnoreCase("Failure")) {
+                    JOptionPane.showMessageDialog(editor,
+                            "The test's last state is not considered to be a successful end state. A certificate cannot be generated.",
+                            "Requesting a certificate", JOptionPane.PLAIN_MESSAGE);
+                }
+                else if (response.toString().equalsIgnoreCase("Success")) {
+                    int choice = JOptionPane.showConfirmDialog(editor, "Successfully generated a certificate. Do you want to save it?",
+                            "Saving certificate", JOptionPane.YES_NO_OPTION);
+                    if (choice != JOptionPane.YES_OPTION){
+                        return;
+                    }
+                    try{
+                        JFileChooser fileChooser = new JFileChooser(System.getProperty("dir"));
+                        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        int fileChoice = fileChooser.showOpenDialog(null);
+                        
+                        if (fileChoice != JFileChooser.APPROVE_OPTION){
+                            return;
+                        }
+                        
+                        File file = fileChooser.getSelectedFile();
+                        
+                        File certificateFile = new File(Paths.get(file.getPath(), "certificate.pdf").toString());
+                        
+                        if (certificateFile.exists()){
+                            int confirmation = JOptionPane.showConfirmDialog(editor, "There is already a file named 'certificate.pdf' in this directory."
+                                    + "Are you sure you want to continue?", "Overriding existing file", JOptionPane.YES_NO_OPTION);
+                            if (confirmation != JOptionPane.YES_OPTION){
+                                return;
+                            }
+                        }
+                        
+                        Document document = new Document();
+                        PdfWriter.getInstance(document, new FileOutputStream(certificateFile));
+                        document.open();
+                        
+                        Font font = FontFactory.getFont(FontFactory.COURIER, 19, BaseColor.DARK_GRAY);
+                        Paragraph heading = new Paragraph("Certificate", font);
+                        heading.setAlignment(Element.ALIGN_CENTER);
+                        
+                        font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
+                        Paragraph reportParagraph = new Paragraph(report.getTextTrace(), font);
+                        
+                        document.add(heading);
+                        document.add(new Paragraph(" "));
+                        
+                        document.add(reportParagraph);
+                        document.close();
+                        
+                        JOptionPane.showMessageDialog(editor,
+                            "Successfully saved your certificate in " + file.getPath() + ".",
+                            "Saving certificate", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    catch (DocumentException ex){
+                        JOptionPane.showMessageDialog(editor,
+                                "Something went wrong while generating your certificate.",
+                                "Certificate generation error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (IOException ex) {}
         });
         menu.add(certifyItem);
         
