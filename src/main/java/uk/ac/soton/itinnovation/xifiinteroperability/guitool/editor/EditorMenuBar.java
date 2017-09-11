@@ -28,14 +28,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.FontFactory;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.mxgraph.util.mxResources;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -43,7 +35,6 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -220,7 +211,7 @@ public class EditorMenuBar extends JMenuBar {
                 InteroperabilityReport report = editor.getCodePanel().getTestingPanel().getInteroperabilityReport();
                 Map<String, String> testReport = new HashMap<>();
                 testReport.put("success", report.getSuccess());
-                testReport.put("report", report.getReport());
+                testReport.put("report", report.getReport()); // this is probably not needed
                 testReport.put("model", editor.getCertificationManager().getExecutedModel());
                 testReport.put("modelUrl", editor.getCertificationManager().getLastURL());
                 String jsonTestReport = new ObjectMapper().writeValueAsString(testReport);
@@ -234,6 +225,7 @@ public class EditorMenuBar extends JMenuBar {
                     id = urlLink.substring(index-1, index) + id;
                     index -= 1;
                 }
+
                 // URL url = new URL(urlLink + "/certify"); // this implementation is to be used when the API is updated on the actual server
                 URL url = new URL("http://localhost:8081/interop/models/" + id + "/certify"); // localhost url is currently used for testing purposes
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -277,55 +269,30 @@ public class EditorMenuBar extends JMenuBar {
                     if (choice != JOptionPane.YES_OPTION){
                         return;
                     }
-                    try{
-                        JFileChooser fileChooser = new JFileChooser(System.getProperty("dir"));
-                        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                        int fileChoice = fileChooser.showOpenDialog(null);
-                        
-                        if (fileChoice != JFileChooser.APPROVE_OPTION){
+                    JFileChooser fileChooser = new JFileChooser(System.getProperty("dir"));
+                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    int fileChoice = fileChooser.showOpenDialog(null);
+
+                    if (fileChoice != JFileChooser.APPROVE_OPTION) {
+                        return;
+                    }
+
+                    File file = fileChooser.getSelectedFile();
+
+                    File certificateFile = new File(Paths.get(file.getPath(), "certificate.pdf").toString());
+
+                    if (certificateFile.exists()) {
+                        int confirmation = JOptionPane.showConfirmDialog(editor, "There is already a file named 'certificate.pdf' in this directory."
+                                + "Are you sure you want to continue?", "Overriding existing file", JOptionPane.YES_NO_OPTION);
+                        if (confirmation != JOptionPane.YES_OPTION) {
                             return;
                         }
-                        
-                        File file = fileChooser.getSelectedFile();
-                        
-                        File certificateFile = new File(Paths.get(file.getPath(), "certificate.pdf").toString());
-                        
-                        if (certificateFile.exists()){
-                            int confirmation = JOptionPane.showConfirmDialog(editor, "There is already a file named 'certificate.pdf' in this directory."
-                                    + "Are you sure you want to continue?", "Overriding existing file", JOptionPane.YES_NO_OPTION);
-                            if (confirmation != JOptionPane.YES_OPTION){
-                                return;
-                            }
-                        }
-                        
-                        Document document = new Document();
-                        PdfWriter.getInstance(document, new FileOutputStream(certificateFile));
-                        document.open();
-                        
-                        Font font = FontFactory.getFont(FontFactory.COURIER, 19, BaseColor.DARK_GRAY);
-                        Paragraph heading = new Paragraph("Certificate", font);
-                        heading.setAlignment(Element.ALIGN_CENTER);
-                        
-                        font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
-                        Paragraph reportParagraph = new Paragraph(report.getTextTrace(), font);
-                        
-                        document.add(heading);
-                        document.add(new Paragraph(" "));
-                        
-                        document.add(reportParagraph);
-                        document.close();
-                        
-                        JOptionPane.showMessageDialog(editor,
-                            "Successfully saved your certificate in " + file.getPath() + ".",
-                            "Saving certificate", JOptionPane.INFORMATION_MESSAGE);
                     }
-                    catch (DocumentException ex){
-                        JOptionPane.showMessageDialog(editor,
-                                "Something went wrong while generating your certificate.",
-                                "Certificate generation error", JOptionPane.ERROR_MESSAGE);
-                    }
+
+                    PDFGenerator.generate(certificateFile, report.getTextTrace(), editor);
                 }
-            } catch (IOException ex) {}
+            } 
+            catch (IOException ex) {}
         });
         menu.add(certifyItem);
         
