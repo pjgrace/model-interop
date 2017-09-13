@@ -38,68 +38,41 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
-import java.awt.Color;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import javax.swing.JOptionPane;
 
 /**
  * a utility class used to generate the PDF certificates
+ * 
  * @author ns17
  */
 public class PDFGenerator {
+    
+    public static String verificationKeyLabel = "========  VERIFICATION KEY  ========";
     
     /**
      * a static method, which generates the PDF certificates
      * @param file the file object of the PDF
      * @param testTrace the test trace of the tool
+     * @param authID the digital signature
      * @param editor reference to the editor
+     * @param date the current date and time
      */
-    public static void generate(File file, String testTrace, BasicGraphEditor editor){
+    public static void generate(File file, String testTrace, String authID, String date, BasicGraphEditor editor){
+        if (authID == null || authID.equals("")){
+            JOptionPane.showMessageDialog(editor,
+                    "Something went wrong while generating your certificate. The verification key is not valid.",
+                    "Certificate generation error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
         try {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(file));
-            document.open();
-
-            // generate a heading
-            Font font = FontFactory.getFont(FontFactory.COURIER, 19, new BaseColor(7, 34, 76));
-            Paragraph heading = new Paragraph("Fiesta Certificate", font);
-            heading.setAlignment(Element.ALIGN_CENTER);
-            document.add(heading);
-            document.add(new Paragraph(" ")); // add an empty line under the heading
             
-            // generate the test trace in the pdf
-            font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
-            Paragraph reportParagraph = new Paragraph(testTrace, font);
-            document.add(reportParagraph);
-            document.add(new Paragraph(" ")); document.add(new Paragraph(" "));  // add two empty lines under the test trace
-            
-            // get the current datetime 
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Calendar cal = Calendar.getInstance();
-            
-            // generate a timestamp
-            font = FontFactory.getFont(FontFactory.TIMES_BOLDITALIC, 14, new BaseColor(13, 46, 99));
-            Chunk horizontalGlue = new Chunk(new VerticalPositionMark());
-            Paragraph timestamp = new Paragraph(dateFormat.format(cal.getTime()), font);
-            timestamp.add(new Chunk(horizontalGlue));
-            timestamp.add("Fiesta IoT");
-            document.add(timestamp);
-            document.add(new Paragraph(" "));  // add an empty line under the test trace
-            
-            // add the Fiesta logo
-            Image logo = Image.getInstance(editor.getClass().getResource("/images/fiesta.png").getFile());
-            logo.setAlignment(Element.ALIGN_CENTER);
-            logo.scalePercent(40f, 40f);
-            document.add(logo);
-                    
-            document.close();
+            PDFGenerator.generateDocument(document, testTrace, authID, Image.getInstance(editor.getClass().getResource("/images/fiesta.png").getFile()), date);
 
             JOptionPane.showMessageDialog(editor,
                     "Successfully saved your certificate in " + file.getPath() + ".",
@@ -111,5 +84,55 @@ public class PDFGenerator {
                     "Certificate generation error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    /**
+     * this method is used to generate the elements of the pdf document
+     * @param document the pdf document object
+     * @param testTrace the test trace of the tool
+     * @param authID the digital signature
+     * @param date the current date and time
+     * @logo the Image object of the fiesta logo
+     */
+    private static void generateDocument(Document document, String testTrace, String authID, Image logo, String date) throws DocumentException{
+        document.open();
+        
+        // generate a heading
+        Font font = FontFactory.getFont(FontFactory.COURIER, 19, new BaseColor(7, 34, 76));
+        Paragraph heading = new Paragraph("Fiesta Certificate", font);
+        heading.setAlignment(Element.ALIGN_CENTER);
+        document.add(heading);
+        document.add(new Paragraph(" ")); // add an empty line under the heading
 
+        // generate the test trace in the pdf
+        font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
+        Paragraph reportParagraph = new Paragraph(testTrace, font);
+        document.add(reportParagraph);
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph(" "));  // add two empty lines under the test trace
+
+        // generate a timestamp
+        font = FontFactory.getFont(FontFactory.TIMES_BOLDITALIC, 14, new BaseColor(13, 46, 99));
+        Chunk horizontalGlue = new Chunk(new VerticalPositionMark());
+        Paragraph timestamp = new Paragraph(date, font);
+        timestamp.add(new Chunk(horizontalGlue));
+        timestamp.add("Fiesta IoT");
+        document.add(timestamp);
+        document.add(new Paragraph(" "));  // add an empty line under the test trace
+
+        // add the Fiesta logo
+        logo.setAlignment(Element.ALIGN_CENTER);
+        logo.scalePercent(40f, 40f);
+        document.add(logo);
+        
+        document.add(new Paragraph(" "));  // add an empty line under the logo
+        
+        Paragraph signature = new Paragraph(verificationKeyLabel);
+        signature.setAlignment(Element.ALIGN_CENTER);
+        document.add(signature);
+        signature = new Paragraph(authID);
+        signature.setAlignment(Element.ALIGN_CENTER);
+        document.add(signature);
+        
+        document.close();
+    }
 }
