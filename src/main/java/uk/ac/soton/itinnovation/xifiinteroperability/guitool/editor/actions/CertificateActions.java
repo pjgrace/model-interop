@@ -228,6 +228,74 @@ public class CertificateActions {
             this.editor = editor;
         }
         
+        /**
+         * this method is used for testing purposes only
+         * @param file the pdf certificate to verify
+         * @return True if the certificate is a valid one
+         * @throws IOException 
+         */
+        public static final boolean verifyCertificate(File file) throws IOException {
+            // read the content of the pdf certificate
+            StringBuilder fullContent = new StringBuilder();
+            PdfReader reader = new PdfReader(file.getAbsolutePath());
+            for (int i = 1; i < reader.getNumberOfPages(); i++) {
+                fullContent.append(PdfTextExtractor.getTextFromPage(reader, i));
+            }
+            for (int i = 1; i < reader.getNumberOfPages(); i++) {
+                fullContent.append(Base64.getEncoder().encodeToString(reader.getPageContent(i)));
+            }
+
+            String certificateContent = fullContent.toString();
+
+            String verificationKey = PdfTextExtractor.getTextFromPage(reader, reader.getNumberOfPages());
+            int index = verificationKey.indexOf(PDFGenerator.verificationKeyLabel);
+            if (index < 0) {
+                reader.close();
+                return false;
+            }
+            if (reader.getPageResources(reader.getNumberOfPages()).size() > 1
+                    || Pattern.matches(PDFGenerator.verificationKeyLabel + ".+" + PDFGenerator.verificationKeyLabel, verificationKey.replaceAll("\\s+", ""))) {
+                reader.close();
+                return false;
+            }
+
+            verificationKey = verificationKey.substring(index).replaceAll(PDFGenerator.verificationKeyLabel, "").trim();
+
+            reader.close();
+
+            Map<String, String> dataToVerify = new HashMap<>();
+            dataToVerify.put("verificationKey", verificationKey);
+            dataToVerify.put("certificateContent", certificateContent);
+            String jsonDataToVerify = new ObjectMapper().writeValueAsString(dataToVerify);
+            byte[] dataToVerifyBytes = jsonDataToVerify.getBytes();
+
+            // send a request to server to verify the certificate content and the verification key
+            URL url = new URL("http://localhost:8081/interop/models/certificates/verify"); // FIXME localhost url is currently used for testing purposes
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("charset", "utf-8");
+            conn.setRequestProperty("Content-Length", Integer.toString(dataToVerifyBytes.length));
+
+            try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
+                dos.write(dataToVerifyBytes);
+            }
+
+            StringBuilder responseBuilder = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null) {
+                responseBuilder.append(line);
+            }
+            br.close();
+
+            boolean verified = Boolean.parseBoolean(responseBuilder.toString());
+            
+            return verified;
+        }
+        
         @Override
         public void actionPerformed(ActionEvent ae) {
             JFileChooser fileChooser = new JFileChooser(System.getProperty("dir"));
