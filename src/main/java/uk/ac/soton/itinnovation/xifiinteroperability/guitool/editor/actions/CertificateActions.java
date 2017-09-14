@@ -40,8 +40,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -179,6 +181,7 @@ public class CertificateActions {
                         return;
                     }
                     JFileChooser fileChooser = new JFileChooser(System.getProperty("dir"));
+                    fileChooser.setDialogTitle("Choose a directory to save the certificate");
                     fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                     int fileChoice = fileChooser.showOpenDialog(null);
 
@@ -189,7 +192,7 @@ public class CertificateActions {
                     File file = fileChooser.getSelectedFile();
 
                     File certificateFile = new File(Paths.get(file.getPath(), "certificate.pdf").toString());
-
+                    
                     if (certificateFile.exists()) {
                         int confirmation = JOptionPane.showConfirmDialog(editor, "There is already a file named 'certificate.pdf' in this directory."
                                 + "Are you sure you want to continue?", "Overriding existing file", JOptionPane.YES_NO_OPTION);
@@ -228,6 +231,7 @@ public class CertificateActions {
         @Override
         public void actionPerformed(ActionEvent ae) {
             JFileChooser fileChooser = new JFileChooser(System.getProperty("dir"));
+            fileChooser.setDialogTitle("Choose the PDF file of the certificate to verify");
             fileChooser.setAcceptAllFileFilterUsed(false);
             FileNameExtensionFilter filter = new FileNameExtensionFilter("*.pdf", "pdf");
             fileChooser.setFileFilter(filter);
@@ -243,24 +247,36 @@ public class CertificateActions {
                 // read the content of the pdf certificate
                 StringBuilder fullContent = new StringBuilder();
                 PdfReader reader = new PdfReader(file.getAbsolutePath());
-                for(int i=1; i <= reader.getNumberOfPages(); i++){
+                for(int i=1; i < reader.getNumberOfPages(); i++){
                     fullContent.append(PdfTextExtractor.getTextFromPage(reader, i));
                 }
-                reader.close();
+                for(int i=1; i < reader.getNumberOfPages(); i++){
+                    fullContent.append(Base64.getEncoder().encodeToString(reader.getPageContent(i)));
+                }
                 
-                // extract the verification key from the full content
-                String verificationKey;
-                String certificateContent;
-                int index = fullContent.toString().indexOf(PDFGenerator.verificationKeyLabel);
+                String certificateContent = fullContent.toString();
+                
+                String verificationKey = PdfTextExtractor.getTextFromPage(reader, reader.getNumberOfPages());
+                int index = verificationKey.indexOf(PDFGenerator.verificationKeyLabel);
                 if (index < 0){
                     JOptionPane.showMessageDialog(editor, "No verification key found in this certificate. "
                             + "Therefore, certificate is not a valid Fiesta certificate.",
                         "Reading error", JOptionPane.ERROR_MESSAGE);
+                    reader.close();
+                    return;
+                }
+                if (reader.getPageResources(reader.getNumberOfPages()).size() > 1 
+                        || Pattern.matches(PDFGenerator.verificationKeyLabel + ".+" + PDFGenerator.verificationKeyLabel, verificationKey.replaceAll("\\s+", ""))){
+                    JOptionPane.showMessageDialog(editor, "The certificate has been altered. Invalid certificate!",
+                            "Invalid certificate", JOptionPane.ERROR_MESSAGE);
+                    reader.close();
+                    return;
                 }
                 
-                certificateContent = fullContent.toString().substring(0, index);
-                verificationKey = fullContent.toString().substring(index).replaceAll(PDFGenerator.verificationKeyLabel, "").trim();
+                verificationKey = verificationKey.substring(index).replaceAll(PDFGenerator.verificationKeyLabel, "").trim();
                 
+                reader.close();
+                               
                 Map<String, String> dataToVerify = new HashMap<>();
                 dataToVerify.put("verificationKey", verificationKey);
                 dataToVerify.put("certificateContent", certificateContent);

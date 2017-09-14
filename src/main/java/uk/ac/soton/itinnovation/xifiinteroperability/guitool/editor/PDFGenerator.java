@@ -80,7 +80,7 @@ public class PDFGenerator {
         } 
         catch (DocumentException | IOException ex) {
             JOptionPane.showMessageDialog(editor,
-                    "Something went wrong while generating your certificate.",
+                    "Something went wrong while generating your certificate. Make sure the file is not opened by another program.",
                     "Certificate generation error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -126,10 +126,15 @@ public class PDFGenerator {
         
         document.add(new Paragraph(" "));  // add an empty line under the logo
         
+        document.newPage();
+        
         Paragraph signature = new Paragraph(verificationKeyLabel);
         signature.setAlignment(Element.ALIGN_CENTER);
         document.add(signature);
         signature = new Paragraph(authID);
+        signature.setAlignment(Element.ALIGN_CENTER);
+        document.add(signature);
+        signature = new Paragraph(verificationKeyLabel);
         signature.setAlignment(Element.ALIGN_CENTER);
         document.add(signature);
         
