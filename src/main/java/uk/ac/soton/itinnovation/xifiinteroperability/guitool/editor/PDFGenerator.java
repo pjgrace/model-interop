@@ -110,7 +110,7 @@ public class PDFGenerator {
         
         // add the name of the test
         font = FontFactory.getFont(FontFactory.COURIER, 17, new BaseColor(7, 34, 76));
-        heading = new Paragraph("Generate for test: " + testName, font);
+        heading = new Paragraph("Generated for test: " + testName, font);
         heading.setAlignment(Element.ALIGN_CENTER);
         document.add(heading);
         document.add(new Paragraph(" "));
