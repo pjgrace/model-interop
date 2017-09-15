@@ -846,6 +846,7 @@ public class FileActions {
                             jsonResponse = response.toString();
                             Map<String, Object> jsonMap = new ObjectMapper().readValue(jsonResponse, HashMap.class);
                             String model = (String) jsonMap.get("model");
+                            String testName = (String) jsonMap.get("name");
                             if (model == null) {
                                 return;
                             }
@@ -856,9 +857,9 @@ public class FileActions {
                             if (model != null) {
                                 openModel(model);
                                 
-                                // if opened from the certification tab set the last url in the certification manager
+                                // if opened from the certification tab set the last url and the name of the test in the certification manager
                                 if (certification) {
-                                    editor.getCertificationManager().setLastURL(urlStr);
+                                    editor.getCertificationManager().setInfo(urlStr, testName);
                                 }
                             }
                         } catch (MalformedURLException ex) {

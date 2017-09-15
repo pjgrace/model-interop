@@ -58,9 +58,10 @@ public class PDFGenerator {
      * @param testTrace the test trace of the tool
      * @param authID the digital signature
      * @param editor reference to the editor
+     * @param testName the name of the certificate test
      * @param date the current date and time
      */
-    public static void generate(File file, String testTrace, String authID, String date, BasicGraphEditor editor){
+    public static void generate(File file, String testTrace, String authID, String date, String testName, BasicGraphEditor editor){
         if (authID == null || authID.equals("")){
             JOptionPane.showMessageDialog(editor,
                     "Something went wrong while generating your certificate. The verification key is not valid.",
@@ -72,7 +73,7 @@ public class PDFGenerator {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream(file));
             
-            PDFGenerator.generateDocument(document, testTrace, authID, Image.getInstance(editor.getClass().getResource("/images/fiesta.png").getFile()), date);
+            PDFGenerator.generateDocument(document, testTrace, authID, Image.getInstance(editor.getClass().getResource("/images/fiesta.png").getFile()), date, testName);
 
             JOptionPane.showMessageDialog(editor,
                     "Successfully saved your certificate in " + file.getPath() + ".",
@@ -91,9 +92,10 @@ public class PDFGenerator {
      * @param testTrace the test trace of the tool
      * @param authID the digital signature
      * @param date the current date and time
+     * @param testName the name of the last loaded test
      * @logo the Image object of the fiesta logo
      */
-    private static void generateDocument(Document document, String testTrace, String authID, Image logo, String date) throws DocumentException{
+    private static void generateDocument(Document document, String testTrace, String authID, Image logo, String date, String testName) throws DocumentException{
         document.open();
         
         // generate a heading
@@ -102,7 +104,13 @@ public class PDFGenerator {
         heading.setAlignment(Element.ALIGN_CENTER);
         document.add(heading);
         document.add(new Paragraph(" ")); // add an empty line under the heading
-
+        
+        font = FontFactory.getFont(FontFactory.COURIER, 17, new BaseColor(7, 34, 76));
+        heading = new Paragraph("Generate for test: " + testName, font);
+        heading.setAlignment(Element.ALIGN_CENTER);
+        document.add(heading);
+        document.add(new Paragraph(" "));
+        
         // generate the test trace in the pdf
         font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
         Paragraph reportParagraph = new Paragraph(testTrace, font);
