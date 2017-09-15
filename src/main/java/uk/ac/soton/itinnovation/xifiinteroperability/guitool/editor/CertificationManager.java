@@ -48,12 +48,27 @@ public class CertificationManager {
     }
     
     /**
-     * setter for the URL of the last loaded test,
+     * holds the name of the last loaded test
+     */
+    private String testName;
+    
+    /**
+     * a getter for the name of the last loaded test
+     * @return the name of the last loaded test
+     */
+    public String getTestName(){
+        return testName;
+    }
+    
+    /**
+     * setter for the info of the last loaded test,
      * this method is to be used only when someone opens a model from the Certification menu
      * @param url the new URL of the last loaded test
+     * @param name the name of the loaded test
      */
-    public void setLastURL(String url){
+    public void setInfo(String url, String name){
         this.lastURL = url;
+        this.testName = name;
     }
     
     /**
