@@ -179,6 +179,7 @@ public class CertificateActions {
                 testReport.put("modelUrl", editor.getCertificationManager().getLastURL());
                 String testName = editor.getCertificationManager().getTestName();
                 testReport.put("testName", testName);
+                testReport.put("username", usernameField.getText());
                 String jsonTestReport = new ObjectMapper().writeValueAsString(testReport);
                 byte[] testReportBytes = jsonTestReport.getBytes(StandardCharsets.UTF_8);
                 int testReportLength = testReportBytes.length;
@@ -261,7 +262,7 @@ public class CertificateActions {
                         }
                     }
 
-                    PDFGenerator.generate(certificateFile, report.getTextTrace(), authID, date, testName, editor);
+                    PDFGenerator.generate(certificateFile, report.getTextTrace(), authID, date, testName, usernameField.getText(), editor);
                 }
             } 
             catch (IOException ex) {}
