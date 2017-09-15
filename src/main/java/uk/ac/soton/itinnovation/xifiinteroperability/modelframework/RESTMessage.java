@@ -261,8 +261,18 @@ public class RESTMessage extends ProtocolMessage{
                                 mediaType = MediaType.APPLICATION_XML;
                     } else if (this.dataBody.getType().equalsIgnoreCase(JSON_LABEL)) {
                         entity.setMediaType(MediaType.APPLICATION_JSON);
-                        clientRes.accept(MediaType.APPLICATION_JSON);
-                        mediaType = MediaType.APPLICATION_JSON;
+//                        clientRes.accept(MediaType.APPLICATION_JSON);
+                        for (Parameter param : headers) {
+                            if (param.getName().equalsIgnoreCase("Accept")) {
+                                String mType = param.getValue();
+                                mediaType = MediaType.valueOf(mType);
+                            }
+                        }
+                        if (mediaType == null) {
+                            mediaType = MediaType.APPLICATION_JSON;
+
+                        }
+                        clientRes.accept(mediaType);
                     } else if (this.dataBody.getType().equalsIgnoreCase(OTHER_LABEL)) {
                         String applicationType = null;
                         for (Parameter param : headers) {
@@ -274,8 +284,12 @@ public class RESTMessage extends ProtocolMessage{
                                 mediaType = MediaType.valueOf(mType);
                             }
                         }
-                        entity.setMediaType(MediaType.valueOf(applicationType));
-                        clientRes.accept(mediaType);
+                        if(applicationType != null) {
+                            entity.setMediaType(MediaType.valueOf(applicationType));
+                        }
+                        if(mediaType != null) {
+                            clientRes.accept(mediaType);
+                        }
                     }
                 }
             }
