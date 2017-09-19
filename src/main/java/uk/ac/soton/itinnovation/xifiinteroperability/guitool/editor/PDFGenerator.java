@@ -59,9 +59,10 @@ public class PDFGenerator {
      * @param authID the digital signature
      * @param editor reference to the editor
      * @param testName the name of the certificate test
+     * @param username the username of the user requesting a certificate
      * @param date the current date and time
      */
-    public static void generate(File file, String testTrace, String authID, String date, String testName, BasicGraphEditor editor){
+    public static void generate(File file, String testTrace, String authID, String date, String testName, String username, BasicGraphEditor editor){
         if (authID == null || authID.equals("")){
             JOptionPane.showMessageDialog(editor,
                     "Something went wrong while generating your certificate. The verification key is not valid.",
@@ -71,9 +72,10 @@ public class PDFGenerator {
         
         try {
             Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(file));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
+            writer.setPageEmpty(false);
             
-            PDFGenerator.generateDocument(document, testTrace, authID, Image.getInstance(editor.getClass().getResource("/images/fiesta.png").getFile()), date, testName);
+            PDFGenerator.generateDocument(document, testTrace, authID, Image.getInstance(editor.getClass().getResource("/images/fiesta.png").getFile()), date, testName, username);
 
             JOptionPane.showMessageDialog(editor,
                     "Successfully saved your certificate in " + file.getPath() + ".",
@@ -93,9 +95,10 @@ public class PDFGenerator {
      * @param authID the digital signature
      * @param date the current date and time
      * @param testName the name of the last loaded test
+     * @param username the username of the user requesting a certificate
      * @logo the Image object of the fiesta logo
      */
-    private static void generateDocument(Document document, String testTrace, String authID, Image logo, String date, String testName) throws DocumentException{
+    private static void generateDocument(Document document, String testTrace, String authID, Image logo, String date, String testName, String username) throws DocumentException{
         document.open();
         
         // generate a heading
@@ -105,8 +108,16 @@ public class PDFGenerator {
         document.add(heading);
         document.add(new Paragraph(" ")); // add an empty line under the heading
         
+        // add the name of the test
         font = FontFactory.getFont(FontFactory.COURIER, 17, new BaseColor(7, 34, 76));
-        heading = new Paragraph("Generate for test: " + testName, font);
+        heading = new Paragraph("Generated for test: " + testName, font);
+        heading.setAlignment(Element.ALIGN_CENTER);
+        document.add(heading);
+        document.add(new Paragraph(" "));
+        
+        // add user's username
+        font = FontFactory.getFont(FontFactory.COURIER, 15, new BaseColor(7, 34, 76));
+        heading = new Paragraph("Certificate owned by: " + username, font);
         heading.setAlignment(Element.ALIGN_CENTER);
         document.add(heading);
         document.add(new Paragraph(" "));
@@ -118,6 +129,13 @@ public class PDFGenerator {
         document.add(new Paragraph(" "));
         document.add(new Paragraph(" "));  // add two empty lines under the test trace
 
+        // add the Fiesta logo
+        logo.setAlignment(Element.ALIGN_CENTER);
+        logo.scalePercent(40f, 40f);
+        document.add(logo);
+        
+        document.add(new Paragraph(" "));  // add an empty line under the logo
+        
         // generate a timestamp
         font = FontFactory.getFont(FontFactory.TIMES_BOLDITALIC, 14, new BaseColor(13, 46, 99));
         Chunk horizontalGlue = new Chunk(new VerticalPositionMark());
@@ -126,13 +144,6 @@ public class PDFGenerator {
         timestamp.add("Fiesta IoT");
         document.add(timestamp);
         document.add(new Paragraph(" "));  // add an empty line under the test trace
-
-        // add the Fiesta logo
-        logo.setAlignment(Element.ALIGN_CENTER);
-        logo.scalePercent(40f, 40f);
-        document.add(logo);
-        
-        document.add(new Paragraph(" "));  // add an empty line under the logo
         
         document.newPage();
         

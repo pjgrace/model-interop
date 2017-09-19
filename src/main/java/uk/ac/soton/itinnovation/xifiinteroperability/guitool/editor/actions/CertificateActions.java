@@ -30,6 +30,9 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -45,8 +48,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
+import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.PDFGenerator;
@@ -112,6 +120,56 @@ public class CertificateActions {
                 return;
             }
             
+            // create the login form
+            JPanel loginForm = new JPanel();
+            loginForm.setLayout(new BoxLayout(loginForm, BoxLayout.PAGE_AXIS));
+            
+            JPanel usernamePanel = new JPanel();
+            usernamePanel.setLayout(new BoxLayout(usernamePanel, BoxLayout.LINE_AXIS));
+            usernamePanel.add(new JLabel("Username    "));
+            JTextField usernameField = new JTextField("", 15);
+            usernamePanel.add(usernameField);
+            loginForm.add(usernamePanel);
+            
+            JPanel passwordPanel = new JPanel();
+            passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.LINE_AXIS));
+            passwordPanel.add(new JLabel("Password    "));
+            JPasswordField passwordField = new JPasswordField("", 15);
+            passwordPanel.add(passwordField);
+            loginForm.add(passwordPanel);
+            
+            int check = JOptionPane.showConfirmDialog(editor, loginForm, "Certificate request authentication", JOptionPane.OK_CANCEL_OPTION);
+            
+            if (check != JOptionPane.OK_OPTION){
+                return;
+            }
+                    
+            // authenticate user
+            Client client = Client.create();
+            WebResource webResourceOpenAM = client.resource("https://platform.fiesta-iot.eu/openam/json/authenticate");
+            ClientResponse responseAuth = webResourceOpenAM.type("application/json")
+                    .header("X-OpenAM-Username", usernameField.getText())
+                    .header("X-OpenAM-Password", new String(passwordField.getPassword())).post(ClientResponse.class, "{}");
+            if (responseAuth.getStatus() != 200){
+                JOptionPane.showMessageDialog(editor, "Invalid credentials. You cannot request a certificate!",
+                        "Authentication error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            try {
+                Map<String, Object> jsonResponse = new ObjectMapper().readValue(responseAuth.getEntity(String.class), HashMap.class);
+                if (!jsonResponse.containsKey("tokenId") || jsonResponse.get("tokenId") == null || jsonResponse.get("tokenId") == ""){
+                    JOptionPane.showMessageDialog(editor, "Invalid credentials. You cannot request a certificate!",
+                            "Authentication error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            catch (IOException ioe){
+                JOptionPane.showMessageDialog(editor, "Invalid credentials. You cannot request a certificate!",
+                            "Authentication error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
             try {
                 InteroperabilityReport report = editor.getCodePanel().getTestingPanel().getInteroperabilityReport();
                 Map<String, String> testReport = new HashMap<>();
@@ -121,6 +179,7 @@ public class CertificateActions {
                 testReport.put("modelUrl", editor.getCertificationManager().getLastURL());
                 String testName = editor.getCertificationManager().getTestName();
                 testReport.put("testName", testName);
+                testReport.put("username", usernameField.getText());
                 String jsonTestReport = new ObjectMapper().writeValueAsString(testReport);
                 byte[] testReportBytes = jsonTestReport.getBytes(StandardCharsets.UTF_8);
                 int testReportLength = testReportBytes.length;
@@ -203,7 +262,7 @@ public class CertificateActions {
                         }
                     }
 
-                    PDFGenerator.generate(certificateFile, report.getTextTrace(), authID, date, testName, editor);
+                    PDFGenerator.generate(certificateFile, report.getTextTrace(), authID, date, testName, usernameField.getText(), editor);
                 }
             } 
             catch (IOException ex) {}
