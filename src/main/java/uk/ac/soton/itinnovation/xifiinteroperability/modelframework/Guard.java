@@ -28,7 +28,6 @@
 package uk.ac.soton.itinnovation.xifiinteroperability.modelframework;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
@@ -151,8 +150,8 @@ public class Guard {
      */
     public Guard(final String label, final Class type, final ComparisonType condition,
             final String comparitor, final Architecture arc) throws InvalidGuard {
-        this.guardCondition = label.toLowerCase(Locale.ENGLISH);
-        
+        this.guardCondition = label;
+
         String testCondition = comparitor;
         if (testCondition.startsWith(XMLStateMachine.DATA_TAG)) {
             try {
@@ -163,7 +162,7 @@ public class Guard {
         }
 
         this.guardCondType = condition;
-        this.compareTo = testCondition.toLowerCase(Locale.ENGLISH);
+        this.compareTo = testCondition;
         this.dataType = type;
     }
 
@@ -177,16 +176,19 @@ public class Guard {
     public final boolean evaluate(final Object input) throws InvalidInputException, InvalidRegexException {
         Object toCompare = input;
         if (dataType == String.class) {
-            toCompare = ((String) input).toLowerCase();
+            toCompare = ((String) input);
         }
-        System.out.println("Input: " + toCompare.toString());
-        System.out.println("Input2 : " + this.compareTo);
-        System.out.println("Input3 : " + this.guardCondType);
 
         switch(this.guardCondType) {
             case EQUALS:
+                if (dataType == String.class) {
+                    return ((String) toCompare).equalsIgnoreCase(this.compareTo);
+                }
                 return toCompare.equals(this.compareTo);
             case NOTEQUALS:
+                if (dataType == String.class) {
+                    return ((String) toCompare).equalsIgnoreCase(this.compareTo);
+                }
                 return !toCompare.equals(this.compareTo);
             case COUNTER:
                 Integer aC = new Integer(this.compareTo);
@@ -210,7 +212,7 @@ public class Guard {
                 }
             case CONTAINS:
                  final HashMap<String, Parameter> heads = (HashMap<String, Parameter>) input;
-                 return heads.containsKey(this.compareTo.toLowerCase());
+                 return heads.containsKey(this.compareTo);
             case REGEX:
                 try {
                     return Pattern.matches(this.compareTo, toCompare.toString());

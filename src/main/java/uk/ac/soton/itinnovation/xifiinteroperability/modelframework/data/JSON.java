@@ -75,13 +75,12 @@ public final class JSON {
     public static PathEvaluationResult assertJSON(final String jsondoc,
                         final String reference, final Object value) throws InvalidJSONPathException {
         try {
-            final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
+            final String xprVal = readValue(jsondoc, reference);
             final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
             return new PathEvaluationResult(jsonVal.equalsIgnoreCase(xprVal), xprVal, DataFormat.JSON);
-//            JsonAssert.with(jsondoc.toLowerCase(Locale.ENGLISH)).assertThat(reference, Matchers.equalTo(jsonVal));
         }
         catch (PathNotFoundException ex) {
-            final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
+            final String jsonVal = ((String) value);
             if(jsonVal.equalsIgnoreCase("null")){
                 return new PathEvaluationResult(true, "null", DataFormat.JSON);
             }
@@ -95,7 +94,7 @@ public final class JSON {
     /**
      * Compare a JSON document reference (jsonpath expr) against a particular value.
      * LESSTHAN or GREATERTHAN comparisons only, use assertJSON for EQUAL and NOTEQUAL comparisons
-     * 
+     *
      * @param jsondoc The document to check.
      * @param reference The JSON path expression.
      * @param value The required value.
@@ -104,11 +103,11 @@ public final class JSON {
      * @throws InvalidJSONPathException Thrown in case of an invalid JSONPath in a guard.
      */
     public static PathEvaluationResult compareJSON(final String jsondoc,
-                        final String reference, final Object value, final Guard.ComparisonType comparisonType) 
+                        final String reference, final Object value, final Guard.ComparisonType comparisonType)
             throws InvalidJSONPathException {
         try {
-            final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
-            final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
+            final String xprVal = readValue(jsondoc, reference);
+            final String jsonVal = ((String) value);
             if (comparisonType == Guard.ComparisonType.GREATERTHAN){
                 try{
                     double a = new Double(xprVal);
@@ -136,11 +135,11 @@ public final class JSON {
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
     }
-    
+
     /**
      * Check if a JSON document reference (jsonpath expr) matches a particular regex.
      * REGEX comparison
-     * 
+     *
      * @param jsondoc the json document to check
      * @param reference the JSON path expression
      * @param value the regular expression to check against
@@ -151,8 +150,8 @@ public final class JSON {
     public static PathEvaluationResult regexJSON(final String jsondoc,
             final String reference, final Object value) throws InvalidJSONPathException, InvalidRegexException {
         try {
-            final String xprVal = readValue(jsondoc.toLowerCase(Locale.ENGLISH), reference.toLowerCase(Locale.ENGLISH));
-            final String jsonVal = ((String) value).toLowerCase(Locale.ENGLISH);
+            final String xprVal = readValue(jsondoc, reference);
+            final String jsonVal = ((String) value);
             boolean boolResult = Pattern.matches(jsonVal, xprVal);
             return new PathEvaluationResult(boolResult, xprVal, DataFormat.JSON);
         }
@@ -166,11 +165,11 @@ public final class JSON {
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
     }
-    
+
     /**
      * Check if a JSON document reference (jsonpath expr) contains a particular key field.
      * CONTAINS evaluation
-     * 
+     *
      * @param jsondoc The document to check.
      * @param reference The JSON path expression.
      * @param value The required value.
@@ -178,25 +177,25 @@ public final class JSON {
      * @throws InvalidJSONPathException Thrown in case of an invalid JSONPath in a guard.
      */
     public static PathEvaluationResult containsJSON(final String jsondoc,
-                        final String reference, final Object value) 
+                        final String reference, final Object value)
             throws InvalidJSONPathException {
         try {
             final Object document = Configuration.defaultConfiguration().jsonProvider().parse(jsondoc);
             Map<String, String> childFields = JsonPath.read(document, reference);
             List<String> childFieldsList = new ArrayList<>();
-            
+
             boolean containsResult = false;
             for (String child: childFields.keySet()){
                 childFieldsList.add(child);
-                
-                if (child.toLowerCase().equals(value.toString().toLowerCase())){
+
+                if (child.equalsIgnoreCase(value.toString())){
                     containsResult = true;
                 }
             }
             return new PathEvaluationResult(containsResult, childFieldsList, DataFormat.JSON);
         }
         catch (ClassCastException ex) {
-            /* if a ClassCastException is thrown, this means that the json evaluation most 
+            /* if a ClassCastException is thrown, this means that the json evaluation most
             probably returned a list and not a map, hence there are no child fields */
             return new PathEvaluationResult(false, new ArrayList<>(), DataFormat.JSON);
         }
@@ -204,7 +203,7 @@ public final class JSON {
             throw new InvalidJSONPathException("JSONPath '" + reference + "' is invalid or does not exist.");
         }
     }
-    
+
     /**
      * Validate a JSON document against a schema.
      * @param jsonDoc The full json document content as a string.

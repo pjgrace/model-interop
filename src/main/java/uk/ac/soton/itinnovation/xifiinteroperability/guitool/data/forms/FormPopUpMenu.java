@@ -51,7 +51,7 @@ public class FormPopUpMenu extends JPopupMenu {
      * The textfield this pop up instance works with.
      */
     private final transient JTextComponent bufferField;
-    
+
     /**
      * reference to the data model
      */
@@ -118,7 +118,7 @@ public class FormPopUpMenu extends JPopupMenu {
 
         }
     }
-    
+
     /**
      * insert action for inserting pattern specific data
      */
@@ -135,11 +135,11 @@ public class FormPopUpMenu extends JPopupMenu {
                 patternDataIDs.add(data.getFieldName());
             });
             if (patternDataIDs.size() > 0){
-                Object result = JOptionPane.showInputDialog(bufferField, 
-                        "Please choose the ID of the pattern data you want to insert.", 
+                Object result = JOptionPane.showInputDialog(bufferField,
+                        "Please choose the ID of the pattern data you want to insert.",
                         "Inserting pattern data", JOptionPane.PLAIN_MESSAGE,
                         null, patternDataIDs.toArray(), patternDataIDs.get(0));
-                
+
                 if (result == null){
                     return;
                 }
@@ -152,13 +152,13 @@ public class FormPopUpMenu extends JPopupMenu {
                 }
             }
             else {
-                JOptionPane.showMessageDialog(bufferField, 
+                JOptionPane.showMessageDialog(bufferField,
                         "You haven't added any pattern data, yet.",
                         "No pattern data found", JOptionPane.WARNING_MESSAGE);
             }
         }
     }
-    
+
     /**
      * insert data from previous states
      */
@@ -173,37 +173,37 @@ public class FormPopUpMenu extends JPopupMenu {
             expression.append("$$");
             List<GraphNode> states = dataModel.getGraphElements();
             if (states.isEmpty()){
-                JOptionPane.showMessageDialog(bufferField, 
+                JOptionPane.showMessageDialog(bufferField,
                         "There are no states available.",
                         "No states found", JOptionPane.WARNING_MESSAGE);
             }
-            
-            Object chosenState = JOptionPane.showInputDialog(bufferField, 
-                    "Please choose a state.", "Choosing state", 
+
+            Object chosenState = JOptionPane.showInputDialog(bufferField,
+                    "Please choose a state.", "Choosing state",
                     JOptionPane.PLAIN_MESSAGE, null, states.toArray(), states.get(0));
-            
+
             if (chosenState == null){
                 return;
             }
-            
+
             expression.append(chosenState.toString());
             expression.append("|");
-            
-            String[] dataTypes = {"Content", "Headers"};
+
+            String[] dataTypes = {"content", "headers"};
             Object chosenType = JOptionPane.showInputDialog(bufferField,
                     "Please choose what data you want to extract.", "Choosing type",
                     JOptionPane.PLAIN_MESSAGE, null, dataTypes, dataTypes[0]);
-            
+
             if (chosenType == null){
                 return;
             }
-            
+
             expression.append(chosenType.toString().toLowerCase());
             expression.append("|");
-            
+
             String identifier;
             if (chosenType.toString().equalsIgnoreCase("content")){
-                Object path = JOptionPane.showInputDialog(bufferField, "Please type your XPath or JSONPath", 
+                Object path = JOptionPane.showInputDialog(bufferField, "Please type your XPath or JSONPath",
                         "Choosing path", JOptionPane.PLAIN_MESSAGE);
                 if (path == null){
                     return;
@@ -211,18 +211,18 @@ public class FormPopUpMenu extends JPopupMenu {
                 identifier = path.toString();
             }
             else {
-                Object id = JOptionPane.showInputDialog(bufferField, 
-                        "Please type the id of the header", 
+                Object id = JOptionPane.showInputDialog(bufferField,
+                        "Please type the id of the header",
                         "Choosing ID", JOptionPane.PLAIN_MESSAGE);
                 if (id == null){
                     return;
                 }
                 identifier = id.toString();
             }
-            
+
             expression.append(identifier);
             expression.append("$$");
-            
+
             try {
                 bufferField.getDocument().insertString(bufferField.getCaretPosition(), expression.toString(), null);
             } catch (BadLocationException ex) {

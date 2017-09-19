@@ -132,8 +132,8 @@ public class GuardForm extends JPanel {
     /**
      * the posible header fields for guard description
      */
-    private final String[] headerFields = {"From", "Code", "Msg", "Date", "To", "Expires", "Content-Type",
-        "Server", "Transfer-Encoding", "Accept-Ranges"};
+    private final String[] headerFields = {"from", "code", "msg", "date", "to", "expires", "content-type",
+        "server", "transfer-encoding", "accept-ranges"};
 
     /**
      * The user interface model i.e. this data is what this form is
@@ -164,7 +164,7 @@ public class GuardForm extends JPanel {
      * The text area to input a URL.
      */
     private final transient JTextField url = new JTextField();
-    
+
     /**
      * the combo box for the guard function
      */
@@ -260,7 +260,7 @@ public class GuardForm extends JPanel {
                 if (!ident.isEditable()){
                     return;
                 }
-                
+
                 if (SwingUtilities.isRightMouseButton(e)){
                     String[] types = {"Header", "Message content", "Non-functional"};
                     String type = (String) JOptionPane.showInputDialog(topPanel,
@@ -268,7 +268,7 @@ public class GuardForm extends JPanel {
                             JOptionPane.PLAIN_MESSAGE, null, types, types[0]);
 
                     if (type != null && type.equals("Header")){
-                        String[] protocols = {"HTTP", "COAP"};
+                        String[] protocols = {"http", "coap"};
                         String protocol = (String) JOptionPane.showInputDialog(topPanel,
                             "Please choose the type of protocol you want to use:", "Selection dialog",
                             JOptionPane.PLAIN_MESSAGE, null, protocols, protocols[0]);
@@ -334,12 +334,12 @@ public class GuardForm extends JPanel {
                                     "Load JSON file", JOptionPane.YES_NO_CANCEL_OPTION);
                             if (choice == JOptionPane.CANCEL_OPTION) {
                                 return;
-                            } 
+                            }
                             else if (choice == JOptionPane.NO_OPTION) {
                                 new JSONPathGeneratorEditor().initGUI(true, ident);
                                 return;
                             }
-                            
+
                             final JFileChooser fChooser = new JFileChooser(System.getProperty("user.dir"));
                             FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
                             fChooser.setFileFilter(filter);
@@ -375,7 +375,7 @@ public class GuardForm extends JPanel {
                         if (choice != null && choice.equals("Timeout")){
                             try {
                                 ident.getDocument().insertString(ident.getCaretPosition(), "timeout", null);
-                            } 
+                            }
                             catch (BadLocationException ex) {
                                 JOptionPane.showMessageDialog(topPanel,
                                         "An error occured while inserting your selection.",
@@ -385,7 +385,7 @@ public class GuardForm extends JPanel {
                         else if (choice != null && choice.equals("Response-time")){
                             try {
                                 ident.getDocument().insertString(ident.getCaretPosition(), "response-time", null);
-                            } 
+                            }
                             catch (BadLocationException ex) {
                                 JOptionPane.showMessageDialog(topPanel,
                                         "An error occured while inserting your selection.",
@@ -431,13 +431,13 @@ public class GuardForm extends JPanel {
                         "Invalid guard", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
+
             if (mirrorNode.hasTimeout()){
                 JOptionPane.showMessageDialog(editor, "You cannot have a timeout transition with guards other than the timeout guard.",
                         "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             if (ident.getText().equalsIgnoreCase("timeout")){
                 if (mirrorNode.getData().size() > 0){
                     JOptionPane.showMessageDialog(editor, "Timeout transitions can only have one guard for the timeout value. "
@@ -445,13 +445,13 @@ public class GuardForm extends JPanel {
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Equals){
                     JOptionPane.showMessageDialog(editor, "The only function that can be used for a timeout guard is the 'equals' function.",
                             "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 try {
                     Long timeout = Long.parseLong(address.getText());
                     if (timeout <= 0){
@@ -466,13 +466,13 @@ public class GuardForm extends JPanel {
                     return;
                 }
             }
-            
+
             if (mirrorNode.hasCounter()) {
                 JOptionPane.showMessageDialog(editor, "You cannot have a counter transition with guards other than the index guard.",
                         "Counter transition error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             if (ident.getText().equalsIgnoreCase("index")){
                 if (mirrorNode.getData().size() > 0){
                     JOptionPane.showMessageDialog(editor, "Counter transitions can only have one guard for the index value. "
@@ -480,13 +480,13 @@ public class GuardForm extends JPanel {
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 if (((Function.FunctionType) comboBox.getSelectedItem()) != Function.FunctionType.Counter){
                     JOptionPane.showMessageDialog(editor, "The only function that can be used for an index guard is the 'counter' function.",
                             "Counter transition error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 try {
                     Integer counter = Integer.parseInt(address.getText());
                     if (counter <= 0){
@@ -501,7 +501,7 @@ public class GuardForm extends JPanel {
                     return;
                 }
             }
-            
+
             if (ident.getText().equalsIgnoreCase("response-time")){
                 try {
                     Long responseTime = Long.parseLong(address.getText());
@@ -517,18 +517,18 @@ public class GuardForm extends JPanel {
                     return;
                 }
             }
-            
+
             if (comboBox.getSelectedItem() == Function.FunctionType.Regex){
                 try {
                     Pattern.compile(address.getText());
                 }
                 catch (PatternSyntaxException ex){
-                    JOptionPane.showMessageDialog(editor, "The guard value is not a valid regular expression.", 
+                    JOptionPane.showMessageDialog(editor, "The guard value is not a valid regular expression.",
                             "Regex error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
-            
+
             mirrorNode.addGuard((Function.FunctionType) comboBox.getSelectedItem(), ident.getText(), address.getText());
             guardView.clearData();
             guardView.setData(mirrorNode);
@@ -598,13 +598,13 @@ public class GuardForm extends JPanel {
         url.setText("");
         adjustGuardDescription();
     }
-    
+
     private void adjustGuardDescription(){
         if (comboBox.getSelectedItem() == Function.FunctionType.Counter) {
             ident.setText("Index");
             ident.setEditable(false);
             ident.setToolTipText("Counter guards have a fixed value for guard description, which is Index.");
-        } 
+        }
         else {
             ident.setEditable(true);
             ident.setToolTipText("Click right button for selection dialog.");

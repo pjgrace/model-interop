@@ -61,6 +61,8 @@ public class RESTEvent extends MsgEvent implements  Serializable {
     /** What is the URL path i.e. the HTTP interface of the request. */
     public static final String HTTP_TOINTERFACE = "http.tointerface";
 
+    public static final String HTTP_TOPATH = "http.path";
+
      /**  What is the message type - get, put, delete, post ...*/
     public static final String HTTP_MSG = "http.msg";
 
@@ -72,7 +74,7 @@ public class RESTEvent extends MsgEvent implements  Serializable {
 
     /** A response time label **/
     public static final String RESPONSE_TIME = "response-time";
-    
+
     /**
      * The content of the message - optional, not all REST events will
      * have associated data.
