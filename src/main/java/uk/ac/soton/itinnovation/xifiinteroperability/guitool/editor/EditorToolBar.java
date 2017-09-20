@@ -124,7 +124,7 @@ public class EditorToolBar extends JToolBar {
 
                 addSeparator(new Dimension(15,3));
 
-                add(createToolbarButton("Check", "Check Model", new VerifyAction(), editor, "/images/check.png", "/images/checkselect.png"));
+                add(createToolbarButton("Check", "Check Model", new VerifyAction(editor), editor, "/images/check.png", "/images/checkselect.png"));
 
                 add(createToolbarButton("Run", "Run Test", new ExecuteAction(), editor, "/images/run.png", "/images/runselect.png"));
 

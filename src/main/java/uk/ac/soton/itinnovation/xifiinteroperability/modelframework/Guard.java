@@ -187,7 +187,7 @@ public class Guard {
                 return toCompare.equals(this.compareTo);
             case NOTEQUALS:
                 if (dataType == String.class) {
-                    return ((String) toCompare).equalsIgnoreCase(this.compareTo);
+                    return !((String) toCompare).equalsIgnoreCase(this.compareTo);
                 }
                 return !toCompare.equals(this.compareTo);
             case COUNTER:

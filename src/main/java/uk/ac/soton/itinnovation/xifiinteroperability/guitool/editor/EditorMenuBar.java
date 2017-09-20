@@ -75,13 +75,13 @@ public class EditorMenuBar extends JMenuBar {
         menuItem.addActionListener(new OpenAction(editor));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
-        
-        menuItem = new JMenuItem(editor.bind("Open Template Model", new FileActions.OpenTemplateAction(editor), "/images/open16.png"));
+
+        menuItem = new JMenuItem(editor.bind("Create from Template", new FileActions.OpenTemplateAction(editor), "/images/bricks.png"));
         menu.add(menuItem);
-        
-        menuItem = new JMenuItem(editor.bind("Open Model From Web", new FileActions.OpenFromWebAction(editor), "/images/open16.png"));
+
+        menuItem = new JMenuItem(editor.bind("Download Model", new FileActions.OpenFromWebAction(editor), "/images/downloadcert.png"));
         menu.add(menuItem);
-        
+
         menu.addSeparator();
 
 
@@ -102,7 +102,7 @@ public class EditorMenuBar extends JMenuBar {
 
         // Creates the edit menu
         menu = add(new JMenu(mxResources.get("edit")));
-        
+
         menuItem = new JMenuItem(editor.bind("Cut", new DefaultEditorKit.CutAction(), "/images/cut16.png"));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
@@ -114,7 +114,7 @@ public class EditorMenuBar extends JMenuBar {
         menuItem = new JMenuItem(editor.bind("Paste", new DefaultEditorKit.PasteAction(), "/images/paste16.png"));
         menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_MASK));
         menu.add(menuItem);
-                
+
         menu.addSeparator();
         menuItem = new JMenuItem(mxResources.get("undo"), new ImageIcon(BasicGraphEditor.class.getResource("/images/undo16.png")));
         menuItem.addActionListener(new HistoryAction(true, editor));
@@ -138,17 +138,18 @@ public class EditorMenuBar extends JMenuBar {
 
         menu.add(editor.bind("Model", new GraphAction(editor), "/images/graph16.png"));
         menu.add(editor.bind(mxResources.get("XML"), new XMLAction(editor), "/images/xml16.png"));
-        menuItem = new JMenuItem("Current Test");
-        menuItem.addActionListener(new EditorActions.TestViewAction(editor));
-        menu.add(menuItem);
+//        menuItem = new JMenuItem("Current Test");
+//        menuItem.addActionListener(new EditorActions.TestViewAction(editor));
+//        menu.add(menuItem);
+        menu.add(editor.bind("Current Test", new EditorActions.TestViewAction(editor), "/images/bug.png"));
         menu.addSeparator();
-        menu.add(editor.bind("Test Reports", new EditorActions.ReportsAction(editor), "/images/report16.png"));
+        menu.add(editor.bind("Previous Tests", new EditorActions.ReportsAction(editor), "/images/report16.png"));
 
         // creates the run menu
-        menu = add(new JMenu("Run"));
-        
+        menu = add(new JMenu("Test"));
+        menu.add(editor.bind("Check Model", new EditorActions.VerifyAction(editor), "/images/check16.png"));
         menu.add(editor.bind("Run test", new EditorActions.ExecuteAction(editor), "/images/run16.png"));
-        
+
         JMenuItem stopButton = new JMenuItem("Stop test");
         stopButton.addActionListener((ActionEvent ae) -> {
             EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
@@ -157,7 +158,7 @@ public class EditorMenuBar extends JMenuBar {
         });
         stopButton.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/stop16.png")));
         menu.add(stopButton);
-        
+
         JMenuItem nextButton = new JMenuItem("Next step");
         nextButton.addActionListener((ActionEvent e) -> {
             EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
@@ -166,30 +167,38 @@ public class EditorMenuBar extends JMenuBar {
         });
         nextButton.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/step16.png")));
         menu.add(nextButton);
-        
+
         // creates the certification menu
         menu = add(new JMenu("Certification"));
-        JMenuItem openCertificationModelItem = new JMenuItem("Open certification model");
+        JMenuItem openCertificationModelItem = new JMenuItem("Download Model");
         // TODO the OpenFromWebAction might have to be adjusted to ask for username or API KEY to handle authentication for certification
         openCertificationModelItem.addActionListener(new CertificateActions.CertificateOpenAction(editor));
+        openCertificationModelItem.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/download.png")));
         menu.add(openCertificationModelItem);
-        
-        JMenuItem certifyItem = new JMenuItem("Request a certificate");
+
+        JMenuItem certifyItem = new JMenuItem("Request Certificate");
         certifyItem.addActionListener(new CertificateActions.CertificateRequestAction(editor));
+        certifyItem.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/cert16.png")));
+
         menu.add(certifyItem);
-        
-        JMenuItem verifyItem = new JMenuItem("Certificate verification");
+
+        JMenuItem verifyItem = new JMenuItem("Verify Certificate");
         verifyItem.addActionListener(new CertificateActions.VerifyCertificateAction(editor));
+        verifyItem.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/verify.png")));
         menu.add(verifyItem);
-        
+
         // creates the tools menu
         menu = add(new JMenu("Tools"));
 
-        JMenuItem xPathGeneratorItem = new JMenuItem("XPath Expression Generator");
-        xPathGeneratorItem.addActionListener(new ToolsActions.XPathAction(editor));
+        JMenuItem xPathGeneratorItem = new JMenuItem("XPath Tool");
+        verifyItem.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/verify.png")));
 
-        JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Expression Generator");
+        xPathGeneratorItem.addActionListener(new ToolsActions.XPathAction(editor));
+        xPathGeneratorItem.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/xpath.png")));
+
+        JMenuItem jsonPathGeneratorItem = new JMenuItem("JSONPath Tool");
         jsonPathGeneratorItem.addActionListener(new ToolsActions.JSONPathAction(editor));
+        jsonPathGeneratorItem.setIcon(new ImageIcon(BasicGraphEditor.class.getResource("/images/jsonpath.png")));
 
         menu.add(xPathGeneratorItem);
         menu.add(jsonPathGeneratorItem);

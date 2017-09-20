@@ -27,13 +27,17 @@
 
 package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
+import java.awt.BorderLayout;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ComponentForm;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.EmptyForm;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.GuardForm;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.MessageForm;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.NodeForm;
 import java.awt.Color;
+import java.awt.CardLayout;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.EndForm;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ExecutionPanel;
@@ -43,7 +47,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.Executio
  * and view attributes attached to different elements of the pattern.
  * @author pjg
  */
-public class AttributePanel {
+public class AttributePanel extends JPanel{
 
     /**
      * There are five types of panels:
@@ -119,12 +123,12 @@ public class AttributePanel {
     public final EndForm getEndForm() {
         return eForm;
     }
-    
+
     /**
      * reference to the Execution panel UI component
      */
     private final transient ExecutionPanel execPanel;
-    
+
     /**
      * a getter method for the execution panel reference
      * @return the reference to the execution panel
@@ -175,12 +179,17 @@ public class AttributePanel {
      * The attribute panel for trigger nodes.
      */
     private static final String TRIGGERPANEL = "trigger";
-    
+
     /**
      * The panel opened on test execution
      */
     public static final String EXECUTION = "execution";
 
+    private JPanel attributePanel;
+
+    public JPanel getAttribuePanel() {
+        return this.attributePanel;
+    }
 
     /**
      * Change the look and feel.
@@ -199,11 +208,28 @@ public class AttributePanel {
      * Create a new instance of the attribute panel within the editor context.
      * @param parent The parent panel this is hosted in.
      * @param editor The editor this is hosted in.
+     * @param libraryPane
      */
-    public AttributePanel(final JPanel parent, final BasicGraphEditor editor) {
+    public AttributePanel(final JPanel parent, final BasicGraphEditor editor, final JTabbedPane libraryPane) {
+        super(new BorderLayout());
+
         // HTTP Method
         final String[] httpMethods = {"GET", "PUT", "POST", "DELETE"};
         final String[] dataTypes = {"XML", "JSON", "OTHER"};
+
+        // Creates the left split pane that contains the library with the
+        // palettes and the card attributes
+        attributePanel = new JPanel(new CardLayout());
+
+        final JSplitPane inner = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+                        libraryPane, attributePanel);
+        inner.setDividerLocation(100);
+        inner.setResizeWeight(0.3);
+        inner.setOneTouchExpandable(false);
+        inner.setContinuousLayout(false);
+        inner.setDividerSize(2);
+        inner.setBorder(null);
+
 
         mForm = new MessageForm(httpMethods, dataTypes, editor);
         cForm = new ComponentForm(editor);
@@ -213,16 +239,17 @@ public class AttributePanel {
         execPanel = new ExecutionPanel(editor);
 
         //Create the panel that contains the "cards".
-        parent.add(new EmptyForm(), "EmptyPanel");
-        parent.add(gForm, GUARDPANEL);
-        parent.add(nForm, NODEPANEL);
-        parent.add(cForm, COMPONENTPANEL);
-        parent.add(mForm, MESSAGEPANEL);
-        parent.add(eForm, ENDPANEL);
-        parent.add(new EmptyForm(), NORMALPANEL);
-        parent.add(new EmptyForm(), LOOPPANEL);
-        parent.add(new EmptyForm(), TRIGGERPANEL);
-        parent.add(execPanel, EXECUTION);
+        attributePanel.add(new EmptyForm(), "EmptyPanel");
+        attributePanel.add(gForm, GUARDPANEL);
+        attributePanel.add(nForm, NODEPANEL);
+        attributePanel.add(cForm, COMPONENTPANEL);
+        attributePanel.add(mForm, MESSAGEPANEL);
+        attributePanel.add(eForm, ENDPANEL);
+        attributePanel.add(new EmptyForm(), NORMALPANEL);
+        attributePanel.add(new EmptyForm(), LOOPPANEL);
+        attributePanel.add(new EmptyForm(), TRIGGERPANEL);
+
+        parent.add(inner);
     }
 
 }

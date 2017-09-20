@@ -53,8 +53,8 @@ public class InteroperabilityReport {
      * This is the editable content of the report (i.e. the body). We initialise
      * with a title.
      */
-    private transient String textTrace = "Output from Interoperability Test Framework\n";
-    
+    private transient String textTrace = "Beginning test: \n";
+
     /**
      * a getter for the text trace of the report
      * @return the text trace of the report
@@ -168,14 +168,14 @@ public class InteroperabilityReport {
             output.println("\t" + newval);
         }
     }
-    
+
     /**
      * Clear the text trace of the report
      */
     public final void clear(){
         this.textTrace = "";
     }
-    
+
     /**
      * Produce a text version of the output report. Typically displayed to
      * a text field or the console.

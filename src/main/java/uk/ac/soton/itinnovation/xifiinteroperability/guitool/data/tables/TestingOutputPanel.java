@@ -30,10 +30,13 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -67,7 +70,7 @@ public class TestingOutputPanel extends JPanel {
      * The text area where the test reports are displayed.
      */
     private final transient JTextArea consoleOutput;
-    
+
 
     /**
      * Create the console output of test results in a panel that is
@@ -88,17 +91,24 @@ public class TestingOutputPanel extends JPanel {
             final TestingOutputStream outputReport = new TestingOutputStream(consoleOutput);
             interopReport = new InteroperabilityReport(new PrintStream(outputReport, true, StandardCharsets.UTF_8.name()));
 
+            final JLabel gLabel = new JLabel(" Testing Output");
+            final Font font = gLabel.getFont();
+            final Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
+            gLabel.setFont(boldFont);
+
+
             final JScrollPane areaScrollPane = new JScrollPane(consoleOutput);
             areaScrollPane.setVerticalScrollBarPolicy(
                     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             areaScrollPane.setPreferredSize(new Dimension(1000, 1000));
-                        
-            add(areaScrollPane, BorderLayout.CENTER);
+            final JSplitPane outer = new JSplitPane(JSplitPane.VERTICAL_SPLIT, gLabel, areaScrollPane);
+            outer.setDividerSize(0);
+            add(outer, BorderLayout.CENTER);
         } catch (Exception ex) {
             ServiceLogger.LOG.error("Unable to create text area output on local device: " + ex.getMessage());
         }
     }
-    
+
     /**
      * Clear all text from the testing panel.
      */

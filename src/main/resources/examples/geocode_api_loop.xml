@@ -50,11 +50,11 @@
 				<to>A3</to>
 				<guards>
 					<equal>
-						<param>HTTP.from</param>
+						<param>http.from</param>
 						<value>component.geocode.address</value>
 					</equal>
 					<equal>
-						<param>HTTP.msg</param>
+						<param>http.msg</param>
 						<value>REPLY</value>
 					</equal>
 					<equal>
@@ -74,24 +74,24 @@
 						<value>0</value>
 					</lessthan>
 					<contains>
-						<param>HTTP</param>
+						<param>http</param>
 						<value>http.code</value>
 					</contains>
 					<contains>
-						<param>content[//GEOMETRY]</param>
-						<value>VIEWPORT</value>
+						<param>content[//geometry]</param>
+						<value>viewport</value>
 					</contains>
 					<lessthan>
 						<param>response-time</param>
-						<value>200</value>
+						<value>750</value>
 					</lessthan>
 					<regex>
-						<param>HTTP.code</param>
+						<param>http.code</param>
 						<value>[0-9]+</value>
 					</regex>
 					<regex>
 						<param>content[//result/place_id]</param>
-						<value>[a-z0-9]+</value>
+						<value>[A-Za-z0-9]+</value>
 					</regex>
 				</guards>
 			</transition>
@@ -152,11 +152,11 @@
 				<to>A4</to>
 				<guards>
 					<equal>
-						<param>HTTP.from</param>
+						<param>http.from</param>
 						<value>component.geocode.address</value>
 					</equal>
 					<equal>
-						<param>HTTP.code</param>
+						<param>http.code</param>
 						<value>200</value>
 					</equal>
 					<equal>
@@ -172,12 +172,12 @@
 						<value>0</value>
 					</lessthan>
 					<contains>
-						<param>content[$.RESULTS[0]]</param>
+						<param>content[$.results[0]]</param>
 						<value>formatted_ADDRESS</value>
 					</contains>
 					<contains>
-						<param>HTTP</param>
-						<value>HTTP.code</value>
+						<param>http</param>
+						<value>http.code</value>
 					</contains>
 					<notequal>
 						<param>http.content-type</param>
@@ -189,7 +189,7 @@
 					</lessthan>
 					<regex>
 						<param>content[$.results[0].place_id]</param>
-						<value>[a-z0-9]*</value>
+						<value>[A-Za-z0-9]*</value>
 					</regex>
 				</guards>
 			</transition>

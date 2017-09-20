@@ -32,6 +32,7 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.DataModel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.PreviousReportsPanel;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.XMLSpecificationPanel;
@@ -124,7 +125,7 @@ public class MainDisplayPanel {
             /**
              * Add the Interoperability Model Label
              */
-            final JLabel gLabel = new JLabel("Interoperability Behaviour Model");
+            final JLabel gLabel = new JLabel("     Test State Model");
             final Font font = gLabel.getFont();
             final Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
             gLabel.setFont(boldFont);
@@ -133,22 +134,20 @@ public class MainDisplayPanel {
             /**
              * Add the Deployment Model Label
              */
-            final JLabel arcLabel = new JLabel("Deployment Model");
+            final JLabel arcLabel = new JLabel("Deployment Model     ", SwingConstants.RIGHT);
             arcLabel.setFont(boldFont);
             controls.add(arcLabel);
 
             /**
              * Create the two panels for drag and drop of models
              */
-            final JPanel graphs = new JPanel();
-            graphs.setLayout(new GridLayout(1 , 2));
-            graphs.add(editor.getBehaviourGraph());
-            graphs.add(editor.getSystemGraph());
+            final JSplitPane viewSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor.getBehaviourGraph(), editor.getSystemGraph());
+            viewSplit.setDividerLocation(350);
+            viewSplit.setResizeWeight(0.7);
+            viewSplit.setDividerSize(1);
 
-            final JSplitPane boxSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, controls, graphs);
-            boxSplit.setOneTouchExpandable(true);
-            boxSplit.setDividerLocation(25);
-            boxSplit.setDividerSize(3);
+            final JSplitPane boxSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, controls, viewSplit);
+            boxSplit.setDividerSize(0);
 
             //Create the panel that contains the "cards".
             parent.add(boxSplit, GRAPHPANEL);

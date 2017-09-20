@@ -124,6 +124,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.GraphNode;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Message;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ExecutionPanel;
+import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.AttributePanel.EXECUTION;
 
 /**
     Interoperability Tool: A software developer tool to test whether applications
@@ -156,13 +157,15 @@ public class BasicGraphEditor extends JPanel {
      * The Attribute panel for adding data to graph nodes and transitions.
      */
     private final transient AttributePanel ctablePanel;
-    
+
     /**
      * a getter method for the test animation panel
      * @return the panel which displays the graph during test execution
      */
+
+    private ExecutionPanel execPanel;
     public ExecutionPanel getExecPanel(){
-        return ctablePanel.getExecPanel();
+        return execPanel;
     }
 
     /**
@@ -251,7 +254,11 @@ public class BasicGraphEditor extends JPanel {
      * @return The Jpanel reference to the attributes card panel.
      */
     public final JPanel getAttributePanel() {
-        return attributePanel;
+        return sidePanel;
+    }
+
+    public final JPanel getFormPanel() {
+        return ctablePanel.getAttribuePanel();
     }
 
     /**
@@ -269,7 +276,7 @@ public class BasicGraphEditor extends JPanel {
      * handles the copy pasting of graph components
      */
     private final transient CopyPasteManager copyPasteManager;
-    
+
     /**
      * a getter method for the copy-paste manager
      * @return the copyPasteManager reference
@@ -277,12 +284,12 @@ public class BasicGraphEditor extends JPanel {
     public CopyPasteManager getCopyPasteManager(){
         return copyPasteManager;
     }
-    
+
     /**
      * handles the certification services
      */
     private final transient CertificationManager certificationManager;
-    
+
     /**
      * a getter method for the certification manager
      * @return the certificationManager reference
@@ -290,7 +297,7 @@ public class BasicGraphEditor extends JPanel {
     public CertificationManager getCertificationManager(){
         return certificationManager;
     }
-    
+
     /**
      * Handle XML undo events
      */
@@ -315,7 +322,7 @@ public class BasicGraphEditor extends JPanel {
     /**
      * Frame title.
      */
-    private final transient  String appTitle;
+    private final transient String appTitle;
 
     /**
      * The status text at the bottom left of the frame.
@@ -332,12 +339,12 @@ public class BasicGraphEditor extends JPanel {
      * Flag indicating whether the current graph has been modified.
      */
     private boolean modified = false;
-    
+
     /**
      * a boolean to signify is there is currently a test running or not
      */
     private boolean testRunning = false;
-    
+
     /**
      * a getter for the testRunning attribute
      * @return true if there is currently a test running, false otherwise
@@ -345,7 +352,9 @@ public class BasicGraphEditor extends JPanel {
     public boolean isRunning(){
         return testRunning;
     }
-    
+
+    private JPanel sidePanel;
+
     /**
      * a setter for the testRunning attribute
      * @param testRunning represents whether there is a test currently running
@@ -366,7 +375,7 @@ public class BasicGraphEditor extends JPanel {
         this.getCertificationManager().resetURL();
         this.getExecPanel().resetGraph();
     }
-    
+
     /**
      * Add a listener to react to undo events.
      */
@@ -513,11 +522,13 @@ public class BasicGraphEditor extends JPanel {
         * Variable is used to switch view when graph elements are selected.
         */
 
-        final JPanel topPanel = new JPanel();
-        topPanel.setLayout(new BorderLayout());
+        sidePanel = new JPanel(new CardLayout());
+//        sidePanel.setLayout(new BorderLayout());
 
-        ctablePanel = new AttributePanel(attributePanel, this);
-        topPanel.add(attributePanel, BorderLayout.CENTER);
+        ctablePanel = new AttributePanel(attributePanel, this, libraryPane);
+        sidePanel.add(attributePanel, "empty");
+        execPanel = new ExecutionPanel(this);
+        sidePanel.add(execPanel, EXECUTION);
 
         // Create the code panel to the right side
         codePanel = new JPanel(new CardLayout());
@@ -525,25 +536,25 @@ public class BasicGraphEditor extends JPanel {
 
         // Creates the left split pane that contains the library with the
         // palettes and the card attributes
-        final JSplitPane inner = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-                        libraryPane, topPanel);
-        inner.setDividerLocation(150);
-        inner.setResizeWeight(0.5);
-        inner.setOneTouchExpandable(true);
-        inner.setContinuousLayout(true);
-        inner.setDividerSize(6);
-        inner.setBorder(null);
+//        final JSplitPane inner = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+//                        libraryPane, topPanel);
+//        inner.setDividerLocation(100);
+//        inner.setResizeWeight(0.3);
+//        inner.setOneTouchExpandable(false);
+//        inner.setContinuousLayout(false);
+//        inner.setDividerSize(2);
+//        inner.setBorder(null);
 
         // Creates the right split pane that contains the inner split pane and
         // the graph behaveGraph on the right side of the window
-        final JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, inner,
+        final JSplitPane outer = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidePanel,
                         codePanel);
         //outer.setOneTouchExpandable(false);
-        outer.setResizeWeight(0.5);
-        outer.setOneTouchExpandable(true);
-        outer.setContinuousLayout(true);
-        outer.setDividerLocation(250);
-        //outer.setDividerSize(3);
+        outer.setResizeWeight(0.2);
+        outer.setOneTouchExpandable(false);
+        outer.setContinuousLayout(false);
+        outer.setDividerLocation(225);
+        outer.setDividerSize(2);
         outer.setBorder(null);
 
         // Creates the status bar at the bottom of the GUI
@@ -1045,7 +1056,7 @@ final JFrame frame = new JFrame();
         frame.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosing(WindowEvent e) {
-                int check = JOptionPane.showConfirmDialog(frame, 
+                int check = JOptionPane.showConfirmDialog(frame,
                         "All unsaved data including patterns and previous test reports would be lost. Do you want to continue ?",
                         "Confirm exit", JOptionPane.YES_NO_OPTION);
                 if (check == JOptionPane.YES_OPTION){
@@ -1191,15 +1202,16 @@ final JFrame frame = new JFrame();
     public final void updateTableView(final String uiID) {
         /* two null arguments are passed if a new file is opened, this clears the table */
         if (uiID == null){
-            ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), "EmptyPanel");
+            ((CardLayout) sidePanel.getLayout()).show(sidePanel, "Empty");
+            ((CardLayout) getFormPanel().getLayout()).show(getFormPanel(), "EmptyPanel");
             return;
         }
-        
-        if (uiID.equalsIgnoreCase(AttributePanel.EXECUTION)) { 
-            ((CardLayout) getAttributePanel().getLayout()).show(getAttributePanel(), AttributePanel.EXECUTION);
-            return; 
+
+        if (uiID.equalsIgnoreCase(AttributePanel.EXECUTION)) {
+            ((CardLayout) sidePanel.getLayout()).show(sidePanel, AttributePanel.EXECUTION);
+            return;
         }
-        
+
         // Get the attribut information
         AbstractGraphElement transition = dataModel.getNode(uiID);
 

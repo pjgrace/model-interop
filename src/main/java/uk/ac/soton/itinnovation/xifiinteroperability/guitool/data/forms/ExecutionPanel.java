@@ -35,6 +35,7 @@ import com.mxgraph.view.mxGraph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -50,9 +51,11 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableModel;
@@ -60,64 +63,71 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.RESTCompo
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ObjectDeepCloner;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEditor;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BehaviourGraphComponent;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.SystemGraphComponent;
 
 /**
  * A panel to display the behaviour and the system graph when running a test
- * 
+ *
  * @author ns17
  */
 public class ExecutionPanel extends JPanel {
-      
+
     /**
      * a reference to the editor
      */
     private final transient BasicGraphEditor editor;
-     
+
     /**
      * a reference to the behaviour component
      */
     private transient mxGraphComponent behaviourComponent;
-    
+
     /**
      * a reference to the system component
      */
     private transient mxGraphComponent systemComponent;
-    
+
     /**
      * reference to the panel containing the two graphs
      */
     private transient final JPanel graphs;
-    
+
     /**
      * reference to the table with the interfaces and their respective ports
      */
     private transient final JTable portsTable;
-    
+
     /**
      * constructor for the panel, initialises the GUI components
      * @param editor the editor reference
      */
     public ExecutionPanel(BasicGraphEditor editor){
         super(new BorderLayout());
-        
+
         this.editor = editor;
-        
-        graphs = new JPanel(new GridLayout(2, 1));
+
+        graphs = new JPanel(new GridLayout(1, 1));
         graphs.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        
+
         behaviourComponent = new BehaviourGraphComponent(editor.getBehaviourGraph().getGraph());
         behaviourComponent.setEnabled(false);
         behaviourComponent.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 0)));
+
         graphs.add(behaviourComponent);
-        
-        systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
-        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
-        systemComponent.setEnabled(false);
-        graphs.add(systemComponent);
-             
-        add(graphs, BorderLayout.CENTER);
-        
+
+//        systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
+//        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
+//        systemComponent.setEnabled(false);
+//        graphs.add(systemComponent);
+
+        // Creates a split pane to label the graph in the testing panel
+        final JLabel gLabel = new JLabel(" Execution View");
+        final Font font = gLabel.getFont();
+        final Font boldFont = new Font(font.getFontName(), Font.BOLD, font.getSize());
+        gLabel.setFont(boldFont);
+        final JSplitPane outer = new JSplitPane(JSplitPane.VERTICAL_SPLIT, gLabel, graphs);
+        outer.setDividerSize(0);
+        add(outer, BorderLayout.CENTER);
+
         JPanel tablePanel = new JPanel(new BorderLayout());
         String[] columnNames = {"Interface:", "Proxy running on port:"};
         Object[][] data = {};
@@ -126,8 +136,8 @@ public class ExecutionPanel extends JPanel {
             @Override
             public boolean isCellEditable(int row, int column){
                 return false;
-            }  
-            
+            }
+
             @Override
             public String getToolTipText(MouseEvent e){
                 String tooltip = null;
@@ -146,7 +156,7 @@ public class ExecutionPanel extends JPanel {
         };
         portsTable.setPreferredScrollableViewportSize(new Dimension(portsTable.getPreferredSize().width, portsTable.getRowHeight()*8));
         portsTable.setFillsViewportHeight(true);
-        
+
         // add a KeyListener to the table, which will copy the original address but with the proxy port
         portsTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK), "Copy");
         portsTable.getActionMap().put("Copy", new AbstractAction(){
@@ -160,12 +170,12 @@ public class ExecutionPanel extends JPanel {
                     String proxyPort = (String) portsTable.getValueAt(rowIndex, 1);
                     URL url = new URL(urlStr);
                     url = new URL(url.getProtocol(), url.getHost(), Integer.parseInt(proxyPort), url.getFile());
-                    
+
                     // copy the url
                     StringSelection stringSel = new StringSelection(url.toString());
                     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                     clipboard.setContents(stringSel, null);
-                    
+
                     // display a message for successcul copy of the url
                     JOptionPane.showMessageDialog(graphs, "Successfully copied the url of the interface. "
                             + "Keep in mind that the port number is the port of the proxy for this interface.\n" + url.toString(),
@@ -176,10 +186,10 @@ public class ExecutionPanel extends JPanel {
             }
         });
         tablePanel.add(new JScrollPane(portsTable), BorderLayout.CENTER);
-        
+
         add(tablePanel, BorderLayout.SOUTH);
     }
-    
+
     /**
      * called when starting a new test, refreshes the graph components and the table of interfaces
      * @param restComponents a map linking component IDs to rest component objects
@@ -187,34 +197,34 @@ public class ExecutionPanel extends JPanel {
     public void refreshGraph(Map<String, RESTComponent> restComponents){
         mxGraph behaviourGraph = new mxGraph((mxIGraphModel) ObjectDeepCloner.deepCopy(editor.getBehaviourGraph().getGraph().getModel()),
                 editor.getBehaviourGraph().getGraph().getStylesheet());
-        mxGraph systemGraph = new mxGraph((mxIGraphModel) ObjectDeepCloner.deepCopy(editor.getSystemGraph().getGraph().getModel()),
-                editor.getSystemGraph().getGraph().getStylesheet());
+//        mxGraph systemGraph = new mxGraph((mxIGraphModel) ObjectDeepCloner.deepCopy(editor.getSystemGraph().getGraph().getModel()),
+//                editor.getSystemGraph().getGraph().getStylesheet());
         behaviourComponent = new BehaviourGraphComponent(behaviourGraph);
-        systemComponent = new SystemGraphComponent(systemGraph);
-        
+//        systemComponent = new SystemGraphComponent(systemGraph);
+
         graphs.removeAll();
-        
+
         behaviourComponent.setEnabled(false);
         behaviourComponent.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 0)));
         graphs.add(behaviourComponent);
-        
-        systemComponent.setEnabled(false);
-        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
-        graphs.add(systemComponent);
-             
+
+//        systemComponent.setEnabled(false);
+//        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
+//        graphs.add(systemComponent);
+
         graphs.revalidate();
         graphs.repaint();
-        
+
         List<List<String>> data = new ArrayList<>();
         restComponents.values().forEach((component) -> {
             component.getInterfaces().forEach((restInterface) -> {
                 data.add(new ArrayList<>(Arrays.asList(restInterface.getURL(), Integer.toString(restInterface.getPort()))));
             });
         });
-        
+
         refreshTable(data);
     }
-    
+
     /**
      * refresh the table of interfaces and port numbers
      * @param data the new data to insert into the table
@@ -225,7 +235,7 @@ public class ExecutionPanel extends JPanel {
             ((DefaultTableModel) portsTable.getModel()).addRow(row.toArray());
         });
     }
-    
+
     /**
      * refresh the table without inserting new data into it
      */
@@ -233,13 +243,13 @@ public class ExecutionPanel extends JPanel {
         DefaultTableModel model = (DefaultTableModel) portsTable.getModel();
         model.setRowCount(0);
     }
-    
+
     /**
      * resets the Execution panel, by reseting the graph components
      */
     public void resetGraph(){
         behaviourComponent = new BehaviourGraphComponent(editor.getBehaviourGraph().getGraph());
-        systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
+//        systemComponent = new SystemGraphComponent(editor.getSystemGraph().getGraph());
 
         graphs.removeAll();
 
@@ -247,17 +257,17 @@ public class ExecutionPanel extends JPanel {
         behaviourComponent.setBorder(BorderFactory.createLineBorder(new Color(128, 0, 0)));
         graphs.add(behaviourComponent);
 
-        systemComponent.setEnabled(false);
-        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
-        graphs.add(systemComponent);
+//        systemComponent.setEnabled(false);
+//        systemComponent.setBorder(BorderFactory.createLineBorder(new Color(0, 66, 128)));
+//        graphs.add(systemComponent);
 
         graphs.revalidate();
         graphs.repaint();
-        
+
         // reset the table
         refreshTable();
     }
-    
+
     /**
      * a method to set the current test state by changing the selection in the graph
      * @param labelID the labelID of the current state

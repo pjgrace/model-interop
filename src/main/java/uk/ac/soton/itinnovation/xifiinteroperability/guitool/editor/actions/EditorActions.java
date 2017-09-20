@@ -109,17 +109,17 @@ public final class EditorActions {
 
         return null;
     }
-    
+
     /**
      * A copy action for states and system components
      */
     public static class CopyComponentAction extends AbstractAction {
-        
+
         /**
          * Editor for the action.
          */
         private final transient BasicGraphEditor editor;
-        
+
         /**
          * The action method constructor.
          * @param edtr The editor context.
@@ -128,7 +128,7 @@ public final class EditorActions {
             super();
             this.editor = edtr;
         }
-        
+
         /**
          * overriding the actionPerformed method to copy the chosen component
          * @param actionEvent the actual event
@@ -199,21 +199,21 @@ public final class EditorActions {
                 }
                 return;
             }
-            
+
             TransferHandler.getCopyAction().actionPerformed(actionEvent);
         }
     }
-    
+
     /**
      * A paste action for states and system components
      */
     public static class PasteComponentAction extends AbstractAction {
-        
+
         /**
          * Editor for the action.
          */
         private final transient BasicGraphEditor editor;
-        
+
         /**
          * The action method constructor.
          * @param edtr The editor context.
@@ -222,7 +222,7 @@ public final class EditorActions {
             super();
             this.editor = edtr;
         }
-        
+
         /**
          * overriding the actionPerformed method to paste the chosen component
          * @param actionEvent the actual event
@@ -233,9 +233,9 @@ public final class EditorActions {
             if (editorReference == null) {
                 editorReference = EditorActions.getEditor(actionEvent);
             }
-            
+
             // check for a copied transition
-            if (editorReference.getCopyPasteManager().getData() != null && 
+            if (editorReference.getCopyPasteManager().getData() != null &&
                     editorReference.getCopyPasteManager().getData().containsKey("transitionType")){
                 Object[] cells = editorReference.getBehaviourGraph().getGraph().getSelectionCells();
                 if (cells.length != 1){
@@ -246,7 +246,7 @@ public final class EditorActions {
                 if (transition instanceof Guard){
                     if (!editorReference.getCopyPasteManager().getData().get("transitionType").toString().equalsIgnoreCase("guard")){
                         // a dialog to notify an imposible pasting of message data to guard transition
-                        JOptionPane.showMessageDialog(editor, 
+                        JOptionPane.showMessageDialog(editor,
                                 "You cannot paste the data of a message transition into a guard transition.",
                                 "Pasting transition data error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -259,28 +259,28 @@ public final class EditorActions {
                 else if (transition instanceof Message){
                     if (!editorReference.getCopyPasteManager().getData().get("transitionType").toString().equalsIgnoreCase("message")){
                         // a dialog to notify an imposible pasting of guard data to message transition
-                        JOptionPane.showMessageDialog(editor, 
+                        JOptionPane.showMessageDialog(editor,
                                 "You cannot paste the data of a guard transition into a message transition.",
                                 "Pasting transition data error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     Map<String, Object> data = editorReference.getCopyPasteManager().getData();
-                    ((Message) transition).updateMessage((String) data.get("url"), (String) data.get("path"), (String) data.get("method"), 
+                    ((Message) transition).updateMessage((String) data.get("url"), (String) data.get("path"), (String) data.get("method"),
                             (String) data.get("dataType"), (String) data.get("body"));
                     List<ConstantData> headers = (List<ConstantData>) ObjectDeepCloner.deepCopy(data.get("headers"));
                     ((Message) transition).setConstantData(headers);
                     editorReference.updateTableView(ident);
                 }
-                
+
                 return;
             }
-            
+
             // check for a copied ordinary state  - normal, loop, trigger
             if (editorReference.getCopyPasteManager().getLastGUIid() == null ){
                 TransferHandler.getPasteAction().actionPerformed(actionEvent);
                 return;
             }
-            
+
             TransferHandler.getPasteAction().actionPerformed(actionEvent);
             String guiId = editorReference.getCopyPasteManager().getLastGUIid();
             AbstractGraphElement node = editorReference.getDataModel().getNode(guiId);
@@ -297,7 +297,7 @@ public final class EditorActions {
                     List<ConstantData> constantDataList = (List<ConstantData>) ObjectDeepCloner.deepCopy(data.get("constantData"));
                     graphNode.setConstantData(constantDataList);
                 }
-            }     
+            }
             else if (node instanceof ArchitectureNode){
                 // paste the information associated with the node component
                 ArchitectureNode archNode = (ArchitectureNode) node;
@@ -345,12 +345,12 @@ public final class EditorActions {
      * corresponding testing framework.
      */
     public static class ExecuteAction extends AbstractAction {
-        
+
         /**
          * a reference to the editor
          */
         private final transient BasicGraphEditor editorReference;
-        
+
         /**
          * A constructor to set the editor reference
          * @param editor the reference to the editor
@@ -358,14 +358,14 @@ public final class EditorActions {
         public ExecuteAction(BasicGraphEditor editor){
             this.editorReference = editor;
         }
-        
+
         /**
          * an empty constructor in case a reference to the editor is not needed
          */
         public ExecuteAction(){
             this.editorReference = null;
         }
-        
+
         /**
          * The method to start the execution of the pattern.
          * @param actionEvent The received UI event.
@@ -380,14 +380,14 @@ public final class EditorActions {
             else {
                 editor = test;
             }
-            
+
             if (editor.isRunning()){
-                JOptionPane.showMessageDialog(editor, 
+                JOptionPane.showMessageDialog(editor,
                         "There is currently another test running. Either let the test finish or stop it before starting a new one.",
                         "Multiple test executions", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
+
             String[] choices = {"Execution mode", "Step-by-step mode"};
             String mode = (String) JOptionPane.showInputDialog(null,
                     "Which mode do you want to use to run the interoperability test?",
@@ -403,7 +403,7 @@ public final class EditorActions {
             try {
                 final PatternCheckThread checkThread = new PatternCheckThread(editor.getDataModel().getGraphXML(),
                         editor.getCodePanel().getTestingPanel().getInteroperabilityReport(), editor, debugMode);
-                
+
                 // adjusting the listeners of the tool bar buttons
                 EditorToolBar toolBar = (EditorToolBar) ((BorderLayout) editor.getLayout()).getLayoutComponent(BorderLayout.NORTH);
                 JButton stopButton = (JButton) toolBar.getComponentAtIndex(toolBar.getStopButtonIndex());
@@ -497,7 +497,7 @@ public final class EditorActions {
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.PREVIOUSREPORTS);
             editor.getCodePanel().getReportsPanel().resetTabbedPane();
-            
+
             for(Component comp: editor.getAttributePanel().getComponents()){
                 if (comp.isVisible() && comp instanceof ExecutionPanel){
                     editor.updateTableView(null);
@@ -512,13 +512,30 @@ public final class EditorActions {
      * Interface selection to verify the specification of the pattern.
      */
     public static class VerifyAction extends AbstractAction {
+
+        /**
+         * The editor context for action to be associated with.
+         */
+        private transient BasicGraphEditor editor;
+
+        /**
+         * Create instance of the verify action with the editor context.
+         * @param edtr The GUI editor context for the action.
+         */
+        public VerifyAction(final BasicGraphEditor edtr) {
+            super();
+            this.editor = edtr;
+        }
+
         /**
          * Method to verify if the graphical specification is valid.
          * @param actionEvent The UI action.
          */
         @Override
         public final void actionPerformed(final ActionEvent actionEvent) {
-            final BasicGraphEditor editor = getEditor(actionEvent);
+            if (editor == null) {
+                editor = getEditor(actionEvent);
+            }
             try {
                 final String xml = editor.getDataModel().getGraphXML();
                 if (PatternValidation.validatePattern(xml)) {
@@ -580,7 +597,10 @@ public final class EditorActions {
             editor.getCodePanel().getXMLPanel().displayXMLSpecification();
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.CODEPANEL);
-            
+
+            final CardLayout sideLayout = (CardLayout) editor.getAttributePanel().getLayout();
+            sideLayout.show(editor.getAttributePanel(), "empty");
+
             for(Component comp: editor.getAttributePanel().getComponents()){
                 if (comp.isVisible() && comp instanceof ExecutionPanel){
                     editor.updateTableView(null);
@@ -623,9 +643,12 @@ public final class EditorActions {
             }
             final CardLayout cardLayout = (CardLayout) editor.getMainArea().getLayout();
             cardLayout.show(editor.getMainArea(), MainDisplayPanel.GRAPHPANEL);
-            
+
+            final CardLayout sideLayout = (CardLayout) editor.getAttributePanel().getLayout();
+            sideLayout.show(editor.getAttributePanel(), "empty");
+
             for(Component comp: editor.getAttributePanel().getComponents()){
-                if (comp.isVisible() && comp instanceof ExecutionPanel){
+                if (comp.isVisible() &&  comp instanceof ExecutionPanel){
                     editor.updateTableView(null);
                     editor.getBehaviourGraph().getGraph().clearSelection();
                     break;
@@ -633,7 +656,7 @@ public final class EditorActions {
             }
         }
     }
-    
+
     /**
      * Switch to the current Test view in the user interface.
      */
@@ -670,10 +693,10 @@ public final class EditorActions {
             }
             final CardLayout cardLayout = (CardLayout) editorReference.getMainArea().getLayout();
             cardLayout.show(editorReference.getMainArea(), MainDisplayPanel.REPORTPANEL);
-            
+
             editor.updateTableView(AttributePanel.EXECUTION);
         }
-        
+
     }
 
     /**

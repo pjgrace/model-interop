@@ -35,16 +35,16 @@
 				<to>A3</to>
 				<guards>
 					<equal>
-						<param>COAP.from</param>
+						<param>coap.from</param>
 						<value>component.f_coap_comp.address</value>
 					</equal>
 					<equal>
-						<param>COAP.Code</param>
+						<param>coap.code</param>
 						<value>69</value>
 					</equal>
 					<lessthan>
 						<param>response-time</param>
-						<value>100</value>
+						<value>1000</value>
 					</lessthan>
 				</guards>
 			</transition>

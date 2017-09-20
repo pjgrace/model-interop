@@ -796,6 +796,8 @@ public class StateNode implements State {
                         return false;
                     }
                     final Object compareVal = value.getValue();
+                   System.out.println(compareVal);
+                   System.out.println(chGuard.getGuardCompare());
                     try {
                         if (!chGuard.evaluate(compareVal)) {
                             reportGuardFailure(chGuard, value, report);

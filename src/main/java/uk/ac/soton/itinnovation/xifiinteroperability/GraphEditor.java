@@ -325,8 +325,8 @@ public class GraphEditor extends BasicGraphEditor {
                     editor.getXmlUndoManager().add(getDataModel().getState());
                     updateTableView(connData.getId());
                     String type = (getDataModel().getTransition(connData.getId()) instanceof Guard) ? "guard" : "message";
-                    final CardLayout cardLayout = (CardLayout) getAttributePanel().getLayout();
-                    cardLayout.show(getAttributePanel(), type);
+                    final CardLayout cardLayout = (CardLayout) getFormPanel().getLayout();
+                    cardLayout.show(getFormPanel(), type);
 
                 };
             }
@@ -366,7 +366,7 @@ public class GraphEditor extends BasicGraphEditor {
                         updateTableView(null);
                         return;
                     }
-     
+
                     for (Object cell : ((mxGraphSelectionModel) sender).getCells()) {
                         // Get the user interface ID of the selection
                         final String ident = GUIdentifier.getGUIdentifier(((mxCell) cell).getId(), graphComponent);
@@ -384,12 +384,12 @@ public class GraphEditor extends BasicGraphEditor {
                             else {
                                 editor.getSystemGraph().getGraph().clearSelection();
                             }
-                            final CardLayout cardLayout = (CardLayout) getAttributePanel().getLayout();
+                            final CardLayout cardLayout = (CardLayout) getFormPanel().getLayout();
                             String type = grpghM.getType();
                             if (type.contains(XMLStateMachine.START_LABEL)) {
                                 type = XMLStateMachine.START_LABEL;
                             }
-                            cardLayout.show(getAttributePanel(), type);
+                            cardLayout.show(getFormPanel(), type);
                         }
                     }
                 }
