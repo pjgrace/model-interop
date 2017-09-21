@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -41,10 +42,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
  * The menu that pops up when right click on a field in the UI form. Generally
  * applies cut/copy/paste actions to the menu.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class ChangeTable extends JPopupMenu {
 

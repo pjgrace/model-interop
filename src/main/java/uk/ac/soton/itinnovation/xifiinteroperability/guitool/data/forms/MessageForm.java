@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -72,10 +73,8 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
  * The message form for inputing data to a trigger out transition. This allows
  * the: Header, message body and URL to be created.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
  *
- * @author Paul Grace
+ * @author pjg
  */
 public class MessageForm extends JPanel {
 

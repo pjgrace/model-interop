@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Created by Stanislav Lapitsky
- *
+ * Created by Stanislav Lapitsky 
+ * 
  * Reference to original source code http://java-sl.com/xml_editor_kit.html
  ******************************************************************************/
 
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ

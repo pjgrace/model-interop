@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -49,6 +50,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleConstants;
+import org.xml.sax.SAXParseException;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.ADDTAG_ATTRIBUTES;
 import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.XMLDocument.PLAIN_ATTRIBUTES;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCustomizer;
@@ -61,26 +63,23 @@ import static uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEdit
  * of the graph views is displayed. It is a simple scrolling text panel displayed
  * in the main area to the right side of the tool.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 
 public class XMLSpecificationPanel extends JPanel {
-
+    
     public final static Color REPLACE_ATTRS_HIGHLIGHT = new Color(241, 218, 218);
-
+    
     public final static Color DELETE_ATTRS_HIGHLIGHT = new Color(255, 204, 220);
-
+    
     public final static Color APPEND_ATTRS_HIGHLIGHT = new Color(204, 204, 255);
-
+    
     /**
      * Reference to the tool's underlying data model, so we can generate and
      * display the specification.
      */
     private final transient DataModel dataModel;
-
+    
     /**
      * a getter for the reference to the data model
      * @return the dataModel reference
@@ -88,7 +87,7 @@ public class XMLSpecificationPanel extends JPanel {
     public final DataModel getDataModel(){
         return dataModel;
     }
-
+    
     /**
      * The core element of the panel - the text area to display the xml.
      */
@@ -114,7 +113,7 @@ public class XMLSpecificationPanel extends JPanel {
         xmlSpecification.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
         xmlSpecification.setEditorKit(new XMLEditorKit(this, false));
-
+        
 
         // Create the scrolling text area with the content.
         final JScrollPane areaScrollPane = new JScrollPane(xmlSpecification);
@@ -124,11 +123,11 @@ public class XMLSpecificationPanel extends JPanel {
 
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
-
+        
          // a button to toggle editing mode
         JButton toggleEditingButton = new JButton("Enable pattern editing");
         ButtonCustomizer.customizeButton(toggleEditingButton);
-
+        
         JButton submitChangesButton = new JButton("Update changes");
         submitChangesButton.setVisible(false);
         ButtonCustomizer.customizeButton(submitChangesButton);
@@ -137,9 +136,9 @@ public class XMLSpecificationPanel extends JPanel {
                 String xml;
                 try {
                     xml = xmlSpecification.getDocument().getText(0, xmlSpecification.getDocument().getLength()).replaceAll("\n", "");
-                }
+                } 
                 catch (BadLocationException ex) {
-                    JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern",
+                    JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
                             "Error", JOptionPane.ERROR_MESSAGE, null);
                     return;
                 }
@@ -156,12 +155,12 @@ public class XMLSpecificationPanel extends JPanel {
                         graphGenerator.createGraph(GraphGenerator.loadXMLFromString(xml));
                         final mxHierarchicalLayout layout = new mxHierarchicalLayout(editor.getBehaviourGraph().getGraph());
                         layout.execute(editor.getBehaviourGraph().getGraph().getDefaultParent());
-
-                        JOptionPane.showMessageDialog(this,
-                                "Successfully validated and updated the edited XML pattern.",
+                        
+                        JOptionPane.showMessageDialog(this, 
+                                "Successfully validated and updated the edited XML pattern.", 
                                 "Success", JOptionPane.PLAIN_MESSAGE);
                     } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern",
+                        JOptionPane.showMessageDialog(this, "Error while processing the edited version of the xml pattern", 
                             "Error", JOptionPane.ERROR_MESSAGE, null);
                         try {
                             clearPattern(editor);
@@ -172,23 +171,23 @@ public class XMLSpecificationPanel extends JPanel {
                             // since the old XML pattern is being generated we shouldn't
                             // be entering this catch block
                         }
-                    }
+                    }              
                 }
                 ((XMLEditorKit)xmlSpecification.getEditorKit()).resetSaved();
                 ((XMLEditorKit)xmlSpecification.getEditorKit()).resetFirstState();
             }
-            toggleEditingButton.doClick();
+            toggleEditingButton.doClick();  
         });
-
+        
         toggleEditingButton.addActionListener((ActionEvent ae) -> {
             XMLEditorKit editorKit = ((XMLEditorKit)xmlSpecification.getEditorKit());
             if (editorKit.editingAllowed()){
                 if (editorKit.isChanged() && !editorKit.changesSaved()){
-                    if (JOptionPane.showConfirmDialog(this,
+                    if (JOptionPane.showConfirmDialog(this, 
                             "Your changes are not validated and will not be updated in the pattern unless "
                                     + "you click the validation button on the top before disabling editing. "
-                                    + "Do you still want to continue ? ",
-                            "Changes not updated", JOptionPane.YES_NO_OPTION,
+                                    + "Do you still want to continue ? ", 
+                            "Changes not updated", JOptionPane.YES_NO_OPTION, 
                             JOptionPane.WARNING_MESSAGE, null) == JOptionPane.NO_OPTION){
                         return;
                     }
@@ -214,7 +213,7 @@ public class XMLSpecificationPanel extends JPanel {
                 displayXMLSpecification();
             }
         });
-
+        
         buttonsPanel.add(toggleEditingButton);
         buttonsPanel.add(Box.createRigidArea(new Dimension(10,0)));
         buttonsPanel.add(submitChangesButton);
@@ -225,7 +224,7 @@ public class XMLSpecificationPanel extends JPanel {
         buttonsPanel.add(legendLabel);
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
         Dimension dim = new Dimension(20,10);
-
+        
         JPanel purpleRect = new JPanel();
         purpleRect.setMinimumSize(dim);
         purpleRect.setMaximumSize(dim);
@@ -236,9 +235,9 @@ public class XMLSpecificationPanel extends JPanel {
         purpleRectLabel.setFont(new Font("serif", Font.PLAIN, purpleRectLabel.getFont().getSize() + 1));
         purpleRectLabel.setForeground(new Color(0, 0, 102));
         buttonsPanel.add(purpleRectLabel);
-
+        
         buttonsPanel.add(Box.createRigidArea(new Dimension(6, 0)));
-
+        
         JPanel orangeRect = new JPanel();
         orangeRect.setMinimumSize(dim);
         orangeRect.setPreferredSize(dim);
@@ -249,9 +248,9 @@ public class XMLSpecificationPanel extends JPanel {
         orangeRectLabel.setFont(new Font("serif", Font.PLAIN, orangeRectLabel.getFont().getSize() + 1));
         orangeRectLabel.setForeground(new Color(0, 0, 102));
         buttonsPanel.add(orangeRectLabel);
-
+        
         buttonsPanel.add(Box.createRigidArea(new Dimension(6, 0)));
-
+        
         JPanel redRect = new JPanel();
         redRect.setMinimumSize(dim);
         redRect.setPreferredSize(dim);
@@ -263,7 +262,7 @@ public class XMLSpecificationPanel extends JPanel {
         redRectLabel.setForeground(new Color(0, 0, 102));
         buttonsPanel.add(redRectLabel);
         buttonsPanel.add(Box.createRigidArea(new Dimension(25, 0)));
-
+        
         add(areaScrollPane, BorderLayout.CENTER);
         add(buttonsPanel, BorderLayout.NORTH);
     }
@@ -283,7 +282,7 @@ public class XMLSpecificationPanel extends JPanel {
             catch (IllegalArgumentException ex){}
         }
     }
-
+    
     private void clearPattern(BasicGraphEditor editor){
         final mxGraph graph = editor.getBehaviourGraph().getGraph();
         final mxCell root = new mxCell();
@@ -294,7 +293,7 @@ public class XMLSpecificationPanel extends JPanel {
         final mxCell root2 = new mxCell();
         root2.insert(new mxCell());
         agraph.getModel().setRoot(root2);
-
+        
         editor.getDataModel().clearData();
         editor.updateTableView(null);
     }

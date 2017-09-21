@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -31,11 +32,7 @@ import java.io.Serializable;
 /**
  * Each element of the data model is an implementation of the abstract class
  * AbstractGraphElement which represents an element of the drawn graph.
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public abstract class AbstractGraphElement implements Serializable{
 
@@ -66,7 +63,7 @@ public abstract class AbstractGraphElement implements Serializable{
         this.type = newType;
         this.label = newType + ident;
     }
-
+    
     /**
      * Create a new Graph element data node. This constructor takes the label as
      * argument.

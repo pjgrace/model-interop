@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -31,13 +31,10 @@ import javax.swing.text.LabelView;
 
 /**
  * A view to represent plain text
- * 
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * @author ns17
  */
 public class PlainTextView extends LabelView {
-
+    
     /**
      * Constructor for PlainTextView
      * No overriding of methods or addition of new ones,
@@ -48,5 +45,5 @@ public class PlainTextView extends LabelView {
     public PlainTextView(Element elem){
         super(elem);
     }
-
+    
 }

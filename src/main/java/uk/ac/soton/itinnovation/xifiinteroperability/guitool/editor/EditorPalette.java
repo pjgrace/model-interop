@@ -61,10 +61,7 @@ import com.mxgraph.util.mxRectangle;
  * circles are added, so that they can be dragged and dropped onto the
  * graph editing area.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class EditorPalette extends JPanel {
 

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -54,10 +55,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
  *
  * No pattern should be executed that does not validate.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public final class PatternValidation {
 
@@ -113,7 +111,7 @@ public final class PatternValidation {
 
             // validate the DOM tree
             validator.validate(new DOMSource(document));
-
+            
             NodeList stateTypes = document.getElementsByTagName("type");
             boolean hasStart = false;
             for(int i=0; i<stateTypes.getLength(); i++){

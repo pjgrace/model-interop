@@ -17,6 +17,7 @@
 // the software.
 //
 //	Created By :			Paul Grace
+//	Created for Project :		XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -39,10 +40,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.UnexpectedEv
  * Set of tests for ensuring that the code for managing state behaviour in
  * the state machine remains correct.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class RESTMessageTest {
 

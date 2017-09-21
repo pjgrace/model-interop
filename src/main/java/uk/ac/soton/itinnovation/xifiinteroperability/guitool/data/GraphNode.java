@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -35,10 +36,7 @@ import java.util.List;
  * trigger start. Label information and the set of conncections to other nodes
  * in the state machine.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class GraphNode extends AbstractGraphElement implements Serializable {
 
@@ -76,7 +74,7 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
     public final List<ConstantData> getConstantData() {
         return data;
     }
-
+    
     /**
      * Set the list of constant data elements attached to the node,
      * Used by the copy paste manager to totally override the existing list of constant data elements
@@ -86,7 +84,7 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
     public final void setConstantData(List<ConstantData> data) {
         this.data = data;
     }
-
+    
     /**
      * Create a new graph node element.
      * @param idty The UI identity of the node
@@ -117,9 +115,9 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
     public final void addConstantData(final String consName, final String consValue) {
         data.add(new ConstantData(consName, consValue));
     }
-
+    
     /**
-     * Remove constant data for this node.
+     * Remove constant data for this node. 
      * @param consName The constant name
      */
     public final void removeConstantData(final String consName) {
@@ -130,7 +128,7 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
                 break;
             }
         }
-
+        
         if (toRemove != null){
             data.remove(toRemove);
         }
@@ -174,7 +172,7 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
         }
         this.transitions.remove(toDelete);
     }
-
+    
     /**
      * a method to delete a transition bu giving its target label as argument
      * @param toLabel the target label
@@ -251,7 +249,7 @@ public class GraphNode extends AbstractGraphElement implements Serializable {
         }
         return sBuilder.toString();
     }
-
+    
     /**
      * Overriding the toString method to return the label of the node
      * @return the label of the state

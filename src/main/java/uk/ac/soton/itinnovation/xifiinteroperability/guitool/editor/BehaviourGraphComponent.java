@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -42,11 +43,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specificatio
 
 /**
  * The UI element holding the behaviour graph (state machine).
- * 
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class BehaviourGraphComponent extends mxGraphComponent {
 
@@ -56,7 +53,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
     private transient DataModel dataModel;
 
     private transient BasicGraphEditor editor;
-
+    
     /**
      * Constant: file location of the GUI style - in resources location.
      */
@@ -97,7 +94,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
     public final void setDataModel(final DataModel data) {
         this.dataModel = data;
     }
-
+    
     public final void setEditor(final BasicGraphEditor editor){
         this.editor = editor;
     }
@@ -116,7 +113,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
     @Override
     public final Object[] importCells(final Object[] cells, final double dxPos,
             final double dyPos, final Object origTarget, final Point location) {
-
+        
         Object target = origTarget;
 
         if (origTarget == null && cells.length == 1) {
@@ -128,7 +125,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
                     JOptionPane.ERROR_MESSAGE);
                 return null;
             }
-
+            
             if (type.equals(XMLStateMachine.START_LABEL) || type.equals(XMLStateMachine.TRIGGERSTART_LABEL)){
                 if (dataModel.containsStart()){
                     JOptionPane.showMessageDialog(this.getParent(),
@@ -138,7 +135,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
                     return null;
                 }
             }
-
+            
             if (location != null) {
                 target = getCellAt(location.x, location.y);
 
@@ -166,7 +163,7 @@ public class BehaviourGraphComponent extends mxGraphComponent {
             // in case of copy-pasting take the type from the CopyPasteManager
             type = editor.getCopyPasteManager().getLastType();
         }
-
+        
         if (dataModel.graphIdentExist(label)){
             // generating a unique ID
             int i = 1;
@@ -175,27 +172,27 @@ public class BehaviourGraphComponent extends mxGraphComponent {
                 i += 1;
                 testLabel = "state" + i;
             }
-            label = (String) JOptionPane.showInputDialog(this.getParent(),
-                        "Please choose a label for this state",
-                        "State Label",
-                        JOptionPane.PLAIN_MESSAGE,
+            label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please choose a label for this state", 
+                        "State Label", 
+                        JOptionPane.PLAIN_MESSAGE, 
                         null, null, testLabel);
             if (label != null){
                 label = label.replaceAll("\\s+", "_");
             }
-
+            
             while (label != null && dataModel.graphIdentExist(label)){
-                label = (String) JOptionPane.showInputDialog(this.getParent(),
-                        "Please chooose a different label for this state",
-                        "State Label",
-                        JOptionPane.ERROR_MESSAGE,
+                label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please chooose a different label for this state", 
+                        "State Label", 
+                        JOptionPane.ERROR_MESSAGE, 
                         null, null, testLabel);
                 if (label != null){
                     label = label.replaceAll("\\s+", "_");
                 }
-            }
+            } 
         }
-
+        
         if (label != null){
             newNode.setValue(label);
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);

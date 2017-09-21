@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -46,26 +47,23 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
 /**
  * Panel of the UI for displaying previous test reports.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author ns17
  */
 
 public class PreviousReportsPanel extends JPanel {
-
+    
     /**
      * The tabbed pane to hold all the tabs with the previous reports.
      * Used only if the TestingOutputPanel is used to present previous reports
      */
     private final transient JTabbedPane tabbedPane = new JTabbedPane();
-
+    
     /**
      * A hash map to store all previous reports, linked to a name of the report.
      * Used only if the TestingOutputPanel is used to present previous reports
      */
     private final transient Map<String, String> previousReports = new HashMap<>();
-
+    
     /**
      * A getter method for the previous reports map
      * @return a reference to the previousReports map
@@ -73,12 +71,12 @@ public class PreviousReportsPanel extends JPanel {
     public final Map<String, String> getPreviousReports(){
         return previousReports;
     }
-
+    
     /**
      * An editor used for saving test reports
      */
     public final BasicGraphEditor editor;
-
+    
     /**
      * A getter method for the editor
      * @return the editor reference
@@ -86,12 +84,12 @@ public class PreviousReportsPanel extends JPanel {
     public BasicGraphEditor getEditor(){
         return editor;
     }
-
+    
     /**
      * A JLabel used for heading of the panel
      */
     private transient JLabel title;
-
+    
     /**
      * Create the panel for previous reports
      * @param editor the editor used for saving test reports
@@ -103,7 +101,7 @@ public class PreviousReportsPanel extends JPanel {
         add(title, BorderLayout.NORTH);
         add(tabbedPane, BorderLayout.CENTER);
     }
-
+    
     /**
      * add a new report tab to the tabbed pane
      * @param report the report that the tab will show
@@ -112,7 +110,7 @@ public class PreviousReportsPanel extends JPanel {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String name = "report - " + sdf.format(cal.getTime());
-
+        
         previousReports.put(name, report);
         JTextArea consoleOutput = new JTextArea();
         consoleOutput.setBorder(new CompoundBorder(new LineBorder(Color.BLUE),
@@ -131,7 +129,7 @@ public class PreviousReportsPanel extends JPanel {
         setPanelTitle();
         tabbedPane.setSelectedIndex(tabbedPane.getTabCount()-1);
     }
-
+    
     /**
      * Set the tabbed pane to show the text of the first tab
      */
@@ -141,7 +139,7 @@ public class PreviousReportsPanel extends JPanel {
         }
         setPanelTitle();
     }
-
+    
     /**
      * Set the title text
      */
@@ -162,7 +160,7 @@ public class PreviousReportsPanel extends JPanel {
         }
         title.setText(titleLabel);
     }
-
+    
     /**
      * clear the tabbed pane
      */

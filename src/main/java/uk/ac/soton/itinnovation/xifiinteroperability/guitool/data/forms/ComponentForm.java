@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -69,10 +70,9 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
  *
  * Attach name value pairs for constant values used in the graph.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
+ * todo: add rules for one ID, one address only
  *
- * @author Paul Grace
+ * @author pjg
  */
 
 public class ComponentForm extends JPanel {
@@ -82,12 +82,12 @@ public class ComponentForm extends JPanel {
      * the url should contain a port number and specify the protocol (http(s) or coap)
      */
     public final transient static String REGEX = "^(http|https|coap):\\/\\/[^:]+:[0-9]{1,5}(\\/.*)?$";
-
+    
     /**
      * the regular expression for catching the port number only from the interface url
      */
     public final transient static String PORT_REGEX = ":[0-9]{1,5}";
-
+    
     /**
      * The panel displaying the entered URLs of this component.
      */
@@ -266,7 +266,7 @@ public class ComponentForm extends JPanel {
                 try {
                     Integer port = Integer.parseInt(portStr);
                     if (port > 65536){
-                        JOptionPane.showMessageDialog(newIntfPane,
+                        JOptionPane.showMessageDialog(newIntfPane, 
                                 "The port number in the url must be between 0 and 65536.",
                                 "Port number exceeding limit", JOptionPane.WARNING_MESSAGE);
                         return;
@@ -279,7 +279,7 @@ public class ComponentForm extends JPanel {
                     return;
                 }
             }
-
+            
             for(InterfaceData data: mirrorNode.getData()){
                 if (data.getRestID().equalsIgnoreCase(urlID.getText())){
                     JOptionPane.showMessageDialog(newIntfPane,
@@ -288,7 +288,7 @@ public class ComponentForm extends JPanel {
                     return;
                 }
             }
-
+            
             mirrorNode.addInterfaceData(urlID.getText(), url.getText(), getProtocol(editor));
             componentView.clearData();
             componentView.setData(mirrorNode);

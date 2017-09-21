@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// Â© University of Southampton IT Innovation Centre, 2017
+// Â© University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -35,11 +36,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Parameter
  * Capture the data held in each rest event. Note we use a builder pattern
  * rather than a single constructor. Information is extracted from
  * multiple sources, and the event is built up over time.
- * 
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class RESTEvent extends MsgEvent implements  Serializable {
 

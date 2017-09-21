@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -39,11 +40,7 @@ import javax.swing.SwingUtilities;
  * In the main GUI pane Test can be run to evaluate interoperability. The
  * results of these tests are dynamically displayed in this TextArea. It works using
  * received input from the underlying interoperability framework.
- * 
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class TestingOutputStream extends OutputStream {
 

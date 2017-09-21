@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 //	Created By :			Paul Grace
+//	Created for Project :		XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -33,10 +34,7 @@ import org.junit.Test;
  * Set of tests for ensuring that the properties file contains sufficient
  * entries for configuring the tools.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class PropertiesTest {
 
@@ -58,6 +56,6 @@ public class PropertiesTest {
         } catch (ConfigurationException ex) {
             Assert.fail("Error reading virtualised property");
         }
-
+        
     }
 }
