@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -29,16 +28,18 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
 /**
  * a Manager class to handle the certification services
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class CertificationManager {
-    
+
     /**
      * holds the URL of the last loaded test
      */
     private String lastURL;
-    
+
     /**
      * getter for the URL of the last loaded test
      * @return the lastURL attribute of the manager
@@ -46,12 +47,12 @@ public class CertificationManager {
     public String getLastURL(){
         return lastURL;
     }
-    
+
     /**
      * holds the name of the last loaded test
      */
     private String testName;
-    
+
     /**
      * a getter for the name of the last loaded test
      * @return the name of the last loaded test
@@ -59,7 +60,7 @@ public class CertificationManager {
     public String getTestName(){
         return testName;
     }
-    
+
     /**
      * setter for the info of the last loaded test,
      * this method is to be used only when someone opens a model from the Certification menu
@@ -70,7 +71,7 @@ public class CertificationManager {
         this.lastURL = url;
         this.testName = name;
     }
-    
+
     /**
      * this method is to be used when a new model is loaded or created from somewhere
      * different than the Certification menu, the last URL is set to null
@@ -79,12 +80,12 @@ public class CertificationManager {
         this.lastURL = null;
         this.executed = false;
     }
-    
+
     /**
      * boolean to represent if the test has been executed after it was loaded
      */
     private boolean executed;
-    
+
     /**
      * a getter for the executed attribute of the certification manager
      * @return true if the test was executed after it has been loaded and false otherwise
@@ -92,7 +93,7 @@ public class CertificationManager {
     public boolean getExecuted(){
         return executed;
     }
-    
+
     /**
      * a setter method for the executed attribute of the certification manager
      * @param executed True if the test was executed after it has been loaded and false otherwise
@@ -102,12 +103,12 @@ public class CertificationManager {
         this.executedXMLmodel = executedXMLmodel;
         this.executed = executed;
     }
-    
+
     /**
      * the xml model that was last executed
      */
     private String executedXMLmodel;
-    
+
     /**
      * a getter for the last executed model
      * @return the xml of the last executed test
@@ -115,12 +116,12 @@ public class CertificationManager {
     public String getExecutedModel(){
         return executedXMLmodel;
     }
-    
+
     /**
      * a constructor for the certification manager
      */
     public CertificationManager(){
         // empty constructor, nothing to initialise
     }
-    
+
 }

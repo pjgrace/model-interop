@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Created by Stanislav Lapitsky 
- * 
+ * Created by Stanislav Lapitsky
+ *
  * Reference to original source code http://java-sl.com/xml_editor_kit.html
  ******************************************************************************/
 
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -84,7 +84,7 @@ public class XMLReader {
             DefaultStyledDocument.ElementSpec[] data = new DefaultStyledDocument.ElementSpec[specs.size()];
             specs.toArray(data);
             doc.insert(pos, data);
-            
+
         } catch(SAXException pce) {
             JOptionPane.showMessageDialog(null, "Something went wrong while processing your xml data.", "Error", JOptionPane.ERROR_MESSAGE);
         } catch(ParserConfigurationException | IOException pce) {
@@ -134,45 +134,45 @@ public class XMLReader {
             String xml_tag = "xml";
             String xml_version_attr = "version";
             String xml_version_value = dd.getXmlVersion();
-            
+
             // start tag name
-            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     "?".toCharArray(), 0, 1);
             specs.add(spec);
-            
-            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.TAGNAME_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+
+            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.TAGNAME_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     xml_tag.toCharArray(), 0, xml_tag.length());
             specs.add(spec);
-            
-            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+
+            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     " ".toCharArray(), 0, 1);
             specs.add(spec);
-            
-            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.ATTRIBUTENAME_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.ATTRIBUTENAME_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     xml_version_attr.toCharArray(), 0, xml_version_attr.length());
             specs.add(spec);
-            
-            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     "=\"".toCharArray(), 0, 2);
             specs.add(spec);
-           
-            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.ATTRIBUTEVALUE_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.ATTRIBUTEVALUE_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     xml_version_value.toCharArray(), 0, xml_version_value.length());
             specs.add(spec);
-            
-            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     "\"".toCharArray(), 0, 1);
             specs.add(spec);
-            
-            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+
+            spec = new DefaultStyledDocument.ElementSpec(XMLDocument.BRACKET_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     "?".toCharArray(), 0, 1);
             specs.add(spec);
         }
@@ -183,8 +183,8 @@ public class XMLReader {
                         DefaultStyledDocument.ElementSpec.ContentType,
                         node.getNodeName().toCharArray(), 0, node.getNodeName().length());
             }
-            else if (node.getNodeName().equals("patterndata") || node.getNodeName().equals("architecture") 
-                    || node.getNodeName().equals("behaviour") || node.getNodeName().equals("label") 
+            else if (node.getNodeName().equals("patterndata") || node.getNodeName().equals("architecture")
+                    || node.getNodeName().equals("behaviour") || node.getNodeName().equals("label")
                     || node.getNodeName().equals("address")){
                  spec = new DefaultStyledDocument.ElementSpec(XMLDocument.ADDTAG_ATTRIBUTES,
                         DefaultStyledDocument.ElementSpec.ContentType,
@@ -250,7 +250,7 @@ public class XMLReader {
 
                         spec=new DefaultStyledDocument.ElementSpec(tagRowEndAttrs, DefaultStyledDocument.ElementSpec.EndTagType);
                         specs.add(spec);
-                
+
                     }
                 }
             }

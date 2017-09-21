@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -31,7 +30,10 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelcomponent;
  * Exception when there is an error during the deployment of a wrapper; or
  * when there is an exception during the event-capture redirect.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public class WrapperDeploymentException extends Exception {
 

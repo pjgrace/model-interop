@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -33,7 +32,10 @@ import java.io.Serializable;
  * Enumeration of function types for guards: to extend add a new function
  * to the list; the UI will be updated automatically to handle inputs.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ * 
+ * @author Paul Grace
  */
 public final class Function implements Serializable {
 
@@ -73,12 +75,12 @@ public final class Function implements Serializable {
          * < function, a > b
          */
         GreaterThan ("greaterthan"),
-        
+
         /**
          * The counter function - Index = NumIterations
          */
         Counter ("counter"),
-        
+
         /**
          * The regex function - matching values with regular expressions
          */

@@ -40,7 +40,10 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.PopU
  * menu options corresponding to editor actions as found in the EditorActions
  * class.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public class EditorPopupMenu extends JPopupMenu {
 

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -45,13 +44,15 @@ import javax.swing.JOptionPane;
 
 /**
  * a utility class used to generate the PDF certificates
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class PDFGenerator {
-    
+
     public static String verificationKeyLabel = "========  VERIFICATION KEY  ========";
-    
+
     /**
      * a static method, which generates the PDF certificates
      * @param file the file object of the PDF
@@ -69,25 +70,25 @@ public class PDFGenerator {
                     "Certificate generation error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         try {
             Document document = new Document();
             PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(file));
             writer.setPageEmpty(false);
-            
+
             PDFGenerator.generateDocument(document, testTrace, authID, Image.getInstance(editor.getClass().getResource("/images/fiesta.png").getFile()), date, testName, username);
 
             JOptionPane.showMessageDialog(editor,
                     "Successfully saved your certificate in " + file.getPath() + ".",
                     "Saving certificate", JOptionPane.INFORMATION_MESSAGE);
-        } 
+        }
         catch (DocumentException | IOException ex) {
             JOptionPane.showMessageDialog(editor,
                     "Something went wrong while generating your certificate. Make sure the file is not opened by another program.",
                     "Certificate generation error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * this method is used to generate the elements of the pdf document
      * @param document the pdf document object
@@ -100,28 +101,28 @@ public class PDFGenerator {
      */
     private static void generateDocument(Document document, String testTrace, String authID, Image logo, String date, String testName, String username) throws DocumentException{
         document.open();
-        
+
         // generate a heading
         Font font = FontFactory.getFont(FontFactory.COURIER, 19, new BaseColor(7, 34, 76));
         Paragraph heading = new Paragraph("Fiesta Certificate", font);
         heading.setAlignment(Element.ALIGN_CENTER);
         document.add(heading);
         document.add(new Paragraph(" ")); // add an empty line under the heading
-        
+
         // add the name of the test
         font = FontFactory.getFont(FontFactory.COURIER, 17, new BaseColor(7, 34, 76));
         heading = new Paragraph("Generated for test: " + testName, font);
         heading.setAlignment(Element.ALIGN_CENTER);
         document.add(heading);
         document.add(new Paragraph(" "));
-        
+
         // add user's username
         font = FontFactory.getFont(FontFactory.COURIER, 15, new BaseColor(7, 34, 76));
         heading = new Paragraph("Certificate owned by: " + username, font);
         heading.setAlignment(Element.ALIGN_CENTER);
         document.add(heading);
         document.add(new Paragraph(" "));
-        
+
         // generate the test trace in the pdf
         font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, BaseColor.BLACK);
         Paragraph reportParagraph = new Paragraph(testTrace, font);
@@ -133,9 +134,9 @@ public class PDFGenerator {
         logo.setAlignment(Element.ALIGN_CENTER);
         logo.scalePercent(40f, 40f);
         document.add(logo);
-        
+
         document.add(new Paragraph(" "));  // add an empty line under the logo
-        
+
         // generate a timestamp
         font = FontFactory.getFont(FontFactory.TIMES_BOLDITALIC, 14, new BaseColor(13, 46, 99));
         Chunk horizontalGlue = new Chunk(new VerticalPositionMark());
@@ -144,9 +145,9 @@ public class PDFGenerator {
         timestamp.add("Fiesta IoT");
         document.add(timestamp);
         document.add(new Paragraph(" "));  // add an empty line under the test trace
-        
+
         document.newPage();
-        
+
         Paragraph signature = new Paragraph(verificationKeyLabel);
         signature.setAlignment(Element.ALIGN_CENTER);
         document.add(signature);
@@ -156,7 +157,7 @@ public class PDFGenerator {
         signature = new Paragraph(verificationKeyLabel);
         signature.setAlignment(Element.ALIGN_CENTER);
         document.add(signature);
-        
+
         document.close();
     }
 }

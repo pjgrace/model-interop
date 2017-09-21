@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -28,25 +27,26 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor;
 
 import java.util.ArrayList;
 import java.util.List;
-import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ArchitectureNode;
 
 /**
  * Undo manager for the data model state, used to keep track with the graph undo manager
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class XMLUndoManager {
-    
+
     /**
      * a list to keep track of all undoable data model states
      */
     private List<DataModelState> undoXMLs;
-    
+
     /**
      * a list to keep track of all redoable data model states
      */
     private List<DataModelState> redoXMLs;
-    
+
     /**
      * constructor initialises the lists
      */
@@ -54,7 +54,7 @@ public class XMLUndoManager {
         undoXMLs = new ArrayList<>();
         redoXMLs = new ArrayList<>();
     }
-    
+
     /**
      * a method to clear this undo manager
      */
@@ -62,10 +62,10 @@ public class XMLUndoManager {
         undoXMLs = new ArrayList<>();
         redoXMLs = new ArrayList<>();
     }
-    
+
     /**
      * undo method, returns null if undoXMLs is empty
-     * @return the state before the last added data model state in undoXMLs and adds 
+     * @return the state before the last added data model state in undoXMLs and adds
      * the last one in the redoXMLs by removing it from the undoXMLs
      */
     public DataModelState undo(){
@@ -76,7 +76,7 @@ public class XMLUndoManager {
         redoXMLs.add(undoXMLs.remove(undoXMLs.size()-1));
         return modelState;
     }
-    
+
     /**
      * redo method, returns null if redoXMLs is empty
      * @return last added data model state in redoXMLs and adds it to the undoXMLs
@@ -86,27 +86,27 @@ public class XMLUndoManager {
         if (redoXMLs.isEmpty()){
             return null;
         }
-        
+
         DataModelState lastUndoneXML = redoXMLs.remove(redoXMLs.size()-1);
         undoXMLs.add(lastUndoneXML);
         return lastUndoneXML;
     }
-    
+
     public boolean canUndo(){
         return this.undoXMLs.size() >= 2;
     }
-    
+
     public boolean canRedo(){
         return !this.redoXMLs.isEmpty();
     }
-    
+
     /**
      * add an data model state to the list of data model states
      * @param state the data model state
      */
     public void add(DataModelState state){
         undoXMLs.add(state);
-        
+
         redoXMLs = new ArrayList<>();
     }
 }

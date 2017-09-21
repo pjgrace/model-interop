@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -43,27 +42,29 @@ import javax.swing.Timer;
 
 /**
  * A JDialog to show the seconds left until there is a timeout
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class TimerDialog extends JDialog {
-    
-    private final JLabel timeoutLabel = new JLabel(); 
-    
+
+    private final JLabel timeoutLabel = new JLabel();
+
     public TimerDialog() {
         super();
     }
-    
+
     /**
      * the initGUI method which initialises the GUI components
-     * 
-     * @param time the timeout in milliseconds 
+     *
+     * @param time the timeout in milliseconds
      */
     public void initGUI(long time){
         this.setTitle("Timeout count");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         timeoutLabel.setText("      Time left before timeout transition takes place: " + time + "ms      ");
         timeoutLabel.setFont(new Font("Serif", Font.BOLD, timeoutLabel.getFont().getSize() + 3));
         timeoutLabel.setForeground(new Color(0, 0, 153));
@@ -74,20 +75,20 @@ public class TimerDialog extends JDialog {
         timeoutLabelPanel.add(timeoutLabel);
         timeoutLabelPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         this.add(timeoutLabelPanel, BorderLayout.CENTER);
-        
+
         this.startTimer(time);
-        
+
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
-    
+
     private void startTimer(long time){
-        
+
         JDialog reference = this;
         new Timer(500, new ActionListener() {
             int timeCount = -500;
-            
+
             @Override
             public void actionPerformed(ActionEvent ae) {
                 timeCount += 500;
@@ -99,5 +100,5 @@ public class TimerDialog extends JDialog {
                 }
             }
         }).start();
-    }   
+    }
 }

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -41,20 +41,22 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XMLEditorKit.X
 /**
  * a GeneratorXMLReader, which extends the XMLReader class so that it is compatible
  * with the XPath Generator
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class GeneratorXMLReader extends XMLReader{
     /**
      * static instance of the reader
      */
     static GeneratorXMLReader instance = new GeneratorXMLReader();
-    
+
     /**
      * private constructor, instance of the class available with the getInstance method
      */
     private GeneratorXMLReader(){}
-    
+
     /**
      * a getter for an instance of the class
      * @return the static instance of the XMLReader
@@ -62,7 +64,7 @@ public class GeneratorXMLReader extends XMLReader{
     public static XMLReader getInstance() {
         return instance;
     }
-    
+
     /**
      * Overriding the XMLReader class to include the associated XML Node in the
      * attribute set used to create each text element
@@ -71,7 +73,7 @@ public class GeneratorXMLReader extends XMLReader{
      * @param pos starting position
      * @param specs array list of ElementSpec instances used in creating the text elements
      * @return
-     * @throws BadLocationException 
+     * @throws BadLocationException
      */
     @Override
     public int writeNode(Document doc, Node node, int pos, ArrayList<DefaultStyledDocument.ElementSpec> specs)  throws BadLocationException{
@@ -115,45 +117,45 @@ public class GeneratorXMLReader extends XMLReader{
             String xml_tag = "xml";
             String xml_version_attr = "version";
             String xml_version_value = dd.getXmlVersion();
-            
+
             // start tag name
-            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     "?".toCharArray(), 0, 1);
             specs.add(spec);
-            
-            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.TAGNAME_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+
+            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.TAGNAME_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     xml_tag.toCharArray(), 0, xml_tag.length());
             specs.add(spec);
-            
-            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+
+            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     " ".toCharArray(), 0, 1);
             specs.add(spec);
-            
-            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.ATTRIBUTENAME_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.ATTRIBUTENAME_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     xml_version_attr.toCharArray(), 0, xml_version_attr.length());
             specs.add(spec);
-            
-            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     "=\"".toCharArray(), 0, 2);
             specs.add(spec);
-           
-            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.ATTRIBUTEVALUE_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.ATTRIBUTEVALUE_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     xml_version_value.toCharArray(), 0, xml_version_value.length());
             specs.add(spec);
-            
-            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES, 
+
+            spec=new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES,
                     DefaultStyledDocument.ElementSpec.ContentType,
                     "\"".toCharArray(), 0, 1);
             specs.add(spec);
-            
-            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES, 
-                    DefaultStyledDocument.ElementSpec.ContentType, 
+
+            spec = new DefaultStyledDocument.ElementSpec(GeneratorXMLDocument.BRACKET_ATTRIBUTES,
+                    DefaultStyledDocument.ElementSpec.ContentType,
                     "?".toCharArray(), 0, 1);
             specs.add(spec);
         }

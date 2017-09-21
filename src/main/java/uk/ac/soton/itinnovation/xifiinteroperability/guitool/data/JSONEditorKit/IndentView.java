@@ -31,11 +31,13 @@ import javax.swing.text.Element;
 
 /**
  * a child class of the BoxView, sets some insets for JSON indentation
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class IndentView extends BoxView {
-    
+
     /**
      * a constructor for the IndentView
      * @param elem the element associated with this view
@@ -43,12 +45,12 @@ public class IndentView extends BoxView {
      */
     public IndentView(Element elem, boolean indent){
         super(elem, BoxView.Y_AXIS);
-        
+
         int leftInset = indent ? 20 : 0;
 
         setInsets((short) 0, (short) (leftInset), (short) 0, (short) 0);
     }
-    
+
     /**
      * a getter for the alignment of the view
      * @param axis the axis for which to return the alignment

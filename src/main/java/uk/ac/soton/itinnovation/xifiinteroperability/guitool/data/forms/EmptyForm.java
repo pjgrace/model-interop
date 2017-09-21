@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -35,8 +34,10 @@ import javax.swing.JPanel;
  * Elements of the graph can have no attributes. Therefore, we need to
  * have a panel with no inputs.
  *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
  *
- * @author pjg
+ * @author Paul Grace
  */
 
 public class EmptyForm extends JPanel {

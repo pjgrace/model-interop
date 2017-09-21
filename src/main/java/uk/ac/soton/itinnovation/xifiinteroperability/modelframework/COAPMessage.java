@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : FIESTA (http://fiesta-iot.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -47,7 +46,9 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specificatio
  * message to be used for firing test messages at a REST service. Hence, it
  * will contain information for a request message (POST, GET, etc..)
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Paul Grace
  */
 public class COAPMessage extends ProtocolMessage{
 

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -37,7 +36,10 @@ import java.util.List;
  * in the state machine; and it contains checks and rules for testing
  * conditions of behaviour.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public class Guard extends AbstractGraphElement implements Serializable {
 
@@ -58,10 +60,10 @@ public class Guard extends AbstractGraphElement implements Serializable {
     public final List<GuardData> getData() {
         return data;
     }
-    
+
     /**
      * a setter method for the list of guard data elements,
-     * used by the copy paste manager to totally override the existing  list of guard data elements 
+     * used by the copy paste manager to totally override the existing  list of guard data elements
      * with the copied one
      * @param data the new list with guards data
      */
@@ -106,9 +108,9 @@ public class Guard extends AbstractGraphElement implements Serializable {
             data.remove(toRemove);
         }
     }
-    
+
     /**
-     * this method checks if the guard has a GuardData for a timeout 
+     * this method checks if the guard has a GuardData for a timeout
      * @return True if the guard is a timeout guard
      */
     public final boolean hasTimeout(){
@@ -122,7 +124,7 @@ public class Guard extends AbstractGraphElement implements Serializable {
     public final boolean hasCounter(){
         return data.stream().anyMatch((guardData) -> (guardData.getGuardData().equalsIgnoreCase("index")));
     }
-    
+
     /**
      * Update the target id of the connection.
      * @param newTarget The label id of the
