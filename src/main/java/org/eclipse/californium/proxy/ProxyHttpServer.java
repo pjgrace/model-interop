@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2015 Institute for Pervasive Computing, ETH Zurich and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
- * The Eclipse Public License is available at
+ *
+ * The Eclipse Public License is available att
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *    Matthias Kovatsch - creator and main architect
  *    Martin Lanter - architect and re-implementation
@@ -44,19 +44,19 @@ import org.eclipse.californium.proxy.resources.StatsResource;
 public class ProxyHttpServer {
 
 	private final static Logger LOGGER = Logger.getLogger(ProxyHttpServer.class.getCanonicalName());
-	
+
 	private static final String PROXY_COAP_CLIENT = "proxy/coapClient";
 	private static final String PROXY_HTTP_CLIENT = "proxy/httpClient";
 
 	private final ProxyCacheResource cacheResource = new ProxyCacheResource(true);
 	private final StatsResource statsResource = new StatsResource(cacheResource);
-	
+
 	private ProxyCoapResolver proxyCoapResolver;
 	private HttpStack httpStack;
 
 	/**
 	 * Instantiates a new proxy endpoint from the default ports.
-	 * 
+	 *
 	 * @throws SocketException
 	 *             the socket exception
 	 */
@@ -66,14 +66,14 @@ public class ProxyHttpServer {
 
 	/**
 	 * Instantiates a new proxy endpoint.
-	 * 
+	 *
 	 * @param httpPort
 	 *            the http port
 	 * @throws IOException
 	 *             the socket exception
 	 */
 	public ProxyHttpServer(int httpPort) throws IOException {
-	
+
 		this.httpStack = new HttpStack(httpPort);
 		this.httpStack.setRequestHandler(new RequestHandler() {
 			public void handleRequest(Request request) {
@@ -83,9 +83,9 @@ public class ProxyHttpServer {
 	}
 
 	public void handleRequest(final Request request) {
-		
+
 		LOGGER.info("ProxyEndpoint handles request "+request);
-		
+
 		Exchange exchange = new Exchange(request, Origin.REMOTE) {
 
 			@Override
@@ -112,11 +112,11 @@ public class ProxyHttpServer {
 			}
 		};
 		exchange.setRequest(request);
-		
+
 		Response response = null;
 		// ignore the request if it is reset or acknowledge
 		// check if the proxy-uri is defined
-		if (request.getType() != Type.RST && request.getType() != Type.ACK 
+		if (request.getType() != Type.RST && request.getType() != Type.ACK
 				&& request.getOptions().hasProxyUri()) {
 			// get the response from the cache
 			response = cacheResource.getResponse(request);
@@ -163,7 +163,7 @@ public class ProxyHttpServer {
 
 	/**
 	 * Manage proxy uri request.
-	 * 
+	 *
 	 * @param request
 	 *            the request
 	 * @throws URISyntaxException
@@ -190,7 +190,7 @@ public class ProxyHttpServer {
 
 		// set the path in the request to be forwarded correctly
 		request.getOptions().setUriPath(clientPath);
-		
+
 	}
 
 	protected void responseProduced(Request request, Response response) {
@@ -211,5 +211,5 @@ public class ProxyHttpServer {
 	public void setProxyCoapResolver(ProxyCoapResolver proxyCoapResolver) {
 		this.proxyCoapResolver = proxyCoapResolver;
 	}
-	
+
 }
