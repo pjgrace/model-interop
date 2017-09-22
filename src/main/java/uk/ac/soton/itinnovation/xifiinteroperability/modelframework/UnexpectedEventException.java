@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -30,11 +31,7 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework;
  * An event occurring during the execution of the state machine that does not
  * match the expected behaviour.
  * For example, a message not matching a guard.
- * 
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class UnexpectedEventException extends Exception {
     /**

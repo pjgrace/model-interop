@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -38,13 +38,11 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenera
 
 /**
  * a child class of the DefaultStyledDocument, sets some basic styles used for displaying the JSON file
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * 
+ * @author ns17
  */
 public class JSONDocument extends DefaultStyledDocument {
-
+    
     public final static String ROW_START_ELEMENT = "row_start_element";
     public final static String ROW_END_ELEMENT = "row_end_element";
     public final static String ROOT_ELEMENT = "start_element";
@@ -52,38 +50,38 @@ public class JSONDocument extends DefaultStyledDocument {
     public final static String INDENT_ELEMENT = "indent_element";
     public final static String JSON_KEY_NAME = "JSON_KEY_NAME";
     public final static String JSON_VALUE_NAME = "JSON_VALUE_NAME";
-
+     
     public final static SimpleAttributeSet BRACKET_ATTRIBUTES = new SimpleAttributeSet();
     public final static SimpleAttributeSet CURLY_BRACKET_ATTRIBUTES = new SimpleAttributeSet();
     public final static SimpleAttributeSet COLON_ATTRIBUTES = new SimpleAttributeSet();
     public final static SimpleAttributeSet KEYNAME_ATTRIBUTES = new SimpleAttributeSet();
     public final static SimpleAttributeSet VALUE_ATTRIBUTES = new SimpleAttributeSet();
     public final static SimpleAttributeSet STRING_VALUE_ATTRIBUTES = new SimpleAttributeSet();
-
+    
     static {
         StyleConstants.setForeground(BRACKET_ATTRIBUTES, new Color(119, 51, 255));
-
+        
         StyleConstants.setForeground(CURLY_BRACKET_ATTRIBUTES, Color.MAGENTA.brighter());
-
+        
         StyleConstants.setForeground(COLON_ATTRIBUTES, Color.darkGray.darker());
-
+        
         StyleConstants.setForeground(KEYNAME_ATTRIBUTES, Color.RED);
         StyleConstants.setBold(KEYNAME_ATTRIBUTES, true);
         KEYNAME_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, JSON_KEY_NAME);
-
+        
         StyleConstants.setForeground(VALUE_ATTRIBUTES, Color.BLUE);
         StyleConstants.setItalic(VALUE_ATTRIBUTES, true);
         VALUE_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, JSON_VALUE_NAME);
-
+        
         StyleConstants.setForeground(STRING_VALUE_ATTRIBUTES, Color.MAGENTA.darker());
         StyleConstants.setItalic(STRING_VALUE_ATTRIBUTES, true);
         STRING_VALUE_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, JSON_VALUE_NAME);
     }
-
+    
     public JSONDocument(){
         super();
     }
-
+    
     @Override
     protected void insert(int offset, ElementSpec[] data) throws BadLocationException {
         super.insert(offset, data);
@@ -102,7 +100,7 @@ public class JSONDocument extends DefaultStyledDocument {
         JSONTreeNode node = (JSONTreeNode) a.getAttribute("node");
         if (node == null) {
             return new LeafElement(parent, a, p0, p1);
-        }
+        } 
         else {
             return new GeneratorLeafElement(parent, a, p0, p1, node);
         }
@@ -114,7 +112,7 @@ public class JSONDocument extends DefaultStyledDocument {
     public class GeneratorLeafElement extends LeafElement {
 
         private final JSONTreeNode node;
-
+        
         public JSONTreeNode getNode() {
             return node;
         }
@@ -124,5 +122,5 @@ public class JSONDocument extends DefaultStyledDocument {
             this.node = node;
         }
     }
-
+    
 }

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -28,13 +28,11 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGener
 
 /**
  * an exception to be thrown in case of an invalid JSON string
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * 
+ * @author ns17
  */
 public class InvalidJSONException extends Exception {
-
+    
     /**
      * Construct an invalid JSON exception with a given string message.
      * @param exceptionMessage The error message passed to this exception.
@@ -52,5 +50,5 @@ public class InvalidJSONException extends Exception {
     public InvalidJSONException(final String exceptionMessage, final Exception excep) {
         super(exceptionMessage, excep);
     }
-
+    
 }

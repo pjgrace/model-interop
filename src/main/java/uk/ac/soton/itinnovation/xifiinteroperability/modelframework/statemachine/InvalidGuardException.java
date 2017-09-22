@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -29,14 +30,10 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachin
 /**
  * Error identifying an error when creating a new transition guard - this
  * will typically be a faulty xml specification or invalid input/content.
- * 
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class InvalidGuardException extends Exception {
-
+    
     /**
      * Construct a guard exception with a given string message.
      * @param exceptionMessage The error message.

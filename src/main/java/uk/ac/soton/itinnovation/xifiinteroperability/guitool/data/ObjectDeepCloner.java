@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -33,21 +34,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * A class used to make deep copies of objects
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * a class used to make deep copies of objects
+ * 
+ * @author ns17
  */
 public class ObjectDeepCloner {
-
+    
     /**
      * a private constructor, only static method used
      */
     private ObjectDeepCloner(){
         // empty constructor
     }
-
+    
     /**
      * method to deep copy an object
      * @param toCopy the object to copy
@@ -70,5 +69,5 @@ public class ObjectDeepCloner {
             return null;
         }
     }
-
+    
 }

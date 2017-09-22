@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -46,10 +47,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
  * is concretised using XML. The XML pattern can be used to execute the
  * automated testing tool.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class DataModel {
 
@@ -64,19 +62,19 @@ public class DataModel {
      * for completeness may include the interface to comply check
      */
     private transient List<ArchitectureNode> archElements;
-
+    
     public List<String> getRestUrls(){
         List<String> restUrls = new ArrayList<>();
-
+        
         archElements.forEach((archNode) -> {
             archNode.getData().forEach((data) -> {
                 restUrls.add("component." + archNode.getLabel() + "." + data.getRestID());
             });
         });
-
+        
         return restUrls;
     }
-
+    
     /**
      * The Graph is a set of nodes (vertices).
      * @see GraphNode
@@ -90,12 +88,12 @@ public class DataModel {
     public final List<GraphNode> getGraphElements(){
         return graphElements;
     }
-
+    
     /**
      * Index of connection IDs to the source node.
      */
     private transient Map<String, GraphNode> connectionIndex;
-
+    
     /**
      * Boolean to represent if the model has a start state.
      * Only one start state is allowed
@@ -109,7 +107,7 @@ public class DataModel {
     public boolean containsStart(){
         return this.hasStart;
     }
-
+    
     /**
      * Initialse the data model.
      */
@@ -140,7 +138,7 @@ public class DataModel {
        }
        return null;
    }
-
+   
     /**
      * a getter for the start or tigger start node in the graph if it exists
      *
@@ -264,15 +262,15 @@ public class DataModel {
                 this.graphElements.add(new GraphNode(ident, label, type));
        }
    }
-
+   
    /**
     * a method to add pre-made architecture nodes
-    * @param archNode the pre-made architecture node to add
+    * @param archNode the pre-made architecture node to add 
     */
    public final void addArchNode(ArchitectureNode archNode){
        this.archElements.add(archNode);
    }
-
+   
    /**
     * Check if a label identifier is already in use with another arch node
     * @param ident The label identifier to check
@@ -281,7 +279,7 @@ public class DataModel {
    public final boolean archIdentExist(final String ident){
        return this.archElements.stream().anyMatch((archNode) -> (archNode.getLabel().equalsIgnoreCase(ident)));
    }
-
+   
    /**
     * Check if a label is already in use with another graph node
     * @param ident The label to check
@@ -312,7 +310,7 @@ public class DataModel {
                this.hasStart = false;
            }
            this.graphElements.remove(toDelete);
-
+           
            /* deleting all transitions going TO this Node */
            List<String> transitionsToRemove = new ArrayList<>();
            /* set is used to avoid double checking the same transitions from a given node*/
@@ -343,7 +341,7 @@ public class DataModel {
            }).forEachOrdered((transitionToRemove) -> {
                this.connectionIndex.remove(transitionToRemove);
            });
-       }
+       } 
        else {
            ArchitectureNode aDelete = null;
            for (ArchitectureNode e : this.archElements) {
@@ -386,7 +384,7 @@ public class DataModel {
             this.connectionIndex.put(connID, src);
             src.addTransition(connection);
        }
-
+              
    }
 
    /**
@@ -483,7 +481,7 @@ public class DataModel {
        this.graphElements.clear();
        this.hasStart = false;
    }
-
+   
     public final void updateState(DataModelState state) {
         if (state == null) {
             return;
@@ -495,12 +493,12 @@ public class DataModel {
         state.getGraphElements().forEach((graphNode) -> {
             this.graphElements.add((GraphNode) ObjectDeepCloner.deepCopy(graphNode));
         });
-
+        
         this.archElements = new ArrayList<>();
         state.getArchitectureElements().forEach((archNode) -> {
             this.archElements.add((ArchitectureNode) ObjectDeepCloner.deepCopy(archNode));
         });
-
+        
         this.connectionIndex = new HashMap<>();
         for(String index: state.getConnectionIndex().keySet()){
             for (GraphNode testNode: this.graphElements){
@@ -515,5 +513,5 @@ public class DataModel {
    public final DataModelState getState() {
        return new DataModelState(this.graphElements, this.archElements, this.connectionIndex, this.hasStart);
    }
-
+   
 }

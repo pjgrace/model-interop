@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -45,10 +46,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specificatio
  * This is the UI element - to display and handle drag and drop of templates
  * into the graph.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public  class SystemGraphComponent extends mxGraphComponent {
 
@@ -57,7 +55,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
      * is a view onto the system graph portion of the data model.
      */
     private transient DataModel dataModel;
-
+    
     private BasicGraphEditor editor;
 
     /**
@@ -95,7 +93,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
     public final void setDataModel(final DataModel dModel) {
         this.dataModel = dModel;
     }
-
+    
     public final void setEditor(final BasicGraphEditor editor){
         this.editor = editor;
     }
@@ -122,7 +120,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
                 // in case of copy pasting take the type of the CopyPasteManager
                 type = editor.getCopyPasteManager().getLastType();
             }
-
+            
             if (!(type.equalsIgnoreCase(DataModel.CLIENT) || type.equalsIgnoreCase(XMLStateMachine.INTERFACE_LABEL))) {
                 JOptionPane.showMessageDialog(this.getParent(),
                     "Behaviour elements not allowed in architecture graph",
@@ -152,7 +150,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
         if (newNode != null) {
             label = (String) newNode.getValue();
         }
-
+        
         if (dataModel.archIdentExist(label)){
             // generating a unique ID
             int i = 1;
@@ -161,27 +159,27 @@ public  class SystemGraphComponent extends mxGraphComponent {
                 i += 1;
                 testLabel = "component" + i;
             }
-            label = (String) JOptionPane.showInputDialog(this.getParent(),
-                        "Please choose a label identifier for this component",
-                        "Component Identifier",
-                        JOptionPane.PLAIN_MESSAGE,
+            label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please choose a label identifier for this component", 
+                        "Component Identifier", 
+                        JOptionPane.PLAIN_MESSAGE, 
                         null, null, testLabel);
             if (label != null){
                 label = label.replaceAll("\\s+", "_");
             }
-
+            
             while (label != null && dataModel.archIdentExist(label)){
-                label = (String) JOptionPane.showInputDialog(this.getParent(),
-                        "Please chooose a different label identifier for this component",
-                        "Component Identifier",
-                        JOptionPane.ERROR_MESSAGE,
+                label = (String) JOptionPane.showInputDialog(this.getParent(), 
+                        "Please chooose a different label identifier for this component", 
+                        "Component Identifier", 
+                        JOptionPane.ERROR_MESSAGE, 
                         null, null, testLabel);
                 if (label != null){
                     label = label.replaceAll("\\s+", "_");
                 }
-            }
+            } 
         }
-
+        
         if (label != null){
             newNode.setValue(label);
             final Object[] newCells = super.importCells(cells, dxPos, dyPos, target, location);
@@ -195,7 +193,7 @@ public  class SystemGraphComponent extends mxGraphComponent {
             }
             return newCells;
         }
-
+        
         return null;
     }
 

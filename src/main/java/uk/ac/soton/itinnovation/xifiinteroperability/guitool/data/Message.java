@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -37,10 +38,7 @@ import java.util.List;
  * machine. This is the GUI representation of the message that is placed in the
  * form.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class Message extends AbstractGraphElement implements Serializable {
 
@@ -127,7 +125,7 @@ public class Message extends AbstractGraphElement implements Serializable {
     public final List<ConstantData> getConstantData() {
         return headers;
     }
-
+    
     /**
      * a setter method for the list of headers,
      * used by the copy paste manager to override the existing list of headers with the copied one
@@ -172,7 +170,7 @@ public class Message extends AbstractGraphElement implements Serializable {
     public final void addHeader(final String name, final String value) {
         this.headers.add(new ConstantData(name, value));
     }
-
+    
     /**
      * remove an existing http header from the data message.
      * @param name the header to remove
@@ -185,7 +183,7 @@ public class Message extends AbstractGraphElement implements Serializable {
                 break;
             }
         }
-
+        
         if (toRemove != null){
             headers.remove(toRemove);
         }

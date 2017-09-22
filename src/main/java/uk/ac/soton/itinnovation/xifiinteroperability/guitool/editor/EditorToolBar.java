@@ -48,11 +48,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.File
  * The editor toolbar at the top of the GUI. Simply a set of buttons
  * with a corresponding action in the EditorActions class. Eg. Open, Save,
  * Undo, etc.
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class EditorToolBar extends JToolBar {
 

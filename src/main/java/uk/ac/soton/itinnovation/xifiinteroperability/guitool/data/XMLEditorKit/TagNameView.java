@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -31,13 +31,11 @@ import javax.swing.text.LabelView;
 
 /**
  * A view to represent tag names of xml tags
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * 
+ * @author ns17
  */
 public class TagNameView extends LabelView{
-
+    
     /**
      * Constructor for TagNameView
      * No overriding of methods or addition of new ones,
@@ -48,5 +46,5 @@ public class TagNameView extends LabelView{
     public TagNameView(Element elem){
         super(elem);
     }
-
+    
 }

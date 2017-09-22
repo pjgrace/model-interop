@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -64,11 +65,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
  3) A required interface with invokes other REST interfaces.
 
  This class maintains an architectural representation as a data structure.
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class Architecture {
 
@@ -81,7 +78,7 @@ public class Architecture {
      * to create a proxy of for application testing).
      */
     private final transient Map<String, RESTComponent> services;
-
+    
     /**
      * a getter method for the services used in the architecture
      * @return the rest components IDs linked to rest component objects in a map

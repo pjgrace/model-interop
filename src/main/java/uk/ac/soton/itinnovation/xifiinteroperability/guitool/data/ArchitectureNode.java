@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -35,11 +36,9 @@ import java.util.List;
  * An architecture node is the data representation of the two graph elements:
  1) Interface: a rest interface described by its url
  2) A client: a rest user described by its address location.
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
  *
  * @see AbstractGraphElement
- * @author Paul Grace
+ * @author pjg
  */
 public class ArchitectureNode extends AbstractGraphElement implements Serializable {
 
@@ -82,7 +81,7 @@ public class ArchitectureNode extends AbstractGraphElement implements Serializab
     public final List<InterfaceData> getData() {
         return data;
     }
-
+    
     /**
      * a setter for the interface data list,
      * used by the copy paste manager to totally override the existing list of interface data

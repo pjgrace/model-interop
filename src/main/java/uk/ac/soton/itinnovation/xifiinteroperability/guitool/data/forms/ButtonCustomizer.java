@@ -32,10 +32,8 @@ import javax.swing.JButton;
 
 /**
  * a class with static methods to customize buttons design
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * 
+ * @author ns17
  */
 public class ButtonCustomizer {
 

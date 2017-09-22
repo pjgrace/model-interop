@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -37,17 +37,15 @@ import javax.swing.text.ViewFactory;
 
 /**
  * a View factory, which creates the appropriate views based on the name of the element
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * 
+ * @author ns17
  */
 public class JSONViewFactory implements ViewFactory {
 
     @Override
     public View create(Element elem) {
         String type = elem.getName();
-
+        
         if (type != null){
             switch (type) {
                 case JSONDocument.ROOT_ELEMENT:
@@ -86,5 +84,5 @@ public class JSONViewFactory implements ViewFactory {
 
         return new LabelView(elem);
     }
-
+    
 }

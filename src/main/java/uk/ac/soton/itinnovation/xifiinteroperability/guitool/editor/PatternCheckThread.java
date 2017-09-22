@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -36,10 +37,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine
  * Execute a thread that runs interoperability tests and then reports it
  * to the UI via asynchronous reporting.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class PatternCheckThread extends Thread {
 
@@ -47,17 +45,17 @@ public class PatternCheckThread extends Thread {
      * The pattern in XML to run the test with.
      */
     private final transient String patternToTest;
-
+    
     /**
      * reference to the architecture used to run the test
      */
     private transient Architecture arch;
-
+    
     /**
      * whether the state machine should be run in debug mode
      */
     private final transient boolean debugMode;
-
+    
     /**
      * getter for the reference of the architecture
      * @return the arch reference
@@ -65,7 +63,7 @@ public class PatternCheckThread extends Thread {
     public Architecture getArch(){
         return arch;
     }
-
+    
     /**
      * The reporting output.
      */
@@ -112,7 +110,7 @@ public class PatternCheckThread extends Thread {
                 if (editor.getCertificationManager().getLastURL() != null){
                     editor.getCertificationManager().setExecuted(true, editor.getDataModel().getGraphXML());
                 }
-
+                
                 arch.cleanup();
                 editor.getCodePanel().getReportsPanel().addTabReport(report.outputTrace());
             }

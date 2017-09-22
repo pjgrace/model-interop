@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -36,13 +36,11 @@ import java.util.Map;
 /**
  * a JSONParser class used to parse a JSON tree created by the jackson library into a
  * custom made JSON Tree model used by the JSONPathGenerator
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * 
+ * @author ns17
  */
 public class JSONParser {
-
+    
     /**
      * a static method, which parses a JSON string to the custom JSON tree model using the jackson tree model
      * @param json the json string to parse
@@ -61,7 +59,7 @@ public class JSONParser {
         }
         return root;
     }
-
+    
     /**
      * a method, which tries to parse a string value to integer, double, boolean or null
      * if not successful, the value should be treated as a string
@@ -90,7 +88,7 @@ public class JSONParser {
             }
         }
     }
-
+    
     /**
      * a method used to traverse a json list and parse its values to the custom JSON tree model
      * @param parent the parent list node
@@ -118,7 +116,7 @@ public class JSONParser {
             index += 1;
         }
     }
-
+    
     /**
      * a method used to traverse a json object and parse its values to the custom JSON tree model
      * @param parent the parent object node
@@ -131,7 +129,7 @@ public class JSONParser {
             if (entry.getValue().getNodeType() == JsonNodeType.ARRAY) {
                 JSONTreeNode arrayNode = JSONTreeNode.createNode(parent, entry.getKey(), null, JSONTreeNode.NodeType.ARRAY_NODE, null);
                 parseList(arrayNode, entry.getValue());
-            }
+            } 
             else if (entry.getValue().getNodeType() == JsonNodeType.OBJECT) {
                 JSONTreeNode objectNode = JSONTreeNode.createNode(parent, entry.getKey(), null, JSONTreeNode.NodeType.OBJECT_NODE, null);
                 parseObject(objectNode, entry.getValue());

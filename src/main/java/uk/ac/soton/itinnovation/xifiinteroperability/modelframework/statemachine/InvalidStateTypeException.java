@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -29,12 +30,8 @@ package uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachin
 /**
  * Exception caused when trying to create a state that is not one of
  * the three state types. This is typically caused by an invalid name
- * used in the XML description.
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * used in the XML description o
+ * @author pjg
  */
 public class InvalidStateTypeException extends Exception {
 

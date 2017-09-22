@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -54,10 +55,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
  and port issues, or firewall problems) then a WrapperDeploymentException
  is thrown
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 public class RESTInterface {
 
@@ -118,7 +116,7 @@ public class RESTInterface {
      * The port number of the interface. This is not accessed outside the class.
      */
     private final transient int port;
-
+    
     /**
      * a getter for the port number of the interface
      * @return the port number attribute

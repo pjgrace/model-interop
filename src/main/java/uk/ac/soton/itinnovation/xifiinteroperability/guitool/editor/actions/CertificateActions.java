@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -62,43 +63,41 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.Interoperabi
 
 /**
  * This class holds all the actions related to generation and verification of certificates
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * @author ns17
  */
 public class CertificateActions {
-
+    
     /**
      * Utility class, therefore use a private constructor.
      */
     private CertificateActions() {
         // empty implementation
     }
-
+    
     /**
      * an action to open a certification model
      */
     public static class CertificateOpenAction extends OpenFromWebAction {
-
+        
         public CertificateOpenAction(BasicGraphEditor editor){
             super(editor, true);
         }
-
+        
     }
-
+    
     /**
      * an action to request a certificate
      */
     public static class CertificateRequestAction extends AbstractAction {
-
+        
         /**
          * reference to the editor
          */
         private final BasicGraphEditor editor;
-
+        
         /**
          * constructor for this action, sets the editor reference
-         *
+         * 
          * @param editor the editor reference
          */
         public CertificateRequestAction(BasicGraphEditor editor){
@@ -108,43 +107,43 @@ public class CertificateActions {
         @Override
         public void actionPerformed(ActionEvent ae) {
             if (editor.getCertificationManager().getLastURL() == null){
-                JOptionPane.showMessageDialog(editor,
+                JOptionPane.showMessageDialog(editor, 
                         "In order to request a certificate open a repository model from the certification menu.",
                         "Certification error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            
             if (!editor.getCertificationManager().getExecuted()){
                 JOptionPane.showMessageDialog(editor,
                         "In order to request a certificate you must execute the loaded test first. Click on the 'Run' icon in the menu toolbar.",
                         "Certification error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            
             // create the login form
             JPanel loginForm = new JPanel();
             loginForm.setLayout(new BoxLayout(loginForm, BoxLayout.PAGE_AXIS));
-
+            
             JPanel usernamePanel = new JPanel();
             usernamePanel.setLayout(new BoxLayout(usernamePanel, BoxLayout.LINE_AXIS));
             usernamePanel.add(new JLabel("Username    "));
             JTextField usernameField = new JTextField("", 15);
             usernamePanel.add(usernameField);
             loginForm.add(usernamePanel);
-
+            
             JPanel passwordPanel = new JPanel();
             passwordPanel.setLayout(new BoxLayout(passwordPanel, BoxLayout.LINE_AXIS));
             passwordPanel.add(new JLabel("Password    "));
             JPasswordField passwordField = new JPasswordField("", 15);
             passwordPanel.add(passwordField);
             loginForm.add(passwordPanel);
-
+            
             int check = JOptionPane.showConfirmDialog(editor, loginForm, "Certificate request authentication", JOptionPane.OK_CANCEL_OPTION);
-
+            
             if (check != JOptionPane.OK_OPTION){
                 return;
             }
-
+                    
             // authenticate user
             Client client = Client.create();
             WebResource webResourceOpenAM = client.resource("https://platform.fiesta-iot.eu/openam/json/authenticate");
@@ -156,7 +155,7 @@ public class CertificateActions {
                         "Authentication error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            
             try {
                 Map<String, Object> jsonResponse = new ObjectMapper().readValue(responseAuth.getEntity(String.class), HashMap.class);
                 if (!jsonResponse.containsKey("tokenId") || jsonResponse.get("tokenId") == null || jsonResponse.get("tokenId") == ""){
@@ -170,7 +169,7 @@ public class CertificateActions {
                             "Authentication error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+            
             try {
                 InteroperabilityReport report = editor.getCodePanel().getTestingPanel().getInteroperabilityReport();
                 Map<String, String> testReport = new HashMap<>();
@@ -184,7 +183,7 @@ public class CertificateActions {
                 String jsonTestReport = new ObjectMapper().writeValueAsString(testReport);
                 byte[] testReportBytes = jsonTestReport.getBytes(StandardCharsets.UTF_8);
                 int testReportLength = testReportBytes.length;
-
+                
                 String urlLink = editor.getCertificationManager().getLastURL();
                 int index = urlLink.length();
                 String id = "";
@@ -201,11 +200,11 @@ public class CertificateActions {
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("charset", "utf-8");
                 conn.setRequestProperty("Content-Length", Integer.toString(testReportLength));
-
+                
                 try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
                     dos.write(testReportBytes);
                 }
-
+                
                 StringBuilder responseBuilder = new StringBuilder();
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String line;
@@ -213,24 +212,24 @@ public class CertificateActions {
                     responseBuilder.append(line);
                 }
                 br.close();
-
+                
                 Map<String, Object> jsonResponseMap = new ObjectMapper().readValue(responseBuilder.toString(), HashMap.class);
-
+                
                 String authID = (String) jsonResponseMap.get("authenticationID");
                 String date = (String) jsonResponseMap.get("date");
                 String response = (String) jsonResponseMap.get("certificate");
-
+                
                 if (response.equalsIgnoreCase("Altered")) {
                     JOptionPane.showMessageDialog(editor,
                             "The originally loaded model for certification has been altered.\n"
                             + "Either reload the certification model or remove your changes.",
                             "Altered model", JOptionPane.ERROR_MESSAGE);
-                }
+                } 
                 else if (response.equalsIgnoreCase("Error")) {
                     JOptionPane.showMessageDialog(editor,
                             "Couldn't generate a certificate, because an unexpected error occured.",
                             "Error while generating certificate", JOptionPane.ERROR_MESSAGE);
-                }
+                } 
                 else if (response.equalsIgnoreCase("Failure")) {
                     JOptionPane.showMessageDialog(editor,
                             "The test's last state is not considered to be a successful end state. A certificate cannot be generated.",
@@ -254,7 +253,7 @@ public class CertificateActions {
                     File file = fileChooser.getSelectedFile();
 
                     File certificateFile = new File(Paths.get(file.getPath(), "certificate.pdf").toString());
-
+                    
                     if (certificateFile.exists()) {
                         int confirmation = JOptionPane.showConfirmDialog(editor, "There is already a file named 'certificate.pdf' in this directory."
                                 + "Are you sure you want to continue?", "Overriding existing file", JOptionPane.YES_NO_OPTION);
@@ -265,36 +264,36 @@ public class CertificateActions {
 
                     PDFGenerator.generate(certificateFile, report.getTextTrace(), authID, date, testName, usernameField.getText(), editor);
                 }
-            }
+            } 
             catch (IOException ex) {}
         }
-
+        
     }
-
+    
     /**
      * action to verify that a pdf certificate was generated by the Fiesta server
      */
     public static class VerifyCertificateAction extends AbstractAction {
-
+        
         /**
          * reference to the editor
          */
         private final BasicGraphEditor editor;
-
+        
         /**
          * constructor for this action, sets the editor reference
-         *
+         * 
          * @param editor the editor reference
          */
         public VerifyCertificateAction(BasicGraphEditor editor){
             this.editor = editor;
         }
-
+        
         /**
          * this method is used for testing purposes only
          * @param file the pdf certificate to verify
          * @return True if the certificate is a valid one
-         * @throws IOException
+         * @throws IOException 
          */
         public static final boolean verifyCertificate(File file) throws IOException {
             // read the content of the pdf certificate
@@ -354,10 +353,10 @@ public class CertificateActions {
             br.close();
 
             boolean verified = Boolean.parseBoolean(responseBuilder.toString());
-
+            
             return verified;
         }
-
+        
         @Override
         public void actionPerformed(ActionEvent ae) {
             JFileChooser fileChooser = new JFileChooser(System.getProperty("dir"));
@@ -365,7 +364,7 @@ public class CertificateActions {
             fileChooser.setAcceptAllFileFilterUsed(false);
             FileNameExtensionFilter filter = new FileNameExtensionFilter("*.pdf", "pdf");
             fileChooser.setFileFilter(filter);
-
+            
             int fileChoice = fileChooser.showOpenDialog(null);
 
             if (fileChoice != JFileChooser.APPROVE_OPTION) {
@@ -383,9 +382,9 @@ public class CertificateActions {
                 for(int i=1; i < reader.getNumberOfPages(); i++){
                     fullContent.append(Base64.getEncoder().encodeToString(reader.getPageContent(i)));
                 }
-
+                
                 String certificateContent = fullContent.toString();
-
+                
                 String verificationKey = PdfTextExtractor.getTextFromPage(reader, reader.getNumberOfPages());
                 int index = verificationKey.indexOf(PDFGenerator.verificationKeyLabel);
                 if (index < 0){
@@ -395,38 +394,38 @@ public class CertificateActions {
                     reader.close();
                     return;
                 }
-                if (reader.getPageResources(reader.getNumberOfPages()).size() > 1
+                if (reader.getPageResources(reader.getNumberOfPages()).size() > 1 
                         || Pattern.matches(PDFGenerator.verificationKeyLabel + ".+" + PDFGenerator.verificationKeyLabel, verificationKey.replaceAll("\\s+", ""))){
                     JOptionPane.showMessageDialog(editor, "The certificate has been altered. Invalid certificate!",
                             "Invalid certificate", JOptionPane.ERROR_MESSAGE);
                     reader.close();
                     return;
                 }
-
+                
                 verificationKey = verificationKey.substring(index).replaceAll(PDFGenerator.verificationKeyLabel, "").trim();
-
+                
                 reader.close();
-
+                               
                 Map<String, String> dataToVerify = new HashMap<>();
                 dataToVerify.put("verificationKey", verificationKey);
                 dataToVerify.put("certificateContent", certificateContent);
                 String jsonDataToVerify = new ObjectMapper().writeValueAsString(dataToVerify);
                 byte[] dataToVerifyBytes = jsonDataToVerify.getBytes();
-
+                
                 // send a request to server to verify the certificate content and the verification key
                 URL url = new URL("http://localhost:8081/interop/models/certificates/verify"); // FIXME localhost url is currently used for testing purposes
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
+                
                 conn.setDoOutput(true);
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("charset", "utf-8");
                 conn.setRequestProperty("Content-Length", Integer.toString(dataToVerifyBytes.length));
-
+                
                 try (DataOutputStream dos = new DataOutputStream(conn.getOutputStream())) {
                     dos.write(dataToVerifyBytes);
                 }
-
+                
                 StringBuilder responseBuilder = new StringBuilder();
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 String line;
@@ -434,9 +433,9 @@ public class CertificateActions {
                     responseBuilder.append(line);
                 }
                 br.close();
-
+                
                 boolean verified = Boolean.parseBoolean(responseBuilder.toString());
-
+                
                 if (verified){
                     JOptionPane.showMessageDialog(editor, "The PDF certificate is authenticated as a valid certificate generated by Fiesta.",
                             "Succussful certificate verification", JOptionPane.INFORMATION_MESSAGE);
@@ -451,6 +450,6 @@ public class CertificateActions {
                         "Reading error", JOptionPane.ERROR_MESSAGE);
             }
         }
-
+        
     }
 }

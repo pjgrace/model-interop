@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2017
+// © University of Southampton IT Innovation Centre, 2015
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -31,15 +31,13 @@ import javax.swing.text.LabelView;
 
 /**
  * A view to represent attribute names of xml tags
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * 
+ * @author ns17
  */
 public class AttributeNameView extends LabelView {
-
+    
     /**
-     * Constructor for AttributeNameView
+     * Constructor for AttributeNameView 
      * No overriding of methods or addition of new ones
      * The class is used to separate tag attribute names in the XML from other text
      * that uses the LabelView.
@@ -48,5 +46,5 @@ public class AttributeNameView extends LabelView {
     public AttributeNameView(Element elem){
         super(elem);
     }
-
+    
 }

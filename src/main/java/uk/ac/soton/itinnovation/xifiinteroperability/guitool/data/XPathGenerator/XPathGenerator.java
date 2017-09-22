@@ -32,20 +32,17 @@ import org.w3c.dom.Node;
 
 /**
  * a XPathGenerator, which takes a Node instance from an XML document and generates
- * an XPath, which leads to it.
- * 
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- *
- * @author Nikolay Stanchev
+ * an XPath, which leads to it
+ * @author ns17
  */
 public class XPathGenerator {
-
+    
     /**
      * a static method, which generates an XPath by taking a Node instance as an argument
      * @param node the node to generate the XPath for
-     * @return
+     * @return 
      */
-    public static String getXPath(Node node){
+    public static String getXPath(Node node){    
         String toAppend;
         switch (node.getNodeType()) {
             case Node.TEXT_NODE:
@@ -58,7 +55,7 @@ public class XPathGenerator {
                 toAppend = "/" + node.getNodeName();
                 break;
         }
-
+        
         if (node.getParentNode() == null || node.getParentNode().getNodeType() == Node.DOCUMENT_NODE){
             return toAppend;
         }
@@ -71,7 +68,7 @@ public class XPathGenerator {
                 }
                 testNode = testNode.getPreviousSibling();
             }
-
+            
             testNode = node.getNextSibling();
             boolean hasNextNode = false;
             while (testNode != null){
@@ -81,7 +78,7 @@ public class XPathGenerator {
                 }
                 testNode = testNode.getNextSibling();
             }
-
+            
             if (!hasNextNode && index == 1){
                 NamedNodeMap attrs = node.getAttributes();
                 if (attrs != null && attrs.getLength() > 0) {

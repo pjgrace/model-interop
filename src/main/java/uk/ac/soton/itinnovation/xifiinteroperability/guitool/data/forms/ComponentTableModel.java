@@ -17,6 +17,7 @@
 // the software.
 //
 // Created By : Paul Grace
+// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -42,10 +43,7 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables.Interfa
  *
  * Attach name value pairs for constant values used in the graph.
  *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
- *
- * @author Paul Grace
+ * @author pjg
  */
 
 public class ComponentTableModel extends AbstractTableModel {
@@ -104,7 +102,7 @@ public class ComponentTableModel extends AbstractTableModel {
             rowNum = data.size() - 1;
         }
         final InterfaceData row = data.get(rowNum);
-
+        
         if (column == 0) {
             for(InterfaceData interfaceData: data){
                 if (interfaceData.getRestID().equalsIgnoreCase((String) value)){
@@ -115,14 +113,14 @@ public class ComponentTableModel extends AbstractTableModel {
                 }
             }
             row.setRestID((String) value);
-        }
+        } 
         else if (column == 1) {
             String newUrl = (String) value;
             boolean hasPortNumber = Pattern.matches(ComponentForm.REGEX, newUrl);
             if (!hasPortNumber){
                 JOptionPane.showMessageDialog(null,
                         "The url of the interface is not valid. Keep in mind that a port number must be specified. For instance - 'http://127.0.0.1:8080/'",
-                        "Invalid URL",
+                        "Invalid URL", 
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
@@ -134,7 +132,7 @@ public class ComponentTableModel extends AbstractTableModel {
                 try {
                     Integer port = Integer.parseInt(portStr);
                     if (port > 65536){
-                        JOptionPane.showMessageDialog(null,
+                        JOptionPane.showMessageDialog(null, 
                                 "The port number in the url must be between 0 and 65536.",
                                 "Port number exceeding limit", JOptionPane.WARNING_MESSAGE);
                         return;
@@ -147,7 +145,7 @@ public class ComponentTableModel extends AbstractTableModel {
                     return;
                 }
             }
-
+            
             row.setRestURL((String) value);
         }
 
