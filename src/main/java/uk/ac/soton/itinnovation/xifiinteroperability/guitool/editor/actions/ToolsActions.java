@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -41,7 +40,10 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.BasicGraphEd
 
 /**
  * This class holds all the actions related to the XPath and JSONPath generator tools
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class ToolsActions {
 
@@ -51,20 +53,20 @@ public class ToolsActions {
     private ToolsActions() {
         // empty implementation
     }
-    
+
     /**
      * the action to open the XPath generator tool
      */
     public static class XPathAction extends AbstractAction {
-        
+
          /**
          * reference to the editor
          */
         private final BasicGraphEditor editor;
-        
+
         /**
          * constructor for this action, sets the editor reference
-         * 
+         *
          * @param editor the editor reference
          */
         public XPathAction(BasicGraphEditor editor){
@@ -109,28 +111,28 @@ public class ToolsActions {
                 }
             }
         }
-        
+
     }
-    
+
     /**
      * the action to open the JSONPAth generator tool
      */
     public static class JSONPathAction extends AbstractAction {
-        
+
         /**
          * reference to the editor
          */
         private final BasicGraphEditor editor;
-        
+
         /**
          * constructor for this action, sets the editor reference
-         * 
+         *
          * @param editor the editor reference
          */
         public JSONPathAction(BasicGraphEditor editor){
             this.editor = editor;
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent ae) {
             int choice = (int) JOptionPane.showConfirmDialog(editor, "Do you want to load an existing JSON file?",
@@ -171,7 +173,7 @@ public class ToolsActions {
                 }
             }
         }
-        
+
     }
-    
+
 }

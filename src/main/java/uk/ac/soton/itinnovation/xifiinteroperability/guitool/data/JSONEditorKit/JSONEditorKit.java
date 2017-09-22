@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -57,16 +57,18 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGenera
 
 /**
  * a custom JSONEditorKit, which extends the StyledEditorKit
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class JSONEditorKit extends StyledEditorKit {
-    
+
     /**
      * custom view factory
      */
     private final ViewFactory defaultViewFactory = new JSONViewFactory();
-    
+
     /**
      * a getter for the view factory used by the editor kit
      * @return the view factory
@@ -75,7 +77,7 @@ public class JSONEditorKit extends StyledEditorKit {
     public ViewFactory getViewFactory(){
         return defaultViewFactory;
     }
-   
+
     /**
      * overriding the createDefaultDocument method to create a JSONDocument
      * @return the new JSONDocument
@@ -93,7 +95,7 @@ public class JSONEditorKit extends StyledEditorKit {
     public String getContentType() {
         return "text/json";
     }
-    
+
     /**
      * a boolean to represent if the XPath should be directly inserted to a text
      * field
@@ -122,15 +124,15 @@ public class JSONEditorKit extends StyledEditorKit {
         this.insertField = insertField;
         this.parentDialog = parentDialog;
     }
-    
+
     /**
      * overriding the read method to use the custom JSONReader
-     * 
+     *
      * @param in Reader instance
      * @param doc text document
      * @param pos starting position
      * @throws IOException
-     * @throws BadLocationException 
+     * @throws BadLocationException
      */
     @Override
     public void read(Reader in, Document doc, int pos) throws IOException, BadLocationException {
@@ -144,21 +146,21 @@ public class JSONEditorKit extends StyledEditorKit {
 
         JSONReader.getInstance().read(new ByteArrayInputStream(buff.toString().getBytes()), doc, pos);
     }
-    
+
     /**
      *  overriding the read method to use the custom JSONReader
-     * 
+     *
      * @param in InputStream instance
      * @param doc text document
      * @param pos starting position
      * @throws IOException
-     * @throws BadLocationException 
+     * @throws BadLocationException
      */
     @Override
     public void read(InputStream in, Document doc, int pos) throws IOException, BadLocationException {
         JSONReader.getInstance().read(in, doc, pos);
     }
-    
+
     /**
      * adding the custom mouseListener when installing the other listeners
      * @param c the editor pane
@@ -168,7 +170,7 @@ public class JSONEditorKit extends StyledEditorKit {
         super.install(c);
         c.addMouseListener(mouseListener);
     }
-    
+
     /**
      * removing the custom mouseListener when deinstalling the other listeners
      * @param c the editor pane
@@ -178,7 +180,7 @@ public class JSONEditorKit extends StyledEditorKit {
         c.removeMouseListener(mouseListener);
         super.deinstall(c);
     }
-    
+
     /**
      * a custom mouse listener to handle clicks on key - value pairs
      */
@@ -223,13 +225,13 @@ public class JSONEditorKit extends StyledEditorKit {
             }
         }
     };
-    
+
     /**
      * a getter for the deepest view on click
      * @param pos position
      * @param src the editor pane
      * @param c the class of the view we are searching for
-     * @return 
+     * @return
      */
     public View getDeepestView(int pos, JEditorPane src, Class c) {
         try {
@@ -252,12 +254,12 @@ public class JSONEditorKit extends StyledEditorKit {
             return null;
         }
     }
-    
+
     /**
      * a getter for the shape of the view so that we can check if a click is in this area
      * @param v the view
      * @param edit the editor pane
-     * @return 
+     * @return
      */
     protected static Shape getAllocation(View v, JEditorPane edit) {
         Insets ins=edit.getInsets();

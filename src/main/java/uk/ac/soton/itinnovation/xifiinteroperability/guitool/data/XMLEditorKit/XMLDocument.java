@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Created by Stanislav Lapitsky 
- * 
+ * Created by Stanislav Lapitsky
+ *
  * Reference to original source code http://java-sl.com/xml_editor_kit.html
  ******************************************************************************/
 
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -57,11 +57,11 @@ public class XMLDocument extends DefaultStyledDocument {
         StyleConstants.setBold(TAGNAME_ATTRIBUTES, true);
         StyleConstants.setForeground(TAGNAME_ATTRIBUTES, Color.BLUE.darker());
         TAGNAME_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, TAG_NAME_ELEMENT);
-        
+
         StyleConstants.setBold(REMOVETAG_ATTRIBUTES, true);
         StyleConstants.setForeground(REMOVETAG_ATTRIBUTES, Color.BLUE.darker());
         REMOVETAG_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, TAG_NAME_ELEMENT);
-        
+
         StyleConstants.setBold(ADDTAG_ATTRIBUTES, true);
         StyleConstants.setForeground(ADDTAG_ATTRIBUTES, Color.BLUE.darker());
         ADDTAG_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, TAG_NAME_ELEMENT);
@@ -77,11 +77,11 @@ public class XMLDocument extends DefaultStyledDocument {
         StyleConstants.setBold(PLAIN_ATTRIBUTES, true);
         PLAIN_ATTRIBUTES.addAttribute(AbstractDocument.ElementNameAttribute, PLAIN_TEXT_ELEMENT);
     }
-    
+
     public XMLDocument() {
         super();
     }
-    
+
     @Override
     protected void insert(int offset, ElementSpec[] data) throws BadLocationException {
         super.insert(offset, data);

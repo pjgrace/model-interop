@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Created by Stanislav Lapitsky 
- * 
+ * Created by Stanislav Lapitsky
+ *
  * Reference to original source code http://java-sl.com/xml_editor_kit.html
  ******************************************************************************/
 
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -43,15 +43,15 @@ public class TagView extends BoxView {
     private final boolean isSecondTag;
     public static final int AREA_X_SHIFT = 20;
     public static final int AREA_SHIFT=10;
-    
+
     public final boolean isStartTag(){
         return isXMLStartTag;
     }
-    
+
     public final boolean isSecondTag(){
         return isSecondTag;
     }
-    
+
     public TagView(Element elem, boolean start_tag, boolean second_tag) {
         super(elem, View.Y_AXIS);
         isXMLStartTag = start_tag;

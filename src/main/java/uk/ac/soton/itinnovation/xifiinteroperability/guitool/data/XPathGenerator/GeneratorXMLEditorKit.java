@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -58,8 +58,10 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.XPathGenerator
 /**
  * An editor kit which extends the XML editor kit and modifies the on click actions
  * in order to be compatible with the XPathGenerator
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class GeneratorXMLEditorKit extends XMLEditorKit {
 
@@ -67,17 +69,17 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
      * a boolean to represent if the XPath should be directly inserted to a text field
      */
     private final boolean insertPath;
-    
+
     /**
      * the field to insert the XPath into
      */
     private final JTextField insertField;
-    
+
     /**
      * the parent dialog window
      */
     private final JDialog parentDialog;
-    
+
     /**
      * a constructor for the editor kit, initialises the extended kit
      * @param insertPath boolean to know whether to directly insert the path
@@ -94,23 +96,23 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
     /**
      * Overriding the default document used in the kit, GeneratorXMLDocument is used
      * so that the document is compatible with the XPath Generator
-     * 
+     *
      * @return a new instance of a GeneratorXMLDocument
      */
     @Override
     public Document createDefaultDocument() {
         return new GeneratorXMLDocument();
     }
-    
+
     /**
-     * Overriding the read method to use a GeneratorXMLReader in order to be compatible 
+     * Overriding the read method to use a GeneratorXMLReader in order to be compatible
      * with the XPath generator
-     * 
+     *
      * @param in reference to the reader to get the text from
      * @param doc Document to insert the text into
      * @param pos starting position
      * @throws IOException
-     * @throws BadLocationException 
+     * @throws BadLocationException
      */
     @Override
     public void read(Reader in, Document doc, int pos) throws IOException, BadLocationException {
@@ -125,23 +127,23 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
         int p=getInsertPosition(pos, doc);
         GeneratorXMLReader.getInstance().read(new ByteArrayInputStream(buff.toString().getBytes()), doc, p);
     }
-    
+
     /**
      * Overriding the read method to use a GeneratorXMLReader in order to be compatible
      * with the XPath generator
-     * 
+     *
      * @param in input stream to get the text from
      * @param doc document to insert the text into
      * @param pos starting position
      * @throws IOException
-     * @throws BadLocationException 
+     * @throws BadLocationException
      */
     @Override
     public void read(InputStream in, Document doc, int pos) throws IOException, BadLocationException {
         int p=getInsertPosition(pos, doc);
         GeneratorXMLReader.getInstance().read(in, doc, p);
     }
-    
+
     /**
      * modifying the mouse listener, and more precisely the on click method
      */
@@ -151,22 +153,22 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
             JEditorPane src = (JEditorPane) e.getSource();
 
             int pos = src.viewToModel(e.getPoint());
-            
+
             // checking for a click over a PlainTextView
             PlainTextView deepestPlainTextView = (PlainTextView) getDeepestView(pos, src, PlainTextView.class);
             if (generateXPathDialog(deepestPlainTextView, src, e))
                 return;
-            
+
             // checking for a click over a tag element name
             TagNameView deepestTagNameView = (TagNameView) getDeepestView(pos, src, TagNameView.class);
             if (generateXPathDialog(deepestTagNameView, src, e))
                 return;
-            
+
             // checking for a click over a tag attribute name
             AttributeNameView deepestAttributeNameView = (AttributeNameView) getDeepestView(pos, src, AttributeNameView.class);
             if (generateXPathDialog(deepestAttributeNameView, src, e))
                 return;
-            
+
             // checking for a click over an expanding tag
             TagView deepest = (TagView) getDeepestView(pos, src, TagView.class);
             if (deepest != null && !deepest.isStartTag()) {
@@ -247,7 +249,7 @@ public class GeneratorXMLEditorKit extends XMLEditorKit {
         }
         return false;
     }
-    
+
     /**
      * overriding the install method, so that it installs the altered mouse listener
      * and remove the old mouse listener

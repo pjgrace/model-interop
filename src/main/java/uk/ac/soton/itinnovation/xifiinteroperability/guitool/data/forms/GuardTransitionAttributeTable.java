@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -51,7 +50,11 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Function;
  * 3) The value that the parameter guard must match
  *
  * The table is displayed as part of the GuardForm object.
- * @author pjg
+ * 
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public class GuardTransitionAttributeTable extends AbstractTableModel {
 
@@ -82,7 +85,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
      * the node for which the form refers
      */
     private Guard mirrorNode;
-    
+
     /**
      * a setter for the mirrorNode
      * @param mirrorNode the new mirror node
@@ -90,7 +93,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
     public void setMirrorNode(Guard mirrorNode){
         this.mirrorNode = mirrorNode;
     }
-    
+
     /**
      * Create a new table of guards.
      */
@@ -146,14 +149,14 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
         }
         final GuardData row = data.get(rowVal);
         switch (colVal) {
-            case 0: 
+            case 0:
                 String strValue = (String) value;
                 if (strValue == null || strValue.equals("")){
-                    JOptionPane.showMessageDialog(comboBox, "Please fill a value for the guard description!", 
+                    JOptionPane.showMessageDialog(comboBox, "Please fill a value for the guard description!",
                             "Invalid guard", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                
+
                 if (strValue.equalsIgnoreCase("timeout")){
                     if (mirrorNode.getData().size() > 1){
                         JOptionPane.showMessageDialog(comboBox, "Timeout transitions can only have one guard for the timeout value. "
@@ -177,7 +180,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                                 }
                             }
                             catch (NumberFormatException ex){
-                                JOptionPane.showMessageDialog(comboBox, "A timeout guard can only have integers as its guard value.", 
+                                JOptionPane.showMessageDialog(comboBox, "A timeout guard can only have integers as its guard value.",
                                         "Timeout transition error", JOptionPane.ERROR_MESSAGE);
                                 return;
                             }
@@ -205,9 +208,9 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                                             "Counter transition error", JOptionPane.ERROR_MESSAGE);
                                     return;
                                 }
-                            } 
+                            }
                             catch (NumberFormatException ex){
-                                JOptionPane.showMessageDialog(comboBox, "A counter guard can only have integers as its guard value.", 
+                                JOptionPane.showMessageDialog(comboBox, "A counter guard can only have integers as its guard value.",
                                         "Counter transition error", JOptionPane.ERROR_MESSAGE);
                                 return;
                             }
@@ -236,10 +239,10 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         return;
                     }
                 }
-                
+
                 row.setGuardData(strValue);
                 break;
-            case 1: 
+            case 1:
                 if (row.getGuardData().equalsIgnoreCase("timeout")) {
                     if (((FunctionType) value) != FunctionType.Equals){
                         JOptionPane.showMessageDialog(comboBox, "The only function that can be used for a timeout guard is the 'equals' function.",
@@ -285,16 +288,16 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         return;
                     }
                 }
-                
+
                 row.setFunctionType((FunctionType) value);
                 break;
             case 2:
                 if (value == null || ((String) value).equals("")){
-                    JOptionPane.showMessageDialog(comboBox, "Please fill a guard value!", 
+                    JOptionPane.showMessageDialog(comboBox, "Please fill a guard value!",
                             "Invalid guard", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                
+
                 if (row.getGuardData().equalsIgnoreCase("timeout")) {
                     try {
                         Long timeout = Long.parseLong((String) value);
@@ -350,7 +353,7 @@ public class GuardTransitionAttributeTable extends AbstractTableModel {
                         return;
                     }
                 }
-                
+
                 row.setGuardValue((String) value);
         }
         fireTableCellUpdated(rowVal, colVal);

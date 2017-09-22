@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// University of Southampton IT Innovation Centre, 2015
+// University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : FIESTA (http://www.fiesta-iot.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -90,6 +89,10 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.GUIdentifier
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specification.XMLStateMachine;
 import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.statemachine.InvalidTransitionException;
 import com.seaglasslookandfeel.SeaGlassLookAndFeel;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
 
 /**
@@ -99,7 +102,11 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.Guard;
  * the content here is largely modified to reflect the Interoperability
  * Tool pattern editor.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
+ *
  */
 public class GraphEditor extends BasicGraphEditor {
 
@@ -458,10 +465,19 @@ public class GraphEditor extends BasicGraphEditor {
      */
     public static void main(final String[] args) {
         try {
+
             LookAndFeel laf = new SeaGlassLookAndFeel();
             UIManager.setLookAndFeel(laf);
+            // create log files to hide the system console messages
+            FileOutputStream outLog = new FileOutputStream("log" + File.separator + "output.log");
+            System.setOut(new PrintStream(outLog));
+            FileOutputStream errLog = new FileOutputStream("log" + File.separator + "errors.log");
+            System.setOut(new PrintStream(errLog));
+
         }  catch (UnsupportedLookAndFeelException e1) {
             ServiceLogger.LOG.error("Invalid Look and feel try: " + e1.getMessage());
+        } catch (FileNotFoundException ex) {
+            ServiceLogger.LOG.error("Could not add logs: " + ex.getMessage());
         }
 
         mxSwingConstants.SHADOW_COLOR = Color.LIGHT_GRAY;

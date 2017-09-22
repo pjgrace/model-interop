@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -32,8 +31,12 @@ package uk.ac.soton.itinnovation.xifiinteroperability;
  * Interoperability tool before hosting as a service. Generally, this will be
  * because the properties file may contain invalid entries and/or insufficient
  * entries.
+ * 
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
  *
- * @author pjg
+ * @author Paul Grace
+ *
  */
 public class ConfigurationException extends Exception {
 

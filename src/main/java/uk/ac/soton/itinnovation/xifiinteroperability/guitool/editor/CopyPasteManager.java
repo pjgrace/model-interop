@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -31,16 +30,18 @@ import java.util.Map;
 
 /**
  * a manager class to handle the copying and pasting of graph components data
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class CopyPasteManager {
-    
+
     /**
      * the GUI id of the most recently created GUI component
      */
     private String lastGUIid;
-    
+
     /**
      * a getter method for the last GUI identifier
      * @return the gui id of the most recently created GUI component
@@ -48,15 +49,15 @@ public class CopyPasteManager {
     public String getLastGUIid(){
         return lastGUIid;
     }
-    
+
     /**
      * a setter method for the last GUI identifier
-     * @param GUIid the gui id of the most recently created GUI component 
+     * @param GUIid the gui id of the most recently created GUI component
      */
     public void setLastGUIid(String GUIid){
         lastGUIid = GUIid;
     }
-    
+
     /**
      * the type of the most recently created GUI component
      */
@@ -85,7 +86,7 @@ public class CopyPasteManager {
      * a map object to save the data that has to be passed when pasting the copied element
      */
     private Map data;
-    
+
     /**
      * a getter method for the saved data
      * @return the saved data from the last copied component
@@ -93,7 +94,7 @@ public class CopyPasteManager {
     public Map getData(){
         return data;
     }
-    
+
     /**
      * a setter method for the saved data
      * @param data the new data that has to be saved
@@ -101,12 +102,12 @@ public class CopyPasteManager {
     public void setData(Map data){
         this.data = data;
     }
-    
+
     /**
      * A constructor for the CopyPasteManager class
      */
     public CopyPasteManager(){
         // empty implementation, nothing to initialise
     }
-    
+
 }

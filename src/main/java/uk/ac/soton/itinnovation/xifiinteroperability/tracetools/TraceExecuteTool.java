@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -29,8 +28,6 @@ package uk.ac.soton.itinnovation.xifiinteroperability.tracetools;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.log4j.BasicConfigurator;
 import uk.ac.soton.itinnovation.xifiinteroperability.ServiceLogger;
 import uk.ac.soton.itinnovation.xifiinteroperability.architecturemodel.Architecture;
@@ -46,7 +43,11 @@ import uk.ac.soton.itinnovation.xifiinteroperability.utilities.FileUtils;
  * 2) the trace of events to replay.
  *
  * usage: TraceExecute filename<pattern> filename<trace>
- * @author pjg
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public final class TraceExecuteTool {
 
@@ -91,7 +92,7 @@ public final class TraceExecuteTool {
            ServiceLogger.LOG.error("Unable to execute tool: invalid statemachine input, check " + args[0]);
         } catch (InvalidPatternException ex) {
             ServiceLogger.LOG.error("Unable to execute tool: invalid statemachine input, check " + args[0]);
-        } 
+        }
 
     }
 

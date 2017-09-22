@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -50,11 +49,14 @@ import javax.swing.UIManager;
  *
  * The form supports the entry of success field and reason information.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 
 public class EndForm extends JPanel {
-    
+
     private final static String HELPER = "<html><body>"
             + "<font size=+1><b><i>End state report</i></b></font><br><br>"
             + "When creating a pattern, you are allowed to have more than one end states.<br>"
@@ -98,9 +100,9 @@ public class EndForm extends JPanel {
         final JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        
+
         topPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        
+
         JPanel successPanel = new JPanel();
         successPanel.setLayout(new BoxLayout(successPanel, BoxLayout.X_AXIS));
         successPanel.add(Box.createHorizontalGlue());
@@ -110,18 +112,18 @@ public class EndForm extends JPanel {
         successPanel.add(successBox);
         successPanel.add(Box.createHorizontalGlue());
         topPanel.add(successPanel);
-        
+
         topPanel.add(Box.createRigidArea(new Dimension(0, 14)));
-        
+
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.X_AXIS));
         labelPanel.add(Box.createHorizontalGlue());
         labelPanel.add(new JLabel("Test Report:"));
         labelPanel.add(Box.createHorizontalGlue());
         topPanel.add(labelPanel);
-        
+
         topPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        
+
         JPanel textAreaPanel = new JPanel();
         textAreaPanel.setLayout(new BoxLayout(textAreaPanel, BoxLayout.X_AXIS));
         textAreaPanel.add(Box.createHorizontalGlue());
@@ -133,9 +135,9 @@ public class EndForm extends JPanel {
         textAreaPanel.add(Box.createHorizontalGlue());
         textAreaPanel.add(Box.createRigidArea(new Dimension(8, 0)));
         topPanel.add(textAreaPanel);
-        
+
         topPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        
+
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(Box.createHorizontalGlue());
@@ -155,9 +157,9 @@ public class EndForm extends JPanel {
         });
         buttonPanel.add(Box.createHorizontalGlue());
         topPanel.add(buttonPanel);
-        
+
         topPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        
+
         FocusListener focusListener = new FocusListener(){
             @Override
             public void focusGained(FocusEvent fe) {
@@ -171,15 +173,15 @@ public class EndForm extends JPanel {
                 if (fe.getComponent() instanceof JTextArea){
                     fe.getComponent().setBackground(UIManager.getColor("TextField.background"));
                 }
-                
+
                 mirrorEndNode.addEndStateData((Boolean) successBox.getSelectedItem(), reasonInput.getText());
             }
         };
         reasonInput.addFocusListener(focusListener);
         successBox.addFocusListener(focusListener);
-        
+
         add(topPanel, BorderLayout.NORTH);
-        
+
         this.addMouseListener(MessageForm.FOCUS_CHANGER);
         topPanel.addMouseListener(MessageForm.FOCUS_CHANGER);
     }

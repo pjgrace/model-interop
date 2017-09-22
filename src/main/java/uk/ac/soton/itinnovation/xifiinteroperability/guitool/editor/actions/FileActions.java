@@ -27,7 +27,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -44,7 +44,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -106,7 +105,10 @@ import uk.ac.soton.itinnovation.xifiinteroperability.modelframework.specificatio
  * Modification of mxGraph Action operations to open, close, new and save
  * files.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public class FileActions {
 
@@ -521,11 +523,11 @@ public class FileActions {
         public OpenTemplateAction(final BasicGraphEditor editor) {
             this.editor = editor;
         }
-        
+
         /**
          * generates the data model for a simple API test template
          * @param protocol http or coap
-         * @return 
+         * @return
          */
         private DataModel generateAPItemplate(String protocol){
             // Create the API template model
@@ -538,10 +540,10 @@ public class FileActions {
             archNode.addInterfaceData("rest", protocol.toLowerCase() + "://127.0.0.1:8000/", protocol.toLowerCase());
             dataModel.addConnection("5", "1", "2");
             dataModel.addConnection("6", "2", "3");
-            
+
             return dataModel;
         }
-        
+
         /**
          * generates the data model for a simple interoperability test template
          */
@@ -557,7 +559,7 @@ public class FileActions {
             archNode.addInterfaceData("rest", protocol.toLowerCase() + "://127.0.0.1:8000/", protocol.toLowerCase());
             dataModel.addConnection("5", "1", "2");
             dataModel.addConnection("6", "2", "3");
-            
+
             return dataModel;
         }
 
@@ -629,51 +631,51 @@ public class FileActions {
             if (editor == null) {
                 return;
             }
-            
+
             if (editor.isModified() && JOptionPane.showConfirmDialog(editor,
                     mxResources.get("loseChanges")) != JOptionPane.YES_OPTION) {
                 return;
             }
-            
+
             String[] options = {"HTTP API test template", "COAP API test template", "HTTP Interoperability test template", "COAP Interoperability test template"};
-            String choice = (String) JOptionPane.showInputDialog(editor, 
-                    "Please choose the type of template you want to generate.", 
+            String choice = (String) JOptionPane.showInputDialog(editor,
+                    "Please choose the type of template you want to generate.",
                     "Model from template", JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             if (choice == null){
                 return;
             }
-            
+
             if (choice.equalsIgnoreCase(options[0])){
                 // Create the API template model
                 DataModel dataModel = generateAPItemplate("http");
-                
+
                 // generate the model
                 openModel(dataModel.getGraphXML());
             }
             else if (choice.equalsIgnoreCase(options[1])){
                 // Create the API template model
                 DataModel dataModel = generateAPItemplate("coap");
-                
+
                 // generate the model
                 openModel(dataModel.getGraphXML());
             }
             else if (choice.equalsIgnoreCase(options[2])){
                 // Create the interoperability template model
                 DataModel dataModel = generateInteropTemplate("http");
-                        
+
                 // generate the model
                 openModel(dataModel.getGraphXML());
             }
             else if (choice.equalsIgnoreCase(options[3])){
                 // Create the interoperability template model
                 DataModel dataModel = generateInteropTemplate("coap");
-                
+
                 // generate the model
                 openModel(dataModel.getGraphXML());
             }
         }
     }
-    
+
     /**
      * Action to open a model from web repositories
      */
@@ -683,9 +685,9 @@ public class FileActions {
          * a reference to the editor
          */
         private BasicGraphEditor editor;
-        
+
         private boolean certification;
-        
+
         /**
          * a constructor for the OpenFromWebAction, assumes no certification
          * @param editor the editor reference
@@ -693,7 +695,7 @@ public class FileActions {
         public OpenFromWebAction(final BasicGraphEditor editor){
             this(editor, false);
         }
-        
+
         /**
          * a constructor for the OpenFromWebAction, which also indicates whether this model is opened for certification
          * @param editor the editor reference
@@ -703,7 +705,7 @@ public class FileActions {
             this.editor = editor;
             this.certification = certification;
         }
-        
+
         /**
          * Clear the editor information of data and history.
          */
@@ -726,7 +728,7 @@ public class FileActions {
 
         /**
          * a method which loads the string model into the tool
-         * @param model 
+         * @param model
          */
         private void openModel(String model){
             try {
@@ -757,7 +759,7 @@ public class FileActions {
                 JOptionPane.showMessageDialog(editor, "Error in pattern data: Invalid Pattern specification", "Pattern error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        
+
         /**
          * a method which replaces the **Value** strings in the xml model
          */
@@ -770,7 +772,7 @@ public class FileActions {
                 int horizontalBarIndex = originalValue.indexOf("|");
                 String newVal;
                 if (horizontalBarIndex >= 1){
-                    newVal = (String) JOptionPane.showInputDialog(editor, originalValue, 
+                    newVal = (String) JOptionPane.showInputDialog(editor, originalValue,
                             originalValue.substring(0, horizontalBarIndex) + " - input for model", JOptionPane.PLAIN_MESSAGE,
                             null, null, originalValue.substring(0, horizontalBarIndex));
                 }
@@ -787,7 +789,7 @@ public class FileActions {
             }
             return model;
         }
-        
+
         /**
          * a method which initialises a JTable with the available models in the repository
          */
@@ -795,8 +797,8 @@ public class FileActions {
             JDialog tableDialog = new JDialog();
             tableDialog.setTitle("Available models in the repository");
             tableDialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
- 
-            
+
+
             // initialising the JTable and overriding the isCellEditable method to not allow editing
             JTable table = new JTable(data, columns) {
                 @Override
@@ -804,12 +806,12 @@ public class FileActions {
                     return false;
                 }
             };
-            
+
             // setting the rendered of the description column to a custom one which wraps long text
             table.getColumnModel().getColumn(1).setCellRenderer(new CustomCellRenderer());
             // setting the table to fill the viewport height
             table.setFillsViewportHeight(true);
-            
+
             // add a listener to the table to react on double clicks over a name of a model
             table.addMouseListener(new MouseAdapter() {
                 @Override
@@ -850,13 +852,13 @@ public class FileActions {
                             if (model == null) {
                                 return;
                             }
-                            
+
                             // close the dialog and open the model
                             tableDialog.dispose();
                             model = replaceValues(model);
                             if (model != null) {
                                 openModel(model);
-                                
+
                                 // if opened from the certification tab set the last url and the name of the test in the certification manager
                                 if (certification) {
                                     editor.getCertificationManager().setInfo(urlStr, testName);
@@ -876,13 +878,13 @@ public class FileActions {
             });
 
             JScrollPane scrollPane = new JScrollPane(table);
-            
+
             tableDialog.add(scrollPane);
             tableDialog.pack();
             tableDialog.setLocationRelativeTo(null);
             tableDialog.setVisible(true);
         }
-        
+
         /**
          * The action to be performed
          * @param ae the actual action event
@@ -895,19 +897,19 @@ public class FileActions {
             if (editor == null) {
                 return;
             }
-            
+
             if (editor.isModified() && JOptionPane.showConfirmDialog(editor,
                     mxResources.get("loseChanges")) != JOptionPane.YES_OPTION) {
                 return;
             }
-            
-            String urlStr = JOptionPane.showInputDialog(editor, 
-                    "Please specify the url of the repository with the models.", 
+
+            String urlStr = JOptionPane.showInputDialog(editor,
+                    "Please specify the url of the repository with the models.",
                     "Model from web", JOptionPane.PLAIN_MESSAGE);
             if (urlStr == null){
                 return;
             }
-            
+
             /**
              * extract the models from the repository and initialise a table with the name and description
              * of the available models
@@ -924,7 +926,7 @@ public class FileActions {
                     response.append(line);
                 }
                 br.close();
-                
+
                 jsonResponse = response.toString();
                 Object[] jsonArray = new ObjectMapper().readValue(jsonResponse, Object[].class);
                 String[] columns = {"Name", "Description"};
@@ -945,26 +947,26 @@ public class FileActions {
                     }
                     index += 1;
                 }
-                
+
                 initTable(columns, data, modelsIDs);
             }
             catch (MalformedURLException ex){
-                JOptionPane.showMessageDialog(editor, 
+                JOptionPane.showMessageDialog(editor,
                         "There is something wrong with the URL of the repository.",
                         "Invalid URL", JOptionPane.ERROR_MESSAGE);
             }
             catch (IOException ex){
-                JOptionPane.showMessageDialog(editor, 
+                JOptionPane.showMessageDialog(editor,
                         "There is something wrong with the repository of the model you supplied.",
                         "Invalid model repository", JOptionPane.ERROR_MESSAGE);
             }
         }
-        
+
         /**
          * a custom cell rendered for the JTable , which uses a JTextArea set to wrap long text
          */
         private class CustomCellRenderer extends JTextArea implements TableCellRenderer {
-                
+
             /**
              * the constructor for the CustomCellRendered
              */
@@ -986,7 +988,7 @@ public class FileActions {
             }
         }
     }
-    
+
      /**
      * Action to import a specification from a file.
      */

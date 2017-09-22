@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Nikolay Stanchev
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -38,18 +37,20 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.ObjectDeepClon
 /**
  * a DataModelState encapsulates a single state of the DataModel class,
  * used for the XMLUndoManager
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class DataModelState {
-    
+
     /**
      * Each pattern may contain 0 or more component elements. Note
      * a trigger-based graph may not require component elements. Although
      * for completeness may include the interface to comply check
      */
     private final List<GraphNode> graphElements;
-    
+
     /**
      * Getter for the list of graph nodes
      * @return graphElements
@@ -57,13 +58,13 @@ public class DataModelState {
     public List<GraphNode> getGraphElements(){
         return graphElements;
     }
-    
+
     /**
      * The Graph is a set of nodes (vertices).
      * @see GraphNode
      */
     private final List<ArchitectureNode> architectureElements;
-    
+
     /**
      * Getter for the list of architecture nodes
      * @return architectureElements
@@ -71,26 +72,26 @@ public class DataModelState {
     public List<ArchitectureNode> getArchitectureElements() {
         return architectureElements;
     }
-    
+
     /**
      * Index of connection IDs to the source node.
      */
     private final Map<String, GraphNode> connectionIndex;
-    
+
     /**
      * Getter for the map of index of connection IDs to the source node
-     * @return connectionIndex 
+     * @return connectionIndex
      */
     public Map<String, GraphNode> getConnectionIndex() {
         return connectionIndex;
     }
-    
+
     /**
      * Boolean to represent if the model has a start state.
      * Only one start state is allowed
      */
     private final boolean hasStart;
-    
+
     /**
      * Getter for the boolean representing if the data model contains a start
      * @return hasStart
@@ -98,7 +99,7 @@ public class DataModelState {
     public boolean getHasStart() {
         return hasStart;
     }
-    
+
     /**
      * constructor, which encapsulates the state of the data model
      * @param graphElements the list of graph nodes
@@ -106,7 +107,7 @@ public class DataModelState {
      * @param connectionIndex the map for transitions
      * @param hasStart the boolean representing if there is a start node in the model
      */
-    public DataModelState(final List<GraphNode> graphElements, final List<ArchitectureNode> architectureElements, 
+    public DataModelState(final List<GraphNode> graphElements, final List<ArchitectureNode> architectureElements,
             final Map<String, GraphNode> connectionIndex, final boolean hasStart) {
         this.hasStart = hasStart;
 
@@ -114,12 +115,12 @@ public class DataModelState {
         graphElements.forEach((graphNode) -> {
             this.graphElements.add((GraphNode) ObjectDeepCloner.deepCopy(graphNode));
         });
-        
+
         this.architectureElements = new ArrayList<>();
         architectureElements.forEach((archNode) -> {
             this.architectureElements.add((ArchitectureNode) ObjectDeepCloner.deepCopy(archNode));
         });
-        
+
         this.connectionIndex = new HashMap<>();
         for(String index: connectionIndex.keySet()){
             for (GraphNode testNode: this.graphElements){

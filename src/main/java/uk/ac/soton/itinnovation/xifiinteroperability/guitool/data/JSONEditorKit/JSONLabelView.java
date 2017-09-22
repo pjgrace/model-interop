@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -31,13 +31,15 @@ import javax.swing.text.LabelView;
 
 /**
  * A child class of the LabelView, represents key and value labels
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class JSONLabelView extends LabelView {
-    
+
     /**
-     * Constructor for JSONLabelView 
+     * Constructor for JSONLabelView
      * No overriding of methods or addition of new ones
      * The class is used to separate key and value text in the JSON from other text
      * that uses the LabelView.
@@ -47,5 +49,5 @@ public class JSONLabelView extends LabelView {
     public JSONLabelView(Element elem){
         super(elem);
     }
-    
+
 }

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -28,11 +28,13 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.JSONPathGener
 
 /**
  * a JSON path generator, which uses the custom JSON tree model to generate a JSON path for a given node
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
 public class JSONPathGenerator {
-    
+
     /**
      * a method to generate a JSON path from a JSONTreeNode object
      * @param node the node for which a JSON path is generated
@@ -47,20 +49,20 @@ public class JSONPathGenerator {
                 if (node.getParent().getNodeType() == JSONTreeNode.NodeType.ARRAY_NODE){
                     toAppend = "[" + node.getIndex() + "]";
                 }
-                
+
                 if (node.getNodeName() != null){
                     toAppend += "." + node.getNodeName();
                 }
-                
+
                 break;
             case ROOT_NODE:
                 toAppend = node.getNodeName();
                 return toAppend;
-                
+
             default:
                 break;
         }
-        
+
         if (node.getParent() != null){
             return getJSONPath(node.getParent()) + toAppend;
         }
@@ -68,5 +70,5 @@ public class JSONPathGenerator {
             return toAppend;
         }
     }
-    
+
 }

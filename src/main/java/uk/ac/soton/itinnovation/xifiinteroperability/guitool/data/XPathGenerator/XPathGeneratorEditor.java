@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -61,43 +61,45 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCu
 /**
  * An editor, which loads an xml file and generates XPath on click on elements
  * It also accepts user input for the xml data
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
-public class XPathGeneratorEditor extends JDialog{ 
-    
+public class XPathGeneratorEditor extends JDialog{
+
     /**
      * the editor pane for the xml data
      */
     private JEditorPane editorPane;
-    
+
     public XPathGeneratorEditor(){
         super(); // called for clarity reasons
     }
-    
+
     /**
      * the initGUI method but without requiring an xml data argument
-     * 
-     * @param insertPath a boolean which represents whether the generated 
+     *
+     * @param insertPath a boolean which represents whether the generated
      * path expression should be inserted in the text field (helper mode)
-     * @param textField the text field where the generated path should be inserted if appropriate 
+     * @param textField the text field where the generated path should be inserted if appropriate
      */
     public void initGUI(boolean insertPath, JTextField textField){
         this.initGUI("", insertPath, textField);
     }
-    
+
     /**
      * the initGUI method which initialises the GUI components
      * @param xml a string which contains the initial xml data to load
-     * @param insertPath a boolean which represents whether the generated 
+     * @param insertPath a boolean which represents whether the generated
      * path expression should be inserted in the text field (helper mode)
-     * @param textField the text field where the generated path should be inserted if appropriate 
+     * @param textField the text field where the generated path should be inserted if appropriate
      */
     public void initGUI(String xml, boolean insertPath, JTextField textField) {
         this.setTitle("XPath Generator");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-         
+
         editorPane = new JEditorPane("text/xml", xml);
         final JScrollPane areaScrollPane = new JScrollPane(editorPane);
         areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -110,7 +112,7 @@ public class XPathGeneratorEditor extends JDialog{
         int caretPosition = editorPane.getCaretPosition();
         editorPane.setText(xml);
         editorPane.setCaretPosition(caretPosition);
-        
+
         JPanel northPanel = new JPanel();
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.PAGE_AXIS));
         northPanel.add(Box.createRigidArea(new Dimension(0, 16)));
@@ -118,7 +120,7 @@ public class XPathGeneratorEditor extends JDialog{
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
         buttonsPanel.add(Box.createHorizontalGlue());
-        
+
         // this block of code reffers to manually inserting XML data
         JButton pasteXML = new JButton("Type or paste xml input");
         pasteXML.addActionListener((ActionEvent ae) -> {
@@ -126,9 +128,9 @@ public class XPathGeneratorEditor extends JDialog{
         });
         ButtonCustomizer.customizeButton(pasteXML);
         buttonsPanel.add(pasteXML);
-        
+
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        
+
         // this block of code reffers to inserting XML data from file
         JButton open = new JButton("Open a different xml file");
         open.addActionListener((ActionEvent e) -> {
@@ -136,9 +138,9 @@ public class XPathGeneratorEditor extends JDialog{
             FileNameExtensionFilter filter = new FileNameExtensionFilter("XML files (.xml)", "xml");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-            
+
             final int check = fChooser.showDialog(buttonsPanel, "Choose xml file");
-            
+
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -150,7 +152,7 @@ public class XPathGeneratorEditor extends JDialog{
                         line = br.readLine();
                     }
                     br.close();
-                    
+
                     resetEditor(sb.toString());
                 }
                 catch (IOException ex){
@@ -160,9 +162,9 @@ public class XPathGeneratorEditor extends JDialog{
         });
         ButtonCustomizer.customizeButton(open);
         buttonsPanel.add(open);
-        
+
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        
+
         // this block of code reffers to toggling between highlight modes
         JButton highlight = new JButton("Highlight tags");
         ButtonCustomizer.customizeButton(highlight);
@@ -188,7 +190,7 @@ public class XPathGeneratorEditor extends JDialog{
         buttonsPanel.add(Box.createHorizontalGlue());
         northPanel.add(buttonsPanel);
         northPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        
+
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
         labelPanel.add(Box.createHorizontalGlue());
@@ -198,14 +200,14 @@ public class XPathGeneratorEditor extends JDialog{
         labelPanel.add(Box.createHorizontalGlue());
         northPanel.add(labelPanel);
         northPanel.add(Box.createRigidArea(new Dimension(0, 16)));
-        
+
         this.add(northPanel, BorderLayout.NORTH);
-        
+
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
-    
+
     /**
      * a method which resets the editor, this is used when toggling between highlight modes
      */
@@ -222,7 +224,7 @@ public class XPathGeneratorEditor extends JDialog{
             JOptionPane.showMessageDialog(this, "An error occured while reseting the text in the editor", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * a method which resets the editor with new xml data
      * @param xml the new xml data to insert into the editor pane

@@ -54,7 +54,11 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.editor.actions.Tool
 /**
  * Drop down Menu bar at the top of the GUI. Has a set of drop down menus which
  * are described here.
- * @author pjg
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public class EditorMenuBar extends JMenuBar {
 

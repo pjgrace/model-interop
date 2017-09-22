@@ -17,7 +17,6 @@
 // the software.
 //
 // Created By : Paul Grace
-// Created for Project : XIFI (http://www.fi-xifi.eu)
 //
 /////////////////////////////////////////////////////////////////////////
 //
@@ -32,7 +31,10 @@ package uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.tables;
  * does not match the schema and the data cannot be processed then this
  * exception is thrown with a description of the required format.
  *
- * @author pjg
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ * & XIFI (http://www.fi-xifi.eu)
+ *
+ * @author Paul Grace
  */
 public class InvalidXMLInputException extends Exception {
 

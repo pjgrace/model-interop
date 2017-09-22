@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -58,50 +58,52 @@ import uk.ac.soton.itinnovation.xifiinteroperability.guitool.data.forms.ButtonCu
 
 /**
  * An editor, which loads a json file and generates JSONPath on click on elements
- * 
- * @author ns17
+ *
+ * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
+ *
+ * @author Nikolay Stanchev
  */
-public class JSONPathGeneratorEditor extends JDialog { 
-    
+public class JSONPathGeneratorEditor extends JDialog {
+
     /**
      * the editor pane for the json data
      */
     private JEditorPane editorPane;
-    
+
     public JSONPathGeneratorEditor(){
         super(); // called for clarity reasons
     }
-    
+
     /**
      * the initGUI method but without requiring a json data argument
-     * 
-     * @param insertPath a boolean which represents whether the generated 
+     *
+     * @param insertPath a boolean which represents whether the generated
      * path expression should be inserted in the text field (helper mode)
-     * @param textField the text field where the generated path should be inserted if appropriate 
+     * @param textField the text field where the generated path should be inserted if appropriate
      */
     public void initGUI(boolean insertPath, JTextField textField){
         this.initGUI("", insertPath, textField);
     }
-    
+
     /**
      * the initGUI method which initialises the GUI components
      * @param json a string which contains the initial json data to load
-     * @param insertPath a boolean which represents whether the generated 
+     * @param insertPath a boolean which represents whether the generated
      * path expression should be inserted in the text field (helper mode)
-     * @param textField the text field where the generated path should be inserted if appropriate 
+     * @param textField the text field where the generated path should be inserted if appropriate
      */
     public void initGUI(String json, boolean insertPath, JTextField textField) {
         this.setTitle("JSONPath Generator");
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         editorPane = new JEditorPane("text/json", json);
         final JScrollPane areaScrollPane = new JScrollPane(editorPane);
         areaScrollPane.setVerticalScrollBarPolicy(
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         areaScrollPane.setPreferredSize(new Dimension(850, 850));
         this.add(areaScrollPane, BorderLayout.CENTER);
-        
+
         editorPane.setEditable(false);
         editorPane.setBorder(new CompoundBorder(new LineBorder(Color.GRAY),
                 new EmptyBorder(1, 3, 1, 1)));
@@ -109,15 +111,15 @@ public class JSONPathGeneratorEditor extends JDialog {
         int caret = editorPane.getCaretPosition();
         editorPane.setText(json);
         editorPane.setCaretPosition(caret);
-        
+
         JPanel northPanel = new JPanel();
         northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.PAGE_AXIS));
         northPanel.add(Box.createRigidArea(new Dimension(0, 16)));
-        
+
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
         buttonsPanel.add(Box.createHorizontalGlue());
-        
+
         // this block of code reffers to manually inserting JSON data
         JButton pasteJSON = new JButton("Type or paste json input");
         pasteJSON.addActionListener((ActionEvent ae) -> {
@@ -125,9 +127,9 @@ public class JSONPathGeneratorEditor extends JDialog {
         });
         ButtonCustomizer.customizeButton(pasteJSON);
         buttonsPanel.add(pasteJSON);
-        
+
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        
+
         // this block of code reffers to inserting JSON data from file
         JButton open = new JButton("Open a different json file");
         open.addActionListener((ActionEvent e) -> {
@@ -135,9 +137,9 @@ public class JSONPathGeneratorEditor extends JDialog {
             FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files (.json)", "json");
             fChooser.setFileFilter(filter);
             fChooser.setAcceptAllFileFilterUsed(false);
-            
+
             final int check = fChooser.showDialog(buttonsPanel, "Choose json file");
-            
+
             if (check == JFileChooser.APPROVE_OPTION) {
                 BufferedReader br;
                 try {
@@ -149,7 +151,7 @@ public class JSONPathGeneratorEditor extends JDialog {
                         line = br.readLine();
                     }
                     br.close();
-                    
+
                     resetEditor(sb.toString());
                 }
                 catch (IOException ex){
@@ -159,9 +161,9 @@ public class JSONPathGeneratorEditor extends JDialog {
         });
         ButtonCustomizer.customizeButton(open);
         buttonsPanel.add(open);
-        
+
         buttonsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-        
+
         // this block of code reffers to toggling between highlight modes
         JButton highlight = new JButton("Highlight keys and values");
         highlight.addActionListener((ActionEvent e) -> {
@@ -185,7 +187,7 @@ public class JSONPathGeneratorEditor extends JDialog {
         buttonsPanel.add(Box.createHorizontalGlue());
         northPanel.add(buttonsPanel);
         northPanel.add(Box.createRigidArea(new Dimension(0, 8)));
-        
+
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.LINE_AXIS));
         labelPanel.add(Box.createHorizontalGlue());
@@ -195,14 +197,14 @@ public class JSONPathGeneratorEditor extends JDialog {
         labelPanel.add(Box.createHorizontalGlue());
         northPanel.add(labelPanel);
         northPanel.add(Box.createRigidArea(new Dimension(0, 16)));
-        
+
         this.add(northPanel, BorderLayout.NORTH);
-        
+
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
-    
+
     /**
      * a method which resets the editor, this is used when toggling between highlight modes
      */
@@ -218,7 +220,7 @@ public class JSONPathGeneratorEditor extends JDialog {
             JOptionPane.showMessageDialog(this, "An error occured while reseting the text in the editor", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * a method which resets the editor with new json data
      * @param xml the new json data to insert into the editor pane
