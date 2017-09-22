@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////
 //
-// © University of Southampton IT Innovation Centre, 2015
+// © University of Southampton IT Innovation Centre, 2017
 //
 // Copyright in this library belongs to the University of Southampton
 // University Road, Highfield, Southampton, UK, SO17 1BJ
@@ -53,9 +53,6 @@ import uk.ac.soton.itinnovation.xifiinteroperability.SystemProperties;
  Where a proxy cannot be created for a given interface (e.g. due to protocol
  and port issues, or firewall problems) then a WrapperDeploymentException
  is thrown
- *
- * Project acknowledgements - developed in FIESTA (http://www.fiesta-iot.eu)
- * & XIFI (http://www.fi-xifi.eu)
  *
  * @author Paul Grace
  */
@@ -204,9 +201,11 @@ public class RESTInterface {
         try {
             switch (this.protocol) {
                 case "coap":
+                    System.out.println("Path: " + urlIn.getPath().substring(1));
+                    String newUrl = "coap://" + urlIn.getHost() + ":" + port + urlIn.getPath();
+                    System.out.println("URL: " + newUrl);
 
-                    String newUrl = "coap://" + urlIn.getHost() + ":" + port;
-                    ForwardingResource coap2coap = new ProxyCoapClientResource(urlIn.getPath(), newUrl);
+                    ForwardingResource coap2coap = new ProxyCoapClientResource(urlIn.getPath().substring(1), newUrl, this.pushEvents);
 
                     // Create CoAP Server on PORT with proxy resources form CoAP to CoAP and HTTP
                     coapProxy = new CoapServer(port);
