@@ -37,7 +37,7 @@ public class COAPProxyExample {
 	private CoapServer targetServerA;
 
 	public COAPProxyExample() throws IOException {
-		ForwardingResource coap2coap = new ProxyCoapClientResource(proxyPath, targetURL);
+		ForwardingResource coap2coap = new ProxyCoapClientResource(proxyPath, targetURL, null);
 
 		// Create CoAP Server on PORT with proxy resources form CoAP to CoAP and HTTP
 		targetServerA = new CoapServer(PORT);
