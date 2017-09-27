@@ -48,8 +48,11 @@ These are the two icons being used for those nodes:
 The left icon represents a **Start** node while the right one is a **Triggerstart** node. For the **Fixer** test (which is a compliance test), we are 
 going to use a **Triggerstart** node.   
 On the top left of the tool, you can see a pallete with a set of icons under the behaviour tab:
+
 ![Start screenshot][screenshot-1]
+
 Drag and drop the **Triggerstart** icon to the panel under the _Interoperability Behaviour Model_ label and you have added the state to the test model.
+
 ![Drag screenshot][screenshot-2]
 
 
@@ -58,9 +61,11 @@ Pattern data is global data for which you assign IDs so that you can easily acce
 node in the graph. In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click 
 on the icon of the trigger start node we created. On the left, you see a form to add new node attributes (pattern data) and a table with all the pattern 
 data this node has. We haven't added any pattern data, yet, so the table should be empty.  
+
 ![Pattern data screenshot][screenshot-3]  
 A model can be valid even if it doesn't contain any pattern data, but for the sake of the tutorial we are going to add data with ID _base_ and value _GBP_. This 
 will be the base currency we are going to use for the **Fixer** API. Use the form to add the pattern data and the global constant is added to the test model.
+
 ![Add pattern data screenshot][screenshot-4]
 
 
@@ -406,26 +411,26 @@ within IoT systems. One of the main advantages of the tool is the utilization of
 [undo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/undo.gif "undo"
 [redo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/redo.gif "redo"
 [cut]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/cut.gif "cut"
-[screenshot-1]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-1.png "Start screenshot"
-[screenshot-2]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-2.png "Drag screenshot"
-[screenshot-3]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-3.png "Pattern data screenshot"
-[screenshot-4]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-4.png "Add pattern data screenshot"
-[screenshot-5]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-5.png "Dragging normal node screenshot"
-[screenshot-6]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-6.png "Adding transition"
-[screenshot-7]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-7.png "Deployment tab"
-[screenshot-8]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-8.png "Adding component"
-[screenshot-9]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-9.png "Adding data about a component"
-[screenshot-10]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-10.png "Transition information"
-[screenshot-11]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-11.png "Adding transition information"
-[screenshot-12]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-12.png "Adding a trigger node"
-[screenshot-13]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-13.png "Adding a guard trans"
-[screenshot-14]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-14.png "Adding guard rule"
-[screenshot-15]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-15.png "Adding more guards"
-[screenshot-16]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-16.png "Adding more guards"
-[screenshot-17]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-17.png "Adding a loop node"
-[screenshot-18]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-18.png "Adding another transition"
-[screenshot-19]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-19.png "Adding transition data"
-[screenshot-20]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-20.png "Adding a normal node"
+[screenshot-1]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-1.png "Start screenshot"
+[screenshot-2]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-2.png "Drag screenshot"
+[screenshot-3]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-3.png "Pattern data screenshot"
+[screenshot-4]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-4.png "Add pattern data screenshot"
+[screenshot-5]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-5.png "Dragging normal node screenshot"
+[screenshot-6]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-6.png "Adding transition"
+[screenshot-7]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-7.png "Deployment tab"
+[screenshot-8]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-8.png "Adding component"
+[screenshot-9]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-9.png "Adding data about a component"
+[screenshot-10]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-10.png "Transition information"
+[screenshot-11]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-11.png "Adding transition information"
+[screenshot-12]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-12.png "Adding a trigger node"
+[screenshot-13]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-13.png "Adding a guard trans"
+[screenshot-14]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-14.png "Adding guard rule"
+[screenshot-15]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-15.png "Adding more guards"
+[screenshot-16]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-16.png "Adding more guards"
+[screenshot-17]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-17.png "Adding a loop node"
+[screenshot-18]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-18.png "Adding another transition"
+[screenshot-19]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-19.png "Adding transition data"
+[screenshot-20]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-20.png "Adding a normal node"
 [screenshot-21]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-21.png "Adding another transition"
 [screenshot-22]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-22.png "Linking back to the loop state"
 [screenshot-23]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/screenshot-23.png "Adding new guard rules"
