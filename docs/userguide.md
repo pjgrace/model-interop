@@ -48,8 +48,11 @@ These are the two icons being used for those nodes:
 The left icon represents a **Start** node while the right one is a **Triggerstart** node. For the **Fixer** test (which is a compliance test), we are 
 going to use a **Triggerstart** node.   
 On the top left of the tool, you can see a pallete with a set of icons under the behaviour tab:
+
 ![Start screenshot][screenshot-1]
+
 Drag and drop the **Triggerstart** icon to the panel under the _Interoperability Behaviour Model_ label and you have added the state to the test model.
+
 ![Drag screenshot][screenshot-2]
 
 
@@ -58,9 +61,11 @@ Pattern data is global data for which you assign IDs so that you can easily acce
 node in the graph. In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click 
 on the icon of the trigger start node we created. On the left, you see a form to add new node attributes (pattern data) and a table with all the pattern 
 data this node has. We haven't added any pattern data, yet, so the table should be empty.  
+
 ![Pattern data screenshot][screenshot-3]  
 A model can be valid even if it doesn't contain any pattern data, but for the sake of the tutorial we are going to add data with ID _base_ and value _GBP_. This 
 will be the base currency we are going to use for the **Fixer** API. Use the form to add the pattern data and the global constant is added to the test model.
+
 ![Add pattern data screenshot][screenshot-4]
 
 
