@@ -89,6 +89,16 @@
       <name>Californium Repository</name>
       <url>https://repo.eclipse.org/content/repositories/californium/</url>
     </repository>
+    <repository>
+        <id>bintray</id>
+        <url>https://jcenter.bintray.com</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -231,6 +241,11 @@
       <artifactId>jersey-client</artifactId>
       <version>1.9.1</version>
       <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>io.moquette</groupId>
+      <artifactId>moquette-broker</artifactId>
+      <version>0.10</version>
     </dependency>
   </dependencies>
 </project>
