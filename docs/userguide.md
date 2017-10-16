@@ -34,27 +34,39 @@ API works. We chose this API as an example since it doesn't require any credenti
 makes it perfect for a simple tutorial that can be followed by all. Please note, there is a fair usage policy, so frequent overusage of
 this tutorial and the API may prevent correct access, which in turn will prevent the compliance tests working.
 
-#### Creating an Interoperability Test
+#### Create an Interoperability Test
 An interoperability test requires a specification in two parts:
 * A behaviour model. This is state diagram that is basically a directed graph that describes the sequence of events whose conditions a system under test must follow. The nodes in this graph represent behaviour states while edges represent behaviour transitions between states. A state can be interpreted as a state of a distributed application (not an individual service) waiting to observe an event. A transition represents a change in state based upon an observed event matching a set of rules regarding the required behaviour.
 * A deployment model. This is a description of the system under test. This could be a simple HTTP service, or a distributed system made up of multiple clients and services.
 
+The behaviour model is central to the understanding of developing a compliance test. The following are the key points to understand:
+* State Machine:  A state represents a state of a distributed application (not an individual service) waiting to observe an event. A transition represents a 
+change in state based upon an observed event matching a set of rules regarding the required behavior. Hence, the model represents the series of states 
+that a distributed application proceeds through in reaction to discrete events (e.g. a message exchange, a user input, etc.). If the state machine 
+proceeds such that there is a complete trace from a start state to an end state then we can conclude that software within the distributed system 
+interoperate correctly.
+* State data: In the interoperability model, data exists at states in the graph - for example, an event received that moves the system
+to a new state is saved and is accessible from that state. For example, if we are at State A and recieve an event that moves us
+to state B, then the event is saved at State A and every future state beyond A can then read that value by querying state A.
+
+
 The following steps describe how a test model with the two parts of the specification above can be created from scratch:
 
 * **Creating a start state**  
+
 A start state is the state from where the model evaluation starts. Every valid model should contain exactly one start state. There are two types
 of start nodes that can be used in the graph: **Start** node and **Triggerstart** node. A **Start** node waits to observe an event in a system 
 under test, whereas a **Triggerstart** node triggers an event as soon as the test model evaluation begins. A compliance test should generally
-begin with a trigger node (it will begin to send events to the interface being tested), and hence the **Trigger** node will be explained in further detail in this tutorial.  
+begin with a trigger node (it will begin to send events to the interface of a system being tested), and hence the **Trigger** node will be explained 
+in further detail in this tutorial.  
+
 These are the two icons being used for those nodes:  
 ![Start node][start_node] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![Triggerstart node][triggerstart_node]  
+
 The left icon represents a **Start** node while the right one is a **Triggerstart** node. For the **Fixer** test (which is a compliance test), we are 
 going to use a **Triggerstart** node.   
-On the top left of the tool, you can see a pallete with a set of icons under the behaviour tab:
 
-<p align="center"> 
-<img src="https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-1.png">
-</p>
+On the top left of the tool, you can see a pallete with a set of icons under the behaviour tab:
 
 ![Start screenshot][screenshot-1]
 
@@ -65,8 +77,15 @@ Drag and drop the **Triggerstart** icon to the panel under the _Interoperability
 
 
 * **Adding global constants data**  
-Pattern data is global data for which you assign IDs so that you can easily access it troughout the whole model. This data is assigned to the start 
-node in the graph. In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click 
+
+Constant data values that are needed for multiple tests or need to be easily changed can be 
+defined as a global constant of the test model. A global constant has a label so that you can easily access it troughout the whole model. 
+
+
+This data is assigned within the start node in the graph. 
+
+
+In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click 
 on the icon of the trigger start node we created. On the left, you see a form to add new node attributes (pattern data) and a table with all the pattern 
 data this node has. We haven't added any pattern data, yet, so the table should be empty.  
 
