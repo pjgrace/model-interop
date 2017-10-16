@@ -1,10 +1,12 @@
-## Tutorial: Using the Tool to create an Interoperability Compliance Test Model
+## Tutorial: Using ModelInterop to create an Interoperability Compliance Test Model
 
 ### Interoperability Test Model
-The interoperability test models are simply xml documents with all the information specifying the
-interoperability test in terms of a a state machine. That is the states and transitions in the graph
-represent the conditions and rules that a system must follow in order to pass a test and prove
-that it acheives a level of interoperability.
+The interoperability test models are a model that is represented both graphically via the
+tool, and also concretely as an XML document to persist the model as a file.
+Am interoperability test model captures all of the information to specify the
+interoperability test in terms of a a state machine. That is the states and transitions in the 
+state machien graph represent the conditions and rules that a system must follow in order to pass a test and prove
+that it acheives a level of compliance for a given API specification or standard.
 
 * **_I have an interoperability Test Model I want to test against_** - if you have a pre-made model you want to test a system against, 
 you can load the xml file of the model using the toolbar of the tool and everything will be generated from the loaded information. Here is the 
@@ -22,14 +24,15 @@ This tutorial is going to concentrate mainly on the latter since the former coul
 ### Creating Interoperability Test Models
 So, in this tutorial we will show you how to use the tool to create a simple interoperability test model 
 for the [Fixer](http://fixer.io/) API. In the end, you will have a model, which you can use to check whether a custom API you 
-or someone else created is interoperable with the **Fixer** API specification. This is essentially a test of whether your implementation
+or someone else created is compliant with the **Fixer** API specification. This is essentially a test of whether your implementation
 of the Fixer API complies with the specification.
 
 #### Quick overview of the API
 The Fixer API is a free API for acquiring current and previous exchange rates published by the European Central Bank. The data format the 
 API uses is JSON. Using the API is very easy. You can visit the [website](http://fixer.io/) and check their explanations about how the 
 API works. We chose this API as an example since it doesn't require any credentials or security tokens to be used, and it is publically accessible. This 
-makes it perfect for a simple tutorial that can be followed by all.
+makes it perfect for a simple tutorial that can be followed by all. Please note, there is a fair usage policy, so frequent overusage of
+this tutorial and the API may prevent correct access, which in turn will prevent the compliance tests working.
 
 #### Creating an Interoperability Test
 An interoperability test requires a specification in two parts:
@@ -439,15 +442,15 @@ In this tutorial, we have shown you how you can create specification models and 
 tool. The model-driven approach we used can help you face the issues of highly heterogeneous communication protocols and data formats used 
 within IoT systems. One of the main advantages of the tool is the utilization of lightweight models - simple **XML** files - that can be easily created and re-used.
 
-[start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_end.png "Start node"
-[triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event_triggerstart.png "Triggerstart node"
-[normal_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/event.png "Normal node"
-[trigger_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/link.png "Trigger node"
-[loop_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/loop.png "Loop node"
-[end_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/terminate.png "End node"
-[undo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/undo.gif "undo"
-[redo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/redo.gif "redo"
-[cut]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/master/src/main/resources/images/cut.gif "cut"
+[start_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/event_end.png "Start node"
+[triggerstart_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/event_triggerstart.png "Triggerstart node"
+[normal_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/event.png "Normal node"
+[trigger_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/link.png "Trigger node"
+[loop_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/loop.png "Loop node"
+[end_node]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/terminate.png "End node"
+[undo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/undo.gif "undo"
+[redo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/redo.gif "redo"
+[cut]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/cut.gif "cut"
 [screenshot-1]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-1.png "Start screenshot"
 [screenshot-2]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-2.png "Drag screenshot"
 [screenshot-3]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-3.png "Pattern data screenshot"
