@@ -19,16 +19,19 @@ The tool uses model-driven approaches to handle the issues mentioned above and
 ensure interoperability and compliance are achieved even if the person using the 
 tool is not an expert in the areas of IoT interoperability and testing. 
 
-The tool offers the possibilities of creating, using and reusing _interoperability models_. 
-Thus, the development complexity is considerably reduced by removing the burden of manually testing all interoperability and specification requirements.
+The tool allows a developer to create _interoperability models_ that can then be
+used and re-used for interoperability testing. Thus, the development complexity is considerably 
+reduced by removing the burden of manually testing all interoperability and specification requirements.
 
 Read more at the following [article](https://link.springer.com/article/10.1007/s12243-015-0487-2).
 
 ## Install and Run
 
-The tool is made available as a maven project. In order to build the tool, Java 1.8 or higher must be installed on your machine.
+The tool is made available as a maven project. In order to build the tool, Java 1.8 or 
+higher must be installed on your machine.
 
-To install the tool. Simply download the zip file for the git repository, extract and go to the root folder location. Then type at the command prompt:
+To install the tool. Simply download the zip file for the git repository, extract and 
+go to the root folder location. Then type at the command prompt:
 
 ```
 mvn  install
