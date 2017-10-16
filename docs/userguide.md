@@ -40,7 +40,7 @@ An interoperability test requires a specification in two parts:
 * A deployment model. This is a description of the system under test. This could be a simple HTTP service, or a distributed system made up of multiple clients and services.
 
 The behaviour model is central to the understanding of developing a compliance test. The following are the key points to understand:
-* State Machine:  A state represents a state of a distributed application (not an individual service) waiting to observe an event. A transition represents a 
+* State machine:  A state represents a state of a distributed application (not an individual service) waiting to observe an event. A transition represents a 
 change in state based upon an observed event matching a set of rules regarding the required behavior. Hence, the model represents the series of states 
 that a distributed application proceeds through in reaction to discrete events (e.g. a message exchange, a user input, etc.). If the state machine 
 proceeds such that there is a complete trace from a start state to an end state then we can conclude that software within the distributed system 
@@ -78,36 +78,45 @@ Drag and drop the **Triggerstart** icon to the panel under the _Interoperability
 
 * **Adding global constants data**  
 
-Constant data values that are needed for multiple tests or need to be easily changed can be 
-defined as a global constant of the test model. A global constant has a label so that you can easily access it troughout the whole model. 
+Constant data values that are needed for multiple tests or need to be easily changed 
+can be defined as a global constant of the test model. A global constant has a label 
+so that you can easily access it troughout the whole model. These values are assigned 
+within the start node in the graph. As stated previously, data values are available
+at states in the model to query. Hence, the start state is the obvious location
+for global constants.
 
 
-This data is assigned within the start node in the graph. 
-
-
-In our case, we have a **Triggerstart** node. Hence, we will assign the pattern data to the node we created in the previous step. Click 
-on the icon of the trigger start node we created. On the left, you see a form to add new node attributes (pattern data) and a table with all the pattern 
-data this node has. We haven't added any pattern data, yet, so the table should be empty.  
+In our example, case, we have a **Triggerstart** node. Hence, we will assign the 
+constant data to the node we created in the previous step. Click 
+on the icon of the trigger start node we created. On the left, you see a form to add 
+new node attributes (pattern data) and a table with all the constants 
+data this node has. We haven't added any constants data, yet, so the table should be empty.  
 
 ![Pattern data screenshot][screenshot-3]  
-A model can be valid even if it doesn't contain any pattern data, but for the sake of the tutorial we are going to add data with ID _base_ and value _GBP_. This 
-will be the base currency we are going to use for the **Fixer** API. Use the form to add the pattern data and the global constant is added to the test model.
+A model can be valid even if it doesn't contain any constants data, but for the sake of the tutorial 
+we are going to add data with ID _base_ and value _GBP_. This 
+will be the base currency we are going to use for the **Fixer** API. Use the form to add the constant data 
+and the global constant is added to the test model.
 
 
 ![Add pattern data screenshot][screenshot-4]
 
 
 * **Adding a normal state**  
-Normal states are just event-observing states with no special function. Usually, a **Normal** node follows after a **Trigger** or **Triggerstart** node, so that the triggered event can be captured and evaluated against a set of rules (guards).  
-The icon being used for a **Normal** node is:  
+Normal states are event-observing states with no special function. Usually, a **Normal** node follows after a **Trigger** or **Triggerstart** node, so that 
+the triggered event can be captured and evaluated against a set of rules (tests).  
+The icon used for a **Normal** node is:  
 ![Normal node][normal_node]  
-Again, from the icons on the top-left of the tool, drag and drop the **Normal** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.
+Again, from the icons on the top-left of the tool, drag and drop the **Normal** icon to the panel under the _Interoperability Behaviour Model_ label 
+and you are done with this step.
 ![Dragging normal node screenshot][screenshot-5]
 
 
 * **Adding your first transition**  
-The next step is to add a transition between the **Triggerstart** node and the **Normal** node. Keep in mind that **Triggerstart** and **Start** nodes cannot 
-be the target of a transition. So our transition will have the **Triggerstart** node as a source and the **Normal** node as a target. Click on 
+The next step is to add a transition between the **Triggerstart** node and the **Normal** node. Keep in 
+mind that **Triggerstart** and **Start** nodes cannot 
+be the target of a transition. So our transition will have the **Triggerstart** node as a source 
+and the **Normal** node as a target. Click on 
 the **Triggerstart** node and drag the mouse to the **Normal** node. This will create an edge between the two nodes.  
 
 
@@ -116,12 +125,12 @@ the **Triggerstart** node and drag the mouse to the **Normal** node. This will c
 
 * **Adding a system component**  
 Before continuing with the state diagram we need to add a system component to our model, which will link to the **Fixer** API. Again on the top-left 
-of the tool, where the state nodes icons are located click on the **Deployment** tab. You will see two icons: one representing an interface and one 
-representing a client.  
+of the tool, where the state nodes icons are located click on the **Deployment** tab. You will see icons that represent elements in a distributed system
+e.g. a HTTP interface, a COAP interface, a client application, etc.  
 
 
 ![Deployment tab][screenshot-7]  
-Choose the interface icon, drag-and-drop it to the panel under the _Deployment Model_ label.  
+Choose the HTTP interface icon, drag-and-drop it to the panel under the _Deployment Model_ label.  
 
 
 ![Adding component][screenshot-8]  
@@ -130,7 +139,7 @@ Choose the interface icon, drag-and-drop it to the panel under the _Deployment M
 * **Adding data about a system component**  
 After selecting the interface component. On the left, you see two forms: one for updating component's information and one for adding URL interfaces. First, 
 for the sake of the example, rename the component identifier to _fixer_. Keep in mind that components' identifiers must be unique. Then for 
-component's address update to **_api.fixer.io_**. This is the end point of the fixer API. By clicking **Update** you will see that the component's 
+the component's address update it to **_api.fixer.io_**. This is the end point of the fixer API. By clicking **Update** you will see that the component's 
 label is renamed to _fixer_. Now, add the URL interfaces that you want to use. Each URL interface must have a unique ID. For this example, add 
 URL https://api.fixer.io:443/latest with ID _rest1_ and URL https://api.fixer.io:443/2000-01-03 with ID _rest2_. Note the specified port number for the URLs must be added.
 
@@ -139,14 +148,22 @@ URL https://api.fixer.io:443/latest with ID _rest1_ and URL https://api.fixer.io
 
 
 * **Filling the transition's information**  
-Back to the transition between the two current states, click on it. You should see a lot of form fields on the left for filling information about the transition.  
+Now back to the transition between the two current states, click on the transition (the edge between the two nodes). You should see a 
+lot of form fields on the left for filling information about the transition.  
 
 
 ![Transition's information][screenshot-10]  
 
-This is, basically, the information of the request you are sending to the chosen URL interface. First, let's choose a URL interface. From the URL pointer dropdown choose the URL interface ID you want to use. For this transition we will use the first one - **_component.fixer.rest1_**, which, as you can see below, points to the link https://api.fixer.io:443/latest. We configured that in the component's data.  
-Then comes the resource path. For this example, we want to use _GBP_ as a base for the currency conversion. Hence, we should use this resource path - **?base=GBP**. This is the moment to use the global pattern data we set in the beginning. The format for using pattern data is the following - **$$patterndata.id$$** where _id_ is the ID of the pattern data we want to use. Hence, for resource path, we will write **?base=$$patterndata.base$$**.  
-The pattern data format can also be generated by clicking right button on the resource path field and then choosing the _Insert pattern data_ option.  
+This is, basically, the information of the request you are sending to the chosen URL interface. First, let's choose a URL interface. From the 
+URL pointer dropdown choose the URL interface ID you want to use. For this transition we will use the first one - **_component.fixer.rest1_**, which, 
+as you can see below, points to the link https://api.fixer.io:443/latest. We configured that in the component's data.  
+
+Then comes the resource path. For this example, we want to use _GBP_ as a base for the currency conversion. Hence, we should use this 
+resource path - **?base=GBP**. This is the moment to use the global pattern data we set in the beginning. The format for using pattern data 
+is the following - **$$patterndata.id$$** where _id_ is the ID of the pattern data we want to use. Hence, for resource path, we will 
+write **?base=$$patterndata.base$$**.  
+
+The constant data input can also be generated by clicking right button on the resource path field and then choosing the _Insert pattern data_ option.  
 For the request method, we will use **GET**, since we are retrieving information.  
 The data type, as explained above, is **JSON**.  
 We skip the message content because we do not need to pass any content for this API request.  
