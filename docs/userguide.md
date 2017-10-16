@@ -52,6 +52,9 @@ The left icon represents a **Start** node while the right one is a **Triggerstar
 going to use a **Triggerstart** node.   
 On the top left of the tool, you can see a pallete with a set of icons under the behaviour tab:
 
+<p align="center"> 
+<img src="https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/screenshot-1.png">
+</p>
 
 ![Start screenshot][screenshot-1]
 
