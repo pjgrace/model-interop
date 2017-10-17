@@ -107,9 +107,12 @@ and the global constant is added to the test model.
 Normal states are event-observing states with no special function. Usually, a **Normal** node follows after a **Trigger** or **Triggerstart** node, so that 
 the triggered event can be captured and evaluated against a set of rules (tests).  
 The icon used for a **Normal** node is:  
+
 ![Normal node][normal_node]  
+
 Again, from the icons on the top-left of the tool, drag and drop the **Normal** icon to the panel under the _Interoperability Behaviour Model_ label 
 and you are done with this step.
+
 ![Dragging normal node screenshot][screenshot-5]
 
 
@@ -231,7 +234,9 @@ Loop states are states, which allow the repetition of a given event. This could 
 after a few consecutive calls. 
 
 The icon being used for a **Loop** node is:  
+
 ![Loop node][loop_node]  
+
 From the icons on the top left, drag and drop the **Loop** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.
 
 
@@ -282,6 +287,7 @@ again. In this case, for the new transition, we have to fill the same data we fi
 * **Linking back to the loop state**  
 Since we use a loop state we have to link the normal state back to the loop state, too. This would be a test transition, which will evaluate the 
 response data against the set of rules. We should see the form for adding test rules again.  
+
 ![Linking back to the loop state][screenshot-22]  
 
 
@@ -296,6 +302,7 @@ First, for guard description type **content[$]**, choose **contains** for guard 
 Then, for guard description type **content[$.rates.USD]**, choose **lessthan** for guard function and for guard value type **2**. Click **Add guard**.  
 Finally, for guard description type **content[$.rates.EUR]**, choose **lessthan** for guard function and for guard value type **2**. Click **Add guard**.  
 Now we are done with this step.  
+
 ![Adding new guards][screenshot-23]  
 
 
@@ -303,9 +310,12 @@ Now we are done with this step.
 End states are used to point where the interoperability test should end. You can have as many end states as you want. This is useful, since you can 
 specify end states with different guard rules. For example, one of the end state would be if the content is in XML format and the other if the 
 content is in JSON format.  
-The icon being used for an **End** node is:  
+The icon being used for an **End** node is: 
+
 ![End node][end_node]  
-From the icons on the top left, drag and drop the **End** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step.  
+
+From the icons on the top left, drag and drop the **End** icon to the panel under the _Interoperability Behaviour Model_ label and you are done with this step. 
+
 ![Adding end node][screenshot-24]  
 
 
@@ -317,39 +327,56 @@ These attributes are useful if you have more than one end state. For instance, y
 for some API failed and another if authorization was successful. Then you can set the success attribute for the failing end state to **false** and explain 
 in the test report that the reason is **authorization failure** using JSON format, for example.  
 For our case, just set the **success** attribute to **true** and leave the test report empty.  
+
 ![Adding end node data][screenshot-25]  
 
 
 * **Breaking from the loop**  
-In order to break from the loop we need to create a guard transition, which will include a **counter** guard function. So we create a 
-transition from the **Loop** node to the **End** node. By clicking on it, we see the form for adding guards again.  
+In order to break from the loop we need to create a test transition, which will include a **counter** test function. So we create a 
+transition from the **Loop** node to the **End** node. By clicking on it, we see the form for adding tests again.
+
 ![Adding the last transition][screenshot-26]  
-Here, we add only one guard rule, which is to break the loop after a number of iterations.  
-For the guard description type **Index**, choose **counter** for guard function and for guard value type **5**. Then click **Add guard** and we are done with this step.  
+
+Here, we add only one test rule, which is to break the loop after a number of iterations.  
+For the test description type **Index**, choose **counter** for test function and for test value type **5**. Then click **Add Test** and we are done with this step.  
+
 ![Adding counter guard][screenshot-27]  
 
 #### Saving your interoperability model
-The next step is to save our new model into an xml file. From the icons under the toolbar, click on the save icon. Then choose a location to save your model to.  
+The next step is to save our new model into an xml file. From the icons under the toolbar, click on the save icon. Then choose a location to save your model to.
+
 ![Saving your pattern][screenshot-42]
 
 #### Executing the interoperability test
-So far we managed to create an interoperability pattern, which can be used for interoperability and compliance testing for the [**Fixer**](http://fixer.io) API. 
+So far we managed to create an interoperability model, which can be used for interoperability and compliance testing for the [**Fixer**](http://fixer.io) API. 
+
 Now let's use this model and run the test.  
-First, we need to verify that our model is correct. From the icons on the top of the tool (under the toolbar) click the green tick icon.  
+
+First, we need to verify that our model is correct. From the icons on the top of the tool (under the toolbar) click the green tick icon. 
+
 ![Pattern verification][screenshot-28]  
+
 You should see a message whether your pattern is verified as correct. For our example, we should get a valid pattern message. If you get an error message, please 
 go through the tutorial above and find out what's wrong.  
+
 ![Pattern verification message][screenshot-29]  
-Now, in order to run the test, click the test icon next to the verification icon.  
+
+Now, in order to run the test, click the test icon next to the verification icon. 
+
 ![Run test icon][screenshot-30]  
+
 You should see a dialog to choose the running mode: **execution mode** is the mode, which runs the test directly, while **step-by-step mode** waits the user 
 to click on the arrow icon in order to continue to the next step.  
+
 ![Choosing running mode][screenshot-31]  
+
 For now choose execution mode. You should see the **Test report panel** and a lot of text output. This is basically the interoperability report 
 generating a message for all covered steps in the test and all evaluated guards. You should see the last message 
 being **_End node reached --> Interoperability Testing Complete_**, which means that the **Fixer** API is compliant with the model we created and 
 the test is successful.  
+
 ![Running the test][screenshot-32]  
+
 Before showing you how to execute the test in step-by-step mode, we are going to introduce you to another feature of the tool - using previous states data. It 
 is possible to use data returned in previous states as a guard value for another state.  
 Click on the graph icon, which returns you to the graph view of the model  
