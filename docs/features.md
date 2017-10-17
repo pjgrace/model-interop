@@ -1,11 +1,11 @@
 ## Other Tool Features
 
 So far, you've explored the tool by creating an interoperability model, executing interoperability tests and viewing test reports. Now, we are going to 
-guide you through some additional features of the tool.  
+guide you through some additional features of the tool. First, we open the Geocode example available from the "examples" folder of this repository. 
 
 #### XML view of the pattern
 The tool allows you to view the data of your model in xml format (the xml file that will be generated when you save your pattern will 
-contain this data) and even partially modify it. Click on the XML view icon and then you should see the XML view panel.  
+contain this data) and even partially modify it. Click on the XML view icon and then you should see the XML view panel. 
 
 ![XML view][screenshot-45]  
 
@@ -20,33 +20,42 @@ updated on the actual pattern if you click on **Update changes**. You should als
 ![Editing XML mode][screenshot-47]  
 
 As explained in the legend, clicking on a light-orange tag will let you replace the text value. For instance, let's click 
-on the **GBP** value and try to change it to something else.  
+on the **City** value and try to change it to something else.  
 
 ![Editing XML mode][screenshot-48]  
 
-You should see a dialog asking you to type the new value. For this example, let's type **EUR** and then click **OK**.  
+You should see a dialog asking you to type the new value. For this example, let's type **Berlin** and then click **OK**.  
 
-![Editing pattern data][screenshot-49]  
+Now, the value should be changed to **Berlin**. 
 
-Now, the value should be changed to **EUR**.  
 ![Changed pattern data][screenshot-50]  
+
 Click on the **Update changes** button so that the change is validated and updated. Now let's try to append data. Click 
 on **Enable pattern editing** again. As explained in the legend, clicking on purple tag appends data. Let's click on the **patterndata** tag. You will be asked to confirm your choice, click **Yes**.
+
 ![Adding pattern data][screenshot-51]  
+
 You should now see a dialog for filling the ID of the new pattern data.  
+
 ![id for pattern data][screenshot-52]  
+
 For ID type **testID**. Then you will be asked to enter value for the new pattern data. Type **testValue** and click **OK**. You should 
 now see that the new pattern data is appended in the XML.  
+
 ![appended pattern data][screenshot-53]  
+
 Update the change again by clicking on **Update changes**. Now go back to the graph view and click on the **triggerstart** node. You should 
 see that the pattern data is updated.  
+
 ![updated data][screenshot-54]  
+
 For the sake of the example, let's now delete the newly added pattern data through XML editing. Go back to the XML view, **Enable pattern editing** and 
-click on the second **data** tag. It is red, which, as explained in the legend, means that it will be deleted on click.  
+click on the second **data** tag. It is red, which, as explained in the legend, means that it will be deleted on click.
+
 ![delete data][screenshot-55]  
+
 You will be asked to confirm that you want to delete the pattern data with ID **testID**. Click **Yes**. Then click on **Update changes** again. The 
 second pattern data block will be removed.  
-![deleted data][screenshot-56]  
     
 **Keep in mind** that whenever you do a replace edition - you replace the text value of something - you should update the changes and then continue 
 editing the XML view if appropriate.
