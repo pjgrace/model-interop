@@ -443,7 +443,7 @@ In this tutorial, we have shown you how you can create specification models and 
 tool. The model-driven approach we used can help you face the issues of highly heterogeneous communication protocols and data formats used 
 within IoT systems. One of the main advantages of the tool is the utilization of lightweight models - simple **XML** files - that can be easily created and re-used.
 
-[start_node]: https://gitlab.it-innovation.soton.ac.uk/iot/model-interop/public/src/main/resources/images/event_end.png "Start node"
+[start_node]: https://gitlab.it-innovation.soton.ac.uk/iot/model-interop/blob/public/src/main/resources/images/event_end.png "Start node"
 [triggerstart_node]: https://gitlab.it-innovation.soton.ac.uk/iot/model-interop/public/src/main/resources/images/event_triggerstart.png "Triggerstart node"
 [normal_node]: https://gitlab.it-innovation.soton.ac.uk/iot/model-interop/public/src/main/resources/images/event.png "Normal node"
 [trigger_node]: https://gitlab.it-innovation.soton.ac.uk/iot/model-interop/public/src/main/resources/images/link.png "Trigger node"
