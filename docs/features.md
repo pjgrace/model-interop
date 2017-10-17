@@ -1,7 +1,7 @@
 ## Other Tool Features
 
 So far, you've explored the tool by creating an interoperability model, executing interoperability tests and viewing test reports. Now, we are going to 
-guide you through some addition features of the tool.  
+guide you through some additional features of the tool.  
 
 #### XML view of the pattern
 The tool allows you to view the data of your model in xml format (the xml file that will be generated when you save your pattern will 
