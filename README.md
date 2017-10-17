@@ -49,4 +49,4 @@ The following are a list of further documents in order to use the tool to develo
 * [How to create a compliance test with the tool](docs/userguide.md)
 * [How to create an interoperability test with the tool](docs/interop.md) (Tutorial in development)
 * [COAP testing](docs/coap.md) (Tutorial in development)
-
+* [Other Tool features](docs/features.md)
