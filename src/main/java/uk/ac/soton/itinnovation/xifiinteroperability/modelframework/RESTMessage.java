@@ -238,6 +238,7 @@ public class RESTMessage extends ProtocolMessage{
             client.getContext().getParameters().add("useForwardedForHeader","false");
 
             this.url = url + rPath;
+            System.out.println(this.url);
             final ClientResource clientRes =   new ClientResource(url);
             clientRes.setNext(client);
             if (headers != null) {
