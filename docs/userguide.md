@@ -378,25 +378,38 @@ the test is successful.
 ![Running the test][screenshot-32]  
 
 Before showing you how to execute the test in step-by-step mode, we are going to introduce you to another feature of the tool - using previous states data. It 
-is possible to use data returned in previous states as a guard value for another state.  
-Click on the graph icon, which returns you to the graph view of the model  
-![Graph view icon][screenshot-33]  
-Now click on the guard transition from node with label **state** to node with label **loop**. You should see the form for adding guards on the 
-left along with all the guards we added to this transition in one of the previous steps.  
+is possible to use data returned in previous states as a guard value for another state.
+
+Click on the graph icon, which returns you to the graph view of the model.  
+
+Now click on the transition from the node with label **state** to node with label **loop**. You should see the form for adding tests on the 
+left along with all the guards we added to this transition in one of the previous steps. 
+
 ![Guards][screenshot-34]  
-Now, we are going to add a guard, which includes data from a previous state. For instance, we want to check if the value of the EUR returned by 
+
+Now, we are going to add a test, which includes data from a previous state. For instance, we want to check if the value of the EUR returned by 
 this response is less than the value of the NOK returned by the response of the first event captured in node **normal**.  
+
 ![captured data][screenshot-35]  
-For guard description type **content[$.rates.EUR]** and choose **lessthan** for guard function. For guard value use the format for the previous states
+
+For test description type **content[$.rates.EUR]** and choose **lessthan** for the test function. For test value use the format for the previous states
 data, which is **$$state_label|{content or headers}|XPath or JSONPath or header_id$$**. This could be generated for you by clicking right button on the 
-guard value text field and choosing the _Insert previous states data_ option. For our example the state_label is **normal** (the previous data is captured there), we choose content since we want to extract information from the content of the response and the JSONPath would be **rates.NOK** (note that here we skip the **$.** part in the JSONPath)  
-Thus, for guard value we type **$$normal|content|rates.NOK$$**. Now, click **Add guard**.  
+test value text field and choosing the _Insert previous states data_ option. For our example the state_label is **normal** (the previous data is captured there), we choose content since we want to extract information from the content of the response and the JSONPath would be **rates.NOK** (note that here we skip the **$.** part in the JSONPath)  
+
+Thus, for test value we type **$$normal|content|rates.NOK$$**. Now, click **Add Test**. 
+
 ![added guard][screenshot-36]  
+
 Back to executing the test now. Click test icon again, but this time choose **step-by-step** mode.  
+
 ![step-by-step mode][screenshot-37]  
-You should see the **Test report panel** again with a few output. Now, you have two options, either stop the test by clicking the cross icon next to the run test icon or you can go to the next step in the test by clicking the right arrow icon.  
+
+You should see the **Test report panel** again with a few output. Now, you have two options, either stop the test by clicking the square stop icon next to the run test icon or you can go to the next step in the test by clicking the right arrow icon.  
+
 ![step-by-step mode][screenshot-38]  
+
 By clicking the right arrow icon enough times, you will get to the final state of the test, which should again be a successful message.  
+
 ![finish test][screenshot-39]  
 
 
@@ -404,18 +417,23 @@ By clicking the right arrow icon enough times, you will get to the final state o
 When running the test, you see the test report panel, which displays the report of the test you are currently running. However, there are cases 
 when you want to view previously generated reports. In order to do that click the previous reports icon, which is the last one from the bunch of 
 icons under the toolbar.  
+
 ![previous reports][screenshot-40]  
+
 You should then see the previous reports panel, which shows all generated test reports by the tool. Currently, we have 2 reports since we executed the 
 test twice - in execution mode and in step-by-step mode. Each report is displayed by clicking on its tab. The name of the tab shows the time the report 
 was generated.  
+
 ![previous reports tabs][screenshot-41]  
+
 By clicking on the save icon, you can save your report into a text file. By default the name of the text file will be in the 
-format - **report-{time it was generated}.txt**. For example, **_report-08h59m03s.txt_**.  
+format - **report-{time it was generated}.txt**. For example, **_report-08h59m03s.txt_**.
+
 If you've followed the tutorial and saved your pattern into an xml file, the report will be saved in the same folder as the pattern. Otherwise, you 
 will have to choose the location to save the report.  
+
 ![saving a report][screenshot-43]  
 If there is a file with the same name in the saving directory, you will be asked if you want to overwrite this file.  
-![overwriting file][screenshot-44]  
 
 ### Other features
 
