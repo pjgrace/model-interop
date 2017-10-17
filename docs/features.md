@@ -63,55 +63,35 @@ editing the XML view if appropriate.
 #### XPath expression generator
 
 There are many cases in which it is not easy to track and derive the full XPath for some tag in XML data. The XPath expression generator will do that for you. You 
-just have to load an XML file and then click on the tag, for which you want to generate the XPath expression.  
+just have to load an XML file and then click on the tag, for which you want to generate the XPath expression. 
+
 To open the tool, go to the **Tools** option from the toolbar and choose **XPath expression generator**.  
+
 ![xpath generator][screenshot-57]  
+
 You will have to choose your XML file. I chose the XML file of the model we created in the previous steps.  
-![xpath generator][screenshot-58]  
+
 You can click on the **Highlight tags** button for easier navigation. Now click on some tag, text or attribute. We click on the url address 
 for the **rest1** URL interface.  
-![generating xpath][screenshot-59]  
+
+![generating xpath][screenshot-59]
+
 You should now see the generated XPath expression in a confirmation dialog asking whether you want to copy the XPath to the clipboard in order that it
 can be used in the future by the tool.  
-![generating xpath][screenshot-60]  
 
 #### JSONPath expression generator
 
 The JSONPath expression generator is pretty much the same as the XPath expression generator with the difference being that it works for 
 JSON data format. Again, you load a JSON file and then click on the key or value, for which you want to generate the JSONPath expression.  
 To open the tool go to the **Tools** option from the toolbar and choose **JSONPath expression generator**.  
-![jsonpath generator][screenshot-61]  
+
 You will have to choose your JSON file. I chose a simple JSON file I wrote as an example.  
-![jsonpath generator][screenshot-62]  
+ 
 You can click on the **Highlight keys and values** button for easier navigation. Now click on some key or value.  
-![generating jsonpath][screenshot-63]  
+
 You should now see the generated JSONPath expression in a confirmation dialog asking whether you want to copy the JSONPath.  
 ![generating jsonpath][screenshot-64]  
 
-#### Undo manager
-
-Another feature worth mentioning is the undo manager. However, keep in mind that the undo manager can only be used when you are editing the 
-graph pattern. Hence, when you edit your pattern through the XML view you will not be able to **undo** or **redo**.  
-The icons used for **undo** and **redo** are:  
-![undo][undo] - **undo**, &nbsp;&nbsp; ![redo][redo] - **redo**  
-For example, let's add a **client** component to our model. From the **Deployment** tab on the top-left of the tool drag and 
-drop the **client** icon to the panel under the **Deployment Model**.  
-![adding client][screenshot-65]  
-Now, click on the **undo** icon under the toolbar.  
-![undo addition][screenshot-66]  
-![undo addition][screenshot-67]  
-Now, click on the **redo** icon just to demonstrate how it works.  
-![redo addition][screenshot-68]  
-
-#### Cut feature
-
-The **cut** feature is used to delete a component, state or transition.  
-The icon used for the **cut** feature is: ![cut][cut]  
-In the previous step we have redone the addition of the **client** component. We don't really need it for our model, so let's cut it. Click 
-on it and then click the **cut** icon.  
-![cut client][screenshot-69]  
-After this, the **client** component is deleted.  
-![deleted client][screenshot-70]  
 
 [undo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/undo.gif "undo"
 [redo]: https://iglab.it-innovation.soton.ac.uk/iot/connect-iot/raw/ui-update/src/main/resources/images/redo.gif "redo"
