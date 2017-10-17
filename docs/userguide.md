@@ -12,7 +12,7 @@ that it acheives a level of compliance for a given API specification or standard
 you can load the xml file of the model using the toolbar of the tool and everything will be generated from the loaded information. Here is the 
 sequence to follow in the toolbar.  
 **File** -> **Open File** -> _choose XML file_  
-Pre-made interoperability test models can be found on the [Fiesta IoT](http://fiesta-iot.eu/) website.
+Pre-made interoperability test models can be found in the "Examples" source folder of this respository.
 
 * **_I want to create a new interoperability test model and test a system against it or let others test against it_** - if you want to 
 create your own interoperability test model and test a platform or system against it (or let others test against it), you can use the drag-and-drop 
@@ -60,7 +60,8 @@ under test, whereas a **Triggerstart** node triggers an event as soon as the tes
 begin with a trigger node (it will begin to send events to the interface of a system being tested), and hence the **Trigger** node will be explained 
 in further detail in this tutorial.  
 
-These are the two icons being used for those nodes:  
+These are the two icons being used for those nodes: 
+
 ![Start node][start_node] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![Triggerstart node][triggerstart_node]  
 
 The left icon represents a **Start** node while the right one is a **Triggerstart** node. For the **Fixer** test (which is a compliance test), we are 
