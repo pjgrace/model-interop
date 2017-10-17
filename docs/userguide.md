@@ -443,18 +443,28 @@ guide you through some addition features of the tool.
 #### XML view of the pattern
 The tool allows you to view the data of your model in xml format (the xml file that will be generated when you save your pattern will 
 contain this data) and even partially modify it. Click on the XML view icon and then you should see the XML view panel.  
+
 ![XML view][screenshot-45]  
+
 On the top you should see the **Enable pattern editing** button and the **Editing legend**, which I am going to explain in a moment. First, 
-click on the **Enable pattern editing** button.  
+click on the **Enable pattern editing** button. 
+
 ![Editing XML pattern][screenshot-46]  
+
 Now, you should see two new buttons: **Disable pattern editing** and **Update changes**. All changes made in the XML view will only be 
-updated on the actual pattern if you click on **Update changes**. You should also see that there are highlighted XML tags with different colors.  
+updated on the actual pattern if you click on **Update changes**. You should also see that there are highlighted XML tags with different colors.
+
 ![Editing XML mode][screenshot-47]  
+
 As explained in the legend, clicking on a light-orange tag will let you replace the text value. For instance, let's click 
 on the **GBP** value and try to change it to something else.  
+
 ![Editing XML mode][screenshot-48]  
+
 You should see a dialog asking you to type the new value. For this example, let's type **EUR** and then click **OK**.  
+
 ![Editing pattern data][screenshot-49]  
+
 Now, the value should be changed to **EUR**.  
 ![Changed pattern data][screenshot-50]  
 Click on the **Update changes** button so that the change is validated and updated. Now let's try to append data. Click 
